@@ -4,8 +4,8 @@
 #include <QObject>
 #include <QMutex>
 
-#include "util/geometry/Coordinate.h"
-#include "util/geometry/Envelope.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Envelope.h"
 #include "geos/index/quadtree/Quadtree.h"
 
 using namespace geos::index;

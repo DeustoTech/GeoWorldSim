@@ -1,7 +1,7 @@
 #include "GraphEdge.h"
 
 #include <QDebug>
-#include "util/graph/GraphNode.h"
+#include "../../util/graph/GraphNode.h"
 
 /**
  * WARNING!! IF START NODE AND END NODE ARE THE SAME, CREATING A GRAPHEDGE WILL CRASH

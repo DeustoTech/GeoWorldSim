@@ -1,18 +1,18 @@
-#include "app/App.h"
-#include "object/ObjectFactory.h"
+#include "../../app/App.h"
+#include "./../object/ObjectFactory.h"
 
 #include <QFile>
 #include <QString>
 #include <QJsonDocument>
 #include <QProcess>
 
-#include "agent/Agent.h"
-#include "skill/Skill.h"
-#include "behaviour/Behaviour.h"
+#include "./../agent/Agent.h"
+#include "./../skill/Skill.h"
+#include "./../behaviour/Behaviour.h"
 
-#include "environment/Environment.h"
-#include "environment/agent_environment/AgentEnvironment.h"
-#include "environment/execution_environment/ExecutionEnvironment.h"
+#include "./../environment/Environment.h"
+#include "./../environment/agent_environment/AgentEnvironment.h"
+#include "./../environment/execution_environment/ExecutionEnvironment.h"
 
 int main(int argc, char* argv[])
 {

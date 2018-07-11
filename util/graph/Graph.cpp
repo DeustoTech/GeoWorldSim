@@ -3,11 +3,11 @@
 #include <QImage>
 #include <QPainter>
 
-#include "environment/Environment.h"
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../environment/Environment.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 #include "geos/geom/CoordinateArraySequenceFactory.h"
 #include "geos/geom/Envelope.h"
-#include "util/graph/GraphUtils.h"
+#include "../../util/graph/GraphUtils.h"
 
 GWSGraph::GWSGraph() : PlanarGraph(){
     this->nodes_index = new GWSQuadtree();

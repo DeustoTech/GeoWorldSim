@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 #include "geos/geom/GeometryFactory.h"
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 GWSPoint::GWSPoint(geos::geom::Point *geom, QObject *parent) :  GWSGeometry( geom , parent) {
 }

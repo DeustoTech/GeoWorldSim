@@ -6,7 +6,7 @@
 #include "geos/geom/LineString.h"
 #include "geos/geom/Polygon.h"
 #include "geos/simplify/DouglasPeuckerSimplifier.h"
-#include "util/conversors/projection/ProjectionConversor.h"
+#include "../../util/conversors/projection/ProjectionConversor.h"
 
 GWSGeometryUtils* GWSGeometryUtils::globalInstance(){
     static GWSGeometryUtils instance;

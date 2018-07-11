@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QTimer>
 
-#include "environment/Environment.h"
+#include "../../environment/Environment.h"
 
 class GWSExecutionEnvironment : public GWSEnvironment
 {

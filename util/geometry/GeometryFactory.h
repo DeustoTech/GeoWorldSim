@@ -5,13 +5,13 @@
 
 #include "geos/geom/GeometryFactory.h"
 
-#include "util/geometry/Coordinate.h"
-#include "util/geometry/Envelope.h"
-#include "util/geometry/Geometry.h"
-#include "util/geometry/Point.h"
-#include "util/geometry/LineString.h"
-#include "util/geometry/Polygon.h"
-#include "util/grid/Grid.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Envelope.h"
+#include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/Point.h"
+#include "../../util/geometry/LineString.h"
+#include "../../util/geometry/Polygon.h"
+#include "../../util/grid/Grid.h"
 
 class GWSGeometryFactory : public QObject
 {

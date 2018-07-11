@@ -4,10 +4,10 @@
 #include <QObject>
 #include <QMutex>
 
-#include "environment/Environment.h"
-#include "util/graph/Graph.h"
-#include "util/graph/GraphEdge.h"
-#include "util/graph/GraphNode.h"
+#include "../../environment/Environment.h"
+#include "../../util/graph/Graph.h"
+#include "../../util/graph/GraphEdge.h"
+#include "../../util/graph/GraphNode.h"
 
 class GWSNetworkEnvironment : public GWSEnvironment
 {

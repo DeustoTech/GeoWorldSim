@@ -2,8 +2,8 @@
 #define GSSGEOMETRYUTILS_H
 
 #include <QObject>
-#include "util/geometry/Geometry.h"
-#include "util/geometry/GeometryFactory.h"
+#include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/GeometryFactory.h"
 
 class GWSGeometryUtils : public QObject
 {

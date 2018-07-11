@@ -1,7 +1,7 @@
 #ifndef GSSPOINT_H
 #define GSSPOINT_H
 
-#include "util/geometry/Geometry.h"
+#include "../../util/geometry/Geometry.h"
 #include "geos/geom/Point.h"
 
 class GWSPoint : public GWSGeometry

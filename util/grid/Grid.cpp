@@ -7,10 +7,10 @@
 #include <QtMath>
 #include <QDebug>
 
-#include "util/geometry/GeometryFactory.h"
+#include "../../util/geometry/GeometryFactory.h"
 
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
-#include "util/grid/GridCoordinatesConversor.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/grid/GridCoordinatesConversor.h"
 
 /**
  *

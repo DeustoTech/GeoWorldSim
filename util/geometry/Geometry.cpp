@@ -9,11 +9,11 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "util/geometry/Point.h"
-#include "util/geometry/LineString.h"
-#include "util/geometry/Polygon.h"
+#include "../../util/geometry/Point.h"
+#include "../../util/geometry/LineString.h"
+#include "../../util/geometry/Polygon.h"
 
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 GWSGeometry::GWSGeometry(geos::geom::Geometry *geom, QObject *parent) :  QObject(parent) , inner_geometry( geom ){
 }

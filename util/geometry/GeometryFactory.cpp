@@ -10,7 +10,7 @@
 #include "geos/io/WKTReader.h"
 #include "geos/io/WKTWriter.h"
 
-#include "util/random/UniformDistribution.h"
+#include "../../util/random/UniformDistribution.h"
 
 GWSGeometryFactory* GWSGeometryFactory::globalInstance(){
     static GWSGeometryFactory instance;

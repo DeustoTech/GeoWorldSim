@@ -9,17 +9,17 @@
 #include <QFile>
 #include <QDateTime>
 
-#include "environment/Environment.h"
-#include "environment/agent_environment/AgentEnvironment.h"
-#include "environment/climate_environment/ClimateEnvironment.h"
-#include "environment/execution_environment/ExecutionEnvironment.h"
-#include "environment/network_environment/NetworkEnvironment.h"
-#include "environment/physical_environment/PhysicalEnvironment.h"
-#include "environment/social_environment/SocialEnvironment.h"
-#include "environment/time_environment/TimeEnvironment.h"
+#include "../../environment/Environment.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/climate_environment/ClimateEnvironment.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/network_environment/NetworkEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/social_environment/SocialEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
-#include "util/parallelism/ParallelismController.h"
-#include "util/io/log/Logger.h"
+#include "../../util/parallelism/ParallelismController.h"
+#include "../../util/io/log/Logger.h"
 
 GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
     static GWSApp instance(argc , argv);

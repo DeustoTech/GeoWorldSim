@@ -1,7 +1,7 @@
 #ifndef GWSENVIRONMENT_H
 #define GWSENVIRONMENT_H
 
-#include "agent/Agent.h"
+#include "../../agent/Agent.h"
 
 class GWSEnvironment : public GWSAgent
 {

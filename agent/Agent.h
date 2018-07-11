@@ -14,14 +14,14 @@
 #include <QTimer>
 #include <QDebug>
 
-#include "object/Object.h"
+#include "./../object/Object.h"
 //#include "utils/geometry/Coordinate.h"
 //#include "utils/geometry/Geometry.h"
 //#include "utils/conversors/custom_json/CustomJsonConversor.h"
 
-#include "util/units/Units.h"
-#include "util/storage/ObjectStorage.h"
-#include "util/uistyle/UiStyle.h"
+#include "./../util/units/Units.h"
+#include "./../util/storage/ObjectStorage.h"
+#include "./../util/uistyle/UiStyle.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSEnvironment)
 QT_FORWARD_DECLARE_CLASS(GWSPhysicalEnvironment)

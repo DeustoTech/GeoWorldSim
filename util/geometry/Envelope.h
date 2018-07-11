@@ -1,13 +1,13 @@
 #ifndef GWSENVELOPE_H
 #define GWSENVELOPE_H
 
-#include "object/Object.h"
+#include "../../object/Object.h"
 #include <QJsonArray>
 #include <QImage>
 #include <QColor>
 
-#include "util/units/Units.h"
-#include "util/geometry/Coordinate.h"
+#include "../../util/units/Units.h"
+#include "../../util/geometry/Coordinate.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSPolygon)
 

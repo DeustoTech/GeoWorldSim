@@ -6,10 +6,10 @@
 
 #include "geos/geom/Envelope.h"
 
-#include "util/geometry/Polygon.h"
-#include "util/geometry/GeometryFactory.h"
-#include "util/random/UniformDistribution.h"
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/geometry/Polygon.h"
+#include "../../util/geometry/GeometryFactory.h"
+#include "../../util/random/UniformDistribution.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 using namespace geos::geom;
 

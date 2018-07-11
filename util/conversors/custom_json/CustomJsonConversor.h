@@ -5,8 +5,8 @@
 #include <QJsonObject>
 #include <QList>
 
-#include "util/units/Units.h"
-#include "util/geometry/Geometry.h"
+#include "../../util/units/Units.h"
+#include "../../util/geometry/Geometry.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGrid)

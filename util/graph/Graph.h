@@ -4,10 +4,10 @@
 #include "geos/planargraph/PlanarGraph.h"
 #include "geos/geom/MultiLineString.h"
 
-#include "util/geometry/Quadtree.h"
-#include "util/graph/GraphNode.h"
-#include "util/graph/GraphEdge.h"
-#include "util/geometry/Coordinate.h"
+#include "../../util/geometry/Quadtree.h"
+#include "../../util/graph/GraphNode.h"
+#include "../../util/graph/GraphEdge.h"
+#include "../../util/geometry/Coordinate.h"
 
 using namespace geos::planargraph;
 

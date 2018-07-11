@@ -1,7 +1,7 @@
 #ifndef GWSCOORDINATE_H
 #define GWSCOORDINATE_H
 
-#include "object/Object.h"
+#include "../../object/Object.h"
 
 class GWSCoordinate : public GWSObject
 {

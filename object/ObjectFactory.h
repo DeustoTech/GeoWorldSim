@@ -5,7 +5,7 @@
 #include <QMap>
 #include <QJsonObject>
 
-#include "object/Object.h"
+#include "./../object/Object.h"
 
 class GWSObjectFactory : public QObject
 {

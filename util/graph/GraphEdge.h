@@ -4,8 +4,8 @@
 #include "geos/planargraph/DirectedEdge.h"
 #include "geos/planargraph/PlanarGraph.h"
 
-#include "util/units/Units.h"
-#include "util/graph/Graph.h"
+#include "../../util/units/Units.h"
+#include "../../util/graph/Graph.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 

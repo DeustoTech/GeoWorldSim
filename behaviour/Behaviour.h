@@ -1,8 +1,8 @@
 #ifndef GWSBEHAVIOUR_H
 #define GWSBEHAVIOUR_H
 
-#include "object/Object.h"
-#include "agent/Agent.h"
+#include "../../object/Object.h"
+#include "../../agent/Agent.h"
 
 class GWSBehaviour : public GWSObject
 {

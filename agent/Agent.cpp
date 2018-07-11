@@ -7,15 +7,15 @@
 #include <QPainter>
 #include <QThread>
 
-#include "environment/Environment.h"
-#include "environment/execution_environment/ExecutionEnvironment.h"
-#include "environment/time_environment/TimeEnvironment.h"
+#include "../../environment/Environment.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
-#include "util/conversors/geojson_to_geometry/GeoJsonToGeometryConversor.h"
-#include "util/image_downloader/ImageDownloader.h"
+#include "../../util/conversors/geojson_to_geometry/GeoJsonToGeometryConversor.h"
+#include "../../util/image_downloader/ImageDownloader.h"
 
-#include "behaviour/Behaviour.h"
-#include "skill/Skill.h"
+#include "../../behaviour/Behaviour.h"
+#include "../../skill/Skill.h"
 
 QString GWSAgent::RUNNING_PROP = "running";
 QString GWSAgent::NEXT_TICK_PROP = "next_tick";

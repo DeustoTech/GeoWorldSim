@@ -5,7 +5,7 @@
 #include <QJsonArray>
 #include "geos/geom/LineString.h"
 
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 GWSPolygon::GWSPolygon( geos::geom::Polygon *geom, QObject *parent) : GWSGeometry( geom , parent ){
 
