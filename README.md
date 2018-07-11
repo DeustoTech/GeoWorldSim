@@ -1,2 +1,3 @@
 # GeoWorldSim
-v2
+
+New refactored v2 version
