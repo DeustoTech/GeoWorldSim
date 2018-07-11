@@ -15,17 +15,17 @@ public:
     static GWSObjectFactory* globalInstance();
 
     // METHODS
-    void registerObjectType( const QMetaObject metaobject );
+    void registerType( const QMetaObject metaobject );
     const QMetaObject getRegisteredType( QString type_name );
-    GWSObject* createObject( QString type , GWSObject* parent = Q_NULLPTR );
-    GWSObject* createObject( QJsonObject json = QJsonObject() , GWSObject* parent = Q_NULLPTR );
+    GWSObject* create( QString type , GWSObject* parent = Q_NULLPTR );
+    virtual GWSObject* create( QJsonObject json = QJsonObject() , GWSObject* parent = Q_NULLPTR );
 
-
-private:
+protected:
     GWSObjectFactory();
     GWSObjectFactory(GWSObjectFactory const&);
     ~GWSObjectFactory();
 
+private:
     QMap<QString , QMetaObject> constructors;
 };
 

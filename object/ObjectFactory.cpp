@@ -2,6 +2,10 @@
 
 #include <QDebug>
 
+#include "agent/Agent.h"
+#include "skill/Skill.h"
+#include "behaviour/Behaviour.h"
+
 #include "util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
@@ -11,6 +15,11 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
+
+    // Register basic types
+    this->registerType( GWSAgent::staticMetaObject );
+    this->registerType( GWSSkill::staticMetaObject );
+    this->registerType( GWSBehaviour::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
@@ -20,7 +29,7 @@ GWSObjectFactory::~GWSObjectFactory(){
  METHODS
 **********************************************************************/
 
-void GWSObjectFactory::registerObjectType( QMetaObject metaobject ){
+void GWSObjectFactory::registerType( QMetaObject metaobject ){
     this->constructors.insert( metaobject.className() , metaobject );
 }
 
@@ -28,13 +37,13 @@ const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
     return this->constructors.value( type_name );
 }
 
-GWSObject* GWSObjectFactory::createObject( QString type , GWSObject* parent ){
+GWSObject* GWSObjectFactory::create( QString type , GWSObject* parent ){
     QJsonObject json;
     json.insert( GWSObject::GWS_TYPE_PROP , type );
-    return this->createObject( json , parent );
+    return this->create( json , parent );
 }
 
-GWSObject* GWSObjectFactory::createObject( QJsonObject json , GWSObject* parent ){
+GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
 
     QString type = json.value( GWSObject::GWS_TYPE_PROP ).toString();
 

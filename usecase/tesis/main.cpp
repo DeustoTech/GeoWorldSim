@@ -7,8 +7,8 @@
 #include <QProcess>
 
 #include "agent/Agent.h"
-
 #include "skill/Skill.h"
+#include "behaviour/Behaviour.h"
 
 #include "environment/Environment.h"
 #include "environment/agent_environment/AgentEnvironment.h"
@@ -18,10 +18,6 @@ int main(int argc, char* argv[])
 {
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
-
-
-    GWSObjectFactory::globalInstance()->registerObjectType( GWSAgent::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerObjectType( GWSSkill::staticMetaObject );
 
 
     QJsonObject obj = QJsonDocument::fromJson("{ \
@@ -37,7 +33,7 @@ int main(int argc, char* argv[])
                                             }").object();
 
 
-    GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->createObject( obj ) );
+    GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
     GWSEnvironment::globalInstance()->registerAgent( agent );
     GWSExecutionEnvironment::globalInstance()->runAgent( agent );
 
