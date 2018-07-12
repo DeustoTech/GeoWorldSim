@@ -21,7 +21,7 @@ public:
     static GWSGeometryFactory* globalInstance();
 
     // GETTERS
-    const geos::geom::GeometryFactory* getGeometryFactory() const;
+    //const geos::geom::GeometryFactory* getGeometryFactory() const;
     const GWSGrid getElevationModel() const;
     GWSCoordinate getRandomPoint( const GWSGeometry* bounds , unsigned int seed = qrand() ) const;
 
@@ -54,7 +54,7 @@ private:
     GWSPolygon* createPolygon( geos::geom::Polygon* gpolygon , bool elevate = true ) const;
 
     GWSGrid elevation_model; // Elevation model IN METERS
-    geos::geom::GeometryFactory* geometry_factory; // Geometry factory
+    GeometryFactory::unique_ptr geometry_factory; // Geometry factory
 };
 
 #endif // GWSGEOMETRYCONTROLLER_H

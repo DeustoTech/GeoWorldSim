@@ -7,7 +7,7 @@
 #include <QMutex>
 #include <QStringList>
 
-#include "./../object/Object.h"
+#include "../../object/Object.h"
 
 class GWSObjectStorage : public GWSObject
 {

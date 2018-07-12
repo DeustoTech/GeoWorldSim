@@ -20,11 +20,11 @@ GWSGeometryFactory* GWSGeometryFactory::globalInstance(){
 GWSGeometryFactory::GWSGeometryFactory() : QObject( Q_NULLPTR ){
     // Create geometry factory
     geos::geom::PrecisionModel* precision_model = new geos::geom::PrecisionModel( PrecisionModel::FLOATING );
-    this->geometry_factory = new geos::geom::GeometryFactory( precision_model, 4326 );
+    this->geometry_factory = geos::geom::GeometryFactory::create( precision_model, 4326 );
 }
 
 GWSGeometryFactory::~GWSGeometryFactory(){
-    delete this->geometry_factory;
+    //delete this->geometry_factory;
 }
 
 /**********************************************************************
@@ -35,9 +35,9 @@ const GWSGrid GWSGeometryFactory::getElevationModel() const{
     return this->elevation_model;
 }
 
-const geos::geom::GeometryFactory* GWSGeometryFactory::getGeometryFactory() const{
+/*const geos::geom::GeometryFactory* GWSGeometryFactory::getGeometryFactory() const{
     return this->geometry_factory;
-}
+}*/
 
 GWSCoordinate GWSGeometryFactory::getRandomPoint( const GWSGeometry *bounds, unsigned int seed) const{
     if( bounds->getCoordinates().size() <= 2 ){
@@ -74,7 +74,7 @@ GWSGeometry* GWSGeometryFactory::createGeometry(QString wkt , bool elevate) cons
 
     try{
         // Create reader to build geometry without our elevation
-        geos::io::WKTReader reader = geos::io::WKTReader( this->geometry_factory );
+        geos::io::WKTReader reader = geos::io::WKTReader( this->geometry_factory.get() );
         geos::geom::Geometry* g = reader.read( wkt.trimmed().toStdString() );
 
         // POINT
