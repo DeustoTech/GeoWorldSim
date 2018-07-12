@@ -219,11 +219,11 @@ GWSPolygon* GWSGeometryFactory::createPolygon( QList<GWSCoordinate> outer_coors 
 **********************************************************************/
 
 double GWSGeometryFactory::getElevation( GWSCoordinate coor) const{
-    return this->elevation_model.getValue( coor );
+    return this->elevation_model.getCellValue( coor );
 }
 
 void GWSGeometryFactory::setElevationPoint( GWSCoordinate coor, double value ){
-    this->elevation_model.setValue( coor , value );
+    this->elevation_model.setCellValue( coor , value );
 }
 
 void GWSGeometryFactory::setElevationModel( const GWSGrid& elevation){

@@ -33,14 +33,16 @@ public:
     unsigned int getYSize() const;
     double getMaxValue() const;
     double getMinValue() const;
-    virtual double getValue( GWSCoordinate coor ) const;
+    virtual double getCellValue( GWSCoordinate coor ) const;
+    double getCellValue( unsigned int grid_x , unsigned int grid_y ) const;
     const GWSEnvelope getCellEnvelope( unsigned int grid_x , unsigned int grid_y ) const;
 
     // SETTERS
     void setBounds( double left , double right , double top , double bottom );
     void setBounds( GWSEnvelope bounds );
     void setSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
-    void setValue( GWSCoordinate coor , double v );
+    void setCellValue( GWSCoordinate coor , double v );
+    void setCellValue( unsigned int grid_x , unsigned int grid_y , double v);
 
     // OPERATORS
     GWSGrid& operator=(const GWSGrid&);
@@ -48,12 +50,6 @@ public:
     // METHODS
     GWSGrid getSubGrid( GWSEnvelope bounds );
     QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
-
-protected:
-    // GETTERS
-    double getValue( unsigned int grid_x , unsigned int grid_y ) const;
-    // SETTERS
-    void setValue( unsigned int grid_x , unsigned int grid_y , double v);
 
 private:
     GWSEnvelope bounds;

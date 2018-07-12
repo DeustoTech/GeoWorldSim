@@ -26,9 +26,10 @@ int main(int argc, char* argv[])
     // Create agent normal style
     TerrainAgent* agent2 = new TerrainAgent();
     agent2->setProperty( "message" , "Hello" );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
 
     // Register in environments
+    GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
+
 
     GWSExecutionEnvironment::globalInstance()->run();
 
