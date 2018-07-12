@@ -45,6 +45,11 @@ GWSObject* GWSObjectFactory::create( QString type , GWSObject* parent ){
 
 GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
 
+    if( json.isEmpty() ){
+        qDebug() << QString("Empty JSON");
+        return 0;
+    }
+
     QString type = json.value( GWSObject::GWS_TYPE_PROP ).toString();
 
     if( !this->constructors.keys().contains( type ) ){
@@ -56,9 +61,8 @@ GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
     GWSObject* obj = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
     if( !obj ){ return 0; }
 
-    // Set global @ attributes
+    // Set parent if any
     obj->setParent( parent );
-    if( !json.value( GWSObject::GWS_ID_PROP     ).isNull() ){ obj->setProperty( GWSObject::GWS_ID_PROP , json.value( GWSObject::GWS_ID_PROP ).toString() ); }
 
     // Call deserialize for further population
     obj->deserialize( json );

@@ -10,57 +10,13 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 }
 
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
-    this->environment_agents = new GWSObjectStorage();
+    this->environment_agents = new GWSObjectStorage( this );
     qInfo() << "Agent environment created";
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSAgentEnvironment::~GWSAgentEnvironment(){
-    this->environment_agents->deleteLater();
     qInfo() << "Agent environment deleted";
-}
-
-/**********************************************************************
- EXPORTERS
-**********************************************************************/
-
-QJsonObject GWSAgentEnvironment::serialize(){
-    QJsonObject json = GWSObject::serialize();
-    QJsonArray agent_classes;
-    foreach ( QString class_name, this->environment_agents->getClasses() ) {
-        agent_classes.append( class_name );
-    }
-    json.insert( "agent_types" , agent_classes );
-    return json;
-}
-
-/**
- * @brief Agent::toImage
- * @return
- */
-QImage GWSAgentEnvironment::toImage( unsigned int image_width, unsigned int image_height, QStringList class_names){
-
-    QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
-    /*QPainter painter( &image );
-
-    foreach( QString class_name , class_names ) {
-        foreach( GWSAgent* a , this->getByClass( class_name ) ){
-            painter.drawImage( 0 , 0 , a->toImage( GWSPhysicalEnvironment::globalInstance()->getBounds() , image_width , image_height ) );
-        }
-    }*/
-    return image;
-}
-
-/**********************************************************************
- IMPORTERS
-**********************************************************************/
-
-void GWSAgentEnvironment::deserialize(QJsonObject json){
-    /*GSSAgent::fromJSON(json);
-    QJsonObject properties = json["properties"].toObject();
-    if( properties.contains( "time" ) ){
-        this->time_environment->fromJSON( properties["time"].toObject() );
-    }*/
 }
 
 /***********************************************************************/

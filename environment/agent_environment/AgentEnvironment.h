@@ -13,13 +13,6 @@ class GWSAgentEnvironment : public GWSEnvironment
 public:
     static GWSAgentEnvironment* globalInstance();
 
-    // EXPORTERS
-    virtual QJsonObject serialize();
-    virtual QImage toImage(unsigned int image_width = 1024 , unsigned int image_height = 1024 , QStringList class_names = QStringList( GWSAgent::staticMetaObject.className() ) );
-
-    // IMPORTERS
-    void deserialize(QJsonObject json);
-
     // GETTERS
     quint64 getAmount() const;
     GWSAgent* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent

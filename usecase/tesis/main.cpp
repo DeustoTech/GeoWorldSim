@@ -19,27 +19,22 @@ int main(int argc, char* argv[])
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
+    GWSEnvironment::globalInstance();
+    GWSAgentEnvironment::globalInstance();
+    GWSExecutionEnvironment::globalInstance();
+
     QJsonObject obj = QJsonDocument::fromJson("{ \
                                               \"@context\": \"http://schema.org\", \
                                               \"@id\": \"Person123412\", \
                                               \"@type\": \"GWSAgent\", \
-                                              \"name\": \"George Bush\", \
-                                              \"disambiguatingDescription\": \"41st President of the United States\", \
-                                              \"children\": { \
-                                                \"@type\": \"GWSAgent\", \
-                                                \"name\": \"George W. Bush\", \
-                                                \"disambiguatingDescription\": \"43rd President of the United States\" \
-                                              } \
+                                              \"@inheritance\" : [\"GWSObject\",\"GWSAgent\",\"Person\"], \
+                                              \"@name\": \"George Bush\" \
                                             }").object();
 
 
     GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
     GWSEnvironment::globalInstance()->registerAgent( agent );
-    GWSExecutionEnvironment::globalInstance()->runAgent( agent );
-
-    agent->connect( agent , &GWSAgent::agentBehavedSignal , [agent](){
-        qDebug() << agent->serialize();
-    });
+    qDebug() << GWSAgentEnvironment::globalInstance()->getByClassAndId( "GWSAgent" , "Person123412" )->serialize();
 
     app->exec();
 }

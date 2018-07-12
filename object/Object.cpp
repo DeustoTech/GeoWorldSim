@@ -9,12 +9,15 @@
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
+QString GWSObject::GWS_NAME_PROP = "@name";
 QString GWSObject::GWS_INHERITANCE_TREE_PROP = "@inheritance";
 
 unsigned int GWSObject::counter = 0;
 
 GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
-    this->setProperty( GWS_ID_PROP , QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter ) );
+    QString generated_id = QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter );
+    this->setProperty( GWS_ID_PROP ,  generated_id );
+    this->setObjectName( generated_id );
 }
 
 GWSObject::~GWSObject(){
@@ -32,6 +35,7 @@ QJsonObject GWSObject::serializeMini() const{
     QJsonObject json;
     json.insert( GWS_ID_PROP , this->getId() );
     json.insert( GWS_TYPE_PROP , this->metaObject()->className() );
+    json.insert( GWS_NAME_PROP , this->property( GWS_NAME_PROP ).toString() );
     return json;
 }
 
@@ -44,8 +48,25 @@ QJsonObject GWSObject::serializeMini() const{
 QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
     for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
+
         const char* property_name = this->dynamicPropertyNames().at( i );
-        json.insert( property_name , this->property( property_name ).toJsonValue() );
+        const QVariant property_value = this->property( property_name );
+
+        switch ( property_value.type() ) {
+            case QVariant::Int:
+            case QVariant::UInt:
+            case QVariant::Double:
+            case QVariant::LongLong:
+                json.insert( property_name , this->property( property_name ).toLongLong() ); break;
+            case QVariant::Bool:
+                json.insert( property_name , this->property( property_name ).toBool() ); break;
+            case QVariant::String:
+                json.insert( property_name , this->property( property_name ).toString() ); break;
+            default:
+                qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
+                json.insert( property_name , this->property( property_name ).toJsonValue() ); break;
+        }
+
     }
     return json;
 }
@@ -57,12 +78,23 @@ QJsonObject GWSObject::serialize() const{
 void GWSObject::deserialize(QJsonObject json){
 
     // Set properties
-    foreach( QString key , json.keys() ){
+    foreach( QString property_name , json.keys() ){
 
-        if( key.startsWith('@') ){ continue; } // Avoid control params
+        QJsonValue property_value = json.value( property_name );
 
-        QJsonValue value = json.value( key );
-        this->setProperty( key , value );
+        switch ( property_value.type() ) {
+            case QJsonValue::String:
+                this->setProperty( property_name , property_value.toString() ); break;
+            case QJsonValue::Double:
+                this->setProperty( property_name , property_value.toDouble() ); break;
+            case QJsonValue::Bool:
+                this->setProperty( property_name , property_value.toBool() ); break;
+            case QJsonValue::Array:
+                this->setProperty( property_name , property_value.toArray() ); break;
+            default:
+                qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
+                this->setProperty( property_name , property_value.toVariant() ); break;
+        }
     }
 }
 
@@ -98,7 +130,6 @@ const QVariant GWSObject::operator []( QString name ) const{
  SETTERS
 **********************************************************************/
 
-
-void GWSObject::setProperty( QString name, const QJsonValue &value){
-    QObject::setProperty( name.toLatin1() , value );
+bool GWSObject::setProperty(const QString name, const QVariant &value){
+    return QObject::setProperty( name.toLatin1() , value );
 }
