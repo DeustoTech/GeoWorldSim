@@ -58,16 +58,6 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
     // Init random generators
     qsrand( QDateTime::currentDateTime().time().second() );
 
-    // Create environments
-    GWSEnvironment::globalInstance();
-    GWSAgentEnvironment::globalInstance();
-    GWSExecutionEnvironment::globalInstance();
-    GWSPhysicalEnvironment::globalInstance();
-    GWSSocialEnvironment::globalInstance();
-    GWSTimeEnvironment::globalInstance();
-    GWSGridEnvironment::globalInstance();
-    GWSNetworkEnvironment::globalInstance();
-
     // Connect signal to socket slots
     this->connect( this , &GWSApp::pushAgentSignal , this , &GWSApp::pushAgent );
     this->connect( this , &GWSApp::pushDataSignal , this , &GWSApp::pushData );

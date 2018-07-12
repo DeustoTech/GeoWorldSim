@@ -19,6 +19,7 @@ public:
     // PROPERTIES
     static QString GWS_ID_PROP;
     static QString GWS_TYPE_PROP;
+    static QString GWS_NAME_PROP;
     static QString GWS_INHERITANCE_TREE_PROP;
 
     // EXPORTERS
@@ -35,7 +36,7 @@ public:
     const QVariant operator[]( QString name ) const;
 
     // SETTERS
-    void setProperty( QString name , const QJsonValue &value );
+    bool setProperty(const QString name, const QVariant &value);
 
 protected:
 
