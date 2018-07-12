@@ -11,7 +11,7 @@
 
 #include "../../environment/Environment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
-#include "../../environment/climate_environment/ClimateEnvironment.h"
+#include "../../environment/grid_environment/GridEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -65,7 +65,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
     GWSPhysicalEnvironment::globalInstance();
     GWSSocialEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
-    GWSClimateEnvironment::globalInstance();
+    GWSGridEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
 
     // Connect signal to socket slots

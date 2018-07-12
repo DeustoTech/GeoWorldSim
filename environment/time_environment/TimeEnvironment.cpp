@@ -3,7 +3,7 @@
 
 #include "TimeEnvironment.h"
 
-#include "util/conversors/custom_json/CustomJsonConversor.h"
+#include "../../util/conversors/custom_json/CustomJsonConversor.h"
 
 GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     static GWSTimeEnvironment instance;

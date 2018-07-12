@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QTimer>
 
-#include "util/parallelism/ParallelismController.h"
+#include "../../util/parallelism/ParallelismController.h"
 
 GWSEnvironment* GWSEnvironment::globalInstance(){
     static GWSEnvironment instance;

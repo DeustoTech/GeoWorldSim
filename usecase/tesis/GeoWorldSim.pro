@@ -71,7 +71,7 @@ HEADERS += \
     ../../environment/social_environment/SocialEnvironment.h \
     ../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    ../../ environment/climate_environment/ClimateEnvironment.h \
+    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h
         # AGENTS
@@ -118,9 +118,9 @@ SOURCES += main.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
-    ../../environment/climate_environment/ClimateEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
-    ../../environment/execution_environment/ExecutionEnvironment.cpp
+    ../../environment/execution_environment/ExecutionEnvironment.cpp \
+    ../../environment/grid_environment/GridEnvironment.cpp
         # AGENTS
     #agent/person/Person.cpp
 

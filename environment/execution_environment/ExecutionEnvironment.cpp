@@ -5,9 +5,9 @@
 #include <QImage>
 #include <QJsonDocument>
 
-#include "app/App.h"
-#include "environment/time_environment/TimeEnvironment.h"
-#include "util/parallelism/ParallelismController.h"
+#include "../../app/App.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../util/parallelism/ParallelismController.h"
 
 QString GWSExecutionEnvironment::RUNNING_PROP = "running";
 

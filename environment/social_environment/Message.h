@@ -5,8 +5,8 @@
 #include <QString>
 #include <QDateTime>
 
-#include "agent/Agent.h"
-#include "environment/social_environment/MessageConstants.h"
+#include "../../agent/Agent.h"
+#include "../../environment/social_environment/MessageConstants.h"
 
 QT_FORWARD_DECLARE_CLASS(Agent)
 

@@ -2,7 +2,7 @@
 
 #include <QPainter>
 
-#include "environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
     static GWSAgentEnvironment instance;

@@ -1,9 +1,5 @@
 #include "NetworkEnvironment.h"
 
-#include "environment/Environment.h"
-#include "util/parallelism/ParallelismController.h"
-
-
 GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
     static GWSNetworkEnvironment instance;
     return &instance;
