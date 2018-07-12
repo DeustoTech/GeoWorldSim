@@ -183,9 +183,6 @@ void GWSExecutionEnvironment::tick(){
             qint64 agent_next_tick = agent->getNextTick();
             if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
 
-                    if( agent_next_tick < current_datetime ){
-                        agent->setProperty( GWSAgent::NEXT_TICK_PROP , qMax( agent_next_tick , limit ) );
-                    }
                     ticked_agents++;
 
                     // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
@@ -208,11 +205,6 @@ void GWSExecutionEnvironment::tick(){
                                         .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString() )
                                         .arg( ticked_agents )
                                         .arg( currently_running_agents.size() );
-    QJsonObject tick_json;
-    tick_json.insert( "time" , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
-    tick_json.insert( "tick" , (qint64)this->executed_ticks_amount );
-    tick_json.insert( "ticked" , ticked_agents );
-    emit GWSApp::globalInstance()->pushDataSignal( "tick" , tick_json );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }

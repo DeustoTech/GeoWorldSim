@@ -244,13 +244,13 @@ void GWSAgent::tick(){
     this->incrementBusy();
 
     // Behave
-    GWSBehaviour* execute_behaviour = this->behaviour_start;
-    while( execute_behaviour && execute_behaviour->finished() ){
-        execute_behaviour = execute_behaviour->getNext();
+    GWSBehaviour* next_execute_behaviour = this->behaviour_start;
+    while( next_execute_behaviour && next_execute_behaviour->finished() ){
+        next_execute_behaviour = next_execute_behaviour->getNext();
     }
 
-    if( execute_behaviour ){
-        this->timer->singleShot( 10 + (qrand() % 100) , execute_behaviour , &GWSBehaviour::tick );
+    if( next_execute_behaviour ){
+        this->timer->singleShot( 10 + (qrand() % 100) , next_execute_behaviour , &GWSBehaviour::tick );
     }
 
     this->decrementBusy();
