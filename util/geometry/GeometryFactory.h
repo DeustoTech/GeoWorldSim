@@ -54,7 +54,7 @@ private:
     GWSPolygon* createPolygon( geos::geom::Polygon* gpolygon , bool elevate = true ) const;
 
     GWSGrid elevation_model; // Elevation model IN METERS
-    GeometryFactory::unique_ptr geometry_factory; // Geometry factory
+    const geos::geom::GeometryFactory* geometry_factory; // Geometry factory
 };
 
 #endif // GWSGEOMETRYCONTROLLER_H

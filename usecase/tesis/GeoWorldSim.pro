@@ -21,7 +21,7 @@ QMAKE_CXXFLAGS += -march=native -O2 -pipe
 QMAKE_CFLAGS += -march=native -O2 -pipe
 
 # FORCE C++11
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++14
 
 TARGET      = gws-tesis
 CONFIG      += console

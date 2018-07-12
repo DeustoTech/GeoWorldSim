@@ -19,8 +19,7 @@ GWSGeometryFactory* GWSGeometryFactory::globalInstance(){
 
 GWSGeometryFactory::GWSGeometryFactory() : QObject( Q_NULLPTR ){
     // Create geometry factory
-    geos::geom::PrecisionModel* precision_model = new geos::geom::PrecisionModel( PrecisionModel::FLOATING );
-    this->geometry_factory = geos::geom::GeometryFactory::create( precision_model, 4326 );
+    this->geometry_factory = geos::geom::GeometryFactory::getDefaultInstance();
 }
 
 GWSGeometryFactory::~GWSGeometryFactory(){
@@ -74,7 +73,7 @@ GWSGeometry* GWSGeometryFactory::createGeometry(QString wkt , bool elevate) cons
 
     try{
         // Create reader to build geometry without our elevation
-        geos::io::WKTReader reader = geos::io::WKTReader( this->geometry_factory.get() );
+        geos::io::WKTReader reader = geos::io::WKTReader( this->geometry_factory );
         geos::geom::Geometry* g = reader.read( wkt.trimmed().toStdString() );
 
         // POINT
