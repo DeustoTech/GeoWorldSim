@@ -39,8 +39,8 @@ echo "============================================"
 echo "Downloading and Installing Lemon graph library"
 echo "============================================"
 
-mkdir libs
-cd libs
+mkdir lib
+cd lib
 wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.zip
 unzip lemon-1.3.1.zip 
 cd lemon-1.3.1
@@ -53,8 +53,8 @@ echo "============================================"
 echo "Downloading and Installing Qhttp library"
 echo "============================================"
 
-mkdir libs
-cd libs
+mkdir lib
+cd lib
 wget https://github.com/azadkuh/qhttp/archive/master.zip
 mv master.zip qhttp-master.zip
 unzip qhttp-master.zip

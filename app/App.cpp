@@ -38,7 +38,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
         if( arg.contains( "-console=" ) ){ this->setProperty( "console" , arg.replace( "-console=" , "" ) == "1" ? true : false ); }
         if( arg.contains( "-speed=" ) ){ this->setProperty( "speed" , arg.replace( "-speed=" , "" ).toDouble() ); }
         if( arg.contains( "-debug=" ) ){ this->setProperty( "debug" , arg.replace( "-debug=" , "" ).toInt() ); }
-        if( arg.contains( "-datapath=" ) ){ this->setProperty( "datapath" , arg.replace( "-datapath=" , "" ) ); }
+        if( arg.contains( "-localpath=" ) ){ this->setProperty( "localpath" , arg.replace( "-localpath=" , "" ) ); }
     }
 
     Q_ASSERT( !this->app_id.isEmpty() );
