@@ -26,13 +26,16 @@ int main(int argc, char* argv[])
     // Create agent from JSON
     QJsonObject obj = QJsonDocument::fromJson("{ \
                                               \"@context\": \"http://schema.org\", \
-                                              \"@id\": \"Person123412\", \
+                                              \"@id\": \"Person1\", \
                                               \"@type\": \"GWSAgent\", \
                                               \"@inheritance\" : [\"GWSObject\",\"GWSAgent\",\"Person\"], \
                                               \"name\": \"George Bush\" \
                                             }").object();
-
     GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
+
+    // Create agent normal style
+    GWSAgent* agent = new GWSAgent();
+    agent->setProperty( GWSAgent::GWS_ID_PROP , "Person2");
 
     // Register in environments
     GWSAgentEnvironment::globalInstance()->registerAgent( agent );

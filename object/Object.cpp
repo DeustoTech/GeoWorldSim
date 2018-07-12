@@ -17,6 +17,7 @@ GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
     QString generated_id = QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
     this->setObjectName( generated_id );
+    this->setProperty( GWS_TYPE_PROP ,  this->metaObject()->className() );
 }
 
 GWSObject::~GWSObject(){
