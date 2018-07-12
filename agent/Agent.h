@@ -79,7 +79,7 @@ public:
     // SETTERS
     //virtual void setGeometry( GSSGeometry* geometry );
     void setNextTick( qint64 datetime );
-    void incrementNextTick( GWSTimeUnit seconds = GWSTimeUnit(0) );
+    void incrementInternalTime( GWSTimeUnit seconds = GWSTimeUnit(0) );
     void incrementBusy();
     void decrementBusy();
     void addSkill( GWSSkill* skill );

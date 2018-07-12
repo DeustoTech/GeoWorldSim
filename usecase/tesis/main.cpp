@@ -6,9 +6,7 @@
 #include <QJsonDocument>
 #include <QProcess>
 
-#include "../../agent/Agent.h"
-#include "../../skill/Skill.h"
-#include "../../behaviour/Behaviour.h"
+#include "TerrainAgent.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
@@ -24,26 +22,13 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance();
     GWSGridEnvironment::globalInstance();
 
-    // Create agent from JSON
-    QJsonObject obj = QJsonDocument::fromJson("{ \
-                                              \"@context\": \"http://schema.org\", \
-                                              \"@id\": \"Person1\", \
-                                              \"@type\": \"GWSAgent\", \
-                                              \"@inheritance\" : [\"GWSObject\",\"GWSAgent\",\"Person\"], \
-                                              \"name\": \"George Bush\" \
-                                            }").object();
-    GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
 
     // Create agent normal style
-    GWSAgent* agent2 = new GWSAgent();
-    agent2->setProperty( GWSAgent::GWS_ID_PROP , "Person2");
+    TerrainAgent* agent2 = new TerrainAgent();
+    agent2->setProperty( "message" , "Hello" );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
 
     // Register in environments
-    GWSAgentEnvironment::globalInstance()->registerAgent( agent1 );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent1 );
-
-    // Get from agent environment
-    qDebug() << GWSAgentEnvironment::globalInstance()->getByClassAndId( "GWSAgent" , "Person1" )->serialize();
 
     GWSExecutionEnvironment::globalInstance()->run();
 

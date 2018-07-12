@@ -73,7 +73,8 @@ HEADERS += \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
-    ../../environment/execution_environment/ExecutionEnvironment.h
+    ../../environment/execution_environment/ExecutionEnvironment.h \
+    TerrainAgent.h
         # AGENTS
     #agent/person/Person.h
 
@@ -120,7 +121,8 @@ SOURCES += main.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    ../../environment/grid_environment/GridEnvironment.cpp
+    ../../environment/grid_environment/GridEnvironment.cpp \
+    TerrainAgent.cpp
         # AGENTS
     #agent/person/Person.cpp
 

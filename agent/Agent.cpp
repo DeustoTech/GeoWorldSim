@@ -199,7 +199,7 @@ void GWSAgent::setNextTick( const qint64 datetime ){
     this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
 }
 
-void GWSAgent::incrementNextTick( GWSTimeUnit seconds ){
+void GWSAgent::incrementInternalTime( GWSTimeUnit seconds ){
     qint64 datetime = this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
     this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
 }
@@ -243,8 +243,11 @@ void GWSAgent::tick(){
 
     this->incrementBusy();
 
-    // Behave
-    GWSBehaviour* next_execute_behaviour = this->behaviour_start;
+    // Behaveç
+    this->behave();
+
+
+    /*GWSBehaviour* next_execute_behaviour = this->behaviour_start;
     while( next_execute_behaviour && next_execute_behaviour->finished() ){
         next_execute_behaviour = next_execute_behaviour->getNext();
     }
@@ -258,7 +261,7 @@ void GWSAgent::tick(){
     // No behaviour, not busy anymore
     if( !this->behaviour_start ){
         this->busy_counter = 0;
-    }
+    }*/
 
     emit this->agentBehavedSignal();
 }
