@@ -40,7 +40,7 @@ void GWSTimeEnvironment::deserialize(QJsonObject json){
 
 qint64 GWSTimeEnvironment::getCurrentDateTime() const{
     // Get elapsed time difference
-    double elapsed_msecs = ( QDateTime::currentMSecsSinceEpoch() - this->started_datetime_msecs ) * this->time_speed;
+    quint64 elapsed_msecs = ( QDateTime::currentMSecsSinceEpoch() - this->started_datetime_msecs ) * this->time_speed;
     return this->started_datetime_msecs + elapsed_msecs;
 }
 

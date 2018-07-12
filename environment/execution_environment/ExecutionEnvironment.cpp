@@ -183,17 +183,15 @@ void GWSExecutionEnvironment::tick(){
             qint64 agent_next_tick = agent->getNextTick();
             if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
 
-                    ticked_agents++;
+                    // Set agent to advance to last min_tick, in case it was set to 0
+                    agent->setNextTick( qMax( agent_next_tick , min_tick ) );
 
                     // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
                     agent->timer->singleShot( 10 + (qrand() % 1000) , agent , &GWSAgent::tick );
+
+                    ticked_agents++;
             }
         }
-    } else {
-
-        // Update TimeEnvironment datetime
-        GWSTimeEnvironment::globalInstance()->setDatetime( current_datetime + 1000 );
-
     }
 
     // Calculate to call again this function in (cycleFrequency - spent time) time
@@ -201,10 +199,12 @@ void GWSExecutionEnvironment::tick(){
         this->timer->singleShot( (1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
-    qInfo() << QString("Executed tick %1 , with %2 agents ticked out of %3")
-                                        .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString() )
-                                        .arg( ticked_agents )
-                                        .arg( currently_running_agents.size() );
+    qInfo() << QString("Environment should be : %1 / Executing tick : %2")
+               .arg( QDateTime::fromMSecsSinceEpoch( current_datetime ).toString() )
+               .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString() );
+    qInfo() << QString("Ticked agents : %1 / Running agents : %2")
+               .arg( ticked_agents )
+               .arg( currently_running_agents.size() );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }
