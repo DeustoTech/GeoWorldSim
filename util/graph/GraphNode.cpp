@@ -1,6 +1,6 @@
 #include "GraphNode.h"
 
-#include "util/graph/GraphEdge.h"
+#include "../../util/graph/GraphEdge.h"
 
 GWSGraphNode::GWSGraphNode( GWSCoordinate coor ) : geos::planargraph::Node( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) ){
 }

@@ -4,8 +4,8 @@
 #include <QPen>
 #include <QJsonArray>
 
-#include "util/geometry/GeometryFactory.h"
-#include "util/conversors/image_coordinates/ImageCoordinatesConversor.h"
+#include "../../util/geometry/GeometryFactory.h"
+#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 GWSLineString::GWSLineString( geos::geom::LineString *geom, QObject *parent) : GWSGeometry( geom , parent ){
 

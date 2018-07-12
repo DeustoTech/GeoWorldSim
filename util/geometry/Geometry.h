@@ -8,9 +8,9 @@
 #include <QImage>
 #include <QColor>
 
-#include "util/units/Units.h"
-#include "util/geometry/Coordinate.h"
-#include "util/geometry/Envelope.h"
+#include "../../util/units/Units.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Envelope.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSPoint)
 QT_FORWARD_DECLARE_CLASS(GWSGeometryFactory)

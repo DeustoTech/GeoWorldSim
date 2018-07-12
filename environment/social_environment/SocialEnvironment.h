@@ -1,10 +1,10 @@
 #ifndef SOCIALENVIRONMENT_H
 #define SOCIALENVIRONMENT_H
 
-#include "environment/Environment.h"
-#include "util/graph/Graph.h"
-#include "util/graph/GraphNode.h"
-#include "util/graph/GraphEdge.h"
+#include "../../environment/Environment.h"
+#include "../../util/graph/Graph.h"
+#include "../../util/graph/GraphNode.h"
+#include "../../util/graph/GraphEdge.h"
 
 using namespace geos::geom;
 using namespace geos::planargraph;

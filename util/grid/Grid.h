@@ -5,8 +5,8 @@
 #include <QJsonObject>
 #include <QImage>
 
-#include "util/geometry/Coordinate.h"
-#include "util/geometry/Envelope.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Envelope.h"
 
 class GWSGrid
 {
@@ -18,7 +18,7 @@ class GWSGrid
     //[00 , 10 , 20 , 30]
 
 public:
-    explicit GWSGrid(double left , double right , double top , double bottom , unsigned int x_size = 100 , unsigned int y_size = 100 , double min_value = NAN, double max_value = NAN );
+    explicit GWSGrid(double left , double right , double top , double bottom , unsigned int x_size = 100 , unsigned int y_size = 100 , double min_value = std::numeric_limits<double>::quiet_NaN(), double max_value = std::numeric_limits<double>::quiet_NaN() );
     GWSGrid(const GWSGrid&);
     GWSGrid();
     ~GWSGrid();

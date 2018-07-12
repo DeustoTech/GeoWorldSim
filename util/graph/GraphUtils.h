@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "util/graph/Graph.h"
-#include "util/geometry/Quadtree.h"
+#include "../../util/graph/Graph.h"
+#include "../../util/geometry/Quadtree.h"
 
 class GWSGraphUtils : public QObject
 {

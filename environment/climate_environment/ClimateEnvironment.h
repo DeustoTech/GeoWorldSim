@@ -1,11 +1,11 @@
 #ifndef CLIMATEENVIRONMENT_H
 #define CLIMATEENVIRONMENT_H
 
-#include "environment/Environment.h"
+#include "../../environment/Environment.h"
 
-#include "util/grid/Grid.h"
-#include "util/geometry/Coordinate.h"
-#include "util/units/Units.h"
+#include "../../util/grid/Grid.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/units/Units.h"
 
 class GWSClimateEnvironment : public GWSEnvironment
 {

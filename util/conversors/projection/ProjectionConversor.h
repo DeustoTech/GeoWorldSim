@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
-#include "util/geometry/GeometryFactory.h"
+#include "../../util/geometry/GeometryFactory.h"
 
 #include "proj_api.h"
 

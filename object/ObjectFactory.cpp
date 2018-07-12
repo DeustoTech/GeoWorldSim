@@ -2,11 +2,11 @@
 
 #include <QDebug>
 
-#include "agent/Agent.h"
-#include "skill/Skill.h"
-#include "behaviour/Behaviour.h"
+#include "../../agent/Agent.h"
+#include "../../skill/Skill.h"
+#include "../../behaviour/Behaviour.h"
 
-#include "util/parallelism/ParallelismController.h"
+#include "../../util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
     static GWSObjectFactory instance;

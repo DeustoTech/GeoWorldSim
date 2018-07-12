@@ -3,8 +3,8 @@
 
 #include <QList>
 
-#include "util/geometry/Geometry.h"
-#include "geos/geom/LineString.h"
+#include "../../util/geometry/Geometry.h"
+#include "../../geos/geom/LineString.h"
 
 class GWSLineString : public GWSGeometry
 {

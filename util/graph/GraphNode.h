@@ -7,8 +7,8 @@
 #include "geos/planargraph/Node.h"
 #include "geos/planargraph/PlanarGraph.h"
 
-#include "util/geometry/Coordinate.h"
-#include "util/graph/Graph.h"
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/graph/Graph.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
 

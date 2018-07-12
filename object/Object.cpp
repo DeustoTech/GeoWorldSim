@@ -3,9 +3,9 @@
 #include <QVector>
 #include <QDebug>
 
-#include "app/App.h"
+#include "../../app/App.h"
 
-#include "util/conversors/custom_json/CustomJsonConversor.h"
+#include "../../util/conversors/custom_json/CustomJsonConversor.h"
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";

@@ -1,9 +1,9 @@
 #ifndef GWSAGENTENVIRONMENT_H
 #define GWSAGENTENVIRONMENT_H
 
-#include "environment/Environment.h"
-#include "agent/Agent.h"
-#include "util/storage/ObjectStorage.h"
+#include "../../environment/Environment.h"
+#include "../../agent/Agent.h"
+#include "../../util/storage/ObjectStorage.h"
 
 class GWSAgentEnvironment : public GWSEnvironment
 {

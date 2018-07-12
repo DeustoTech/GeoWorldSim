@@ -4,8 +4,8 @@
 #include <QDateTime>
 #include <QJsonObject>
 
-#include "environment/Environment.h"
-#include "util/units/Units.h"
+#include "../../environment/Environment.h"
+#include "../../util/units/Units.h"
 /**
  * @brief The TimeEnvironment class
  * Class to be used in environment to get time / hours.

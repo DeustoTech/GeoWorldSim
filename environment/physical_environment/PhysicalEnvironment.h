@@ -3,12 +3,12 @@
 
 #include <QMutex>
 
-#include "util/geometry/GeometryFactory.h"
-#include "util/geometry/Geometry.h"
-#include "util/geometry/Envelope.h"
-#include "util/geometry/Quadtree.h"
+#include "../../util/geometry/GeometryFactory.h"
+#include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/Envelope.h"
+#include "../../util/geometry/Quadtree.h"
 
-#include "environment/Environment.h"
+#include "../../environment/Environment.h"
 
 using namespace geos::geom;
 using namespace geos::index::quadtree;

@@ -1,8 +1,8 @@
 #ifndef GSSPOLYGON_H
 #define GSSPOLYGON_H
 
-#include "util/geometry/Geometry.h"
-#include "geos/geom/Polygon.h"
+#include "../../util/geometry/Geometry.h"
+#include "../../geos/geom/Polygon.h"
 
 class GWSPolygon : public GWSGeometry
 {

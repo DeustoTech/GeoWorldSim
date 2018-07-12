@@ -1,8 +1,8 @@
 #ifndef GWSSKILL_H
 #define GWSSKILL_H
 
-#include "object/Object.h"
-#include "agent/Agent.h"
+#include "../../object/Object.h"
+#include "../../agent/Agent.h"
 
 class GWSSkill : public GWSObject
 {

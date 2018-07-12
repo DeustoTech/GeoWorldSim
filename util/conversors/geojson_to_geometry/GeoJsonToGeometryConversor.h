@@ -5,8 +5,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "util/geometry/GeometryFactory.h"
-#include "geos/geom/Geometry.h"
+#include "../../util/geometry/GeometryFactory.h"
+#include "../../geos/geom/Geometry.h"
 
 using namespace geos::geom;
 

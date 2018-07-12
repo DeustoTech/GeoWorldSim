@@ -32,113 +32,113 @@ TEMPLATE = app
 
 HEADERS += \
         # BASICS
-    app/App.h \
-    object/Object.h \
-    object/ObjectFactory.h \
-    agent/Agent.h \
-    skill/Skill.h \
-    behaviour/Behaviour.h \
+    ../../app/App.h \
+    ../../object/Object.h \
+    ../../object/ObjectFactory.h \
+    ../../agent/Agent.h \
+    ../../skill/Skill.h \
+    ../../behaviour/Behaviour.h \
         # UTILS
-    util/parallelism/ParallelismController.h \
-    util/io/log/Logger.h \
-    util/storage/ObjectStorage.h \
-    util/units/Units.h \
-    util/uistyle/UiStyle.h \
+    ../../util/parallelism/ParallelismController.h \
+    ../../util/io/log/Logger.h \
+    ../../util/storage/ObjectStorage.h \
+    ../../util/units/Units.h \
+    ../../util/uistyle/UiStyle.h \
             ## GEOMETRIES
-    util/geometry/GeometryFactory.h \
-    util/geometry/Coordinate.h \
-    util/geometry/Envelope.h \
-    util/geometry/Geometry.h \
-    util/geometry/GeometryUtils.h \
-    util/geometry/LineString.h \
-    util/geometry/Polygon.h \
-    util/geometry/Point.h \
-    util/geometry/Quadtree.h \
+    ../../util/geometry/GeometryFactory.h \
+    ../../util/geometry/Coordinate.h \
+    ../../util/geometry/Envelope.h \
+    ../../util/geometry/Geometry.h \
+    ../../util/geometry/GeometryUtils.h \
+    ../../util/geometry/LineString.h \
+    ../../util/geometry/Polygon.h \
+    ../../util/geometry/Point.h \
+    ../../util/geometry/Quadtree.h \
             ## GRAPH
-    util/graph/GraphNode.h \
-    util/graph/GraphEdge.h \
-    util/graph/Graph.h \
-    util/graph/GraphUtils.h \
+    ../../util/graph/GraphNode.h \
+    ../../util/graph/GraphEdge.h \
+    ../../util/graph/Graph.h \
+    ../../util/graph/GraphUtils.h \
             ## GRID
-    util/grid/Grid.h \
-    util/grid/GridCoordinatesConversor.h \
+    ../../ util/grid/Grid.h \
+    ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
-    util/random/UniformDistribution.h \
+    ../../util/random/UniformDistribution.h \
         # ENVIRONMENT
-    environment/Environment.h \
-    environment/agent_environment/AgentEnvironment.h \
-    environment/physical_environment/PhysicalEnvironment.h \
-    environment/social_environment/SocialEnvironment.h \
-    environment/social_environment/Message.h \
-    environment/time_environment/TimeEnvironment.h \
-    environment/climate_environment/ClimateEnvironment.h \
-    environment/network_environment/NetworkEnvironment.h \
-    environment/execution_environment/ExecutionEnvironment.h
+    ../../environment/Environment.h \
+    ../../environment/agent_environment/AgentEnvironment.h \
+    ../../environment/physical_environment/PhysicalEnvironment.h \
+    ../../environment/social_environment/SocialEnvironment.h \
+    ../../environment/social_environment/Message.h \
+    ../../environment/time_environment/TimeEnvironment.h \
+    ../../ environment/climate_environment/ClimateEnvironment.h \
+    ../../environment/network_environment/NetworkEnvironment.h \
+    ../../environment/execution_environment/ExecutionEnvironment.h
         # AGENTS
     #agent/person/Person.h
 
 
-SOURCES += usecase/tesis/main.cpp \
+SOURCES += main.cpp \
         # BASICS
-    app/App.cpp \
-    object/Object.cpp \
-    object/ObjectFactory.cpp \
-    agent/Agent.cpp \
-    skill/Skill.cpp \
-    behaviour/Behaviour.cpp \
+    ../../app/App.cpp \
+    ../../object/Object.cpp \
+    ../../object/ObjectFactory.cpp \
+    ../../agent/Agent.cpp \
+    ../../skill/Skill.cpp \
+    ../../behaviour/Behaviour.cpp \
         # UTILS
-    util/parallelism/ParallelismController.cpp \
-    util/io/log/Logger.cpp \
-    util/storage/ObjectStorage.cpp \
-    util/uistyle/UiStyle.cpp \
+    ../../util/parallelism/ParallelismController.cpp \
+    ../../util/io/log/Logger.cpp \
+    ../../util/storage/ObjectStorage.cpp \
+    ../../util/uistyle/UiStyle.cpp \
             ## GEOMETRIES
-    util/geometry/GeometryFactory.cpp \
-    util/geometry/Coordinate.cpp \
-    util/geometry/Envelope.cpp \
-    util/geometry/Geometry.cpp \
-    util/geometry/GeometryUtils.cpp \
-    util/geometry/LineString.cpp \
-    util/geometry/Polygon.cpp \
-    util/geometry/Point.cpp \
-    util/geometry/Quadtree.cpp \
+    ../../util/geometry/GeometryFactory.cpp \
+    ../../util/geometry/Coordinate.cpp \
+    ../../util/geometry/Envelope.cpp \
+    ../../util/geometry/Geometry.cpp \
+    ../../util/geometry/GeometryUtils.cpp \
+    ../../util/geometry/LineString.cpp \
+    ../../util/geometry/Polygon.cpp \
+    ../../util/geometry/Point.cpp \
+    ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    util/graph/GraphNode.cpp \
-    util/graph/GraphEdge.cpp \
-    util/graph/Graph.cpp \
-    util/graph/GraphUtils.cpp \
+    ../../util/graph/GraphNode.cpp \
+    ../../util/graph/GraphEdge.cpp \
+    ../../util/graph/Graph.cpp \
+    ../../util/graph/GraphUtils.cpp \
             ## GRID
-    util/grid/Grid.cpp \
-    util/grid/GridCoordinatesConversor.cpp \
+    ../../util/grid/Grid.cpp \
+    ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
-    util/random/UniformDistribution.cpp \
+    ../../util/random/UniformDistribution.cpp \
         # ENVIRONMENT
-    environment/Environment.cpp \
-    environment/agent_environment/AgentEnvironment.cpp \
-    environment/physical_environment/PhysicalEnvironment.cpp \
-    environment/social_environment/SocialEnvironment.cpp \
-    environment/social_environment/Message.cpp \
-    environment/time_environment/TimeEnvironment.cpp \
-    environment/climate_environment/ClimateEnvironment.cpp \
-    environment/network_environment/NetworkEnvironment.cpp \
-    environment/execution_environment/ExecutionEnvironment.cpp
+    ../../environment/Environment.cpp \
+    ../../environment/agent_environment/AgentEnvironment.cpp \
+    ../../environment/physical_environment/PhysicalEnvironment.cpp \
+    ../../environment/social_environment/SocialEnvironment.cpp \
+    ../../environment/social_environment/Message.cpp \
+    ../../environment/time_environment/TimeEnvironment.cpp \
+    ../../environment/climate_environment/ClimateEnvironment.cpp \
+    ../../environment/network_environment/NetworkEnvironment.cpp \
+    ../../environment/execution_environment/ExecutionEnvironment.cpp
         # AGENTS
     #agent/person/Person.cpp
 
 
 
 #INCLUDE LEMON COMPILED LIBRARY
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/lemon-1.3.1/build/lemon/release/ -lemon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/lemon-1.3.1/build/lemon/debug/ -lemon
-else:unix: LIBS += -L$$PWD/lib/lemon-1.3.1/build/lemon/ -lemon
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/release/ -lemon
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/debug/ -lemon
+else:unix: LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/ -lemon
 
-INCLUDEPATH += $$PWD/lib/lemon-1.3.1/build/lemon
-DEPENDPATH += $$PWD/lib/lemon-1.3.1/build/lemon
+INCLUDEPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
+DEPENDPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/lemon-1.3.1/build/lemon/release/libemon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/lemon-1.3.1/build/lemon/debug/libemon.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/lemon-1.3.1/build/lemon/release/emon.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/lemon-1.3.1/build/lemon/debug/emon.lib
-else:unix: PRE_TARGETDEPS += $$PWD/lib/lemon-1.3.1/build/lemon/libemon.a
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/libemon.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/libemon.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/emon.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/emon.lib
+else:unix: PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/libemon.a
 
 #INCLUDE LEMON SYSTEM LIBRARY
 #unix|win32: LIBS += -lemon

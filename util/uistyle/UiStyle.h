@@ -1,7 +1,7 @@
 #ifndef GWSUISTYLE_H
 #define GWSUISTYLE_H
 
-#include "object/Object.h"
+#include "./../object/Object.h"
 #include <QJsonObject>
 #include <QVariant>
 #include <QImage>
