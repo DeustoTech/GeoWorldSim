@@ -31,18 +31,18 @@ int main(int argc, char* argv[])
                                               \"@inheritance\" : [\"GWSObject\",\"GWSAgent\",\"Person\"], \
                                               \"name\": \"George Bush\" \
                                             }").object();
-    GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
+    GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
 
     // Create agent normal style
-    GWSAgent* agent = new GWSAgent();
-    agent->setProperty( GWSAgent::GWS_ID_PROP , "Person2");
+    GWSAgent* agent2 = new GWSAgent();
+    agent2->setProperty( GWSAgent::GWS_ID_PROP , "Person2");
 
     // Register in environments
-    GWSAgentEnvironment::globalInstance()->registerAgent( agent );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent );
+    GWSAgentEnvironment::globalInstance()->registerAgent( agent1 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( agent1 );
 
     // Get from agent environment
-    qDebug() << GWSAgentEnvironment::globalInstance()->getByClassAndId( "GWSAgent" , "Person123412" )->serialize();
+    qDebug() << GWSAgentEnvironment::globalInstance()->getByClassAndId( "GWSAgent" , "Person1" )->serialize();
 
     GWSExecutionEnvironment::globalInstance()->run();
 
