@@ -19,6 +19,7 @@ public:
     // PROPERTIES
     static QString GWS_ID_PROP;
     static QString GWS_TYPE_PROP;
+    static QString GWS_INHERITANCE_TREE_PROP;
 
     // EXPORTERS
     virtual QJsonObject serializeMini() const;

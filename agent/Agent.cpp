@@ -34,7 +34,6 @@ GWSAgent::~GWSAgent() {
     //if( this->geometry ){ this->geometry->deleteLater(); }
     if( this->timer ){ this->timer->deleteLater(); }
 
-    qDeleteAll( this->skills->getByClass( QObject::staticMetaObject ) );
     this->skills->deleteLater();
 }
 
@@ -50,6 +49,12 @@ void GWSAgent::deserialize(QJsonObject json){
     QJsonArray skills = json.value("@skills").toArray();
     foreach( QJsonValue skill , skills ){
         qDebug() << "SKILL" << skill;
+    }
+
+    // Set behaviour
+    QJsonArray behaviours = json.value("@behaviour").toArray();
+    foreach( QJsonValue behaviour , behaviours ){
+        qDebug() << "BEHAVIOUR" << behaviour;
     }
 }
 
@@ -68,7 +73,7 @@ QJsonObject GWSAgent::serialize() const{
     QJsonObject json = GWSObject::serialize();
     QJsonArray skills;
     if( this->skills ){
-        foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject ) ){
+        foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
             skills.append( s->serializeMini() );
         }
     }
@@ -122,32 +127,32 @@ GWSUiStyle* GWSAgent::getStyle() const{
     return this->style;
 }
 
-bool GWSAgent::hasSkill( QMetaObject metaobject ) const{
-    return this->skills && this->skills->contains( metaobject );
+bool GWSAgent::hasSkill( QString class_name ) const{
+    return this->skills && this->skills->contains( class_name );
 }
 
-GWSSkill* GWSAgent::getSkill( QMetaObject metaobject ) const{
-    return this->getSkill<GWSSkill>( metaobject );
+GWSSkill* GWSAgent::getSkill( QString class_name ) const{
+    return this->getSkill<GWSSkill>( class_name );
 }
 
-template <class T> T* GWSAgent::getSkill( QMetaObject metaobject ) const{
+template <class T> T* GWSAgent::getSkill( QString class_name ) const{
     if( !this->skills ){ return 0; }
-    const QList<GWSObject*> objs = this->skills->getByClass( metaobject );
+    const QList<GWSObject*> objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
-        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( metaobject.className() );
+        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( class_name );
         return 0;
     }
     return dynamic_cast<T*>( objs.at(0) );
 }
 
-QList<GWSSkill*> GWSAgent::getSkills( QMetaObject metaobject ) const{
-    return this->getSkills<GWSSkill>( metaobject );
+QList<GWSSkill*> GWSAgent::getSkills( QString class_name ) const{
+    return this->getSkills<GWSSkill>( class_name );
 }
 
-template <class T> QList<T*> GWSAgent::getSkills( QMetaObject metaobject ) const{
+template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
     QList<GWSSkill*> s;
     if( !this->skills ){ return s; }
-    foreach(QObject* obj , this->skills->getByClass( metaobject )){
+    foreach(QObject* obj , this->skills->getByClass( class_name )){
         s.append( dynamic_cast<T*>( obj ) );
     }
     return s;

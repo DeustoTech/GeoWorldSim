@@ -71,29 +71,29 @@ quint64 GWSAgentEnvironment::getAmount() const{
     return this->environment_agents->getAmount();
 }
 
-GWSAgent* GWSAgentEnvironment::getByClassAndId( const QMetaObject metaobject , QString id) const{
-    return this->getByClassAndId<GWSAgent>( metaobject , id );
+GWSAgent* GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
+    return this->getByClassAndId<GWSAgent>( class_name , id );
 }
 
-template <class T> T* GWSAgentEnvironment::getByClassAndId( const QMetaObject metaobject , QString id ) const{
-    return dynamic_cast<T*>( this->environment_agents->getByClassAndId( metaobject , id ) );
+template <class T> T* GWSAgentEnvironment::getByClassAndId( QString class_name , QString id ) const{
+    return dynamic_cast<T*>( this->environment_agents->getByClassAndId( class_name , id ) );
 }
 
-GWSAgent* GWSAgentEnvironment::getByClassAndName( const QMetaObject metaobject , QString agent_name) const{
-    return this->getByClassAndName<GWSAgent>( metaobject , agent_name );
+GWSAgent* GWSAgentEnvironment::getByClassAndName( QString class_name , QString agent_name) const{
+    return this->getByClassAndName<GWSAgent>( class_name , agent_name );
 }
 
-template <class T> T* GWSAgentEnvironment::getByClassAndName( const QMetaObject metaobject , QString agent_name) const{
-    return dynamic_cast<T*>( this->environment_agents->getByClassAndName( metaobject , agent_name ) );
+template <class T> T* GWSAgentEnvironment::getByClassAndName( QString class_name , QString agent_name) const{
+    return dynamic_cast<T*>( this->environment_agents->getByClassAndName( class_name , agent_name ) );
 }
 
-QList<GWSAgent*> GWSAgentEnvironment::getByClass( const QMetaObject metaobject ) const{
-    return this->getByClass<GWSAgent>( metaobject );
+QList<GWSAgent*> GWSAgentEnvironment::getByClass( QString class_name ) const{
+    return this->getByClass<GWSAgent>( class_name );
 }
 
-template <class T> QList<T*> GWSAgentEnvironment::getByClass( const QMetaObject metaobject ) const{
+template <class T> QList<T*> GWSAgentEnvironment::getByClass( QString class_name ) const{
     QList<T*> agents;
-    foreach( GWSObject* o , this->environment_agents->getByClass( metaobject ) ){
+    foreach( GWSObject* o , this->environment_agents->getByClass( class_name ) ){
         agents.append( dynamic_cast<T*>( o ) );
     }
     return agents;

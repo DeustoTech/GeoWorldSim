@@ -23,13 +23,11 @@ void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
 
     if( grid ){
 
-        const QMetaObject* class_type = agent->metaObject();
-        class_type = agent->metaObject();
-        while( class_type ){
+        QStringList classes = agent->getInheritanceTree();
+        foreach(QString c , classes){
 
             // Add grid
-            this->grids.insert( class_type->className() , grid );
-            class_type = class_type->superClass();
+            this->grids.insert( c , grid );
         }
     }
 }
@@ -39,13 +37,12 @@ void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
 
     if( grid ){
 
-        const QMetaObject* class_type = agent->metaObject();
-        while( class_type ){
+        QStringList classes = agent->getInheritanceTree();
+        foreach(QString c , classes){
 
             // Remove grid
-            this->grids.remove( class_type->className() );
+            this->grids.remove( c );
 
-            class_type = class_type->superClass();
         }
     }
 }

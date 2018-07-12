@@ -1,6 +1,22 @@
 #include "Behaviour.h"
 
-GWSBehaviour::GWSBehaviour(GWSAgent *behaving_agent) : GWSObject( behaving_agent ){
+GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agent ){
+}
+
+/**********************************************************************
+ IMPORTERS
+**********************************************************************/
+
+void GWSBehaviour::deserialize(QJsonObject json){
+    GWSObject::deserialize( json );
+}
+
+/**********************************************************************
+ EXPOERTERS
+**********************************************************************/
+
+QJsonObject GWSBehaviour::serialize() const{
+    return GWSObject::serialize();
 }
 
 /**********************************************************************
@@ -10,7 +26,6 @@ GWSBehaviour::GWSBehaviour(GWSAgent *behaving_agent) : GWSObject( behaving_agent
 GWSAgent* GWSBehaviour::getAgent(){
     return dynamic_cast<GWSAgent*>( this->parent() );
 }
-
 
 GWSBehaviour* GWSBehaviour::getNext(){
     return this->next_behaviour;

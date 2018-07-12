@@ -79,31 +79,30 @@ void GWSNetworkEnvironment::registerAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
-        const QMetaObject* class_type = agent->metaObject();
+        QStringList classes = agent->getInheritanceTree();
         QList<QString> keys = this->network_graphs.keys();
-        while( class_type && !keys.contains( class_type->className() ) ){
+
+        foreach(QString c , classes){
 
             // Insert new spatial graph with the agents class
-            this->mutex.lock();
-            GWSGraph* graph = new GWSGraph();
-            this->network_graphs.insert( class_type->className() , graph );
-            this->mutex.unlock();
+            if( !keys.contains( c ) ){
 
-            class_type = class_type->superClass();
+                this->mutex.lock();
+                this->network_graphs.insert( c , new GWSGraph() );
+                this->mutex.unlock();
+
+            }
         }
 
-        class_type = agent->metaObject();
-        while( class_type ){
+        foreach(QString c , classes){
 
             // Add to spatial graph
             if( edge ){
-                this->network_graphs.value( class_type->className() )->addEdge( edge );
+                this->network_graphs.value( c )->addEdge( edge );
             }
             if( node ){
-                this->network_graphs.value( class_type->className() )->addNode( node );
+                this->network_graphs.value( c )->addNode( node );
             }
-
-            class_type = class_type->superClass();
         }
     }
 }
@@ -114,18 +113,16 @@ void GWSNetworkEnvironment::unregisterAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
-        const QMetaObject* class_type = agent->metaObject();
-        while( class_type ){
+        QStringList classes = agent->getInheritanceTree();
+        foreach(QString c , classes){
 
-            // Add to spatial graph
+            // Remove from spatial graph
             if( edge ){
-                this->network_graphs.value( class_type->className() )->removeEdge( edge );
+                this->network_graphs.value( c )->removeEdge( edge );
             }
             if( node){
-                this->network_graphs.value( class_type->className() )->removeNode( node );
+                this->network_graphs.value( c )->removeNode( node );
             }
-
-            class_type = class_type->superClass();
         }
     }
 }

@@ -70,11 +70,11 @@ public:
     GWSUiStyle* getStyle() const;
 
     // SKILLS
-    bool hasSkill( QMetaObject metaobject ) const;
-    GWSSkill* getSkill( QMetaObject metaobject ) const;
-    template <class T> T* getSkill( QMetaObject metaobject ) const;
-    QList<GWSSkill*> getSkills( QMetaObject metaobject ) const;
-    template <class T> QList<T*> getSkills( QMetaObject metaobject ) const;
+    bool hasSkill( QString class_name ) const;
+    GWSSkill* getSkill( QString class_name ) const;
+    template <class T> T* getSkill( QString class_name ) const;
+    QList<GWSSkill*> getSkills( QString class_name ) const;
+    template <class T> QList<T*> getSkills( QString class_name ) const;
 
     // SETTERS
     //virtual void setGeometry( GSSGeometry* geometry );

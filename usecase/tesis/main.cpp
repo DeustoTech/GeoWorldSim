@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
-
     QJsonObject obj = QJsonDocument::fromJson("{ \
                                               \"@context\": \"http://schema.org\", \
+                                              \"@id\": \"Person123412\", \
                                               \"@type\": \"GWSAgent\", \
                                               \"name\": \"George Bush\", \
                                               \"disambiguatingDescription\": \"41st President of the United States\", \

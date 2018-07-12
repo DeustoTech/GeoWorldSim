@@ -55,7 +55,10 @@ GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
     // Create object
     GWSObject* obj = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
     if( !obj ){ return 0; }
+
+    // Set global @ attributes
     obj->setParent( parent );
+    if( !json.value( GWSObject::GWS_ID_PROP     ).isNull() ){ obj->setProperty( GWSObject::GWS_ID_PROP , json.value( GWSObject::GWS_ID_PROP ).toString() ); }
 
     // Call deserialize for further population
     obj->deserialize( json );

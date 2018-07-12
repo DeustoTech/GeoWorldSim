@@ -12,6 +12,12 @@ class GWSSkill : public GWSObject
 public:
     Q_INVOKABLE explicit GWSSkill( GWSAgent *skilled_agent = Q_NULLPTR );
 
+    // IMPORTERS
+    virtual void deserialize(QJsonObject json);
+
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
+
     // GETTERS
     GWSAgent* getAgent();
 };

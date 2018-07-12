@@ -16,53 +16,53 @@ const QStringList GWSObjectStorage::getClasses() const{
     return this->classes_stored;
 }
 
-GWSObject* GWSObjectStorage::getByClassAndId( QMetaObject metaobject , QString id) const{
-    return this->getByClassAndId<GWSObject>( metaobject , id );
+GWSObject* GWSObjectStorage::getByClassAndId( QString class_name , QString id) const{
+    return this->getByClassAndId<GWSObject>( class_name , id );
 }
 
-template <class T> T* GWSObjectStorage::getByClassAndId( QMetaObject metaobject , QString id ) const{
-    if ( this->classes_stored.contains( metaobject.className() ) ){
-         return dynamic_cast<T*>( this->object_ids[ metaobject.className() ].value( id , 0 ) );
+template <class T> T* GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
+    if ( this->classes_stored.contains( class_name ) ){
+         return dynamic_cast<T*>( this->object_ids[ class_name ].value( id , 0 ) );
     }
     return 0;
 }
 
-GWSObject* GWSObjectStorage::getByClassAndName( QMetaObject metaobject , QString name) const{
-    return this->getByClassAndName<GWSObject>( metaobject , name );
+GWSObject* GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
+    return this->getByClassAndName<GWSObject>( class_name , name );
 }
 
-template <class T> T* GWSObjectStorage::getByClassAndName( QMetaObject metaobject, QString name) const{
-    if ( this->classes_stored.contains( metaobject.className() ) ){
-         return dynamic_cast<T*>( this->object_names[ metaobject.className() ].value( name , 0 ) );
+template <class T> T* GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
+    if ( this->classes_stored.contains( class_name ) ){
+         return dynamic_cast<T*>( this->object_names[ class_name ].value( name , 0 ) );
     }
     return 0;
 }
 
-QList< GWSObject* > GWSObjectStorage::getByClass( QMetaObject metaobject ) const{
-    return this->objects.value( metaobject.className() );
+QList< GWSObject* > GWSObjectStorage::getByClass( QString class_name ) const{
+    return this->objects.value( class_name );
 }
 
-template <class T> QList<T*> GWSObjectStorage::getByClass( QMetaObject metaobject ) const{
+template <class T> QList<T*> GWSObjectStorage::getByClass( QString class_name ) const{
     QList<T*> objs;
-    foreach( GWSObject* o , this->getByClass( metaobject ) ){
+    foreach( GWSObject* o , this->getByClass( class_name ) ){
         objs.append( dynamic_cast<T*>( o ) );
     }
     return objs;
 }
 
-GWSObject* GWSObjectStorage::getByName(QString name) const{
+GWSObject* GWSObjectStorage::getByName( QString name ) const{
     foreach(QString class_name , this->classes_stored){
         return this->object_names[ class_name ].value( name , 0 );
     }
     return 0;
 }
 
-template <class T> T* GWSObjectStorage::getByName(QString name) const{
+template <class T> T* GWSObjectStorage::getByName( QString name ) const{
     return dynamic_cast<T*>( this->getByName( name ) );
 }
 
-bool GWSObjectStorage::contains( QMetaObject metaobject ) const{
-    return this->classes_stored.contains( metaobject.className() );
+bool GWSObjectStorage::contains( QString class_name ) const{
+    return this->classes_stored.contains( class_name );
 }
 
 bool GWSObjectStorage::contains( GWSObject* object ) const{

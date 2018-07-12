@@ -9,11 +9,12 @@
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
+QString GWSObject::GWS_INHERITANCE_TREE_PROP = "@inheritance";
 
 unsigned int GWSObject::counter = 0;
 
 GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
-    this->setProperty( GWSObject::GWS_ID_PROP , QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter ) );
+    this->setProperty( GWS_ID_PROP , QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter ) );
 }
 
 GWSObject::~GWSObject(){
@@ -75,13 +76,14 @@ QString GWSObject::getId() const{
 }
 
 QStringList GWSObject::getInheritanceTree() const{
-    QStringList l;
+    return this->property( GWSObject::GWS_INHERITANCE_TREE_PROP ).toStringList();
+    /*QStringList l;
     const QMetaObject* obj = this->metaObject();
     while( obj ){
         l.append( obj->className() );
         obj = obj->superClass();
     }
-    return l;
+    return l;*/
 }
 
 const QVariant GWSObject::property( QString name ) const{

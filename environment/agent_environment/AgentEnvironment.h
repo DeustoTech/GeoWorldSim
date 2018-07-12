@@ -22,14 +22,14 @@ public:
 
     // GETTERS
     quint64 getAmount() const;
-    GWSAgent* getByClassAndId( const QMetaObject metaobject , QString internal_id ) const;  // Get one agent
-    template <class T> T* getByClassAndId( const QMetaObject metaobject , QString internal_id ) const;  // Get one agent
+    GWSAgent* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
+    template <class T> T* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
 
-    GWSAgent* getByClassAndName( const QMetaObject metaobject , QString name ) const; // Get one agent by its name
-    template <class T> T* getByClassAndName( const QMetaObject metaobject , QString name ) const; // Get one agent by its name
+    GWSAgent* getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
+    template <class T> T* getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
 
-    QList< GWSAgent* > getByClass( const QMetaObject metaobject ) const; // Get all agents for a given type
-    template <class T> QList<T*> getByClass( const QMetaObject metaobject ) const;  // Get all agents for a given type
+    QList< GWSAgent* > getByClass( QString class_name ) const; // Get all agents for a given type
+    template <class T> QList<T*> getByClass( QString class_name ) const;  // Get all agents for a given type
 
     GWSAgent* getByName(QString name) const; // Get one agent by its name
     template <class T> T* getByName(QString name) const; // Get one agent by its name
