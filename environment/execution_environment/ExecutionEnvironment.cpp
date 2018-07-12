@@ -80,7 +80,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     //this->mutex.unlock();
 
     // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = agent->property( GWSAgent::NEXT_TICK_PROP ).value<quint64>() - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 msecs = agent->property( GWSAgent::INTERNAL_TIME_PROP ).value<quint64>() - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     if( msecs < 0 ){
         msecs = 0;
     }

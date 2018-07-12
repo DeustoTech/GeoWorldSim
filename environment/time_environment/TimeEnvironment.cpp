@@ -10,7 +10,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , current_datetime_msecs( QDateTime::currentDateTime().toMSecsSinceEpoch() ) {
+GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , started_datetime_msecs( QDateTime::currentDateTime().toMSecsSinceEpoch() ) {
     qInfo() << "TimeEnvironment created";
 }
 
@@ -39,7 +39,9 @@ void GWSTimeEnvironment::deserialize(QJsonObject json){
 **********************************************************************/
 
 qint64 GWSTimeEnvironment::getCurrentDateTime() const{
-    return this->current_datetime_msecs;
+    // Get elapsed time difference
+    double elapsed_msecs = ( QDateTime::currentMSecsSinceEpoch() - this->started_datetime_msecs ) * this->time_speed;
+    return this->started_datetime_msecs + elapsed_msecs;
 }
 
 double GWSTimeEnvironment::getTimeSpeed() const{
@@ -50,29 +52,9 @@ double GWSTimeEnvironment::getTimeSpeed() const{
  SETTERS
 **********************************************************************/
 
-void GWSTimeEnvironment::setDate( QDate& date ){
-    if( date.isValid() ){
-        QDateTime temp = QDateTime::fromMSecsSinceEpoch( this->current_datetime_msecs );
-        temp.setDate( date );
-        this->current_datetime_msecs = temp.toMSecsSinceEpoch();
-    } else {
-        qWarning() << QString("Invalid date : %1").arg( date.toString() );
-    }
-}
-
-void GWSTimeEnvironment::setTime( QTime& time ){
-    if( time.isValid() ){
-        QDateTime temp = QDateTime::fromMSecsSinceEpoch( this->current_datetime_msecs );
-        temp.setTime( time );
-        this->current_datetime_msecs = temp.toMSecsSinceEpoch();
-    } else {
-        qWarning() << QString("Invalid time : %1").arg( time.toString() );
-    }
-}
-
 void GWSTimeEnvironment::setDatetime(quint64 datetime){
-    if( datetime > 0 ){
-        this->current_datetime_msecs = datetime;
+    if( datetime >= 0 ){
+        this->started_datetime_msecs = datetime;
     } else {
         qWarning() << QString("Invalid datetime : %1").arg( datetime );
     }

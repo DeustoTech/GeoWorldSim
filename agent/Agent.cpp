@@ -18,7 +18,7 @@
 #include "../../skill/Skill.h"
 
 QString GWSAgent::RUNNING_PROP = "running";
-QString GWSAgent::NEXT_TICK_PROP = "next_tick";
+QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
 GWSAgent::GWSAgent( GWSObject* parent ) : GWSObject( parent ) , busy_counter(0) {
     this->style = new GWSUiStyle( this );
@@ -104,7 +104,7 @@ bool GWSAgent::isBusy() const{
 }
 
 qint64 GWSAgent::getNextTick() const{
-    return this->property( GWSAgent::NEXT_TICK_PROP ).value<qint64>();
+    return this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
 /*const GWSGeometry* GWSAgent::getGeometry() const{
@@ -196,12 +196,12 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
 }*/
 
 void GWSAgent::setNextTick( const qint64 datetime ){
-    this->setProperty( GWSAgent::NEXT_TICK_PROP , datetime );
+    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
 }
 
 void GWSAgent::incrementNextTick( GWSTimeUnit seconds ){
-    qint64 datetime = this->property( GWSAgent::NEXT_TICK_PROP ).value<qint64>();
-    this->setProperty( GWSAgent::NEXT_TICK_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
+    qint64 datetime = this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
+    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
 }
 
 void GWSAgent::incrementBusy(){

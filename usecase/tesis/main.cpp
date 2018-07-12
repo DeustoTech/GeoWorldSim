@@ -10,9 +10,9 @@
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
 
-#include "../../environment/Environment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/grid_environment/GridEnvironment.h"
 
 int main(int argc, char* argv[])
 {
@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
     // Init used environments
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
+    GWSGridEnvironment::globalInstance();
 
     // Create agent from JSON
     QJsonObject obj = QJsonDocument::fromJson("{ \

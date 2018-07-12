@@ -52,7 +52,7 @@ public:
         * To be compared with the TimeEnvironment and call this agent's tick
         * IMPORTANT Given in MSecsSinceEpoch
         */
-    static QString NEXT_TICK_PROP;
+    static QString INTERNAL_TIME_PROP;
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);

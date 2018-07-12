@@ -26,8 +26,6 @@ public:
     double getTimeSpeed() const;
 
     // SETTERS
-    void setDate( QDate& date );
-    void setTime( QTime& time );
     void setDatetime( quint64 current_datetime_msecs );
     void setTimeSpeed(double time_speed = 1);
 
@@ -37,9 +35,6 @@ private:
     ~GWSTimeEnvironment();
 
     quint64 started_datetime_msecs;
-
-    // Environment datetime in msecs since epoch
-    quint64 current_datetime_msecs;
 
     // Time speed
     // (How many seconds will there be in a real world second)
