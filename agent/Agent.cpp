@@ -237,7 +237,7 @@ void GWSAgent::tick(){
 
     if( !this->isRunning() ){
         qInfo() << "Agent is not running, skipping behaviour";
-        GWSExecutionEnvironment::globalInstance()->stopAgent( this );
+        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
         return;
     }
 

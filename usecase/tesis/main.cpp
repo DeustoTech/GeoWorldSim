@@ -19,22 +19,29 @@ int main(int argc, char* argv[])
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
-    GWSEnvironment::globalInstance();
+    // Init used environments
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
 
+    // Create agent from JSON
     QJsonObject obj = QJsonDocument::fromJson("{ \
                                               \"@context\": \"http://schema.org\", \
                                               \"@id\": \"Person123412\", \
                                               \"@type\": \"GWSAgent\", \
                                               \"@inheritance\" : [\"GWSObject\",\"GWSAgent\",\"Person\"], \
-                                              \"@name\": \"George Bush\" \
+                                              \"name\": \"George Bush\" \
                                             }").object();
 
-
     GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( obj ) );
-    GWSEnvironment::globalInstance()->registerAgent( agent );
+
+    // Register in environments
+    GWSAgentEnvironment::globalInstance()->registerAgent( agent );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( agent );
+
+    // Get from agent environment
     qDebug() << GWSAgentEnvironment::globalInstance()->getByClassAndId( "GWSAgent" , "Person123412" )->serialize();
+
+    GWSExecutionEnvironment::globalInstance()->run();
 
     app->exec();
 }

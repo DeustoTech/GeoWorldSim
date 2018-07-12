@@ -10,7 +10,6 @@
 class GWSGridEnvironment : public GWSEnvironment
 {
     Q_OBJECT
-    friend class GWSEnvironment; // Environment can access
 
 public:
     static GWSGridEnvironment* globalInstance();

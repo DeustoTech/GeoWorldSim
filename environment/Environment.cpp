@@ -20,21 +20,6 @@ GWSEnvironment::~GWSEnvironment(){
     emit this->environmentDeletedSignal();
 }
 
-
-/**********************************************************************
- EXPORTERS
-**********************************************************************/
-
-/**
- * @brief Agent::toImage
- * @return
- */
-QImage GWSEnvironment::toImage( unsigned int image_width, unsigned int image_height, QStringList class_names){
-
-    QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
-    return image;
-}
-
 /**********************************************************************
  AGENTS METHODS
 **********************************************************************/

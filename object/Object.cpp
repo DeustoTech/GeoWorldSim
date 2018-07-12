@@ -9,7 +9,6 @@
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
-QString GWSObject::GWS_NAME_PROP = "@name";
 QString GWSObject::GWS_INHERITANCE_TREE_PROP = "@inheritance";
 
 unsigned int GWSObject::counter = 0;
@@ -35,7 +34,6 @@ QJsonObject GWSObject::serializeMini() const{
     QJsonObject json;
     json.insert( GWS_ID_PROP , this->getId() );
     json.insert( GWS_TYPE_PROP , this->metaObject()->className() );
-    json.insert( GWS_NAME_PROP , this->property( GWS_NAME_PROP ).toString() );
     return json;
 }
 

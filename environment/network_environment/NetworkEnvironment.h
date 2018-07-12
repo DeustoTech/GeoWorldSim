@@ -12,7 +12,6 @@
 class GWSNetworkEnvironment : public GWSEnvironment
 {
     Q_OBJECT
-    friend class GWSEnvironment; // Environment can access
 
 public:
     static GWSNetworkEnvironment* globalInstance();

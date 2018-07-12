@@ -11,7 +11,6 @@ class GWSExecutionEnvironment : public GWSEnvironment
 {
     Q_OBJECT
     friend class GWSApp; // App can access
-    friend class GWSEnvironment; // Environment can access
 
 public:
     static GWSExecutionEnvironment* globalInstance();
@@ -27,11 +26,9 @@ public:
     int getRunningAgents() const;
     bool isRunning() const;
 
-    // AGENT METHODS
-    void runAgent(GWSAgent* agent);
-    void runAgents(QList<GWSAgent*> agents);
-    void stopAgent(GWSAgent* agent);
-    void stopAgents(QList<GWSAgent*> agents);
+    // METHODS
+    virtual void registerAgent(GWSAgent* agent);
+    virtual void unregisterAgent(GWSAgent* agent);
 
 signals:
     void tickEndedSignal(int executed_tick);

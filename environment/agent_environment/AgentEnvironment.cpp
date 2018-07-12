@@ -1,9 +1,5 @@
 #include "AgentEnvironment.h"
 
-#include <QPainter>
-
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
-
 GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
     static GWSAgentEnvironment instance;
     return &instance;
@@ -12,7 +8,6 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
     this->environment_agents = new GWSObjectStorage( this );
     qInfo() << "Agent environment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSAgentEnvironment::~GWSAgentEnvironment(){

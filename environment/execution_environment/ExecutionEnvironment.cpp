@@ -18,7 +18,6 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
@@ -59,13 +58,7 @@ bool GWSExecutionEnvironment::isRunning() const{
  AGENT METHODS
 **********************************************************************/
 
-void GWSExecutionEnvironment::runAgents(QList<GWSAgent *> agents){
-    foreach(GWSAgent* a , agents){
-        this->runAgent( a );
-    }
-}
-
-void GWSExecutionEnvironment::runAgent(GWSAgent *agent){
+void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
     if( agent->isRunning() ){
         qDebug() << QString("Agent %1 %2 is already running").arg( agent->metaObject()->className() ).arg( agent->getId() );
@@ -75,10 +68,9 @@ void GWSExecutionEnvironment::runAgent(GWSAgent *agent){
     agent->incrementBusy();
 
     // Create agent's own timer to schedule its slots
-    if( !agent->timer ){
-        agent->timer = new QTimer( agent ); // Set its parent to this agent, Really improves speed
-        agent->timer->setSingleShot( true ); // Set single shot, really improves speed
-    }
+    if( agent->timer ){ agent->timer->deleteLater(); }
+    agent->timer = new QTimer( agent ); // Set its parent to this agent, Really improves speed
+    agent->timer->setSingleShot( true ); // Set single shot, really improves speed
 
     if( !agent || agent->deleted ){ return; }
 
@@ -116,13 +108,7 @@ void GWSExecutionEnvironment::runAgent(GWSAgent *agent){
     });
 }
 
-void GWSExecutionEnvironment::stopAgents(QList<GWSAgent *> agents){
-    foreach(GWSAgent* a , agents){
-        this->stopAgent( a );
-    }
-}
-
-void GWSExecutionEnvironment::stopAgent(GWSAgent *agent){
+void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
 
     agent->incrementBusy();
     agent->setProperty( GWSAgent::RUNNING_PROP , false );

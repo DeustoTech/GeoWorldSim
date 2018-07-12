@@ -16,7 +16,6 @@ using namespace geos::index::quadtree;
 class GWSPhysicalEnvironment : public GWSEnvironment
 {
     Q_OBJECT
-    friend class GWSEnvironment; // Environment can access
 
 public:
     static GWSPhysicalEnvironment* globalInstance();

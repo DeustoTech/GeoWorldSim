@@ -6,8 +6,7 @@ GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
 }
 
 GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
-    qInfo() << "GWSGridEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    qInfo() << "Grid environment created";
 }
 
 GWSGridEnvironment::~GWSGridEnvironment(){

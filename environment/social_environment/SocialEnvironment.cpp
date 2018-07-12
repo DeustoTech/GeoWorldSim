@@ -11,7 +11,6 @@ GWSSocialEnvironment* GWSSocialEnvironment::globalInstance(){
 
 GWSSocialEnvironment::GWSSocialEnvironment() : GWSEnvironment(){
     qInfo() << "SocialEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSSocialEnvironment::~GWSSocialEnvironment(){

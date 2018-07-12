@@ -11,7 +11,6 @@ GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
 
 GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
     qInfo() << "PhysicalEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){

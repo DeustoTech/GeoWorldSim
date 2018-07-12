@@ -10,9 +10,6 @@ class GWSEnvironment : public GWSAgent
 public:
     static GWSEnvironment* globalInstance();
 
-    // EXPORTERS
-    virtual QImage toImage(unsigned int image_width = 1024 , unsigned int image_height = 1024 , QStringList class_names = QStringList( GWSAgent::staticMetaObject.className() ) );
-
     // METHODS
     virtual void registerAgent( GWSAgent* agent );
     virtual void unregisterAgent( GWSAgent* agent );

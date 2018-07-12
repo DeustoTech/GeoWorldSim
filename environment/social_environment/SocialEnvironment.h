@@ -12,7 +12,6 @@ using namespace geos::planargraph;
 class GWSSocialEnvironment : public GWSEnvironment
 {
     Q_OBJECT
-    friend class GWSEnvironment; // Environment can access
 
 public:
     static GWSSocialEnvironment* globalInstance();
