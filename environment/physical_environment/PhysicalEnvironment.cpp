@@ -2,8 +2,6 @@
 #include "PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryFactory.h"
 
-QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geometry";
-
 GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
     static GWSPhysicalEnvironment instance;
     return &instance;
@@ -69,17 +67,17 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelo
 }
 
 
-QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
+/*QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
     QList<GWSAgent*> agents;
 
     // Precisely compare inside geom
-    /*foreach(GWSAgent* agent , this->getAgentsInsideEnvelope( geometry->getEnvelope() , class_name ) ){
+    foreach(GWSAgent* agent , this->getAgentsInsideEnvelope( geometry->getEnvelope() , class_name ) ){
         if( geometry->intersects( agent->getGeometry() ) ){
             agents.append( agent );
         }
-    }*/
+    }
     return agents;
-}
+}*/
 
 /**
  * @brief PhysicalEnvironment::getNearestAgents Given a list of geometries and the class_name of agents in the
@@ -172,8 +170,8 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 }
 
 
-GWSAgent* GWSPhysicalEnvironment::getAgentByGeometry(GWSGeometry* geometry, QString class_name) const{
-    /*if( this->spatial_index.contains(class_name) ){
+/*GWSAgent* GWSPhysicalEnvironment::getAgentByGeometry(GWSGeometry* geometry, QString class_name) const{
+    if( this->spatial_index.contains(class_name) ){
 
         QList<void *> objs = this->spatial_index[class_name]->getElements( geometry->getEnvelope() );
 
@@ -185,9 +183,9 @@ GWSAgent* GWSPhysicalEnvironment::getAgentByGeometry(GWSGeometry* geometry, QStr
                 }
             }
         }
-    }*/
+    }
     return 0;
-}
+}*/
 
 
 /***********************************************************************/
@@ -262,14 +260,14 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
 
 }
 
-bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSCoordinate new_geom){
+/*bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSCoordinate new_geom){
     return this->updateAgentGeometry( agent , GWSGeometryFactory::globalInstance()->createPoint( new_geom ) );
-}
+}*/
 
-bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSGeometry *new_geom){
+/*bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSGeometry *new_geom){
 
     // Remove old version from spatial index
-    /*this->unregisterAgent( agent );
+    this->unregisterAgent( agent );
 
     // Set geometry
     agent->mutex.lock();
@@ -285,7 +283,7 @@ bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSGeometry *n
 
     // Add new version in spatial index
     this->registerAgent( agent );
-    return true;*/
-}
+    return true;
+}*/
 
 

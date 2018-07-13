@@ -12,38 +12,18 @@
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
 
-/**
- *
- * @brief Grid::Grid
- * @param left
- * @param right
- * @param top
- * @param bottom
- * @param x_size
- * @param y_size
- * @param min_value
- * @param max_value
- * @param parent
- */
-GWSGrid::GWSGrid(double left , double right , double top , double bottom , unsigned int x_size , unsigned int y_size , double min_value , double max_value ){
-    this->setBounds( left , right , top , bottom );
-    this->setSize( x_size , y_size );
-    this->min_value = min_value;
-    this->max_value = max_value;
+QString GWSGrid::MAX_VALUE_PROP = "max";
+QString GWSGrid::MIN_VALUE_PROP = "min";
+
+GWSGrid::GWSGrid(){
 }
 
 GWSGrid::GWSGrid(const GWSGrid &other){
     this->setBounds( other.getBounds() );
     this->setSize( other.getXSize() , other.getYSize() );
-    this->min_value = other.min_value;
-    this->max_value = other.max_value;
+    this->setMinValue( other.getMinValue() );
+    this->setMaxValue( other.getMaxValue() );
     this->values = other.values;
-}
-
-GWSGrid::GWSGrid(){
-}
-
-GWSGrid::~GWSGrid(){
 }
 
 /**********************************************************************
@@ -150,10 +130,10 @@ double GWSGrid::getCellValue(unsigned int grid_x, unsigned int grid_y) const{
 }
 
 double GWSGrid::getCellValue(GWSCoordinate coor) const{
-    if( this->isEmpty() ){ return this->min_value - 1; }
+    if( this->isEmpty() ){ return this->getMinValue() - 1; }
     if( !this->bounds.covers( coor ) ){
         qWarning() << QString("Coordintate outside grid bounds");
-        return this->min_value - 1;
+        return this->getMinValue() - 1;
     }
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , this->bounds.getMinX() , this->bounds.getMaxX() , this->getXSize() );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , this->bounds.getMinY() , this->bounds.getMaxY() , this->getYSize() );
@@ -170,11 +150,11 @@ const GWSEnvelope GWSGrid::getCellEnvelope(unsigned int grid_x, unsigned int gri
 }
 
 double GWSGrid::getMaxValue() const {
-    return this->max_value;
+    return this->property( MAX_VALUE_PROP ).toDouble();
 }
 
 double GWSGrid::getMinValue() const{
-    return this->min_value;
+    return this->property( MIN_VALUE_PROP ).toDouble();
 }
 
 /**********************************************************************
@@ -189,13 +169,21 @@ void GWSGrid::setBounds(GWSEnvelope bounds){
     this->bounds = bounds;
 }
 
+void GWSGrid::setMaxValue(double max){
+    this->setProperty( MAX_VALUE_PROP , max );
+}
+
+void GWSGrid::setMinValue(double min){
+    this->setProperty( MIN_VALUE_PROP , min );
+}
+
 void GWSGrid::setSize(unsigned int x_size, unsigned int y_size){
     this->values.clear();
     this->values = QVector< QVector<double> >( x_size , QVector<double>( y_size , NAN ) );
 }
 
 void GWSGrid::setCellValue(unsigned int grid_x, unsigned int grid_y, double v){
-    if( v < this->min_value || v > this->max_value ){
+    if( v < this->getMinValue() || v > this->getMaxValue() ){
         this->values[grid_x][grid_y] = NAN;
     } else {
         this->values[grid_x][grid_y] = v;
@@ -219,8 +207,6 @@ void GWSGrid::setCellValue(GWSCoordinate coor, double v){
 GWSGrid& GWSGrid::operator=(const GWSGrid& other){
     this->bounds = other.bounds;
     this->values = other.values;
-    this->min_value = other.min_value;
-    this->max_value = other.max_value;
     return *this;
 }
 
@@ -237,7 +223,11 @@ GWSGrid GWSGrid::getSubGrid(GWSEnvelope bounds){
     int x_size = (bounds.getMaxX() - bounds.getMinX()) / x_per_cell;
     int y_size = (bounds.getMaxY() - bounds.getMinY()) / y_per_cell;
 
-    GWSGrid bounds_grid (bounds.getMinX() , bounds.getMaxX() , bounds.getMaxY() , bounds.getMinY() , x_size , y_size , this->getMinValue() , this->getMaxValue() );
+    GWSGrid bounds_grid;
+    bounds_grid.setBounds( bounds.getMinX() , bounds.getMaxX() , bounds.getMaxY() , bounds.getMinY() );
+    bounds_grid.setSize( x_size , y_size );
+    bounds_grid.setMinValue( this->getMinValue() );
+    bounds_grid.setMaxValue( this->getMaxValue() );
 
     double min_value = 99999999999;
     double max_value = -99999999999;

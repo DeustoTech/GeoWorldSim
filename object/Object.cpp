@@ -14,10 +14,9 @@ QString GWSObject::GWS_INHERITANCE_TREE_PROP = "@inheritance";
 unsigned int GWSObject::counter = 0;
 
 GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
-    QString generated_id = QString("%1-%2%3").arg( GWSApp::globalInstance()->getAppId() ).arg( this->metaObject()->className() ).arg( ++GWSObject::counter );
+    QString generated_id = QString("SIM%1-OBJ%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
     this->setObjectName( generated_id );
-    this->setProperty( GWS_TYPE_PROP ,  this->metaObject()->className() );
 }
 
 GWSObject::~GWSObject(){
@@ -131,4 +130,17 @@ const QVariant GWSObject::operator []( QString name ) const{
 
 bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
+}
+
+/**********************************************************************
+ OPERATORS
+**********************************************************************/
+
+GWSObject& GWSObject::operator=(const GWSObject& other){
+    for (int i = 0; i < other.dynamicPropertyNames().size(); ++i) {
+        const char* property_name = other.dynamicPropertyNames().at( i );
+        const QVariant property_value = other.property( property_name );
+        this->setProperty( property_name , property_value );
+    }
+    return *this;
 }

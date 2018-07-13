@@ -6,8 +6,6 @@
 
 #include "geos/geom/Envelope.h"
 
-#include "../../util/geometry/Polygon.h"
-#include "../../util/geometry/GeometryFactory.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
@@ -172,6 +170,26 @@ void GWSEnvelope::expandToInclude(GWSCoordinate coor){
 }
 
 /**********************************************************************
+ SETTERS
+**********************************************************************/
+
+void GWSEnvelope::setMaxX(double maxX){
+    this->setProperty( RIGHT_PROP , maxX );
+}
+
+void GWSEnvelope::setMinX(double minX){
+    this->setProperty( LEFT_PROP , minX );
+}
+
+void GWSEnvelope::setMaxY(double maxY){
+    this->setProperty( TOP_PROP , maxY );
+}
+
+void GWSEnvelope::setMinY(double minY){
+    this->setProperty( BOTTOM_PROP , minY );
+}
+
+/**********************************************************************
  METHODS
 **********************************************************************/
 
@@ -190,11 +208,12 @@ GWSEnvelope GWSEnvelope::createUnion(GWSEnvelope other) const{
     return GWSEnvelope( copy.getMinX() , copy.getMaxX() , copy.getMinY() , copy.getMaxY() );
 }
 
+/*
 GWSPolygon* GWSEnvelope::createPolygon() const{
     QList<GWSCoordinate> coors;
     coors << this->getTopLeft() << this->getTopRight() << this->getBottomRight() << this->getBottomLeft() << this->getTopLeft();
     return GWSGeometryFactory::globalInstance()->createPolygon( coors );
-}
+}*/
 
 /**********************************************************************
  OPERATORS

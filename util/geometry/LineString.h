@@ -29,7 +29,7 @@ public:
     virtual GWSLineString* createCopy() const;
 
 protected:
-    explicit GWSLineString( geos::geom::LineString* geom , QObject *parent = 0);
+    explicit GWSLineString( geos::geom::LineString* geom , GWSObject *parent = 0);
 
 };
 

@@ -45,14 +45,14 @@ HEADERS += \
     ../../util/units/Units.h \
     ../../util/uistyle/UiStyle.h \
             ## GEOMETRIES
-    ../../util/geometry/GeometryFactory.h \
+    #../../util/geometry/GeometryFactory.h \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Envelope.h \
-    ../../util/geometry/Geometry.h \
-    ../../util/geometry/GeometryUtils.h \
-    ../../util/geometry/LineString.h \
-    ../../util/geometry/Polygon.h \
-    ../../util/geometry/Point.h \
+    #../../util/geometry/Geometry.h \
+    #../../util/geometry/GeometryUtils.h \
+    #../../util/geometry/LineString.h \
+    #../../util/geometry/Polygon.h \
+    #../../util/geometry/Point.h \
     ../../util/geometry/Quadtree.h \
             ## GRAPH
     ../../util/graph/GraphNode.h \
@@ -60,7 +60,7 @@ HEADERS += \
     ../../util/graph/Graph.h \
     ../../util/graph/GraphUtils.h \
             ## GRID
-    ../../ util/grid/Grid.h \
+    ../../util/grid/Grid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -93,14 +93,14 @@ SOURCES += main.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/uistyle/UiStyle.cpp \
             ## GEOMETRIES
-    ../../util/geometry/GeometryFactory.cpp \
+    #../../util/geometry/GeometryFactory.cpp \
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Envelope.cpp \
-    ../../util/geometry/Geometry.cpp \
-    ../../util/geometry/GeometryUtils.cpp \
-    ../../util/geometry/LineString.cpp \
-    ../../util/geometry/Polygon.cpp \
-    ../../util/geometry/Point.cpp \
+    #../../util/geometry/Geometry.cpp \
+    #../../util/geometry/GeometryUtils.cpp \
+    #../../util/geometry/LineString.cpp \
+    #../../util/geometry/Polygon.cpp \
+    #../../util/geometry/Point.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
     ../../util/graph/GraphNode.cpp \

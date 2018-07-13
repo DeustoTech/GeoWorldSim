@@ -13,7 +13,7 @@
 #include "../../util/geometry/Polygon.h"
 #include "../../util/grid/Grid.h"
 
-class GWSGeometryFactory : public QObject
+class GWSGeometryFactory : public GWSObject
 {
     Q_OBJECT
 

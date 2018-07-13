@@ -22,7 +22,7 @@ public:
     // METHODS (Caller takes ownership of returned geometry)
 
 protected:
-    explicit GWSPoint( geos::geom::Point* geom , QObject *parent = 0);
+    explicit GWSPoint( geos::geom::Point* geom , GWSObject *parent = 0);
 
 };
 

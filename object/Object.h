@@ -14,6 +14,7 @@ class GWSObject : public QObject
     friend class GWSExecutionEnvironment;
 
 public:
+    Q_INVOKABLE explicit GWSObject( GWSObject* parent = 0 );
     ~GWSObject();
 
     // PROPERTIES
@@ -37,10 +38,8 @@ public:
     // SETTERS
     bool setProperty(const QString name, const QVariant &value);
 
-protected:
-
-    // Abstract object, cant be created
-    explicit GWSObject( GWSObject* parent = 0 );
+    // OPERATORS
+    GWSObject& operator=(const GWSObject&);
 
 private:
 

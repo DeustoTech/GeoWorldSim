@@ -7,7 +7,7 @@
 #include "../../util/geometry/GeometryFactory.h"
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSLineString::GWSLineString( geos::geom::LineString *geom, QObject *parent) : GWSGeometry( geom , parent ){
+GWSLineString::GWSLineString( geos::geom::LineString *geom, GWSObject *parent) : GWSGeometry( geom , parent ){
 
 }
 

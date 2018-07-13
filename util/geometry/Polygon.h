@@ -22,7 +22,7 @@ public:
     // METHODS (Caller takes ownership of returned geometry)
 
 protected:
-    explicit GWSPolygon( geos::geom::Polygon* geom , QObject *parent = 0);
+    explicit GWSPolygon( geos::geom::Polygon* geom , GWSObject *parent = 0);
 };
 
 #endif // GSSPOLYGON_H

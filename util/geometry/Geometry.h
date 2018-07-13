@@ -8,6 +8,7 @@
 #include <QImage>
 #include <QColor>
 
+#include "../../object/Object.h"
 #include "../../util/units/Units.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
@@ -17,7 +18,7 @@ QT_FORWARD_DECLARE_CLASS(GWSGeometryFactory)
 
 using namespace geos::geom;
 
-class GWSGeometry : public QObject
+class GWSGeometry : public GWSObject
 {
     Q_OBJECT
     friend class GWSGeometryFactory; // GWSGeometryFactory can access this constructor
@@ -52,9 +53,9 @@ public:
     GWSGeometry* createIntersection( const GWSGeometry* other ) const;
 
 protected:
-    explicit GWSGeometry( geos::geom::Geometry* geom , QObject *parent = Q_NULLPTR );
+    explicit GWSGeometry( geos::geom::Geometry* geom , GWSObject *parent = Q_NULLPTR );
 
-    const geos::geom::Geometry* inner_geometry = 0;
+    const geos::geom::Geometry* inner_geometry = Q_NULLPTR;
 
 private:
     GWSGeometry* castToGeometryType( geos::geom::Geometry* geom ) const;

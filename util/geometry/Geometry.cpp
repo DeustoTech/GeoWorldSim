@@ -15,7 +15,7 @@
 
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSGeometry::GWSGeometry(geos::geom::Geometry *geom, QObject *parent) :  QObject(parent) , inner_geometry( geom ){
+GWSGeometry::GWSGeometry(geos::geom::Geometry *geom, GWSObject *parent) :  GWSObject(parent) , inner_geometry( geom ){
 }
 
 GWSGeometry::~GWSGeometry(){

@@ -17,7 +17,7 @@ GWSGeometryFactory* GWSGeometryFactory::globalInstance(){
     return &instance;
 }
 
-GWSGeometryFactory::GWSGeometryFactory() : QObject( Q_NULLPTR ){
+GWSGeometryFactory::GWSGeometryFactory() : GWSObject( Q_NULLPTR ){
     // Create geometry factory
     this->geometry_factory = geos::geom::GeometryFactory::getDefaultInstance();
 }
@@ -71,7 +71,7 @@ GWSCoordinate GWSGeometryFactory::getRandomPoint( const GWSGeometry *bounds, uns
 
 GWSGeometry* GWSGeometryFactory::createGeometry(QString wkt , bool elevate) const{
 
-    try{
+    try {
         // Create reader to build geometry without our elevation
         geos::io::WKTReader reader = geos::io::WKTReader( this->geometry_factory );
         geos::geom::Geometry* g = reader.read( wkt.trimmed().toStdString() );

@@ -3,12 +3,12 @@
 
 #include <QMutex>
 
-#include "../../util/geometry/GeometryFactory.h"
-#include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Envelope.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"
+
+QT_FORWARD_DECLARE_CLASS(GWSGeometry)
 
 using namespace geos::geom;
 using namespace geos::index::quadtree;
@@ -20,18 +20,15 @@ class GWSPhysicalEnvironment : public GWSEnvironment
 public:
     static GWSPhysicalEnvironment* globalInstance();
 
-    // PROPERTIES
-    static QString GEOMETRY_PROP;
-
     // SPATIAL GETTERS
     QList<GWSAgent*> orderByDistance( GWSAgent* source , QList<GWSAgent*> agents ) const;
     QList<GWSAgent*> getAgentsInsideEnvelope( const GWSEnvelope envelope, QString class_name ) const;
-    QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
+    //QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
     GWSAgent* getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     GWSAgent* getNearestAgent( GWSCoordinate coor, QList<GWSAgent*> agents ) const;
     QList<GWSAgent*> getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
     QList<GWSAgent*> getNearestAgents( QList<GWSCoordinate> coors, QList<GWSAgent*> agents ) const;
-    GWSAgent* getAgentByGeometry( GWSGeometry* geometry, QString class_name ) const;
+    //GWSAgent* getAgentByGeometry( GWSGeometry* geometry, QString class_name ) const;
 
     // GETTERS
     GWSEnvelope getBounds() const;
@@ -39,7 +36,7 @@ public:
     // SETTERS
     void setBounds(GWSEnvelope bounds);
     bool updateAgentGeometry( GWSAgent* agent , GWSCoordinate new_geom );
-    bool updateAgentGeometry( GWSAgent* agent , GWSGeometry* new_geom );
+    //bool updateAgentGeometry( GWSAgent* agent , GWSGeometry* new_geom );
 
 protected:
     virtual void registerAgent(GWSAgent *agent);

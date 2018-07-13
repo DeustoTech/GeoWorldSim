@@ -11,13 +11,12 @@
 
 QT_FORWARD_DECLARE_CLASS(GWSPolygon)
 
-
 class GWSEnvelope : public GWSObject
 {
     Q_OBJECT
 
 public:
-    explicit GWSEnvelope();
+    Q_INVOKABLE explicit GWSEnvelope();
     GWSEnvelope( double minX , double maxX , double minY , double maxY );
     GWSEnvelope( const GWSEnvelope& );
 
@@ -50,10 +49,16 @@ public:
     bool intersects( GWSEnvelope env ) const;
     void expandToInclude(GWSCoordinate coor);
 
+    // SETTERS
+    void setMaxX( double maxX );
+    void setMinX( double minX );
+    void setMaxY( double maxY );
+    void setMinY( double minY );
+
     // METHODS
     GWSEnvelope createBuffer(double buffer) const;
     GWSEnvelope createUnion(GWSEnvelope other) const;
-    GWSPolygon* createPolygon() const;
+    //GWSPolygon* createPolygon() const;
 
     // OPERATORS
     GWSEnvelope& operator= (const GWSEnvelope&);

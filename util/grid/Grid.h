@@ -5,10 +5,11 @@
 #include <QJsonObject>
 #include <QImage>
 
+#include "../../object/Object.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
 
-class GWSGrid {
+class GWSGrid : public GWSObject {
 
     //[xy]
     //[03 , 13 , 23 , 33]
@@ -17,10 +18,12 @@ class GWSGrid {
     //[00 , 10 , 20 , 30]
 
 public:
-    explicit GWSGrid(double left , double right , double top , double bottom , unsigned int x_size = 100 , unsigned int y_size = 100 , double min_value = std::numeric_limits<double>::quiet_NaN(), double max_value = std::numeric_limits<double>::quiet_NaN() );
+    Q_INVOKABLE explicit GWSGrid();
     GWSGrid(const GWSGrid&);
-    GWSGrid();
-    ~GWSGrid();
+
+    // PROPERTIES
+    static QString MAX_VALUE_PROP;
+    static QString MIN_VALUE_PROP;
 
     // EXPORTERS
     QImage toImage( const GWSEnvelope image_bounds , int image_width = 1024, int image_height = 1024 ) const;
@@ -39,6 +42,8 @@ public:
     // SETTERS
     void setBounds( double left , double right , double top , double bottom );
     void setBounds( GWSEnvelope bounds );
+    void setMaxValue( double max );
+    void setMinValue( double min );
     void setSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
     void setCellValue( GWSCoordinate coor , double v );
     void setCellValue( unsigned int grid_x , unsigned int grid_y , double v);
@@ -53,8 +58,6 @@ public:
 private:
     GWSEnvelope bounds;
     QVector< QVector<double> > values;
-    double min_value;
-    double max_value;
 };
 
 #endif // GWSGRID_H

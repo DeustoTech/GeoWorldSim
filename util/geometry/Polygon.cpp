@@ -7,7 +7,7 @@
 
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSPolygon::GWSPolygon( geos::geom::Polygon *geom, QObject *parent) : GWSGeometry( geom , parent ){
+GWSPolygon::GWSPolygon( geos::geom::Polygon *geom, GWSObject *parent) : GWSGeometry( geom , parent ){
 
 }
 

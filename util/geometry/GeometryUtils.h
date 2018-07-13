@@ -1,5 +1,5 @@
-#ifndef GSSGEOMETRYUTILS_H
-#define GSSGEOMETRYUTILS_H
+#ifndef GWSGEOMETRYUTILS_H
+#define GWSGEOMETRYUTILS_H
 
 #include <QObject>
 #include "../../util/geometry/Geometry.h"
@@ -24,4 +24,4 @@ private:
 
 };
 
-#endif // GSSGEOMETRYUTILS_H
+#endif // GWSGEOMETRYUTILS_H
