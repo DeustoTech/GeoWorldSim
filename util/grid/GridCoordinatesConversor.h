@@ -1,14 +1,14 @@
-#ifndef GRIDCOORDINATESCONVERSOR_H
-#define GRIDCOORDINATESCONVERSOR_H
+#ifndef GWSGRIDCOORDINATESCONVERSOR_H
+#define GWSGRIDCOORDINATESCONVERSOR_H
 
 #include <QObject>
 
-class GridCoordinatesConversor : public QObject
+class GWSGridCoordinatesConversor : public QObject
 {
     Q_OBJECT
 public:
 
-    explicit GridCoordinatesConversor(QObject *parent = 0);
+    explicit GWSGridCoordinatesConversor(QObject *parent = 0);
 
     // METHODS
     static unsigned int lon2x( double lon , double min_lon, double max_lon , unsigned int x_size); // Given the longitude, left and right boundaries, get the X  of grid
@@ -18,4 +18,4 @@ public:
     static double y2lat(unsigned int grid_y, double min_lat , double max_lat , unsigned int y_size );
 };
 
-#endif // GRIDCOORDINATESCONVERSOR_H
+#endif // GWSGRIDCOORDINATESCONVERSOR_H

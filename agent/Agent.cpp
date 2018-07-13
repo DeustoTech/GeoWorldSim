@@ -103,7 +103,7 @@ bool GWSAgent::isBusy() const{
     return busy_counter > 0;
 }
 
-qint64 GWSAgent::getNextTick() const{
+qint64 GWSAgent::getInternalTime() const{
     return this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
@@ -195,7 +195,7 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
     }
 }*/
 
-void GWSAgent::setNextTick( const qint64 datetime ){
+void GWSAgent::setInternalTime( const qint64 datetime ){
     this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
 }
 
@@ -243,9 +243,10 @@ void GWSAgent::tick(){
 
     this->incrementBusy();
 
-    // Behaveç
+    // Behave
     this->behave();
 
+    this->decrementBusy();
 
     /*GWSBehaviour* next_execute_behaviour = this->behaviour_start;
     while( next_execute_behaviour && next_execute_behaviour->finished() ){

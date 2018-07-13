@@ -66,7 +66,7 @@ public:
     //GWSCoordinate getRepresentativeCoordinate() const;
     bool isRunning() const;
     bool isBusy() const;
-    qint64 getNextTick() const;
+    qint64 getInternalTime() const;
     GWSUiStyle* getStyle() const;
 
     // SKILLS
@@ -78,7 +78,7 @@ public:
 
     // SETTERS
     //virtual void setGeometry( GSSGeometry* geometry );
-    void setNextTick( qint64 datetime );
+    void setInternalTime( qint64 datetime );
     void incrementInternalTime( GWSTimeUnit seconds = GWSTimeUnit(0) );
     void incrementBusy();
     void decrementBusy();

@@ -8,8 +8,7 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
 
-class GWSGrid
-{
+class GWSGrid {
 
     //[xy]
     //[03 , 13 , 23 , 33]

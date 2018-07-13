@@ -16,5 +16,4 @@ void TerrainAgent::behave(){
     }
 
     this->incrementInternalTime( 5 );
-
 }

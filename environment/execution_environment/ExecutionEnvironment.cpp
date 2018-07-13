@@ -166,8 +166,8 @@ void GWSExecutionEnvironment::tick(){
     foreach( GWSAgent* agent , currently_running_agents ){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
-            if( agent->getNextTick() > 0 ){
-                min_tick = qMin( min_tick , agent->getNextTick() );
+            if( agent->getInternalTime() > 0 ){
+                min_tick = qMin( min_tick , agent->getInternalTime() );
             }
         }
     }
@@ -180,14 +180,14 @@ void GWSExecutionEnvironment::tick(){
         qint64 limit = min_tick + this->min_tick_threshold; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 
-            qint64 agent_next_tick = agent->getNextTick();
+            qint64 agent_next_tick = agent->getInternalTime();
             if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
 
                     // Set agent to advance to last min_tick, in case it was set to 0
-                    agent->setNextTick( qMax( agent_next_tick , min_tick ) );
+                    agent->setInternalTime( qMax( agent_next_tick , min_tick ) );
 
                     // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
-                    agent->timer->singleShot( 10 + (qrand() % 1000) , agent , &GWSAgent::tick );
+                    agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
 
                     ticked_agents++;
             }
