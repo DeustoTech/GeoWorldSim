@@ -19,6 +19,9 @@ GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
     this->setObjectName( generated_id );
 }
 
+GWSObject::GWSObject(const GWSObject &other) : QObject( other.parent() ){
+}
+
 GWSObject::~GWSObject(){
     this->deleted = true;
 }
@@ -132,15 +135,16 @@ bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
 }
 
-/**********************************************************************
- OPERATORS
-**********************************************************************/
+template <class T>
+bool GWSObject::setObjectProperty(const QString name, const GWSObject &value){
+    QVariant variant = QVariant::fromValue<T>( value );
+    return this->setProperty( name , variant );
+}
 
-GWSObject& GWSObject::operator=(const GWSObject& other){
+void GWSObject::copyProperties(const GWSObject &other){
     for (int i = 0; i < other.dynamicPropertyNames().size(); ++i) {
         const char* property_name = other.dynamicPropertyNames().at( i );
         const QVariant property_value = other.property( property_name );
         this->setProperty( property_name , property_value );
     }
-    return *this;
 }

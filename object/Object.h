@@ -15,6 +15,7 @@ class GWSObject : public QObject
 
 public:
     Q_INVOKABLE explicit GWSObject( GWSObject* parent = 0 );
+    GWSObject(const GWSObject&);
     ~GWSObject();
 
     // PROPERTIES
@@ -37,9 +38,8 @@ public:
 
     // SETTERS
     bool setProperty(const QString name, const QVariant &value);
-
-    // OPERATORS
-    GWSObject& operator=(const GWSObject&);
+    template <class T> bool setObjectProperty(const QString name, const GWSObject &value);
+    void copyProperties(const GWSObject &other );
 
 private:
 
@@ -48,5 +48,7 @@ private:
 
     bool deleted = false;
 };
+
+Q_DECLARE_METATYPE(GWSObject)
 
 #endif // GWSOBJECT_H

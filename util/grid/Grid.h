@@ -24,6 +24,7 @@ public:
     // PROPERTIES
     static QString MAX_VALUE_PROP;
     static QString MIN_VALUE_PROP;
+    static QString BOUNDS_PROP;
 
     // EXPORTERS
     QImage toImage( const GWSEnvelope image_bounds , int image_width = 1024, int image_height = 1024 ) const;
@@ -56,8 +57,9 @@ public:
     QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
 
 private:
-    GWSEnvelope bounds;
     QVector< QVector<double> > values;
 };
+
+Q_DECLARE_METATYPE(GWSGrid)
 
 #endif // GWSGRID_H

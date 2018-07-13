@@ -11,6 +11,7 @@
 
 QT_FORWARD_DECLARE_CLASS(GWSPolygon)
 
+
 class GWSEnvelope : public GWSObject
 {
     Q_OBJECT
