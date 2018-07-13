@@ -9,7 +9,9 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
 
-class GWSGrid : public GWSObject {
+class GWSGrid : public GWSObject
+{
+    Q_OBJECT
 
     //[xy]
     //[03 , 13 , 23 , 33]
@@ -18,8 +20,7 @@ class GWSGrid : public GWSObject {
     //[00 , 10 , 20 , 30]
 
 public:
-    Q_INVOKABLE explicit GWSGrid();
-    GWSGrid(const GWSGrid&);
+    Q_INVOKABLE explicit GWSGrid( QObject* parent = Q_NULLPTR );
 
     // PROPERTIES
     static QString MAX_VALUE_PROP;
@@ -31,35 +32,31 @@ public:
 
     // GETTERS
     bool isEmpty() const;
-    const GWSEnvelope getBounds() const;
+    const GWSEnvelope* getBounds() const;
     unsigned int getXSize() const;
     unsigned int getYSize() const;
     double getMaxValue() const;
     double getMinValue() const;
-    virtual double getCellValue( GWSCoordinate coor ) const;
+    virtual double getCellValue( GWSCoordinate* coor ) const;
     double getCellValue( unsigned int grid_x , unsigned int grid_y ) const;
-    const GWSEnvelope getCellEnvelope( unsigned int grid_x , unsigned int grid_y ) const;
+    //const GWSEnvelope getCellEnvelope( unsigned int grid_x , unsigned int grid_y ) const;
 
     // SETTERS
-    void setBounds( double left , double right , double top , double bottom );
-    void setBounds( GWSEnvelope bounds );
+    void setBounds( GWSEnvelope* bounds );
     void setMaxValue( double max );
     void setMinValue( double min );
     void setSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
-    void setCellValue( GWSCoordinate coor , double v );
+    void setCellValue( GWSCoordinate* coor , double v );
     void setCellValue( unsigned int grid_x , unsigned int grid_y , double v);
 
-    // OPERATORS
-    GWSGrid& operator=(const GWSGrid&);
-
     // METHODS
-    GWSGrid getSubGrid( GWSEnvelope bounds );
-    QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
+    //GWSGrid getSubGrid( GWSEnvelope bounds );
+    //QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
 
 private:
     QVector< QVector<double> > values;
 };
 
-Q_DECLARE_METATYPE(GWSGrid)
+Q_DECLARE_METATYPE(GWSGrid*)
 
 #endif // GWSGRID_H

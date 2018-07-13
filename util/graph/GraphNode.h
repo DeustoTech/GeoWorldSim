@@ -7,7 +7,7 @@
 #include "geos/planargraph/Node.h"
 #include "geos/planargraph/PlanarGraph.h"
 
-#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/GeoCoordinates.h"
 #include "../../util/graph/Graph.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
@@ -21,14 +21,14 @@ class GWSGraphNode : public geos::planargraph::Node
     friend class GWSGraphEdge;
 
 public:
-    GWSGraphNode( GWSCoordinate coor );
+    GWSGraphNode( GeoCoordinates coor );
 
     // GETTERS
     virtual const QList<GWSGraphEdge*> getDepartingEdges() const;
     virtual const QList<GWSGraphEdge*> getArrivingEdges() const;
     virtual const GWSGraphEdge* getDepartingEdgeTo( GWSGraphNode* to ) const;
     virtual const GWSGraphEdge* getArrivingEdgeFrom( GWSGraphNode* from ) const;
-    virtual const GWSCoordinate getCoordinate() const;
+    virtual const GeoCoordinates getCoordinate() const;
     virtual size_t getDegree() const;
 
     // SETTERS

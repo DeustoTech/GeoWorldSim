@@ -38,7 +38,7 @@ const GWSGrid GWSGeometryFactory::getElevationModel() const{
     return this->geometry_factory;
 }*/
 
-GWSCoordinate GWSGeometryFactory::getRandomPoint( const GWSGeometry *bounds, unsigned int seed) const{
+GeoCoordinates GWSGeometryFactory::getRandomPoint( const GWSGeometry *bounds, unsigned int seed) const{
     if( bounds->getCoordinates().size() <= 2 ){
         return bounds->getRepresentativeCoordinate();
     }
@@ -48,7 +48,7 @@ GWSCoordinate GWSGeometryFactory::getRandomPoint( const GWSGeometry *bounds, uns
     int max_attemps = 4;
     do {
 
-        GWSCoordinate center = bounds->getCentroid();
+        GeoCoordinates center = bounds->getCentroid();
         /*double x_diff = bounds->getEnvelope().getMaxX() - bounds->getEnvelope().getMinX();
         double y_diff = bounds->getEnvelope().getMaxY() - bounds->getEnvelope().getMinY();
         double x_incr = (( qrand() * 100000 ) % int(x_diff * 100000) ) / 100000;
@@ -118,10 +118,10 @@ GWSPoint* GWSGeometryFactory::createPoint( geos::geom::Point* gpoint, bool eleva
 
 
 GWSPoint* GWSGeometryFactory::createPoint(double x, double y, double z, bool elevate) const{
-    return this->createPoint( GWSCoordinate( x , y , z ) , elevate );
+    return this->createPoint( GeoCoordinates( x , y , z ) , elevate );
 }
 
-GWSPoint* GWSGeometryFactory::createPoint(GWSCoordinate c , bool elevate) const{
+GWSPoint* GWSGeometryFactory::createPoint(GeoCoordinates c , bool elevate) const{
     return new GWSPoint( this->geometry_factory->createPoint( geos::geom::Coordinate( c.getX() , c.getY() , elevate ? this->getElevation( c ) : c.getZ() ) ) );
 }
 
@@ -131,28 +131,28 @@ GWSLineString* GWSGeometryFactory::createLineString( geos::geom::LineString *gli
     if( !elevate ){
         return new GWSLineString( gline );
     }
-    QList<GWSCoordinate> coors;
+    QList<GeoCoordinates> coors;
     for(unsigned int i = 0; i < gline->getCoordinates()->size(); i++){
-        coors.append( GWSCoordinate( gline->getCoordinateN( i ).x , gline->getCoordinateN( i ).y ) );
+        coors.append( GeoCoordinates( gline->getCoordinateN( i ).x , gline->getCoordinateN( i ).y ) );
     }
     delete gline;
     return this->createLineString( coors , elevate );
 }
 
-GWSLineString* GWSGeometryFactory::createLineString(GWSCoordinate c1, GWSCoordinate c2 , bool elevate) const{
-    QList<GWSCoordinate> coors;
+GWSLineString* GWSGeometryFactory::createLineString(GeoCoordinates c1, GeoCoordinates c2 , bool elevate) const{
+    QList<GeoCoordinates> coors;
     coors.append( c1 );
     coors.append( c2 );
     return this->createLineString( coors , elevate );
 }
 
-GWSLineString* GWSGeometryFactory::createLineString(QList<GWSCoordinate> coors , bool elevate) const{
+GWSLineString* GWSGeometryFactory::createLineString(QList<GeoCoordinates> coors , bool elevate) const{
     if( coors.isEmpty() || coors.size() == 1){
         qWarning() << "Empty or single coordinate linestring";
         return 0;
     }
     CoordinateSequence* seq = this->geometry_factory->getCoordinateSequenceFactory()->create( (std::size_t)0 );
-    foreach(GWSCoordinate c , coors){
+    foreach(GeoCoordinates c , coors){
         seq->add( geos::geom::Coordinate( c.getX() , c.getY() , elevate ? this->getElevation( c ) : c.getZ() ) );
     }
     return new GWSLineString( this->geometry_factory->createLineString( seq ) );
@@ -165,21 +165,21 @@ GWSPolygon* GWSGeometryFactory::createPolygon( geos::geom::Polygon *gpolygon, bo
         return new GWSPolygon( gpolygon );
     }
 
-    QList<QList<GWSCoordinate>> rings_coors;
+    QList<QList<GeoCoordinates>> rings_coors;
     const geos::geom::LineString* out_ring = gpolygon->getExteriorRing();
 
-    QList<GWSCoordinate> out_coors;
+    QList<GeoCoordinates> out_coors;
     for(unsigned int i = 0 ; i < out_ring->getCoordinates()->size() ; i++){
-        out_coors.append( GWSCoordinate( out_ring->getCoordinateN( i ).x , out_ring->getCoordinateN( i ).y , out_ring->getCoordinateN( i ).z ) );
+        out_coors.append( GeoCoordinates( out_ring->getCoordinateN( i ).x , out_ring->getCoordinateN( i ).y , out_ring->getCoordinateN( i ).z ) );
     }
     rings_coors.append( out_coors );
 
     for(unsigned int i = 0; i < gpolygon->getNumInteriorRing(); i++){
         const geos::geom::LineString* in_ring = gpolygon->getInteriorRingN( i );
 
-        QList<GWSCoordinate> in_coors;
+        QList<GeoCoordinates> in_coors;
         for(unsigned int i = 0 ; i < in_ring->getCoordinates()->size() ; i++){
-            in_coors.append( GWSCoordinate( in_ring->getCoordinateN( i ).x , in_ring->getCoordinateN( i ).y , in_ring->getCoordinateN( i ).z ) );
+            in_coors.append( GeoCoordinates( in_ring->getCoordinateN( i ).x , in_ring->getCoordinateN( i ).y , in_ring->getCoordinateN( i ).z ) );
         }
         rings_coors.append( in_coors );
     }
@@ -187,13 +187,13 @@ GWSPolygon* GWSGeometryFactory::createPolygon( geos::geom::Polygon *gpolygon, bo
     return this->createPolygon( rings_coors , elevate );
 }
 
-GWSPolygon* GWSGeometryFactory::createPolygon(QList<QList<GWSCoordinate> > rings_coors , bool elevate) const{
+GWSPolygon* GWSGeometryFactory::createPolygon(QList<QList<GeoCoordinates> > rings_coors , bool elevate) const{
     LinearRing* shell = 0;
     std::vector<geos::geom::Geometry*> holes;
 
-    foreach(QList<GWSCoordinate> ring_coors , rings_coors){
+    foreach(QList<GeoCoordinates> ring_coors , rings_coors){
         CoordinateSequence* coordinates = this->geometry_factory->getCoordinateSequenceFactory()->create( (std::size_t)0 );
-        foreach(GWSCoordinate c , ring_coors){
+        foreach(GeoCoordinates c , ring_coors){
             coordinates->add( geos::geom::Coordinate( c.getX() , c.getY() , elevate ? this->getElevation( c ) : c.getZ() ) );
         }
 
@@ -208,8 +208,8 @@ GWSPolygon* GWSGeometryFactory::createPolygon(QList<QList<GWSCoordinate> > rings
     return new GWSPolygon( this->geometry_factory->createPolygon( *shell , holes ) );
 }
 
-GWSPolygon* GWSGeometryFactory::createPolygon( QList<GWSCoordinate> outer_coors , bool elevate) const{
-    QList< QList< GWSCoordinate > > rings;
+GWSPolygon* GWSGeometryFactory::createPolygon( QList<GeoCoordinates> outer_coors , bool elevate) const{
+    QList< QList< GeoCoordinates > > rings;
     rings.append( outer_coors );
     return this->createPolygon( rings , elevate );
 }
@@ -218,11 +218,11 @@ GWSPolygon* GWSGeometryFactory::createPolygon( QList<GWSCoordinate> outer_coors 
  ELEVATION
 **********************************************************************/
 
-double GWSGeometryFactory::getElevation( GWSCoordinate coor) const{
+double GWSGeometryFactory::getElevation( GeoCoordinates coor) const{
     return this->elevation_model.getCellValue( coor );
 }
 
-void GWSGeometryFactory::setElevationPoint( GWSCoordinate coor, double value ){
+void GWSGeometryFactory::setElevationPoint( GeoCoordinates coor, double value ){
     this->elevation_model.setCellValue( coor , value );
 }
 

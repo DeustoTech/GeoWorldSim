@@ -18,7 +18,7 @@ GWSGridEnvironment::~GWSGridEnvironment(){
 
 void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
 
-    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
+    /*GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
 
     if( grid ){
 
@@ -28,11 +28,11 @@ void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
             // Add grid
             this->grids.insert( c , grid );
         }
-    }
+    }*/
 }
 
 void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
-    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
+    /*GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
 
     if( grid ){
 
@@ -43,5 +43,5 @@ void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
             this->grids.remove( c );
 
         }
-    }
+    }*/
 }

@@ -2,7 +2,6 @@
 #define GWSENVELOPE_H
 
 #include "../../object/Object.h"
-#include <QJsonArray>
 #include <QImage>
 #include <QColor>
 
@@ -11,15 +10,12 @@
 
 QT_FORWARD_DECLARE_CLASS(GWSPolygon)
 
-
 class GWSEnvelope : public GWSObject
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GWSEnvelope();
-    GWSEnvelope( double minX , double maxX , double minY , double maxY );
-    GWSEnvelope( const GWSEnvelope& );
+    Q_INVOKABLE explicit GWSEnvelope( QObject* parent = Q_NULLPTR );
 
     // PROPERTIES
     static QString LEFT_PROP;
@@ -36,19 +32,19 @@ public:
     double getMinX() const;
     double getMaxY() const;
     double getMinY() const;
-    GWSCoordinate getTopLeft() const;
-    GWSCoordinate getBottomLeft() const;
-    GWSCoordinate getTopRight() const;
-    GWSCoordinate getBottomRight() const;
-    GWSCoordinate getCentroid() const;
-    GWSCoordinate getRandomCoordinate() const;
+    //GeoCoordinates getTopLeft() const;
+    //GeoCoordinates getBottomLeft() const;
+    //GeoCoordinates getTopRight() const;
+    //GeoCoordinates getBottomRight() const;
+    //GeoCoordinates getCentroid() const;
+    //GeoCoordinates getRandomCoordinate() const;
     GWSAreaUnit getArea() const;
-    bool covers( GWSEnvelope env ) const;
-    bool covers( GWSCoordinate coor ) const;
-    bool contains( GWSCoordinate coor ) const;
-    bool contains( GWSEnvelope env ) const;
-    bool intersects( GWSEnvelope env ) const;
-    void expandToInclude(GWSCoordinate coor);
+    bool covers( GWSEnvelope* env ) const;
+    bool covers( GWSCoordinate* coor ) const;
+    bool contains( GWSCoordinate* coor ) const;
+    bool contains( GWSEnvelope* env ) const;
+    bool intersects( GWSEnvelope* env ) const;
+    void expandToInclude(GWSCoordinate* coor);
 
     // SETTERS
     void setMaxX( double maxX );
@@ -57,8 +53,8 @@ public:
     void setMinY( double minY );
 
     // METHODS
-    GWSEnvelope createBuffer(double buffer) const;
-    GWSEnvelope createUnion(GWSEnvelope other) const;
+    //GWSEnvelope createBuffer(double buffer) const;
+    //GWSEnvelope createUnion(GWSEnvelope other) const;
     //GWSPolygon* createPolygon() const;
 
     // OPERATORS
@@ -68,6 +64,6 @@ public:
 
 };
 
-Q_DECLARE_METATYPE(GWSEnvelope)
+Q_DECLARE_METATYPE(GWSEnvelope*)
 
 #endif // GWSENVELOPE_H

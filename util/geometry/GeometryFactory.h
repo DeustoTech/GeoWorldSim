@@ -5,7 +5,7 @@
 
 #include "geos/geom/GeometryFactory.h"
 
-#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/GeoCoordinates.h"
 #include "../../util/geometry/Envelope.h"
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Point.h"
@@ -23,25 +23,25 @@ public:
     // GETTERS
     //const geos::geom::GeometryFactory* getGeometryFactory() const;
     const GWSGrid getElevationModel() const;
-    GWSCoordinate getRandomPoint( const GWSGeometry* bounds , unsigned int seed = qrand() ) const;
+    GeoCoordinates getRandomPoint( const GWSGeometry* bounds , unsigned int seed = qrand() ) const;
 
     // CREATORS
     GWSGeometry* createGeometry(QString wkt , bool elevate = true ) const;
     QString toWKT( GWSGeometry* geom ) const;
 
-    GWSPoint* createPoint( GWSCoordinate coor , bool elevate = true ) const;
+    GWSPoint* createPoint( GeoCoordinates coor , bool elevate = true ) const;
     GWSPoint* createPoint( double x , double y , double z = 0 , bool elevate = true ) const;
 
-    GWSLineString* createLineString( GWSCoordinate c1 , GWSCoordinate c2 , bool elevate = true ) const;
-    GWSLineString* createLineString( QList<GWSCoordinate> coors , bool elevate = true ) const;
+    GWSLineString* createLineString( GeoCoordinates c1 , GeoCoordinates c2 , bool elevate = true ) const;
+    GWSLineString* createLineString( QList<GeoCoordinates> coors , bool elevate = true ) const;
 
-    GWSPolygon* createPolygon( QList< QList<GWSCoordinate> > rings_coors , bool elevate = true ) const;
-    GWSPolygon* createPolygon( QList<GWSCoordinate> outer_coors , bool elevate = true ) const;
+    GWSPolygon* createPolygon( QList< QList<GeoCoordinates> > rings_coors , bool elevate = true ) const;
+    GWSPolygon* createPolygon( QList<GeoCoordinates> outer_coors , bool elevate = true ) const;
 
     // ELEVATION SETTERS
-    double getElevation( GWSCoordinate coor ) const;
+    double getElevation( GeoCoordinates coor ) const;
     void setElevationModel( const GWSGrid& elevation );
-    void setElevationPoint( GWSCoordinate coor , double value );
+    void setElevationPoint( GeoCoordinates coor , double value );
 
 private:
     GWSGeometryFactory();

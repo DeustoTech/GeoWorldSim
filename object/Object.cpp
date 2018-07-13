@@ -5,7 +5,7 @@
 
 #include "../../app/App.h"
 
-#include "../../util/conversors/custom_json/CustomJsonConversor.h"
+#include "../../object/ObjectFactory.h"
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
@@ -13,7 +13,7 @@ QString GWSObject::GWS_INHERITANCE_TREE_PROP = "@inheritance";
 
 unsigned int GWSObject::counter = 0;
 
-GWSObject::GWSObject( GWSObject *parent ) : QObject( parent ){
+GWSObject::GWSObject( QObject *parent ) : QObject( parent ){
     QString generated_id = QString("SIM%1-OBJ%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
     this->setObjectName( generated_id );
@@ -84,17 +84,22 @@ void GWSObject::deserialize(QJsonObject json){
         QJsonValue property_value = json.value( property_name );
 
         switch ( property_value.type() ) {
-            case QJsonValue::String:
-                this->setProperty( property_name , property_value.toString() ); break;
-            case QJsonValue::Double:
-                this->setProperty( property_name , property_value.toDouble() ); break;
-            case QJsonValue::Bool:
-                this->setProperty( property_name , property_value.toBool() ); break;
-            case QJsonValue::Array:
-                this->setProperty( property_name , property_value.toArray() ); break;
-            default:
+        case QJsonValue::String: {
+                this->setProperty( property_name , property_value.toString() ); break; }
+        case QJsonValue::Double: {
+                this->setProperty( property_name , property_value.toDouble() ); break; }
+        case QJsonValue::Bool: {
+                this->setProperty( property_name , property_value.toBool() ); break; }
+        case QJsonValue::Array: {
+                //this->setProperty( property_name , property_value.toArray() );
+                break; }
+        case QJsonValue::Object: {
+                GWSObject* obj = GWSObjectFactory::globalInstance()->create( property_value.toObject() , this );
+                QVariant obj_variant = QVariant::fromValue<GWSObject*>( obj );
+                this->setProperty( property_name , obj_variant ); break; }
+        default: {
                 qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
-                this->setProperty( property_name , property_value.toVariant() ); break;
+                this->setProperty( property_name , property_value.toVariant() ); break; }
         }
     }
 }

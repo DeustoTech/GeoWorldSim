@@ -9,14 +9,8 @@
 #include <QFile>
 #include <QDateTime>
 
-#include "../../environment/Environment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
-#include "../../environment/grid_environment/GridEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
-#include "../../environment/network_environment/NetworkEnvironment.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/social_environment/SocialEnvironment.h"
-#include "../../environment/time_environment/TimeEnvironment.h"
 
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/io/log/Logger.h"
@@ -198,7 +192,7 @@ void GWSApp::pushAgent(QJsonObject entity_json){
 
     QString entity_type = entity_json.value("type").toString();
     QString entity_id = entity_json.value("id").toString();
-    entity_json.insert("time" , QString("%1ms").arg( GWSTimeEnvironment::globalInstance()->getCurrentDateTime() ) );
+    //entity_json.insert("time" , QString("%1ms").arg( GWSTimeEnvironment::globalInstance()->getCurrentDateTime() ) );
     if( entity_type.isEmpty() || entity_id.isEmpty() ){ return; }
     this->pushData( "entity" , entity_json );
 }

@@ -21,12 +21,12 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    GWSGraphNode* getNodeFromGraph( GWSCoordinate coor , QString class_name ) const;
-    template <class T> T* getNodeFromGraph( GWSCoordinate coor , QString class_name ) const;
+    GWSGraphNode* getNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
+    template <class T> T* getNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
 
-    GWSGraphNode* getNearestNodeFromGraph( GWSCoordinate coor , QString class_name ) const;
+    GWSGraphNode* getNearestNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
 
-    const GWSGraphEdge* getEdgeFromGraph( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
+    const GWSGraphEdge* getEdgeFromGraph( GeoCoordinates from , GeoCoordinates to , QString class_name ) const;
 
     const GWSGraph* getGraph( QString class_name ) const;
 

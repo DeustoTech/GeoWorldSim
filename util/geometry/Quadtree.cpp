@@ -13,7 +13,7 @@ GWSQuadtree::~GWSQuadtree(){
     this->inner_index = 0;
 }
 
-QList<void *> GWSQuadtree::getElements(GWSCoordinate coor) const{
+QList<void *> GWSQuadtree::getElements(GeoCoordinates coor) const{
     GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
     return this->getElements( env );
 }
@@ -39,7 +39,7 @@ QList<void *> GWSQuadtree::getElements(GWSEnvelope env) const{
     return objs;
 }
 
-void GWSQuadtree::insert(GWSCoordinate env, void *elm){
+void GWSQuadtree::insert(GeoCoordinates env, void *elm){
     this->insert( GWSEnvelope( env.getX() , env.getX() , env.getY() , env.getY() ) , elm );
 }
 
@@ -51,7 +51,7 @@ void GWSQuadtree::insert(GWSEnvelope env, void *elm){
     this->mutex.unlock();
 }
 
-void GWSQuadtree::remove(GWSCoordinate env, void *elm){
+void GWSQuadtree::remove(GeoCoordinates env, void *elm){
     this->remove( GWSEnvelope( env.getX() , env.getX() , env.getY() , env.getY() ) , elm );
 }
 

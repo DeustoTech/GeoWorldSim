@@ -53,12 +53,12 @@ HEADERS += \
     #../../util/geometry/LineString.h \
     #../../util/geometry/Polygon.h \
     #../../util/geometry/Point.h \
-    ../../util/geometry/Quadtree.h \
+    #../../util/geometry/Quadtree.h \
             ## GRAPH
-    ../../util/graph/GraphNode.h \
-    ../../util/graph/GraphEdge.h \
-    ../../util/graph/Graph.h \
-    ../../util/graph/GraphUtils.h \
+    #../../util/graph/GraphNode.h \
+    #../../util/graph/GraphEdge.h \
+    #../../util/graph/Graph.h \
+    #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
     ../../util/grid/GridCoordinatesConversor.h \
@@ -67,12 +67,12 @@ HEADERS += \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/agent_environment/AgentEnvironment.h \
-    ../../environment/physical_environment/PhysicalEnvironment.h \
-    ../../environment/social_environment/SocialEnvironment.h \
-    ../../environment/social_environment/Message.h \
+    #../../environment/physical_environment/PhysicalEnvironment.h \
+    #../../environment/social_environment/SocialEnvironment.h \
+    #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    ../../environment/grid_environment/GridEnvironment.h \
-    ../../environment/network_environment/NetworkEnvironment.h \
+    #../../environment/grid_environment/GridEnvironment.h \
+    #../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     TerrainAgent.h
         # AGENTS
@@ -101,12 +101,12 @@ SOURCES += main.cpp \
     #../../util/geometry/LineString.cpp \
     #../../util/geometry/Polygon.cpp \
     #../../util/geometry/Point.cpp \
-    ../../util/geometry/Quadtree.cpp \
+    #../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphNode.cpp \
-    ../../util/graph/GraphEdge.cpp \
-    ../../util/graph/Graph.cpp \
-    ../../util/graph/GraphUtils.cpp \
+    #../../util/graph/GraphNode.cpp \
+    #../../util/graph/GraphEdge.cpp \
+    #../../util/graph/Graph.cpp \
+    #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
@@ -115,13 +115,13 @@ SOURCES += main.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
-    ../../environment/physical_environment/PhysicalEnvironment.cpp \
-    ../../environment/social_environment/SocialEnvironment.cpp \
-    ../../environment/social_environment/Message.cpp \
+    #../../environment/physical_environment/PhysicalEnvironment.cpp \
+    #../../environment/social_environment/SocialEnvironment.cpp \
+    #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
-    ../../environment/network_environment/NetworkEnvironment.cpp \
+    #../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    ../../environment/grid_environment/GridEnvironment.cpp \
+    #../../environment/grid_environment/GridEnvironment.cpp \
     TerrainAgent.cpp
         # AGENTS
     #agent/person/Person.cpp

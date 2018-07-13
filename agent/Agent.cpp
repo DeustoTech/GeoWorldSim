@@ -7,20 +7,13 @@
 #include <QPainter>
 #include <QThread>
 
-#include "../../environment/Environment.h"
-#include "../../environment/execution_environment/ExecutionEnvironment.h"
-#include "../../environment/time_environment/TimeEnvironment.h"
-
-#include "../../util/conversors/geojson_to_geometry/GeoJsonToGeometryConversor.h"
-#include "../../util/image_downloader/ImageDownloader.h"
-
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
 
 QString GWSAgent::RUNNING_PROP = "running";
 QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
-GWSAgent::GWSAgent( GWSObject* parent ) : GWSObject( parent ) , busy_counter(0) {
+GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , busy_counter(0) {
     this->style = new GWSUiStyle( this );
 }
 
@@ -28,7 +21,6 @@ GWSAgent::~GWSAgent() {
     // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , agent , &Agent::deleteLater );
 
     QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
-    GWSEnvironment::globalInstance()->unregisterAgent( this );
 
     if( this->style ){ this->style->deleteLater(); }
     //if( this->geometry ){ this->geometry->deleteLater(); }
@@ -237,7 +229,6 @@ void GWSAgent::tick(){
 
     if( !this->isRunning() ){
         qInfo() << "Agent is not running, skipping behaviour";
-        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
         return;
     }
 

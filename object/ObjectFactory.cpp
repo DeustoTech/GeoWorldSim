@@ -53,13 +53,15 @@ GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
     QString type = json.value( GWSObject::GWS_TYPE_PROP ).toString();
 
     if( !this->constructors.keys().contains( type ) ){
-        qWarning() << QString("Object type %1 not defined in the ObjectFactory. To register use registerObjectType.").arg( type );
+        qWarning() << QString("Object type %1 not registered in the ObjectFactory.").arg( type );
         return 0;
     }
 
     // Create object
     GWSObject* obj = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
-    if( !obj ){ return 0; }
+    if( !obj ){
+        return 0;
+    }
 
     // Set parent if any
     obj->setParent( parent );

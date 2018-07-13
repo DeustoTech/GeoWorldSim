@@ -10,7 +10,7 @@
 
 #include "../../object/Object.h"
 #include "../../util/units/Units.h"
-#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/GeoCoordinates.h"
 #include "../../util/geometry/Envelope.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSPoint)
@@ -36,14 +36,14 @@ public:
     bool isValid() const;
     bool intersects( const GWSGeometry *other) const;
     bool equals( const GWSGeometry* other ) const;
-    GWSCoordinate getRepresentativeCoordinate() const;
-    QList<GWSCoordinate> getCoordinates() const;
+    GeoCoordinates getRepresentativeCoordinate() const;
+    QList<GeoCoordinates> getCoordinates() const;
     virtual GWSAreaUnit getArea() const;
-    virtual GWSCoordinate getCentroid() const;
+    virtual GeoCoordinates getCentroid() const;
     virtual GWSEnvelope getEnvelope() const;
     virtual double getDistance( const GWSGeometry* other ) const;
-    virtual GWSCoordinate getFirstCoordinate() const;
-    virtual GWSCoordinate getLastCoordinate() const;
+    virtual GeoCoordinates getFirstCoordinate() const;
+    virtual GeoCoordinates getLastCoordinate() const;
 
     // METHODS (Caller takes ownership of returned geometry)
     virtual GWSGeometry* createCopy() const;

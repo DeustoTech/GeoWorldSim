@@ -29,25 +29,25 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
  GETTERS
 **********************************************************************/
 
-GWSGraphNode* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate coor, QString class_name) const{
+GWSGraphNode* GWSNetworkEnvironment::getNodeFromGraph( GeoCoordinates coor, QString class_name) const{
     return this->getNodeFromGraph<GWSGraphNode>( coor , class_name );
 }
 
-template <class T> T* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate coor , QString class_name ) const{
+template <class T> T* GWSNetworkEnvironment::getNodeFromGraph( GeoCoordinates coor , QString class_name ) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
     return dynamic_cast<T*>( this->network_graphs.value( class_name )->findNode( coor ) );
 }
 
-GWSGraphNode* GWSNetworkEnvironment::getNearestNodeFromGraph( GWSCoordinate coor, QString class_name) const{
+GWSGraphNode* GWSNetworkEnvironment::getNearestNodeFromGraph( GeoCoordinates coor, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
     return this->network_graphs.value( class_name )->findNearestNode( coor );
 }
 
-const GWSGraphEdge* GWSNetworkEnvironment::getEdgeFromGraph( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
+const GWSGraphEdge* GWSNetworkEnvironment::getEdgeFromGraph( GeoCoordinates from,  GeoCoordinates to, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }

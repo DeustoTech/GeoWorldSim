@@ -2,7 +2,7 @@
 
 #include "../../util/graph/GraphEdge.h"
 
-GWSGraphNode::GWSGraphNode( GWSCoordinate coor ) : geos::planargraph::Node( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) ){
+GWSGraphNode::GWSGraphNode( GeoCoordinates coor ) : geos::planargraph::Node( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) ){
 }
 
 /**********************************************************************
@@ -35,8 +35,8 @@ const GWSGraphEdge* GWSGraphNode::getArrivingEdgeFrom(GWSGraphNode *from) const{
     return 0;
 }
 
-const GWSCoordinate GWSGraphNode::getCoordinate() const{
-    return GWSCoordinate( this->pt.x , this->pt.y , this->pt.z );
+const GeoCoordinates GWSGraphNode::getCoordinate() const{
+    return GeoCoordinates( this->pt.x , this->pt.y , this->pt.z );
 }
 
 size_t GWSGraphNode::getDegree() const{

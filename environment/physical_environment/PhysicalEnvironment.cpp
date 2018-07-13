@@ -87,7 +87,7 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelo
  * @param class_name ClassName of the agents in the environment from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QString class_name) const{
+QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GeoCoordinates> coors, QString class_name) const{
     QList<GWSAgent*> founds = QList<GWSAgent*>();
     /*foreach(GWSCoordinate coor , coors){
         founds.append( this->getNearestAgent( coor , class_name ) );
@@ -95,8 +95,8 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
     return founds;
 }
 
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<GWSAgent*> agents) const{
-    QList<GWSCoordinate> coors;
+GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QList<GWSAgent*> agents) const{
+    QList<GeoCoordinates> coors;
     coors.append( coor );
     QList<GWSAgent*> nearests = this->getNearestAgents( coors , agents );
     if( !nearests.isEmpty() ){
@@ -112,7 +112,7 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<GWSA
  * @param class_name ClassName of the agents in the environment from which to get the nearest for geometry
  * @return
  */
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
+GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QString class_name) const{
     GWSAgent* found = 0;
     /*if( this->spatial_index.keys().contains(class_name) ){
 
@@ -140,7 +140,7 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString cl
  * @param agents List of agents from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<GWSAgent*> agents) const{
+QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GeoCoordinates> coors, QList<GWSAgent*> agents) const{
     QList<GWSAgent*> founds;
 
     /*GWSQuadtree* index = new GWSQuadtree();

@@ -14,7 +14,7 @@ class GWSObject : public QObject
     friend class GWSExecutionEnvironment;
 
 public:
-    Q_INVOKABLE explicit GWSObject( GWSObject* parent = 0 );
+    Q_INVOKABLE explicit GWSObject( QObject* parent = Q_NULLPTR );
     GWSObject(const GWSObject&);
     ~GWSObject();
 
@@ -49,6 +49,6 @@ private:
     bool deleted = false;
 };
 
-Q_DECLARE_METATYPE(GWSObject)
+Q_DECLARE_METATYPE(GWSObject*)
 
 #endif // GWSOBJECT_H

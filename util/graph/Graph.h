@@ -7,7 +7,7 @@
 #include "../../util/geometry/Quadtree.h"
 #include "../../util/graph/GraphNode.h"
 #include "../../util/graph/GraphEdge.h"
-#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/GeoCoordinates.h"
 
 using namespace geos::planargraph;
 
@@ -23,9 +23,9 @@ public:
     // GETTERS
     bool containsNode( GWSGraphNode* node ) const;
     bool containsEdge( GWSGraphEdge* edge ) const;
-    GWSGraphNode* findNode( GWSCoordinate coor ) const;
-    GWSGraphNode* findNearestNode( GWSCoordinate coor ) const;
-    GWSGraphEdge* findEdge( GWSCoordinate from , GWSCoordinate to ) const;
+    GWSGraphNode* findNode( GeoCoordinates coor ) const;
+    GWSGraphNode* findNearestNode( GeoCoordinates coor ) const;
+    GWSGraphEdge* findEdge( GeoCoordinates from , GeoCoordinates to ) const;
     QList<GWSGraphNode*> findNodesOfDegree( int degree ) const;
     QList<GWSGraphNode*> getNodes() const;
     QList<GWSGraphEdge*> getEdges() const;

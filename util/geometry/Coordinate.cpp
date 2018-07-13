@@ -4,23 +4,11 @@
 
 using namespace geos::geom;
 
-QString GWSCoordinate::X_PROP = "x";
-QString GWSCoordinate::Y_PROP = "y";
-QString GWSCoordinate::Z_PROP = "z";
+QString GWSCoordinate::LATITUDE_PROP = "latitude";
+QString GWSCoordinate::LONGITUDE_PROP = "longitude";
+QString GWSCoordinate::ELEVATION_PROP = "elevation";
 
-GWSCoordinate::GWSCoordinate() : GWSObject( Q_NULLPTR ){
-}
-
-GWSCoordinate::GWSCoordinate( double x, double y, double z ) : GWSObject( Q_NULLPTR ){
-    this->setProperty( GWSCoordinate::X_PROP , x );
-    this->setProperty( GWSCoordinate::Y_PROP , y );
-    this->setProperty( GWSCoordinate::Z_PROP , z );
-}
-
-GWSCoordinate::GWSCoordinate(const GWSCoordinate &other) : GWSObject( Q_NULLPTR ){
-    this->setProperty( GWSCoordinate::X_PROP , other.getX() );
-    this->setProperty( GWSCoordinate::Y_PROP , other.getY() );
-    this->setProperty( GWSCoordinate::Z_PROP , other.getZ() );
+GWSCoordinate::GWSCoordinate( QObject* parent ) : GWSObject( parent ){
 }
 
 /**********************************************************************
@@ -28,24 +16,36 @@ GWSCoordinate::GWSCoordinate(const GWSCoordinate &other) : GWSObject( Q_NULLPTR 
 **********************************************************************/
 
 bool GWSCoordinate::isNull() const{
-    return this->property( X_PROP ).isNull() || this->property( Y_PROP ).isNull() || this->property( Z_PROP ).isNull();
+    return this->property( LATITUDE_PROP ).isNull() && this->property( LONGITUDE_PROP ).isNull() && this->property( ELEVATION_PROP ).isNull();
+}
+
+double GWSCoordinate::getLatitude() const{
+    return this->property( LATITUDE_PROP ).toDouble();
+}
+
+double GWSCoordinate::getLongitude() const{
+    return this->property( LONGITUDE_PROP ).toDouble();
+}
+
+double GWSCoordinate::getAltitude() const{
+    return this->property( ELEVATION_PROP ).toDouble();
 }
 
 double GWSCoordinate::getX() const{
-    return this->property( X_PROP ).toDouble();
+    return this->getLongitude();
 }
 
 double GWSCoordinate::getY() const{
-    return this->property( Y_PROP ).toDouble();
+    return this->getLatitude();
 }
 
 double GWSCoordinate::getZ() const{
-    return this->property( Z_PROP ).toDouble();
+    return this->getAltitude();
 }
 
-double GWSCoordinate::distance(GWSCoordinate other) const{
+double GWSCoordinate::distance(GWSCoordinate* other) const {
     return geos::geom::Coordinate( this->getX() , this->getY() , this->getZ() )
-            .distance( geos::geom::Coordinate( other.getX() , other.getY() , other.getZ() ) );
+            .distance( geos::geom::Coordinate( other->getX() , other->getY() , other->getZ() ) );
 }
 
 /**********************************************************************
@@ -61,8 +61,8 @@ bool GWSCoordinate::operator != (const GWSCoordinate& other) const{
 }
 
 GWSCoordinate& GWSCoordinate::operator = (const GWSCoordinate& other){
-    this->setProperty( X_PROP , other.getX() );
-    this->setProperty( Y_PROP , other.getY() );
-    this->setProperty( Z_PROP , other.getZ() );
+    this->setProperty( LATITUDE_PROP , other.getLatitude() );
+    this->setProperty( LONGITUDE_PROP , other.getLongitude() );
+    this->setProperty( ELEVATION_PROP , other.getAltitude() );
     return *this;
 }

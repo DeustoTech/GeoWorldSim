@@ -58,7 +58,7 @@ bool GWSGraph::containsEdge( GWSGraphEdge* edge) const{
     return found == edge;
 }
 
-GWSGraphEdge* GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
+GWSGraphEdge* GWSGraph::findEdge(GeoCoordinates from, GeoCoordinates to) const{
     if( from == to ){
         return 0;
     }
@@ -76,7 +76,7 @@ GWSGraphEdge* GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
     return 0;
 }
 
-GWSGraphNode* GWSGraph::findNode(GWSCoordinate coor) const{
+GWSGraphNode* GWSGraph::findNode(GeoCoordinates coor) const{
     geos::planargraph::Node* n = const_cast<GWSGraph*>( this )->PlanarGraph::findNode( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) );
     if( n ){
         return dynamic_cast<GWSGraphNode*>( n );
@@ -89,7 +89,7 @@ GWSGraphNode* GWSGraph::findNode(GWSCoordinate coor) const{
  * @param coor
  * @return
  */
-GWSGraphNode* GWSGraph::findNearestNode(GWSCoordinate coor) const{
+GWSGraphNode* GWSGraph::findNearestNode(GeoCoordinates coor) const{
     GWSGraphNode* found = this->findNode( coor );
     if( !found && this->nodes_index ){
         return GWSGraphUtils::globalInstance()->findNearestFromQuadtree( coor , this->nodes_index );
@@ -111,7 +111,7 @@ QList<GWSGraphEdge*> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
         geos::planargraph::DirectedEdge* e  = dynamic_cast<geos::planargraph::DirectedEdge*>( this->dirEdges.at(i) );
         geos::geom::Coordinate c2 = e->getToNode()->getCoordinate();
         geos::geom::Coordinate c1 = e->getFromNode()->getCoordinate();
-        if( env.contains( GWSCoordinate( c1.x , c1.y , c1.z ) ) && env.contains( GWSCoordinate( c2.x , c2.y , c2.z ) ) ){
+        if( env.contains( GeoCoordinates( c1.x , c1.y , c1.z ) ) && env.contains( GeoCoordinates( c2.x , c2.y , c2.z ) ) ){
             edges.append( dynamic_cast<GWSGraphEdge*>( this->dirEdges.at(i) )  );
         }
     }

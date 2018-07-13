@@ -16,21 +16,7 @@ QString GWSEnvelope::RIGHT_PROP = "right";
 QString GWSEnvelope::BOTTOM_PROP = "bottom";
 QString GWSEnvelope::TOP_PROP = "top";
 
-GWSEnvelope::GWSEnvelope() : GWSObject( Q_NULLPTR ){
-}
-
-GWSEnvelope::GWSEnvelope(double left, double right, double bottom, double top) : GWSObject( Q_NULLPTR ){
-    this->setProperty( LEFT_PROP , left );
-    this->setProperty( RIGHT_PROP , right );
-    this->setProperty( BOTTOM_PROP , bottom );
-    this->setProperty( TOP_PROP , top );
-}
-
-GWSEnvelope::GWSEnvelope(const GWSEnvelope &other) : GWSObject( Q_NULLPTR ){
-    this->setProperty( LEFT_PROP , other.getMinX() );
-    this->setProperty( RIGHT_PROP , other.getMaxX() );
-    this->setProperty( BOTTOM_PROP , other.getMinY() );
-    this->setProperty( TOP_PROP , other.getMaxY() );
+GWSEnvelope::GWSEnvelope(QObject *parent) : GWSObject( parent ){
 }
 
 /**********************************************************************
@@ -105,64 +91,64 @@ GWSAreaUnit GWSEnvelope::getArea() const{
     return GWSAreaUnit( geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() ).getArea() );
 }
 
-GWSCoordinate GWSEnvelope::getCentroid() const{
+/*GeoCoordinates GWSEnvelope::getCentroid() const{
     geos::geom::Coordinate c;
     geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() ).centre( c );
-    return GWSCoordinate( c.x , c.y , c.z );
+    return GeoCoordinates( c.x , c.y , c.z );
 }
 
-GWSCoordinate GWSEnvelope::getTopLeft() const{
-    return GWSCoordinate( this->getMinX() , this->getMaxY() );
+GeoCoordinates GWSEnvelope::getTopLeft() const{
+    return GeoCoordinates( this->getMinX() , this->getMaxY() );
 }
 
-GWSCoordinate GWSEnvelope::getBottomLeft() const{
-    return GWSCoordinate( this->getMinX() , this->getMinY() );
+GeoCoordinates GWSEnvelope::getBottomLeft() const{
+    return GeoCoordinates( this->getMinX() , this->getMinY() );
 }
 
-GWSCoordinate GWSEnvelope::getTopRight() const{
-    return GWSCoordinate( this->getMaxX() , this->getMaxY() );
+GeoCoordinates GWSEnvelope::getTopRight() const{
+    return GeoCoordinates( this->getMaxX() , this->getMaxY() );
 }
 
-GWSCoordinate GWSEnvelope::getBottomRight() const{
-    return GWSCoordinate( this->getMaxX() , this->getMinY() );
+GeoCoordinates GWSEnvelope::getBottomRight() const{
+    return GeoCoordinates( this->getMaxX() , this->getMinY() );
 }
 
-GWSCoordinate GWSEnvelope::getRandomCoordinate() const{
+GeoCoordinates GWSEnvelope::getRandomCoordinate() const{
     double x_width = qAbs( this->getMaxX() - this->getMinX() );
     double y_width = qAbs( this->getMaxY() - this->getMinY() );
     double x = UniformDistribution::uniformDistribution() * x_width;
     double y = UniformDistribution::uniformDistribution() * y_width;
-    return GWSCoordinate( this->getMinX() + x , this->getMinY() + y );
-}
+    return GeoCoordinates( this->getMinX() + x , this->getMinY() + y );
+}*/
 
-bool GWSEnvelope::covers(GWSEnvelope env) const{
+bool GWSEnvelope::covers(GWSEnvelope* env) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    return copy.covers( geos::geom::Envelope( env.getMinX() , env.getMaxX() , env.getMinY() , env.getMaxY() ) );
+    return copy.covers( geos::geom::Envelope( env->getMinX() , env->getMaxX() , env->getMinY() , env->getMaxY() ) );
 }
 
-bool GWSEnvelope::covers(GWSCoordinate coor) const{
+bool GWSEnvelope::covers(GWSCoordinate* coor) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    return copy.covers( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) );
+    return copy.covers( geos::geom::Coordinate( coor->getX() , coor->getY() , coor->getZ() ) );
 }
 
-bool GWSEnvelope::contains(GWSCoordinate coor) const{
+bool GWSEnvelope::contains(GWSCoordinate* coor) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    return copy.contains( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) );
+    return copy.contains( geos::geom::Coordinate( coor->getX() , coor->getY() , coor->getZ() ) );
 }
 
-bool GWSEnvelope::contains(GWSEnvelope env) const{
+bool GWSEnvelope::contains(GWSEnvelope* env) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    return copy.contains( geos::geom::Envelope( env.getMinX() , env.getMaxX() , env.getMinY() , env.getMaxY() ) );
+    return copy.contains( geos::geom::Envelope( env->getMinX() , env->getMaxX() , env->getMinY() , env->getMaxY() ) );
 }
 
-bool GWSEnvelope::intersects(GWSEnvelope env) const{
+bool GWSEnvelope::intersects(GWSEnvelope* env) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    return copy.intersects( geos::geom::Envelope( env.getMinX() , env.getMaxX() , env.getMinY() , env.getMaxY() ) );
+    return copy.intersects( geos::geom::Envelope( env->getMinX() , env->getMaxX() , env->getMinY() , env->getMaxY() ) );
 }
 
-void GWSEnvelope::expandToInclude(GWSCoordinate coor){
+void GWSEnvelope::expandToInclude(GWSCoordinate* coor){
     geos::geom::Envelope envelope = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
-    envelope.expandToInclude( coor.getX() , coor.getY() );
+    envelope.expandToInclude( coor->getX() , coor->getY() );
     this->setProperty( LEFT_PROP , envelope.getMinX() );
     this->setProperty( RIGHT_PROP , envelope.getMaxX() );
     this->setProperty( BOTTOM_PROP , envelope.getMinY() );
@@ -193,20 +179,20 @@ void GWSEnvelope::setMinY(double minY){
  METHODS
 **********************************************************************/
 
-GWSEnvelope GWSEnvelope::createBuffer(double buffer) const{
+/*GWSEnvelope GWSEnvelope::createBuffer(double buffer) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
     copy.expandBy( buffer , buffer );
     return GWSEnvelope( copy.getMinX() , copy.getMaxX() , copy.getMinY() , copy.getMaxY() );
-}
+}*/
 
-GWSEnvelope GWSEnvelope::createUnion(GWSEnvelope other) const{
+/*GWSEnvelope GWSEnvelope::createUnion(GWSEnvelope other) const{
     geos::geom::Envelope copy = geos::geom::Envelope( this->getMinX() , this->getMaxX() , this->getMinY() , this->getMaxY() );
     copy.expandToInclude( other.getMaxX() );
     copy.expandToInclude( other.getMaxY() );
     copy.expandToInclude( other.getMinX() );
     copy.expandToInclude( other.getMinY() );
     return GWSEnvelope( copy.getMinX() , copy.getMaxX() , copy.getMinY() , copy.getMaxY() );
-}
+}*/
 
 /*
 GWSPolygon* GWSEnvelope::createPolygon() const{

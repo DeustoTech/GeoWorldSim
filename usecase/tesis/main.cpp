@@ -10,7 +10,10 @@
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
-#include "../../environment/grid_environment/GridEnvironment.h"
+
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Envelope.h"
+#include "../../util/grid/Grid.h"
 
 int main(int argc, char* argv[])
 {
@@ -18,18 +21,18 @@ int main(int argc, char* argv[])
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
     // Init used environments
+    GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
-    GWSGridEnvironment::globalInstance();
 
+    GWSObjectFactory::globalInstance()->registerType( GWSGrid::staticMetaObject );
 
-    // Create agent normal style
-    TerrainAgent* agent2 = new TerrainAgent();
-    agent2->setProperty( "message" , "Hello" );
+    QJsonDocument json = QJsonDocument::fromJson( "{ \"@type\" : \"GWSAgent\" , \"@id\" : \"mygrid\" , \"geo\" : { \"@type\": \"GWSGrid\" , \"latitude\": 40.75 , \"longitude\" : 73.98 } }" );
+    GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->create( json.object() ) );
+    agent1->setProperty( "message" , "Hello" );
 
     // Register in environments
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
-
+    GWSExecutionEnvironment::globalInstance()->registerAgent( agent1 );
 
     GWSExecutionEnvironment::globalInstance()->run();
 

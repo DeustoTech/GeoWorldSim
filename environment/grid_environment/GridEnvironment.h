@@ -4,7 +4,6 @@
 #include "../../environment/Environment.h"
 
 #include "../../util/grid/Grid.h"
-#include "../../util/geometry/Coordinate.h"
 #include "../../util/units/Units.h"
 
 class GWSGridEnvironment : public GWSEnvironment

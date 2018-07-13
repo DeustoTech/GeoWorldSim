@@ -16,7 +16,7 @@ public:
 
     // METHODS
     QMap<GWSGraphEdge* , QList<GWSGraphEdge*> >  createSimplification( const GWSGraph* graph );
-    GWSGraphNode* findNearestFromQuadtree( GWSCoordinate coor , const GWSQuadtree* nodes_index );
+    GWSGraphNode* findNearestFromQuadtree( GeoCoordinates coor , const GWSQuadtree* nodes_index );
 
 private:
     explicit GWSGraphUtils(QObject *parent = 0);

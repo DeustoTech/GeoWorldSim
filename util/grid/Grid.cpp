@@ -7,8 +7,7 @@
 #include <QtMath>
 #include <QDebug>
 
-#include "../../util/geometry/GeometryFactory.h"
-
+#include "../../util/grid/GridCoordinatesConversor.h"
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
 
@@ -16,15 +15,7 @@ QString GWSGrid::MAX_VALUE_PROP = "max";
 QString GWSGrid::MIN_VALUE_PROP = "min";
 QString GWSGrid::BOUNDS_PROP = "bounds";
 
-GWSGrid::GWSGrid() : GWSObject(){
-}
-
-GWSGrid::GWSGrid(const GWSGrid &other) : GWSObject(){
-    this->setBounds( other.getBounds() );
-    this->setSize( other.getXSize() , other.getYSize() );
-    this->setMinValue( other.getMinValue() );
-    this->setMaxValue( other.getMaxValue() );
-    this->values = other.values;
+GWSGrid::GWSGrid(QObject *parent) : GWSObject( parent ){
 }
 
 /**********************************************************************
@@ -53,7 +44,7 @@ QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int ima
             double value = this->getValue( coor );
 
             double diff_max = this->getMaxValue() - this->getMinValue();
-            QPoint p = ImageCoordinatesConversor::reprojectPoint( coor.getY() , coor.getX() , image_bounds.getMaxY() , image_bounds.getMinY() , image_bounds.getMaxX() , image_bounds.getMinX() , image_width , image_height );
+            QPoint p = ImageCoordinatesConversor::reprojectPoint( coor->getY() , coor->getX() , image_bounds.getMaxY() , image_bounds.getMinY() , image_bounds.getMaxX() , image_bounds.getMinX() , image_width , image_height );
 
             if ( value == value && value <= this->getMaxValue() && value >= this->getMinValue() ){
 
@@ -76,10 +67,10 @@ QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int ima
         }
     }*/
 
-    /*int grid_min_x = GridCoordinatesConversor::lon2x( left , grid.getBounds().getMinX() , grid.getBounds().getMaxX() , grid.getXSize() );
-    int grid_max_x = GridCoordinatesConversor::lon2x( right , grid.getBounds().getMinX() , grid.getBounds().getMaxX() , grid.getXSize() );
-    int grid_min_y = GridCoordinatesConversor::lat2y( bottom , grid.getBounds().getMinY() , grid.getBounds().getMaxY() , grid.getYSize() );
-    int grid_max_y = GridCoordinatesConversor::lat2y( top , grid.getBounds().getMinY() , grid.getBounds().getMaxY() , grid.getYSize() );
+    /*int grid_min_x = GridCoordinatesConversor::lon2x( left , grid.getBounds()->getMinX() , grid.getBounds()->getMaxX() , grid.getXSize() );
+    int grid_max_x = GridCoordinatesConversor::lon2x( right , grid.getBounds()->getMinX() , grid.getBounds()->getMaxX() , grid.getXSize() );
+    int grid_min_y = GridCoordinatesConversor::lat2y( bottom , grid.getBounds()->getMinY() , grid.getBounds()->getMaxY() , grid.getYSize() );
+    int grid_max_y = GridCoordinatesConversor::lat2y( top , grid.getBounds()->getMinY() , grid.getBounds()->getMaxY() , grid.getYSize() );
 
     for(int x = grid_min_x; x <= grid_max_x; x++){
         for(int y = grid_min_y; y <= grid_max_y; y++){
@@ -113,8 +104,8 @@ bool GWSGrid::isEmpty() const{
     return this->values.isEmpty();
 }
 
-const GWSEnvelope GWSGrid::getBounds() const{
-    return this->property( BOUNDS_PROP ).value<GWSEnvelope>();
+const GWSEnvelope* GWSGrid::getBounds() const{
+    return this->property( BOUNDS_PROP ).value<GWSEnvelope*>();
 }
 
 unsigned int GWSGrid::getXSize() const{
@@ -130,25 +121,25 @@ double GWSGrid::getCellValue(unsigned int grid_x, unsigned int grid_y) const{
     return this->values[grid_x][grid_y];
 }
 
-double GWSGrid::getCellValue(GWSCoordinate coor) const{
+double GWSGrid::getCellValue(GWSCoordinate* coor) const{
     if( this->isEmpty() ){ return this->getMinValue() - 1; }
-    if( !this->getBounds().covers( coor ) ){
+    if( !this->getBounds()->covers( coor ) ){
         qWarning() << QString("Coordintate outside grid bounds");
         return this->getMinValue() - 1;
     }
-    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , this->getBounds().getMinX() , this->getBounds().getMaxX() , this->getXSize() );
-    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , this->getBounds().getMinY() , this->getBounds().getMaxY() , this->getYSize() );
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->getXSize() );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->getYSize() );
     return this->getCellValue( x , y );
 }
 
-const GWSEnvelope GWSGrid::getCellEnvelope(unsigned int grid_x, unsigned int grid_y) const{
-    double left =   GWSGridCoordinatesConversor::x2lon( grid_x , this->getBounds().getMinX() , this->getBounds().getMaxX() , this->getXSize() );
-    double top =    GWSGridCoordinatesConversor::y2lat( grid_y+1 , this->getBounds().getMinY() , this->getBounds().getMaxY() , this->getYSize() );
-    double right =  GWSGridCoordinatesConversor::x2lon( grid_x+1 , this->getBounds().getMinX() , this->getBounds().getMaxX() , this->getXSize() );
-    double bottom = GWSGridCoordinatesConversor::y2lat( grid_y , this->getBounds().getMinY() , this->getBounds().getMaxY() , this->getYSize() );
+/*const GWSEnvelope GWSGrid::getCellEnvelope(unsigned int grid_x, unsigned int grid_y) const{
+    double left =   GWSGridCoordinatesConversor::x2lon( grid_x , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->getXSize() );
+    double top =    GWSGridCoordinatesConversor::y2lat( grid_y+1 , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->getYSize() );
+    double right =  GWSGridCoordinatesConversor::x2lon( grid_x+1 , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->getXSize() );
+    double bottom = GWSGridCoordinatesConversor::y2lat( grid_y , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->getYSize() );
 
     return GWSEnvelope( left , right , top , bottom );
-}
+}*/
 
 double GWSGrid::getMaxValue() const {
     return this->property( MAX_VALUE_PROP ).toDouble();
@@ -162,13 +153,8 @@ double GWSGrid::getMinValue() const{
  SETTERS
 **********************************************************************/
 
-void GWSGrid::setBounds(double left, double right, double top, double bottom){
-    this->setBounds( GWSEnvelope(left , right , top , bottom) );
-}
-
-void GWSGrid::setBounds(GWSEnvelope bounds){
-    QVariant bounds_variant = QVariant::fromValue<GWSEnvelope>( bounds );
-    this->setProperty( BOUNDS_PROP , bounds_variant );
+void GWSGrid::setBounds(GWSEnvelope* bounds){
+    //this->setProperty( BOUNDS_PROP , bounds );
 }
 
 void GWSGrid::setMaxValue(double max){
@@ -192,37 +178,25 @@ void GWSGrid::setCellValue(unsigned int grid_x, unsigned int grid_y, double v){
     }
 }
 
-void GWSGrid::setCellValue(GWSCoordinate coor, double v){
-    if( !this->getBounds().contains( coor ) ){
+void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
+    if( !this->getBounds()->contains( coor ) ){
         qWarning() << QString("Coordintate outside grid bounds");
         return;
     }
-    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , this->getBounds().getMinX() , this->getBounds().getMaxX() , this->values.size() );
-    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , this->getBounds().getMinY() , this->getBounds().getMaxY() , this->values[0].size() );
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->values.size() );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->values[0].size() );
     this->setCellValue( x , y , v );
-}
-
-/**********************************************************************
- OPERATORS
-**********************************************************************/
-
-GWSGrid& GWSGrid::operator=(const GWSGrid& other){
-    this->values = other.values;
-    this->setBounds( other.getBounds() );
-    this->setMinValue( other.getMinValue() );
-    this->setMaxValue( other.getMaxValue() );
-    return *this;
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-GWSGrid GWSGrid::getSubGrid(GWSEnvelope bounds){
+/*GWSGrid GWSGrid::getSubGrid(GWSEnvelope bounds){
 
     // Create a new GRID
-    double x_per_cell = (this->getBounds().getMaxX() - this->getBounds().getMinX()) / this->getXSize();
-    double y_per_cell = (this->getBounds().getMaxY() - this->getBounds().getMinY()) / this->getYSize();
+    double x_per_cell = (this->getBounds()->getMaxX() - this->getBounds()->getMinX()) / this->getXSize();
+    double y_per_cell = (this->getBounds()->getMaxY() - this->getBounds()->getMinY()) / this->getYSize();
 
     int x_size = (bounds.getMaxX() - bounds.getMinX()) / x_per_cell;
     int y_size = (bounds.getMaxY() - bounds.getMinY()) / y_per_cell;
@@ -258,8 +232,8 @@ GWSGrid GWSGrid::getSubGrid(GWSEnvelope bounds){
 QList<GWSEnvelope> GWSGrid::getSurroundingCells( GWSCoordinate coor ){
     QList<GWSEnvelope> cells;
 
-    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , this->getBounds().getMinX() , this->getBounds().getMaxX() , this->values.size() );
-    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , this->getBounds().getMinY() , this->getBounds().getMaxY() , this->values[0].size() );
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->values.size() );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->values[0].size() );
 
     cells.append( this->getCellEnvelope( x-1, y+1 ) );
     cells.append( this->getCellEnvelope( x-1, y ) );
@@ -274,4 +248,4 @@ QList<GWSEnvelope> GWSGrid::getSurroundingCells( GWSCoordinate coor ){
     cells.append( this->getCellEnvelope( x+1, y-1 ) );
 
     return cells;
-}
+}*/

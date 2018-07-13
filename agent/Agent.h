@@ -42,7 +42,7 @@ class GWSAgent : public GWSObject
 
 public:
 
-    Q_INVOKABLE explicit GWSAgent( GWSObject* parent = Q_NULLPTR ); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
+    Q_INVOKABLE explicit GWSAgent( QObject* parent = Q_NULLPTR ); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
     ~GWSAgent();
 
     // PROPERTIES

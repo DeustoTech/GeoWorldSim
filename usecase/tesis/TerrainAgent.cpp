@@ -1,11 +1,9 @@
 #include "TerrainAgent.h"
 
-#include "../../util/grid/Grid.h"
-
 TerrainAgent::TerrainAgent() : GWSAgent() {
 
-    QVariant grid_variant = QVariant::fromValue<GWSGrid>( GWSGrid() );
-    this->setProperty( "grid" , grid_variant );
+    //QVariant grid_variant = QVariant::fromValue<GWSGrid>( GWSGrid() );
+    //this->setProperty( "grid" , grid_variant );
 }
 
 void TerrainAgent::behave(){

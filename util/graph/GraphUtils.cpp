@@ -102,7 +102,7 @@ QMap<GWSGraphEdge* , QList<GWSGraphEdge*> > GWSGraphUtils::createSimplification(
     return simplified_to_real;
 }
 
-GWSGraphNode* GWSGraphUtils::findNearestFromQuadtree(GWSCoordinate coor , const GWSQuadtree *nodes_index){
+GWSGraphNode* GWSGraphUtils::findNearestFromQuadtree(GeoCoordinates coor , const GWSQuadtree *nodes_index){
     GWSGraphNode* found = 0;
     QList<void *> objs = nodes_index->getElements( coor );
 
@@ -111,7 +111,7 @@ GWSGraphNode* GWSGraphUtils::findNearestFromQuadtree(GWSCoordinate coor , const 
     }
 
     found = ((GWSGraphNode*) objs.at( 0 ) );
-    GWSCoordinate found_coor = found->getCoordinate();
+    GeoCoordinates found_coor = found->getCoordinate();
     double found_distance = coor.distance( found_coor );
     for(int i = 0 ; i < objs.size() ; i++){
         GWSGraphNode* g = ((GWSGraphNode*) objs.at(i));
