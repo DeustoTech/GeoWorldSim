@@ -1,27 +1,32 @@
 #ifndef GWSCOORDINATE_H
 #define GWSCOORDINATE_H
 
-#include "../../object/Object.h"
-
+#include <QPointF>
+#include <QString>
 
 /**
  * @brief The GeoCoordinates class
  * @url https://schema.org/GeoCoordinates
  */
-class GWSCoordinate : public GWSObject
+class GWSCoordinate
 {
-    Q_OBJECT
     friend class GWSGeometryController;
     friend class GWSGraphNode;
     friend class GWSGraphEdge;
 
 public:
-    Q_INVOKABLE explicit GWSCoordinate( QObject* parent = Q_NULLPTR );
+    explicit GWSCoordinate();
 
     // PROPERTIES
     static QString LATITUDE_PROP;
     static QString LONGITUDE_PROP;
     static QString ELEVATION_PROP;
+
+    // IMPORTERS
+    virtual void deserialize(QJsonObject json);
+
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
 
     // GETTERS
     double getX() const;
@@ -29,7 +34,7 @@ public:
     double getZ() const;
     double getLatitude() const;
     double getLongitude() const;
-    double getAltitude() const;
+    double getElevation() const;
     bool isNull() const;
     double distance( GWSCoordinate* other ) const;
 
@@ -38,8 +43,13 @@ public:
     bool operator != (const GWSCoordinate&) const;
     GWSCoordinate& operator= (const GWSCoordinate&);
 
+private:
+    double latitude;
+    double longitude;
+    double altitude;
+
 };
 
-Q_DECLARE_METATYPE(GWSCoordinate*)
+Q_DECLARE_METATYPE(GWSCoordinate)
 
 #endif // GWSCOORDINATE_H

@@ -45,22 +45,23 @@ HEADERS += \
     ../../util/units/Units.h \
     ../../util/uistyle/UiStyle.h \
             ## GEOMETRIES
+    ../../util/geometry/Geometry.h \
+    ../../util/geometry/Point.h \
+    ../../util/geometry/LineString.h \
+    ../../util/geometry/Polygon.h \
     #../../util/geometry/GeometryFactory.h \
-    ../../util/geometry/Coordinate.h \
-    ../../util/geometry/Envelope.h \
-    #../../util/geometry/Geometry.h \
+    #../../util/geometry/Coordinate.h \
+    #../../util/geometry/Envelope.h \
     #../../util/geometry/GeometryUtils.h \
-    #../../util/geometry/LineString.h \
-    #../../util/geometry/Polygon.h \
-    #../../util/geometry/Point.h \
     #../../util/geometry/Quadtree.h \
             ## GRAPH
-    #../../util/graph/GraphNode.h \
+    ../../util/graph/GraphNode.h \
     #../../util/graph/GraphEdge.h \
     #../../util/graph/Graph.h \
     #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
+    ../../util/grid/GeoGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -71,10 +72,11 @@ HEADERS += \
     #../../environment/social_environment/SocialEnvironment.h \
     #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    #../../environment/grid_environment/GridEnvironment.h \
+    ../../environment/grid_environment/GridEnvironment.h \
     #../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-    TerrainAgent.h
+    TerrainAgent.h \
+    TesisBehaviour.h
         # AGENTS
     #agent/person/Person.h
 
@@ -93,14 +95,14 @@ SOURCES += main.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/uistyle/UiStyle.cpp \
             ## GEOMETRIES
+    ../../util/geometry/Geometry.cpp \
+    ../../util/geometry/Point.cpp \
+    ../../util/geometry/LineString.cpp \
+    ../../util/geometry/Polygon.cpp \
     #../../util/geometry/GeometryFactory.cpp \
-    ../../util/geometry/Coordinate.cpp \
-    ../../util/geometry/Envelope.cpp \
-    #../../util/geometry/Geometry.cpp \
+    #../../util/geometry/Coordinate.cpp \
+    #../../util/geometry/Envelope.cpp \
     #../../util/geometry/GeometryUtils.cpp \
-    #../../util/geometry/LineString.cpp \
-    #../../util/geometry/Polygon.cpp \
-    #../../util/geometry/Point.cpp \
     #../../util/geometry/Quadtree.cpp \
             ## GRAPH
     #../../util/graph/GraphNode.cpp \
@@ -109,6 +111,7 @@ SOURCES += main.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
+    ../../util/grid/GeoGrid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
@@ -121,8 +124,9 @@ SOURCES += main.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     #../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    #../../environment/grid_environment/GridEnvironment.cpp \
-    TerrainAgent.cpp
+    ../../environment/grid_environment/GridEnvironment.cpp \
+    TerrainAgent.cpp \
+    TesisBehaviour.cpp
         # AGENTS
     #agent/person/Person.cpp
 

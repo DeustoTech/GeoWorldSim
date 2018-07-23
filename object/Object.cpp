@@ -51,21 +51,27 @@ QJsonObject GWSObject::serialize() const{
     for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
 
         const char* property_name = this->dynamicPropertyNames().at( i );
-        const QVariant property_value = this->property( property_name );
+        const QVariant property_value = this->getProperty( property_name );
 
         switch ( property_value.type() ) {
             case QVariant::Int:
             case QVariant::UInt:
             case QVariant::Double:
             case QVariant::LongLong:
-                json.insert( property_name , this->property( property_name ).toLongLong() ); break;
+                json.insert( property_name , this->getProperty( property_name ).toLongLong() ); break;
             case QVariant::Bool:
-                json.insert( property_name , this->property( property_name ).toBool() ); break;
+                json.insert( property_name , this->getProperty( property_name ).toBool() ); break;
             case QVariant::String:
-                json.insert( property_name , this->property( property_name ).toString() ); break;
+                json.insert( property_name , this->getProperty( property_name ).toString() ); break;
             default:
-                qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
-                json.insert( property_name , this->property( property_name ).toJsonValue() ); break;
+
+                if( GWSObject* obj = qvariant_cast<GWSObject*>( property_value ) ){
+                    json.insert( property_name , obj->serialize() );
+                } else {
+                    qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
+                    json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
+                }
+
         }
 
     }
@@ -94,7 +100,8 @@ void GWSObject::deserialize(QJsonObject json){
                 //this->setProperty( property_name , property_value.toArray() );
                 break; }
         case QJsonValue::Object: {
-                GWSObject* obj = GWSObjectFactory::globalInstance()->create( property_value.toObject() , this );
+                GWSObject* obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this );
+                if( !obj ){ break; }
                 QVariant obj_variant = QVariant::fromValue<GWSObject*>( obj );
                 this->setProperty( property_name , obj_variant ); break; }
         default: {
@@ -110,11 +117,11 @@ void GWSObject::deserialize(QJsonObject json){
 **********************************************************************/
 
 QString GWSObject::getId() const{
-    return this->property( GWSObject::GWS_ID_PROP ).toString();
+    return this->getProperty( GWSObject::GWS_ID_PROP ).toString();
 }
 
 QStringList GWSObject::getInheritanceTree() const{
-    return this->property( GWSObject::GWS_INHERITANCE_TREE_PROP ).toStringList();
+    return this->getProperty( GWSObject::GWS_INHERITANCE_TREE_PROP ).toStringList();
     /*QStringList l;
     const QMetaObject* obj = this->metaObject();
     while( obj ){
@@ -124,12 +131,12 @@ QStringList GWSObject::getInheritanceTree() const{
     return l;*/
 }
 
-const QVariant GWSObject::property( QString name ) const{
+const QVariant GWSObject::getProperty( QString name ) const{
     return QObject::property( name.toLatin1() );
 }
 
 const QVariant GWSObject::operator []( QString name ) const{
-    return this->property( name );
+    return this->getProperty( name );
 }
 
 /**********************************************************************
@@ -140,16 +147,15 @@ bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
 }
 
-template <class T>
-bool GWSObject::setObjectProperty(const QString name, const GWSObject &value){
-    QVariant variant = QVariant::fromValue<T>( value );
+bool GWSObject::setProperty(const QString name, GWSObject *value){
+    QVariant variant = QVariant::fromValue<GWSObject*>( value );
     return this->setProperty( name , variant );
 }
 
 void GWSObject::copyProperties(const GWSObject &other){
     for (int i = 0; i < other.dynamicPropertyNames().size(); ++i) {
         const char* property_name = other.dynamicPropertyNames().at( i );
-        const QVariant property_value = other.property( property_name );
+        const QVariant property_value = other.getProperty( property_name );
         this->setProperty( property_name , property_value );
     }
 }

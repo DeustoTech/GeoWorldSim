@@ -8,25 +8,62 @@
 #include <QDebug>
 
 #include "../../util/grid/GridCoordinatesConversor.h"
-#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
-#include "../../util/grid/GridCoordinatesConversor.h"
+//#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-QString GWSGrid::MAX_VALUE_PROP = "max";
-QString GWSGrid::MIN_VALUE_PROP = "min";
-QString GWSGrid::BOUNDS_PROP = "bounds";
+QString GWSGrid::MAX_VALUE_PROP = "max_value";
+QString GWSGrid::MIN_VALUE_PROP = "min_value";
+QString GWSGrid::VALUES_PROP = "values";
 
-GWSGrid::GWSGrid(QObject *parent) : GWSObject( parent ){
+GWSGrid::GWSGrid() : GWSObject(){
+    qDebug() << "CONSTRUYO";
+}
+
+/**********************************************************************
+ IMPORTERS
+**********************************************************************/
+
+void GWSGrid::deserialize(QJsonObject json){
+    GWSObject::deserialize( json );
+    if( json.value( VALUES_PROP ).isArray() ){
+
+        QJsonArray a1 = json.value( VALUES_PROP ).toArray();
+        this->values = QVector< QVector<double> >( a1.size() );
+
+        for( int i = 0 ; i < a1.size() ; i++){
+
+            QJsonArray a2 = a1.at( i ).toArray();
+            this->values[i] = QVector<double>( a2.size() );
+
+            for( int j = 0 ; j < a2.size() ; j++){
+                this->values[i][j] = a2.at( j ).toDouble();
+            }
+        }
+    }
 }
 
 /**********************************************************************
  EXPORTERS
 **********************************************************************/
 
-QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int image_height) const{
+QJsonObject GWSGrid::serialize() const{
+    QJsonObject json = GWSObject::serialize();
+    QJsonArray a1;
+    for(int i = 0; i < this->values.size() ; i++){
+        QJsonArray a2;
+        for(int j = 0; j < this->values[i].size() ; j++){
+            a2.append( this->getCellValue( i , j ) );
+        }
+        a1.append( a2 );
+    }
+    json.insert( VALUES_PROP , a1 );
+    return json;
+}
+
+/*QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int image_height) const{
 
     // Image to be retured
     QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
-    /*image.fill( QColor( 0 , 0 , 0 , 0 ) );
+    image.fill( QColor( 0 , 0 , 0 , 0 ) );
 
     // Painter
     QPainter painter( &image );
@@ -92,9 +129,9 @@ QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int ima
                 painter.drawImage( 0 , 0 , QImageExporter::format( envelope , image_bounds , image_width , image_height , QColor("black") , QColor( 0 , 0 , 0 , 0 ) ) );
             }
         }
-    }*/
+    }
     return image;
-}
+}*/
 
 /**********************************************************************
  GETTERS
@@ -104,9 +141,9 @@ bool GWSGrid::isEmpty() const{
     return this->values.isEmpty();
 }
 
-const GWSEnvelope* GWSGrid::getBounds() const{
-    return this->property( BOUNDS_PROP ).value<GWSEnvelope*>();
-}
+/*const GWSEnvelope GWSGrid::getBounds() const{
+    //return this->property( BOUNDS_PROP.toLatin1() ).value<GWSEnvelope*>();
+}*/
 
 unsigned int GWSGrid::getXSize() const{
     return this->values.size();
@@ -118,11 +155,14 @@ unsigned int GWSGrid::getYSize() const{
 }
 
 double GWSGrid::getCellValue(unsigned int grid_x, unsigned int grid_y) const{
+    if( grid_x >= this->getXSize() || grid_y >= this->getYSize() ){
+        return NAN;
+    }
     return this->values[grid_x][grid_y];
 }
 
-double GWSGrid::getCellValue(GWSCoordinate* coor) const{
-    if( this->isEmpty() ){ return this->getMinValue() - 1; }
+/*double GWSGrid::getCellValue(GWSCoordinate* coor) const{
+    if( this->isEmpty() ){ return 0; }
     if( !this->getBounds()->covers( coor ) ){
         qWarning() << QString("Coordintate outside grid bounds");
         return this->getMinValue() - 1;
@@ -130,7 +170,7 @@ double GWSGrid::getCellValue(GWSCoordinate* coor) const{
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->getXSize() );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->getYSize() );
     return this->getCellValue( x , y );
-}
+}*/
 
 /*const GWSEnvelope GWSGrid::getCellEnvelope(unsigned int grid_x, unsigned int grid_y) const{
     double left =   GWSGridCoordinatesConversor::x2lon( grid_x , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->getXSize() );
@@ -142,27 +182,27 @@ double GWSGrid::getCellValue(GWSCoordinate* coor) const{
 }*/
 
 double GWSGrid::getMaxValue() const {
-    return this->property( MAX_VALUE_PROP ).toDouble();
+    return this->property( MAX_VALUE_PROP.toLatin1() ).toDouble();
 }
 
 double GWSGrid::getMinValue() const{
-    return this->property( MIN_VALUE_PROP ).toDouble();
+    return this->property( MIN_VALUE_PROP.toLatin1() ).toDouble();
 }
 
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
-void GWSGrid::setBounds(GWSEnvelope* bounds){
-    //this->setProperty( BOUNDS_PROP , bounds );
-}
+/*void GWSGrid::setBounds(GWSEnvelope* bounds){
+    //this->setProperty( GWSGrid::BOUNDS_PROP.toLatin1() , bounds );
+}*/
 
 void GWSGrid::setMaxValue(double max){
-    this->setProperty( MAX_VALUE_PROP , max );
+    this->setProperty( MAX_VALUE_PROP.toLatin1() , max );
 }
 
 void GWSGrid::setMinValue(double min){
-    this->setProperty( MIN_VALUE_PROP , min );
+    this->setProperty( MIN_VALUE_PROP.toLatin1() , min );
 }
 
 void GWSGrid::setSize(unsigned int x_size, unsigned int y_size){
@@ -178,7 +218,7 @@ void GWSGrid::setCellValue(unsigned int grid_x, unsigned int grid_y, double v){
     }
 }
 
-void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
+/*void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
     if( !this->getBounds()->contains( coor ) ){
         qWarning() << QString("Coordintate outside grid bounds");
         return;
@@ -186,7 +226,33 @@ void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->values.size() );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->values[0].size() );
     this->setCellValue( x , y , v );
+}*/
+
+
+/**********************************************************************
+ OPERATORS
+**********************************************************************/
+
+GWSGrid* GWSGrid::operator +(double number){
+    for(int i = 0; i < this->values.size() ; i++) {
+        for( int j = 0; j < this->values[i].size() ; j++){
+            double value = this->getCellValue( i , j );
+            this->setCellValue( i , j , qMin( this->getMaxValue() , value+number ) );
+        }
+    }
+    return this;
 }
+
+GWSGrid* GWSGrid::operator ++(){
+    for(int i = 0; i < this->values.size() ; i++) {
+        for( int j = 0; j < this->values[i].size() ; j++){
+            double value = this->getCellValue( i , j );
+            this->setCellValue( i , j , qMin( this->getMaxValue() , value++ ) );
+        }
+    }
+    return this;
+}
+
 
 /**********************************************************************
  METHODS

@@ -6,6 +6,12 @@
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
 
+#include "../../util/geometry/Point.h"
+#include "../../util/geometry/LineString.h"
+#include "../../util/geometry/Polygon.h"
+
+#include "../../util/grid/Grid.h"
+
 #include "../../util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
@@ -20,6 +26,12 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSAgent::staticMetaObject );
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
+
+    this->registerType( GWSPoint::staticMetaObject );
+    this->registerType( GWSLineString::staticMetaObject );
+    this->registerType( GWSPolygon::staticMetaObject );
+
+    this->registerType( GWSGrid::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
@@ -37,13 +49,19 @@ const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
     return this->constructors.value( type_name );
 }
 
-GWSObject* GWSObjectFactory::create( QString type , GWSObject* parent ){
+/*GWSObject* GWSObjectFactory::create( QString type , GWSObject* parent ){
     QJsonObject json;
     json.insert( GWSObject::GWS_TYPE_PROP , type );
     return this->create( json , parent );
+}*/
+
+GWSObject* GWSObjectFactory::fromType( QString type , GWSObject* parent ){
+    QJsonObject json;
+    json.insert( GWSObject::GWS_TYPE_PROP , type );
+    return this->fromJSON( json , parent );
 }
 
-GWSObject* GWSObjectFactory::create( QJsonObject json , GWSObject* parent ){
+GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
 
     if( json.isEmpty() ){
         qDebug() << QString("Empty JSON");

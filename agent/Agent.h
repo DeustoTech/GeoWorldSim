@@ -47,6 +47,8 @@ public:
 
     // PROPERTIES
     static QString RUNNING_PROP;
+    static QString GEOMETRY_PROP;
+    static QString STYLE_PROP;
         /**
         * @brief next_operation_datetime Agent's tick will be called when this datetime has been reached
         * To be compared with the TimeEnvironment and call this agent's tick
@@ -67,7 +69,6 @@ public:
     bool isRunning() const;
     bool isBusy() const;
     qint64 getInternalTime() const;
-    GWSUiStyle* getStyle() const;
 
     // SKILLS
     bool hasSkill( QString class_name ) const;
@@ -78,6 +79,7 @@ public:
 
     // SETTERS
     //virtual void setGeometry( GSSGeometry* geometry );
+    void setStartBehaviour( GWSBehaviour* start_behaviour );
     void setInternalTime( qint64 datetime );
     void incrementInternalTime( GWSTimeUnit seconds = GWSTimeUnit(0) );
     void incrementBusy();
@@ -87,7 +89,7 @@ public:
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     void tick(); // Acts as a behave() wrapper
-    virtual void behave(){} // Behaviour, To be implemented by children, must be synchronous because tick is already asyncrhonous
+    virtual void behave(); // Behaviour, To be implemented by children, must be synchronous because tick is already asyncrhonous
 
 signals:
     void agentStartedSignal();
@@ -104,12 +106,7 @@ protected:
     /**
      * @brief Agent behaviour
      */
-    GWSBehaviour* behaviour_start = Q_NULLPTR;
-
-    /**
-     * Color, icon style...
-     **/
-    GWSUiStyle* style = Q_NULLPTR;
+    GWSBehaviour* start_behaviour = Q_NULLPTR;
 
     /**
       * Mutex for paralelism

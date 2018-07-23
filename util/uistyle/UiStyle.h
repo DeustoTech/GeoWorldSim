@@ -41,6 +41,6 @@ public:
     double zoom_level = 0;                  // Zoom level from which on to appear
 };
 
-
+Q_DECLARE_METATYPE(GWSUiStyle*)
 
 #endif // GWSUISTYLE_H

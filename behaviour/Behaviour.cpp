@@ -40,19 +40,37 @@ bool GWSBehaviour::finished(){
 }
 
 /**********************************************************************
+ SETTERS
+**********************************************************************/
+
+void GWSBehaviour::addSubbehaviour(GWSBehaviour *sub_behaviour){
+    Q_ASSERT( this->parent() == sub_behaviour->parent() );
+    this->sub_behaviours.append( sub_behaviour );
+}
+
+void GWSBehaviour::setNextBehaviour(GWSBehaviour *next_behaviour){
+    Q_ASSERT( this->parent() == next_behaviour->parent() );
+    this->next_behaviour = next_behaviour;
+}
+
+/**********************************************************************
  SLOTS
 **********************************************************************/
 
 /**
  * This method is a wrapper slot to be invoked by the GWSAgent for behave() to be executed in the agents thread.
  **/
-void GWSBehaviour::tick(){
+bool GWSBehaviour::tick(){
+
+    bool behaved_correctly = false;
 
     this->getAgent()->incrementBusy();
 
-    this->behave();
+    behaved_correctly = this->behave();
 
     this->getAgent()->decrementBusy();
+
+    return behaved_correctly;
 }
 
 bool GWSBehaviour::behave(){
@@ -63,7 +81,7 @@ bool GWSBehaviour::behave(){
     foreach(GWSBehaviour* sub, this->sub_behaviours) {
 
         if( !sub->finished() ){
-            success = sub->behave();
+            success = sub->tick();
             if( !success ){
                 break;
             }

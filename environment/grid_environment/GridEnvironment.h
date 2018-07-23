@@ -13,13 +13,6 @@ class GWSGridEnvironment : public GWSEnvironment
 public:
     static GWSGridEnvironment* globalInstance();
 
-    // EXPORTERS
-    //QJsonObject toJSON();
-    //void fromJSON(QJsonObject json);
-
-    // GETTERS
-
-
 protected:
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);

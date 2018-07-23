@@ -1,7 +1,6 @@
 #ifndef GWSENVELOPE_H
 #define GWSENVELOPE_H
 
-#include "../../object/Object.h"
 #include <QImage>
 #include <QColor>
 
@@ -10,7 +9,7 @@
 
 QT_FORWARD_DECLARE_CLASS(GWSPolygon)
 
-class GWSEnvelope : public GWSObject
+class GWSEnvelope
 {
     Q_OBJECT
 

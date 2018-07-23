@@ -3,8 +3,6 @@
 #include <QDebug>
 #include <QtMath>
 
-GWSGridCoordinatesConversor::GWSGridCoordinatesConversor(QObject *parent) : QObject(parent){
-}
 
 /**********************************************************************
  GETTERS

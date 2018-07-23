@@ -5,7 +5,6 @@
 
 #include "geos/geom/GeometryFactory.h"
 
-#include "../../util/geometry/GeoCoordinates.h"
 #include "../../util/geometry/Envelope.h"
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Point.h"

@@ -72,19 +72,19 @@ QString GWSEnvelope::toWKT() const{
 **********************************************************************/
 
 double GWSEnvelope::getMaxX() const{
-    return this->property( RIGHT_PROP ).toDouble();
+    return this->getProperty( RIGHT_PROP ).toDouble();
 }
 
 double GWSEnvelope::getMinX() const{
-    return this->property( LEFT_PROP ).toDouble();
+    return this->getProperty( LEFT_PROP ).toDouble();
 }
 
 double GWSEnvelope::getMaxY() const{
-    return this->property( TOP_PROP ).toDouble();
+    return this->getProperty( TOP_PROP ).toDouble();
 }
 
 double GWSEnvelope::getMinY() const{
-    return this->property( BOTTOM_PROP ).toDouble();
+    return this->getProperty( BOTTOM_PROP ).toDouble();
 }
 
 GWSAreaUnit GWSEnvelope::getArea() const{

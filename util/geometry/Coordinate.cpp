@@ -16,19 +16,19 @@ GWSCoordinate::GWSCoordinate( QObject* parent ) : GWSObject( parent ){
 **********************************************************************/
 
 bool GWSCoordinate::isNull() const{
-    return this->property( LATITUDE_PROP ).isNull() && this->property( LONGITUDE_PROP ).isNull() && this->property( ELEVATION_PROP ).isNull();
+    return this->getProperty( LATITUDE_PROP ).isNull() && this->getProperty( LONGITUDE_PROP ).isNull() && this->getProperty( ELEVATION_PROP ).isNull();
 }
 
 double GWSCoordinate::getLatitude() const{
-    return this->property( LATITUDE_PROP ).toDouble();
+    return this->latitude; //this->getProperty( LATITUDE_PROP ).toDouble();
 }
 
 double GWSCoordinate::getLongitude() const{
-    return this->property( LONGITUDE_PROP ).toDouble();
+    return this->longitude; //this->getProperty( LONGITUDE_PROP ).toDouble();
 }
 
-double GWSCoordinate::getAltitude() const{
-    return this->property( ELEVATION_PROP ).toDouble();
+double GWSCoordinate::getElevation() const{
+    return this->altitude; //this->getProperty( ELEVATION_PROP ).toDouble();
 }
 
 double GWSCoordinate::getX() const{
@@ -40,7 +40,7 @@ double GWSCoordinate::getY() const{
 }
 
 double GWSCoordinate::getZ() const{
-    return this->getAltitude();
+    return this->getElevation();
 }
 
 double GWSCoordinate::distance(GWSCoordinate* other) const {
@@ -63,6 +63,6 @@ bool GWSCoordinate::operator != (const GWSCoordinate& other) const{
 GWSCoordinate& GWSCoordinate::operator = (const GWSCoordinate& other){
     this->setProperty( LATITUDE_PROP , other.getLatitude() );
     this->setProperty( LONGITUDE_PROP , other.getLongitude() );
-    this->setProperty( ELEVATION_PROP , other.getAltitude() );
+    this->setProperty( ELEVATION_PROP , other.getElevation() );
     return *this;
 }

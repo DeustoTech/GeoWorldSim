@@ -23,13 +23,17 @@ public:
     GWSBehaviour* getNext();
     virtual bool finished(); // Behaviour finished check
 
+    // SETTERS
+    void addSubbehaviour( GWSBehaviour* sub_behaviour );
+    void setNextBehaviour( GWSBehaviour* next_behaviour );
+
 protected:
 
     QList<GWSBehaviour*> sub_behaviours;
     GWSBehaviour* next_behaviour = Q_NULLPTR;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
-    void tick(); // Acts as a behave() wrapper
+    bool tick(); // Acts as a behave() wrapper
     virtual bool behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asyncrhonous
 
 };

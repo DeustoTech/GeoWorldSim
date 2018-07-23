@@ -1,36 +1,36 @@
-#ifndef GSSLINESTRING_H
-#define GSSLINESTRING_H
+#ifndef GWSLINESTRING_H
+#define GWSLINESTRING_H
 
 #include <QList>
 
-#include "../../util/geometry/Geometry.h"
-#include "../../geos/geom/LineString.h"
+#include "Geometry.h"
+#include "Point.h"
+#include "geos/geom/LineString.h"
 
 class GWSLineString : public GWSGeometry
 {
     Q_OBJECT
-    friend class GWSGeometryFactory; // GeometryController can access this constructor
-    friend class GSSGeometryUtils;
-    friend class GWSGeometry;
 
 public:
+    Q_INVOKABLE explicit GWSLineString( QList<GWSPoint> points = QList<GWSPoint>() );
+
+    // IMPORTERS
+    virtual void deserialize(QJsonObject json);
 
     // EXPORTERS
-    virtual QImage toImage(const GWSEnvelope image_bounds, int image_width = 1024, int image_height = 1024, QColor border_color = QColor("Black"), int border_width = 10 , QColor fill_color = QColor("Green"), QImage icon = QImage()) const;
-    virtual QJsonObject toGeoJSON(QJsonObject properties) const;
+    virtual QJsonObject serialize() const;
+    //virtual QImage toImage(const GWSEnvelope image_bounds, int image_width = 1024, int image_height = 1024, QColor border_color = QColor("Black"), int border_width = 10 , QColor fill_color = QColor("Green"), QImage icon = QImage()) const;
 
     // GETTERS
     GWSLengthUnit getLength() const;
 
-    // METHODS (Caller takes ownership of returned geometry)
-    GWSLineString* createReversed() const;
-    QList<GWSLineString*> createChopsFromCoordinates() const;
-    QList<GWSLineString*> createAmountChops( int amount ) const;
-    virtual GWSLineString* createCopy() const;
+    // METHODS
+    GWSLineString getReversed() const;
 
-protected:
-    explicit GWSLineString( geos::geom::LineString* geom , GWSObject *parent = 0);
-
+private:
+    GWSLineString( geos::geom::LineString* inner_geometry );
 };
 
-#endif // GSSLINESTRING_H
+Q_DECLARE_METATYPE(GWSLineString*)
+
+#endif // GWSLINESTRING_H

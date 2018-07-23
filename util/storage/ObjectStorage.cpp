@@ -85,7 +85,7 @@ void GWSObjectStorage::add( GWSObject* object ){
     // Create storages
     QStringList classes = object->getInheritanceTree();
     classes.append( object->staticMetaObject.className() );
-    classes.append( object->property( GWSObject::GWS_TYPE_PROP ).toString() );
+    classes.append( object->getProperty( GWSObject::GWS_TYPE_PROP ).toString() );
     foreach( QString c , classes ){
         if( !this->classes_stored.contains( c ) ){
 
@@ -122,7 +122,7 @@ void GWSObjectStorage::remove( GWSObject* object ){
     // Remove from storage
     QStringList classes = object->getInheritanceTree();
     classes.append( object->staticMetaObject.className() );
-    classes.append( object->property( GWSObject::GWS_TYPE_PROP ).toString() );
+    classes.append( object->getProperty( GWSObject::GWS_TYPE_PROP ).toString() );
     foreach( QString c , classes ){
         this->mutex.lock();
 

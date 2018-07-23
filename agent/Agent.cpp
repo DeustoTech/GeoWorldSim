@@ -11,10 +11,11 @@
 #include "../../skill/Skill.h"
 
 QString GWSAgent::RUNNING_PROP = "running";
+QString GWSAgent::GEOMETRY_PROP = "geo";
+QString GWSAgent::STYLE_PROP = "style";
 QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
 GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , busy_counter(0) {
-    this->style = new GWSUiStyle( this );
 }
 
 GWSAgent::~GWSAgent() {
@@ -22,7 +23,6 @@ GWSAgent::~GWSAgent() {
 
     QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
 
-    if( this->style ){ this->style->deleteLater(); }
     //if( this->geometry ){ this->geometry->deleteLater(); }
     if( this->timer ){ this->timer->deleteLater(); }
 
@@ -88,7 +88,7 @@ QJsonObject GWSAgent::serialize() const{
 **********************************************************************/
 
 bool GWSAgent::isRunning() const{
-    return this->property( GWSAgent::RUNNING_PROP ).toBool();
+    return this->getProperty( GWSAgent::RUNNING_PROP ).toBool();
 }
 
 bool GWSAgent::isBusy() const{
@@ -96,7 +96,7 @@ bool GWSAgent::isBusy() const{
 }
 
 qint64 GWSAgent::getInternalTime() const{
-    return this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
+    return this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
 /*const GWSGeometry* GWSAgent::getGeometry() const{
@@ -114,10 +114,6 @@ qint64 GWSAgent::getInternalTime() const{
     }
     return GWSCoordinate(0,0,0);
 }*/
-
-GWSUiStyle* GWSAgent::getStyle() const{
-    return this->style;
-}
 
 bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
@@ -187,12 +183,16 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
     }
 }*/
 
+void GWSAgent::setStartBehaviour(GWSBehaviour *start_behaviour){
+    this->start_behaviour = start_behaviour;
+}
+
 void GWSAgent::setInternalTime( const qint64 datetime ){
     this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
 }
 
 void GWSAgent::incrementInternalTime( GWSTimeUnit seconds ){
-    qint64 datetime = this->property( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
+    qint64 datetime = this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
     this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
 }
 
@@ -205,9 +205,6 @@ void GWSAgent::decrementBusy(){
 }
 
 void GWSAgent::addSkill(GWSSkill *skill){
-    if( skill->parent() == 0 ){ skill->setParent( this ); }
-    Q_ASSERT( skill->parent() == this );
-
     if( !this->skills ){
         this->skills = new GWSObjectStorage( this );
     }
@@ -233,27 +230,27 @@ void GWSAgent::tick(){
     }
 
     this->incrementBusy();
-
-    // Behave
     this->behave();
-
     this->decrementBusy();
 
-    /*GWSBehaviour* next_execute_behaviour = this->behaviour_start;
+    emit this->agentBehavedSignal();
+}
+
+void GWSAgent::behave(){
+
+    GWSBehaviour* next_execute_behaviour = this->start_behaviour;
     while( next_execute_behaviour && next_execute_behaviour->finished() ){
         next_execute_behaviour = next_execute_behaviour->getNext();
     }
 
     if( next_execute_behaviour ){
+        qDebug() << QString("Executing behaviour %1 %2").arg( next_execute_behaviour->metaObject()->className() ).arg( next_execute_behaviour->getId() );
         this->timer->singleShot( 10 + (qrand() % 100) , next_execute_behaviour , &GWSBehaviour::tick );
     }
 
-    this->decrementBusy();
-
     // No behaviour, not busy anymore
-    if( !this->behaviour_start ){
+    if( !this->start_behaviour ){
         this->busy_counter = 0;
-    }*/
+    }
 
-    emit this->agentBehavedSignal();
 }

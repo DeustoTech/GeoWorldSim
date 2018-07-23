@@ -17,8 +17,9 @@ public:
     // METHODS
     void registerType( const QMetaObject metaobject );
     const QMetaObject getRegisteredType( QString type_name );
-    GWSObject* create( QString type , GWSObject* parent = Q_NULLPTR );
-    virtual GWSObject* create( QJsonObject json = QJsonObject() , GWSObject* parent = Q_NULLPTR );
+    //GWSObject* create( QString type , GWSObject* parent = Q_NULLPTR );
+    GWSObject* fromType( QString type , GWSObject* parent = Q_NULLPTR );
+    GWSObject* fromJSON( QJsonObject json = QJsonObject() , GWSObject* parent = Q_NULLPTR );
 
 protected:
     GWSObjectFactory();

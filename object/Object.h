@@ -7,7 +7,7 @@
 
 class GWSObject : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT // REQUIRED IN EVERY CHILD
 
     friend class GWSObjectFactory;
     friend class GWSEnvironment;
@@ -33,12 +33,12 @@ public:
     // GETTERS
     QString getId() const;
     QStringList getInheritanceTree() const;
-    const QVariant property( QString name ) const;
+    const QVariant getProperty( QString name ) const;
     const QVariant operator[]( QString name ) const;
 
     // SETTERS
     bool setProperty(const QString name, const QVariant &value);
-    template <class T> bool setObjectProperty(const QString name, const GWSObject &value);
+    bool setProperty(const QString name, GWSObject* value);
     void copyProperties(const GWSObject &other );
 
 private:
@@ -49,6 +49,6 @@ private:
     bool deleted = false;
 };
 
-Q_DECLARE_METATYPE(GWSObject*)
+Q_DECLARE_METATYPE(GWSObject*) // REQUIRED IN EVERY CHILD
 
 #endif // GWSOBJECT_H

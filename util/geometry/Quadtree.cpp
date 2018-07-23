@@ -4,7 +4,7 @@
 
 #include "geos/geom/Envelope.h"
 
-GWSQuadtree::GWSQuadtree(QObject *parent) : QObject(parent){
+GWSQuadtree::GWSQuadtree() : GWSObject(){
     this->inner_index = new geos::index::quadtree::Quadtree();
 }
 
@@ -13,13 +13,13 @@ GWSQuadtree::~GWSQuadtree(){
     this->inner_index = 0;
 }
 
-QList<void *> GWSQuadtree::getElements(GeoCoordinates coor) const{
-    GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
-    return this->getElements( env );
+QList<GWSAgent *> GWSQuadtree::getElements(GWSPoint point) const{
+    /*GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
+    return this->getElements( env );*/
 }
 
-QList<void *> GWSQuadtree::getElements(GWSEnvelope env) const{
-    QList<void *> objs;
+QList<GWSAgent *> GWSQuadtree::getElements(GWSPolygon env) const{
+    /*QList<void *> objs;
     std::vector<void*> vector;
 
     if( !this->inner_index ){
@@ -36,29 +36,23 @@ QList<void *> GWSQuadtree::getElements(GWSEnvelope env) const{
             objs.append( vector.at(i) );
         }
     }
-    return objs;
+    return objs;*/
 }
 
-void GWSQuadtree::insert(GeoCoordinates env, void *elm){
-    this->insert( GWSEnvelope( env.getX() , env.getX() , env.getY() , env.getY() ) , elm );
-}
 
-void GWSQuadtree::insert(GWSEnvelope env, void *elm){
-    this->mutex.lock();
+void GWSQuadtree::insert(GWSAgent* agent){
+    /*this->mutex.lock();
     geos::geom::Envelope* e = new geos::geom::Envelope( env.getMinX() , env.getMaxX() , env.getMinY() , env.getMaxY() );
     this->inner_index->insert( e , elm );
     delete e;
-    this->mutex.unlock();
+    this->mutex.unlock();*/
 }
 
-void GWSQuadtree::remove(GeoCoordinates env, void *elm){
-    this->remove( GWSEnvelope( env.getX() , env.getX() , env.getY() , env.getY() ) , elm );
-}
 
-void GWSQuadtree::remove(GWSEnvelope env , void *elm){
-    this->mutex.lock();
+void GWSQuadtree::remove(GWSAgent* agent){
+    /*this->mutex.lock();
     geos::geom::Envelope* e = new geos::geom::Envelope( env.getMinX() , env.getMaxX() , env.getMinY() , env.getMaxY() );
     this->inner_index->remove( e , elm );
     delete e;
-    this->mutex.unlock();
+    this->mutex.unlock();*/
 }

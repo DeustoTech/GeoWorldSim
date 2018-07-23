@@ -1,10 +1,6 @@
 #include "ImageCoordinatesConversor.h"
 #include <QtMath>
 
-ImageCoordinatesConversor::ImageCoordinatesConversor(QObject *parent) : QObject(parent){
-
-}
-
 /**********************************************************************
  GETTERS
 **********************************************************************/

@@ -1,28 +1,33 @@
-#ifndef GSSPOLYGON_H
-#define GSSPOLYGON_H
+#ifndef GWSPOLYGON_H
+#define GWSPOLYGON_H
 
-#include "../../util/geometry/Geometry.h"
+#include "Geometry.h"
+#include "LineString.h"
 #include "../../geos/geom/Polygon.h"
 
 class GWSPolygon : public GWSGeometry
 {
     Q_OBJECT
-    friend class GWSGeometryFactory; // GeometryController can access this constructor
-    friend class GSSGeometryUtils;
-    friend class GWSGeometry;
 
 public:
 
+    Q_INVOKABLE explicit GWSPolygon( GWSLineString outer_ring = GWSLineString() , QList<GWSLineString> inner_rings = QList<GWSLineString>() );
+
+    // IMPORTERS
+    virtual void deserialize(QJsonObject json);
+
     // EXPORTERS
-    virtual QImage toImage(const GWSEnvelope image_bounds, int image_width = 1024, int image_height = 1024, QColor border_color = QColor("Black"), int border_width = 10 , QColor fill_color = QColor("Green"), QImage icon = QImage()) const;
-    virtual QJsonObject toGeoJSON(QJsonObject properties) const;
+    virtual QJsonObject serialize() const;
+    //virtual QImage toImage(const GWSEnvelope image_bounds, int image_width = 1024, int image_height = 1024, QColor border_color = QColor("Black"), int border_width = 10 , QColor fill_color = QColor("Green"), QImage icon = QImage()) const;
 
     // GETTERS
 
-    // METHODS (Caller takes ownership of returned geometry)
+    // METHODS
 
-protected:
-    explicit GWSPolygon( geos::geom::Polygon* geom , GWSObject *parent = 0);
+private:
+    GWSPolygon( geos::geom::Polygon* inner_geometry );
 };
 
-#endif // GSSPOLYGON_H
+Q_DECLARE_METATYPE(GWSPolygon*)
+
+#endif // GWSPOLYGON_H

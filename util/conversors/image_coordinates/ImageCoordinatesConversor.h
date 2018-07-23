@@ -1,15 +1,12 @@
-#ifndef IMAGECOORDINATESCONVERSOR_H
-#define IMAGECOORDINATESCONVERSOR_H
+#ifndef GWSIMAGECOORDINATESCONVERSOR_H
+#define GWSIMAGECOORDINATESCONVERSOR_H
 
-#include <QObject>
 #include <QPoint>
 
-class ImageCoordinatesConversor : public QObject
+class ImageCoordinatesConversor
 {
-    Q_OBJECT
-public:
 
-    explicit ImageCoordinatesConversor(QObject *parent = 0);
+public:
 
     // METHODS
     static QPoint reprojectPoint(double lat, double lon, double max_lat, double min_lat, double max_lon, double min_lon , int image_x_size, int image_y_size);
@@ -20,4 +17,4 @@ public:
 };
 
 
-#endif // IMAGECOORDINATESCONVERSOR_H
+#endif // GWSIMAGECOORDINATESCONVERSOR_H
