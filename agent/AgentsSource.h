@@ -12,7 +12,7 @@ public:
 
     // PROPERTIES
     static QString CREATION_TYPE_PROP;
-    static QString CREATEION_RATIO_PROP; // Agents per second
+    static QString CREATION_RATIO_PROP; // Agents per second
     static QString CREATION_LIMIT_PROP; // Limit amount
     static QString CREATED_AMOUNT_PROP; // Limit amount
 
