@@ -26,10 +26,7 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSAgent::staticMetaObject );
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
-
-    this->registerType( GWSPoint::staticMetaObject );
-    this->registerType( GWSLineString::staticMetaObject );
-    this->registerType( GWSPolygon::staticMetaObject );
+    this->registerType( GWSGeometry::staticMetaObject );
 
     this->registerType( GWSGrid::staticMetaObject );
 }

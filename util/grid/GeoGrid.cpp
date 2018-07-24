@@ -13,14 +13,14 @@ GWSGeoGrid::GWSGeoGrid() : GWSGrid(){
  GETTERS
 **********************************************************************/
 
-GWSPolygon* GWSGeoGrid::getGridBounds() const{
+GWSGeometry* GWSGeoGrid::getGridBounds() const{
 
 }
 
-double GWSGeoGrid::getCellValue(const GWSPoint *point) const{
+double GWSGeoGrid::getCellValue(const GWSCoordinate point ) const{
 
 }
 
-GWSPolygon* GWSGeoGrid::getCellEnvelope(unsigned int grid_x, unsigned int grid_y) const{
+GWSGeometry* GWSGeoGrid::getCellEnvelope(unsigned int grid_x, unsigned int grid_y) const{
 
 }

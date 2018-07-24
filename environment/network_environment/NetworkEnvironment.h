@@ -1,10 +1,11 @@
-#ifndef NETWORKENVIRONMENT_H
-#define NETWORKENVIRONMENT_H
+#ifndef GWSNETWORKENVIRONMENT_H
+#define GWSNETWORKENVIRONMENT_H
 
 #include <QObject>
 #include <QMutex>
 
 #include "../../environment/Environment.h"
+#include "../../util/geometry/Coordinate.h"
 #include "../../util/graph/Graph.h"
 #include "../../util/graph/GraphEdge.h"
 #include "../../util/graph/GraphNode.h"
@@ -21,12 +22,12 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    GWSGraphNode* getNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
-    template <class T> T* getNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
+    const GWSGraphNode* getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    template <class T> const T* getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
 
-    GWSGraphNode* getNearestNodeFromGraph( GeoCoordinates coor , QString class_name ) const;
+    const GWSGraphNode* getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;
 
-    const GWSGraphEdge* getEdgeFromGraph( GeoCoordinates from , GeoCoordinates to , QString class_name ) const;
+    const GWSGraphEdge* getEdgeFromGraph( GWSCoordinate from_point , GWSCoordinate to_point , QString class_name ) const;
 
     const GWSGraph* getGraph( QString class_name ) const;
 
@@ -48,4 +49,4 @@ private:
 
 };
 
-#endif // NETWORKENVIRONMENT_H
+#endif // GWSNETWORKENVIRONMENT_H

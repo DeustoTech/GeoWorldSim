@@ -83,7 +83,7 @@ unsigned int GWSObjectStorage::getCount(){
 void GWSObjectStorage::add( GWSObject* object ){
 
     // Create storages
-    QStringList classes = object->getInheritanceTree();
+    QStringList classes = object->getInheritanceFamily();
     classes.append( object->staticMetaObject.className() );
     classes.append( object->getProperty( GWSObject::GWS_TYPE_PROP ).toString() );
     foreach( QString c , classes ){
@@ -120,7 +120,7 @@ void GWSObjectStorage::add( GWSObject* object ){
 void GWSObjectStorage::remove( GWSObject* object ){
 
     // Remove from storage
-    QStringList classes = object->getInheritanceTree();
+    QStringList classes = object->getInheritanceFamily();
     classes.append( object->staticMetaObject.className() );
     classes.append( object->getProperty( GWSObject::GWS_TYPE_PROP ).toString() );
     foreach( QString c , classes ){

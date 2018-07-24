@@ -1,55 +1,34 @@
 #ifndef GWSCOORDINATE_H
 #define GWSCOORDINATE_H
 
-#include <QPointF>
+#include <QObject>
 #include <QString>
 
-/**
- * @brief The GeoCoordinates class
- * @url https://schema.org/GeoCoordinates
- */
-class GWSCoordinate
-{
-    friend class GWSGeometryController;
-    friend class GWSGraphNode;
-    friend class GWSGraphEdge;
+#include "../units/Units.h"
 
-public:
-    explicit GWSCoordinate();
+struct GWSCoordinate {
+    double x = 0;
+    double y = 0;
+    double z = 0;
 
-    // PROPERTIES
-    static QString LATITUDE_PROP;
-    static QString LONGITUDE_PROP;
-    static QString ELEVATION_PROP;
-
-    // IMPORTERS
-    virtual void deserialize(QJsonObject json);
-
-    // EXPORTERS
-    virtual QJsonObject serialize() const;
+    // CONSTRUCTORS
+    GWSCoordinate() : x(0) , y(0) , z(0){}
+    GWSCoordinate(double x, double y, double z) : x(x) , y(y) , z(z){}
+    GWSCoordinate(const GWSCoordinate &other) : GWSCoordinate(other.x , other.y, other.z){}
+    ~GWSCoordinate(){}
 
     // GETTERS
     double getX() const;
     double getY() const;
     double getZ() const;
-    double getLatitude() const;
-    double getLongitude() const;
-    double getElevation() const;
-    bool isNull() const;
-    double distance( GWSCoordinate* other ) const;
+    GWSLengthUnit getDistance( GWSCoordinate other ) const;
 
     // OPERATORS
     bool operator == (const GWSCoordinate&) const;
     bool operator != (const GWSCoordinate&) const;
     GWSCoordinate& operator= (const GWSCoordinate&);
 
-private:
-    double latitude;
-    double longitude;
-    double altitude;
-
 };
 
-Q_DECLARE_METATYPE(GWSCoordinate)
 
 #endif // GWSCOORDINATE_H

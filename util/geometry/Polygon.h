@@ -21,6 +21,10 @@ public:
     //virtual QImage toImage(const GWSEnvelope image_bounds, int image_width = 1024, int image_height = 1024, QColor border_color = QColor("Black"), int border_width = 10 , QColor fill_color = QColor("Green"), QImage icon = QImage()) const;
 
     // GETTERS
+    double getMinX() const;
+    double getMaxX() const;
+    double getMinY() const;
+    double getMaxY() const;
 
     // METHODS
 

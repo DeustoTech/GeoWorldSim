@@ -5,13 +5,12 @@
 #include "geos/geom/Geometry.h"
 
 #include <QJsonObject>
+#include <QPointF>
 #include <QImage>
 #include <QColor>
 
-#include "../../util/units/Units.h"
-
-QT_FORWARD_DECLARE_CLASS(GWSPoint)
-QT_FORWARD_DECLARE_CLASS(GWSGeometryFactory)
+#include "../units/Units.h"
+#include "Coordinate.h"
 
 using namespace geos::geom;
 
@@ -33,19 +32,22 @@ public:
 
     // GETTERS
     bool isValid() const;
-    GWSPoint getRepresentativePoint() const;
     GWSAreaUnit getArea() const;
+    double getMaxX() const;
+    double getMinX() const;
+    double getMaxY() const;
+    double getMinY() const;
+    GWSCoordinate getCentroid() const;
 
     // SPATIAL COMPARATORS
-    bool intersects( const GWSGeometry other) const;
-    bool equals( const GWSGeometry other ) const;
-    GWSLengthUnit getDistance( const GWSGeometry other ) const;
+    bool intersects( const GWSGeometry* other) const;
+    bool equals( const GWSGeometry* other ) const;
+    GWSLengthUnit getDistance( const GWSGeometry* other ) const;
 
     // SPATIAL TRANSFORMATIONS
-    GWSPoint getCentroid() const;
-    GWSGeometry getBuffer( double threshold ) const;
-    GWSGeometry getUnion( const GWSGeometry other ) const;
-    GWSGeometry getIntersection( const GWSGeometry other ) const;
+    void transformBuffer( double threshold );
+    void transformUnion( const GWSGeometry* other );
+    void transformIntersection( const GWSGeometry* other );
 
 protected:
     GWSGeometry(const geos::geom::Geometry* inner_geometry);

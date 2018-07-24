@@ -2,7 +2,7 @@
 
 #include "../../util/graph/GraphEdge.h"
 
-GWSGraphNode::GWSGraphNode( GeoCoordinates coor ) : geos::planargraph::Node( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) ){
+GWSGraphNode::GWSGraphNode(){
 }
 
 /**********************************************************************
@@ -35,12 +35,8 @@ const GWSGraphEdge* GWSGraphNode::getArrivingEdgeFrom(GWSGraphNode *from) const{
     return 0;
 }
 
-const GeoCoordinates GWSGraphNode::getCoordinate() const{
-    return GeoCoordinates( this->pt.x , this->pt.y , this->pt.z );
-}
-
-size_t GWSGraphNode::getDegree() const{
-    size_t degree = this->out_edges.size();
+int GWSGraphNode::getDegree() const{
+    int degree = this->out_edges.size();
 
     // Compare the directed opposite edges as one
     foreach( GWSGraphEdge* edge , this->getArrivingEdges() ){
@@ -56,13 +52,17 @@ size_t GWSGraphNode::getDegree() const{
     return degree;
 }
 
+GWSCoordinate GWSGraphNode::getCoordinate(){
+    return this->inner_coordinate;
+}
+
 /**********************************************************************
  PRIVATE
 **********************************************************************/
 
 void GWSGraphNode::connectEdge(GWSGraphEdge *edge){
     if( edge->getFromNode() == this && !this->getDepartingEdges().contains( edge ) ){
-        geos::planargraph::Node::addOutEdge( edge );
+        //geos::planargraph::Node::addOutEdge( edge );
         this->out_edges.append( edge );
     }
     if( edge->getToNode() == this &&  !this->getArrivingEdges().contains( edge )){
@@ -72,7 +72,7 @@ void GWSGraphNode::connectEdge(GWSGraphEdge *edge){
 
 void GWSGraphNode::disconnectEdge(GWSGraphEdge *edge){
     if( edge->getFromNode() == this ){
-        geos::planargraph::Node::getOutEdges()->remove( edge );
+        //geos::planargraph::Node::getOutEdges()->remove( edge );
         this->out_edges.removeAll( edge );
     }
     if( edge->getToNode() == this ){
@@ -90,6 +90,6 @@ double GWSGraphNode::getCost() const{
 
 bool GWSGraphNode::equals(GWSGraphNode* other){
     if( !other ){ return false; }
-    return this->getCoordinate() == other->getCoordinate();
+    return this->inner_coordinate == other->inner_coordinate;
 }
 

@@ -3,8 +3,7 @@
 
 #include "Grid.h"
 
-#include "../geometry/Point.h"
-#include "../geometry/Polygon.h"
+#include "../geometry/Geometry.h"
 
 class GWSGeoGrid : public GWSGrid
 {
@@ -20,9 +19,9 @@ public:
     static QString BOTTOM_BOUNDS_PROP;
 
     // GETTERS
-    GWSPolygon* getGridBounds() const;
-    virtual double getCellValue( const GWSPoint* point ) const;
-    GWSPolygon* getCellEnvelope( unsigned int grid_x , unsigned int grid_y ) const;
+    GWSGeometry* getGridBounds() const;
+    virtual double getCellValue( GWSCoordinate point ) const;
+    GWSGeometry* getCellEnvelope( unsigned int grid_x , unsigned int grid_y ) const;
 
 };
 

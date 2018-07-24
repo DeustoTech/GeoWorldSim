@@ -21,7 +21,7 @@ public:
     // PROPERTIES
     static QString GWS_ID_PROP;
     static QString GWS_TYPE_PROP;
-    static QString GWS_INHERITANCE_TREE_PROP;
+    static QString GWS_INHERITANCE_FAMILY_PROP;
 
     // EXPORTERS
     virtual QJsonObject serializeMini() const;
@@ -32,7 +32,7 @@ public:
 
     // GETTERS
     QString getId() const;
-    QStringList getInheritanceTree() const;
+    QStringList getInheritanceFamily() const;
     const QVariant getProperty( QString name ) const;
     const QVariant operator[]( QString name ) const;
 

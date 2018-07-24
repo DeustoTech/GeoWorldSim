@@ -3,7 +3,6 @@
 
 #include <QMutex>
 
-#include "../../util/geometry/Envelope.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"

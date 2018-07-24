@@ -28,7 +28,6 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
-    GWSGridEnvironment::globalInstance();
 
     // Init Object Factory
 

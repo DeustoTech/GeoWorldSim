@@ -99,9 +99,9 @@ qint64 GWSAgent::getInternalTime() const{
     return this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
-/*const GWSGeometry* GWSAgent::getGeometry() const{
-    return this->geometry;
-}*/
+const GWSGeometry* GWSAgent::getGeometry() const{
+    return this->getProperty( GEOMETRY_PROP ).value<GWSGeometry*>();
+}
 
 /**
  * @brief Agent::getCoordinate

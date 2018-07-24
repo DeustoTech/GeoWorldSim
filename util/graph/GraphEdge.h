@@ -5,20 +5,16 @@
 #include "geos/planargraph/PlanarGraph.h"
 
 #include "../../util/units/Units.h"
-#include "../../util/graph/Graph.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
 using namespace geos::planargraph;
 
-class GWSGraphEdge : public geos::planargraph::DirectedEdge
+class GWSGraphEdge
 {
-    friend class GWSGraph;
-    friend class GWSGraphUtils;
 
 public:
-    GWSGraphEdge( GWSGraphNode* start_node, GWSGraphNode* end_node );
-    GWSGraphEdge( GWSGraphEdge* first_edge, GWSGraphEdge* second_edge ); // Joins two edges ---FIRST---> ---SECOND--->
+    GWSGraphEdge();
     ~GWSGraphEdge();
 
     // GETTERS
@@ -37,7 +33,9 @@ public:
 
 private:
 
-    GWSLengthUnit length;
+    GWSGraphNode* from = Q_NULLPTR;
+    GWSGraphNode* to = Q_NULLPTR;
+    GWSLengthUnit length = 0;
 };
 
 #endif // GSSGRAPHEDGE_H

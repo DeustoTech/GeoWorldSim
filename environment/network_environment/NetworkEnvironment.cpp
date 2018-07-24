@@ -29,25 +29,25 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
  GETTERS
 **********************************************************************/
 
-GWSGraphNode* GWSNetworkEnvironment::getNodeFromGraph( GeoCoordinates coor, QString class_name) const{
-    return this->getNodeFromGraph<GWSGraphNode>( coor , class_name );
+const GWSGraphNode* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point, QString class_name) const{
+    return this->getNodeFromGraph<GWSGraphNode>( point , class_name );
 }
 
-template <class T> T* GWSNetworkEnvironment::getNodeFromGraph( GeoCoordinates coor , QString class_name ) const{
+template <class T> const T* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point , QString class_name ) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
-    return dynamic_cast<T*>( this->network_graphs.value( class_name )->findNode( coor ) );
+    return dynamic_cast<const T*>( this->network_graphs.value( class_name )->findNode( point ) );
 }
 
-GWSGraphNode* GWSNetworkEnvironment::getNearestNodeFromGraph( GeoCoordinates coor, QString class_name) const{
+const GWSGraphNode* GWSNetworkEnvironment::getNearestNodeFromGraph( GWSCoordinate point, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
-    return this->network_graphs.value( class_name )->findNearestNode( coor );
+    return this->network_graphs.value( class_name )->findNearestNode( point );
 }
 
-const GWSGraphEdge* GWSNetworkEnvironment::getEdgeFromGraph( GeoCoordinates from,  GeoCoordinates to, QString class_name) const{
+const GWSGraphEdge* GWSNetworkEnvironment::getEdgeFromGraph( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
@@ -78,7 +78,7 @@ void GWSNetworkEnvironment::registerAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
-        QStringList classes = agent->getInheritanceTree();
+        QStringList classes = agent->getInheritanceFamily();
         QList<QString> keys = this->network_graphs.keys();
 
         foreach(QString c , classes){
@@ -112,14 +112,14 @@ void GWSNetworkEnvironment::unregisterAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
-        QStringList classes = agent->getInheritanceTree();
+        QStringList classes = agent->getInheritanceFamily();
         foreach(QString c , classes){
 
             // Remove from spatial graph
             if( edge ){
                 this->network_graphs.value( c )->removeEdge( edge );
             }
-            if( node){
+            if( node ){
                 this->network_graphs.value( c )->removeNode( node );
             }
         }

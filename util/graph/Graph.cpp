@@ -1,15 +1,6 @@
 #include "Graph.h"
 
-#include <QImage>
-#include <QPainter>
-
-#include "../../environment/Environment.h"
-#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
-#include "geos/geom/CoordinateArraySequenceFactory.h"
-#include "geos/geom/Envelope.h"
-#include "../../util/graph/GraphUtils.h"
-
-GWSGraph::GWSGraph() : PlanarGraph(){
+GWSGraph::GWSGraph() {
     this->nodes_index = new GWSQuadtree();
 }
 
@@ -21,11 +12,11 @@ GWSGraph::~GWSGraph() {
  EXPORTERS
 **********************************************************************/
 
-QImage GWSGraph::toImage(const GWSEnvelope image_bounds, unsigned int image_width, unsigned int image_height) const{
+/*QImage GWSGraph::toImage(const GWSEnvelope image_bounds, unsigned int image_width, unsigned int image_height) const{
 
     // Image to be retured
     QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
-    /*image.fill( QColor( 0 , 0 , 0 , 0 ) );
+    image.fill( QColor( 0 , 0 , 0 , 0 ) );
 
     // Painter
     QPainter painter( &image );
@@ -40,35 +31,32 @@ QImage GWSGraph::toImage(const GWSEnvelope image_bounds, unsigned int image_widt
         QPoint p2 = ImageCoordinatesConversor::reprojectPoint( coor2.getY() , coor2.getX() , image_bounds.getMaxY() , image_bounds.getMinY() , image_bounds.getMaxX() , image_bounds.getMinX() , image_width , image_height );
         painter.drawLine( p1 , p2 );
 
-    }*/
+    }
     return image;
-}
+}*/
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
 bool GWSGraph::containsNode( GWSGraphNode* node ) const{
-    GWSGraphNode* found = this->findNode( node->getCoordinate() );
-    return found == node;
+    return this->nodes.contains( node );
 }
 
 bool GWSGraph::containsEdge( GWSGraphEdge* edge) const{
-    GWSGraphEdge* found = this->findEdge( edge->getFromNode()->getCoordinate() , edge->getToNode()->getCoordinate() );
-    return found == edge;
+    return this->edges.contains( edge );
 }
 
-GWSGraphEdge* GWSGraph::findEdge(GeoCoordinates from, GeoCoordinates to) const{
+const GWSGraphEdge* GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
     if( from == to ){
         return 0;
     }
-    GWSGraphNode* from_node = this->findNode( from );
-    GWSGraphNode* to_node = this->findNode( to );
+    const GWSGraphNode* from_node = this->findNode( from );
+    const GWSGraphNode* to_node = this->findNode( to );
     if( !from_node || !to_node ){
         return 0;
     }
-    for(unsigned int i = 0; i < this->dirEdges.size(); i++){
-        GWSGraphEdge* edge = dynamic_cast<GWSGraphEdge*>( this->dirEdges.at(i) );
+    foreach(GWSGraphEdge* edge , this->edges){
         if( edge->getFromNode() == from_node && edge->getToNode() == to_node ){
             return edge;
         }
@@ -76,10 +64,11 @@ GWSGraphEdge* GWSGraph::findEdge(GeoCoordinates from, GeoCoordinates to) const{
     return 0;
 }
 
-GWSGraphNode* GWSGraph::findNode(GeoCoordinates coor) const{
-    geos::planargraph::Node* n = const_cast<GWSGraph*>( this )->PlanarGraph::findNode( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) );
-    if( n ){
-        return dynamic_cast<GWSGraphNode*>( n );
+const GWSGraphNode* GWSGraph::findNode(GWSCoordinate point) const{
+    foreach (GWSGraphNode* node, this->nodes) {
+        if( node->getCoordinate() == point ){
+            return node;
+        }
     }
     return 0;
 }
@@ -89,23 +78,19 @@ GWSGraphNode* GWSGraph::findNode(GeoCoordinates coor) const{
  * @param coor
  * @return
  */
-GWSGraphNode* GWSGraph::findNearestNode(GeoCoordinates coor) const{
-    GWSGraphNode* found = this->findNode( coor );
-    if( !found && this->nodes_index ){
-        return GWSGraphUtils::globalInstance()->findNearestFromQuadtree( coor , this->nodes_index );
+const GWSGraphNode* GWSGraph::findNearestNode(GWSCoordinate point) const{
+    const GWSGraphNode* found = this->findNode( point );
+    if( this->nodes_index ){
+        return dynamic_cast<GWSGraphNode*>( this->nodes_index->getNearestElement( point ) );
     }
     return found;
 }
 
-QList<GWSGraphEdge*> GWSGraph::getEdges() const{
-    QList<GWSGraphEdge*> edges;
-    for(unsigned int i = 0; i < this->dirEdges.size(); i++){
-        edges.append( dynamic_cast<GWSGraphEdge*>( this->dirEdges.at(i) ) );
-    }
-    return edges;
-}
+/*QList<const GWSGraphEdge*> GWSGraph::getEdges() const{
+    return this->edges;
+}*/
 
-QList<GWSGraphEdge*> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
+/*QList<GWSGraphEdge*> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
     QList<GWSGraphEdge*> edges;
     for(unsigned int i = 0; i < this->dirEdges.size(); i++){
         geos::planargraph::DirectedEdge* e  = dynamic_cast<geos::planargraph::DirectedEdge*>( this->dirEdges.at(i) );
@@ -116,42 +101,38 @@ QList<GWSGraphEdge*> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
         }
     }
     return edges;
-}
+}*/
 
-QList<GWSGraphNode*> GWSGraph::getNodes() const{
-    QList<GWSGraphNode*> nodes;
-    std::vector<geos::planargraph::Node*> ns;
-    const_cast<GWSGraph*>( this )->PlanarGraph::getNodes( ns );
-    for(unsigned int i = 0; i < ns.size(); i++){
-        nodes.append( dynamic_cast<GWSGraphNode*>( ns.at(i) ) );
-    }
+/*QList<const GWSGraphNode*> GWSGraph::getNodes() const{
+    QList<const GWSGraphNode*> nodes;
+    nodes.append( this->nodes );
     return nodes;
-}
+}*/
 
-QMap<GWSGraphEdge*,double> GWSGraph::getCostMap() const{
-    QMap<GWSGraphEdge*,double> cost_map;
-    foreach( GWSGraphEdge* edge , this->getEdges() ){
+QMap<const GWSGraphEdge*,double> GWSGraph::getCostMap() const{
+    QMap<const GWSGraphEdge* , double> cost_map;
+    foreach( const GWSGraphEdge* edge , this->edges ){
         cost_map.insert( edge , edge->getCost() );
     }
     return cost_map;
 }
 
-QList<GWSGraphNode*> GWSGraph::findNodesOfDegree( int degree ) const{
-    QList<GWSGraphNode*> nodes;
-    std::vector<geos::planargraph::Node*> ns;
-    const_cast<GWSGraph*>( this )->PlanarGraph::findNodesOfDegree( degree , ns );
-    for(unsigned int i = 0; i < ns.size(); i++){
-        nodes.append( dynamic_cast<GWSGraphNode*>( ns.at(i) ) );
+QList<const GWSGraphNode*> GWSGraph::findNodesOfDegree( int degree ) const{
+    QList<const GWSGraphNode*> nodes;
+    foreach (GWSGraphNode* node , this->nodes) {
+        if( node->getDegree() == degree ){
+            nodes.append( node );
+        }
     }
     return nodes;
 }
 
 int GWSGraph::countNodes() const{
-    return this->getNodes().size();
+    return this->nodes.size();
 }
 
 int GWSGraph::countEdges() const{
-    return this->dirEdges.size();
+    return this->edges.size();
 }
 
 /*MultiLineString* GWSGraph::toMultiLineString() const{
@@ -172,72 +153,34 @@ int GWSGraph::countEdges() const{
 **********************************************************************/
 
 void GWSGraph::addGraph(const GWSGraph *other){
-    std::vector<geos::planargraph::Node*> ns;
-    const_cast<GWSGraph*>( other )->PlanarGraph::getNodes( ns );
-    foreach( geos::planargraph::Node* n , ns ){
-        GWSGraphNode* node = dynamic_cast<GWSGraphNode*>( n );
-        this->addNode( node );
-        foreach( GWSGraphEdge* edge , node->getDepartingEdges() ){
-            geos::planargraph::PlanarGraph::add( edge );
-        }
+    foreach( GWSGraphEdge* edge , other->edges ){
+            this->addEdge( edge );
     }
 }
 
 void GWSGraph::addEdge(GWSGraphEdge *edge){
-    GWSGraphNode* from = this->findNode( edge->getFromNode()->getCoordinate() );
+    const GWSGraphNode* from = this->findNode( edge->getFromNode()->getCoordinate() );
     if( !from ){
         this->addNode( edge->getFromNode() );
     }
-    GWSGraphNode* to = this->findNode( edge->getToNode()->getCoordinate() );
+    const GWSGraphNode* to = this->findNode( edge->getToNode()->getCoordinate() );
     if( !to ){
         this->addNode( edge->getToNode() );
     }
-    geos::planargraph::PlanarGraph::add( edge );
+    this->edges.append( edge );
 }
 
 void GWSGraph::removeEdge(GWSGraphEdge *edge){
-    auto it = std::find( this->dirEdges.begin(), this->dirEdges.end(), edge);
-    if(it != this->dirEdges.end()){
-        this->dirEdges.erase( it );
-    }
-    //geos::planargraph::PlanarGraph::remove( edge ); NOT WORKING
+    this->edges.removeAll( edge );
 }
 
 void GWSGraph::addNode(GWSGraphNode *node){
-    GWSEnvelope env = GWSEnvelope( node->getCoordinate().getX() , node->getCoordinate().getX() , node->getCoordinate().getY() , node->getCoordinate().getY() );
-    this->nodes_index->insert( env , node );
-    geos::planargraph::PlanarGraph::add( node );
+    this->nodes_index->insert( dynamic_cast<GWSAgent*>( node ) );
+    this->nodes.append( node );
 }
 
 void GWSGraph::removeNode(GWSGraphNode *node){
-    GWSEnvelope env = GWSEnvelope( node->getCoordinate().getX() , node->getCoordinate().getX() , node->getCoordinate().getY() , node->getCoordinate().getY() );
-    this->nodes_index->remove( env , node );
-    geos::planargraph::PlanarGraph::remove( node );
-}
-
-void GWSGraph::replaceNode(GWSGraphNode* old_node , GWSGraphNode *new_node){
-
-    // Take out connected edges
-    foreach( GWSGraphEdge* e , old_node->getDepartingEdges() ){
-        this->removeEdge( e );
-    }
-    foreach( GWSGraphEdge* e , old_node->getArrivingEdges() ){
-        this->removeEdge( e );
-    }
-
-    // Remove old node
-    this->removeNode( old_node );
-    // Add new node
-    this->addNode( new_node );
-
-    // Add again edges with the new node set
-    foreach( GWSGraphEdge* e , old_node->getDepartingEdges() ){
-        e->from = new_node;
-        this->addEdge( e );
-    }
-    foreach( GWSGraphEdge* e , old_node->getArrivingEdges() ){
-        e->to = new_node;
-        this->addEdge( e );
-    }
+    this->nodes_index->remove( dynamic_cast<GWSAgent*>( node ) );
+    this->nodes.removeAll( node );
 }
 

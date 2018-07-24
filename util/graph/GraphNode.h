@@ -1,35 +1,26 @@
-#ifndef GSSGRAPHNODE_H
-#define GSSGRAPHNODE_H
+#ifndef GWSGRAPHNODE_H
+#define GWSGRAPHNODE_H
 
 #include <QList>
 
-#include "geos/geom/Coordinate.h"
-#include "geos/planargraph/Node.h"
-#include "geos/planargraph/PlanarGraph.h"
-
-#include "../../util/geometry/Point.h"
-#include "../../util/graph/Graph.h"
+#include "../util/geometry/Coordinate.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
 
-using namespace geos::geom;
-using namespace geos::planargraph;
-
-class GWSGraphNode : public geos::planargraph::Node
+class GWSGraphNode
 {
-    friend class GWSGraph;
     friend class GWSGraphEdge;
 
 public:
-    GWSGraphNode( GeoCoordinates coor );
+    GWSGraphNode();
 
     // GETTERS
     virtual const QList<GWSGraphEdge*> getDepartingEdges() const;
     virtual const QList<GWSGraphEdge*> getArrivingEdges() const;
     virtual const GWSGraphEdge* getDepartingEdgeTo( GWSGraphNode* to ) const;
     virtual const GWSGraphEdge* getArrivingEdgeFrom( GWSGraphNode* from ) const;
-    virtual const GeoCoordinates getCoordinate() const;
-    virtual size_t getDegree() const;
+    virtual int getDegree() const;
+    GWSCoordinate getCoordinate();
 
     // SETTERS
 
@@ -41,8 +32,9 @@ private:
     void connectEdge(GWSGraphEdge* edge);
     void disconnectEdge(GWSGraphEdge* edge);
 
+    GWSCoordinate inner_coordinate;
     QList<GWSGraphEdge*> out_edges; // Departing edges
     QList<GWSGraphEdge*> in_edges; // Arriving edges
 };
 
-#endif // GSSGRAPHNODE_H
+#endif // GWSGRAPHNODE_H

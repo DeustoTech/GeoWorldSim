@@ -20,6 +20,7 @@
 //#include "utils/conversors/custom_json/CustomJsonConversor.h"
 
 #include "./../util/units/Units.h"
+#include "./../util/geometry/Geometry.h"
 #include "./../util/storage/ObjectStorage.h"
 #include "./../util/uistyle/UiStyle.h"
 
@@ -64,7 +65,7 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 );
 
     // GETTERS
-    //const GWSGeometry* getGeometry() const;
+    const GWSGeometry* getGeometry() const;
     //GWSCoordinate getRepresentativeCoordinate() const;
     bool isRunning() const;
     bool isBusy() const;

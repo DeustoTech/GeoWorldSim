@@ -9,7 +9,9 @@
 
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/CoordinateSequenceFactory.h"
+
 #include "geos/geom/LineString.h"
+#include "geos/geom/Polygon.h"
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
@@ -74,56 +76,89 @@ void GWSGeometry::deserialize(QJsonObject json){
 
 QJsonObject GWSGeometry::serialize() const{
 
-    /*QJsonObject json_geometry;
+    QJsonObject json_geometry;
     if( !this->inner_geometry ){ return json_geometry; }
 
     try {
 
         // POINT
-        if( dynamic_cast<const GWSPoint*>(this) ){
-            return dynamic_cast<const GWSPoint*>( this )->serialize();
+        if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_POINT ){
+                json_geometry.insert("type", QString("Point") );
+
+                QJsonArray coordinates;
+                const geos::geom::Coordinate* coor = this->inner_geometry->getCoordinate();
+                if( coor ){
+                    coordinates.append( coor->x );
+                    coordinates.append( coor->y );
+                    coordinates.append( coor->z );
+                }
+                json_geometry.insert("coordinates", coordinates);
+                return json_geometry;
         }
 
-        // MULTIGEOM
-        if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTIPOINT ||
-                   this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTILINESTRING ||
-                   this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTIPOLYGON ) {
+        // LINESTRING
+        if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_LINESTRING ){
 
-            if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTIPOINT ){ json_geometry.insert("type", QString("MultiPoint") ); }
-            if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTILINESTRING ){ json_geometry.insert("type", QString("MultiLineString") ); }
-            if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_MULTIPOLYGON ){ json_geometry.insert("type", QString("MultiPolygon") ); }
+                geos::geom::LineString* line = dynamic_cast<geos::geom::LineString*>( this->inner_geometry->clone() );
+                json_geometry.insert("type", QString("LineString") );
 
-            QJsonArray geomCoordinates;
+                QJsonArray lineCoordinates;
 
-            for(unsigned int i = 0; i < this->inner_geometry->getNumGeometries(); i++){
-                GWSGeometry* g = new GWSGeometry( this->inner_geometry->getGeometryN(i)->clone() );
-                geomCoordinates.append( g->serialize().value("coordinates") );
-                delete g;
-            }
-            json_geometry.insert("coordinates", geomCoordinates);
+                for(unsigned int i = 0; i < line->getCoordinates()->size(); i++){
+                    if( !line->getCoordinates()->getAt(i).isNull() ){
+                        QJsonArray coordinatePair;
+                        coordinatePair.append( line->getCoordinates()->getAt(i).x );
+                        coordinatePair.append( line->getCoordinates()->getAt(i).y );
+                        coordinatePair.append( line->getCoordinates()->getAt(i).z );
+                        lineCoordinates.append(coordinatePair);
+                    }
+                }
+                json_geometry.insert("coordinates", lineCoordinates);
 
-            // GEOMETRYCOLLECTION
-        } else if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_GEOMETRYCOLLECTION ) {
+                delete line;
+                return json_geometry;
+        }
 
-            json_geometry.insert("type" , QString("GeometryCollection") );
-            QJsonArray geometries;
+        // POLYGON
+        if( this->inner_geometry->getGeometryTypeId() == geos::geom::GEOS_POLYGON ) {
+                geos::geom::Polygon* polygon = dynamic_cast<geos::geom::Polygon*>( this->inner_geometry->clone() );
 
-            for(unsigned int i = 0; i < this->inner_geometry->getNumGeometries(); i++){
-                GWSGeometry* g = new GWSGeometry( this->inner_geometry->getGeometryN( i )->clone() );
-                geometries.append( g->serialize() );
-                delete g;
-            }
-            json_geometry.insert( "geometries" , geometries);
+                json_geometry.insert("type", QString("Polygon") );
 
-        } else {
-            qWarning() << QString("Geometry type %1 unknown").arg( QString::fromStdString( this->inner_geometry->getGeometryType() ) );
+                QJsonArray rings;
+
+                QJsonArray ringCoordinates;
+                for(unsigned int i = 0; i < polygon->getExteriorRing()->getCoordinates()->size(); i++){
+                    QJsonArray coordinatePair;
+                    coordinatePair.append( polygon->getExteriorRing()->getCoordinates()->getAt( i ).x );
+                    coordinatePair.append( polygon->getExteriorRing()->getCoordinates()->getAt( i ).y );
+                    coordinatePair.append( polygon->getExteriorRing()->getCoordinates()->getAt( i ).z );
+                    ringCoordinates.append(coordinatePair);
+                }
+                rings.append(ringCoordinates);
+
+                for(unsigned int i = 0; i < polygon->getNumInteriorRing(); i++){
+                    QJsonArray ringCoordinates;
+                    for(unsigned int j = 0; j < polygon->getInteriorRingN( i )->getCoordinates()->size(); j++){
+                        QJsonArray coordinatePair;
+                        coordinatePair.append( polygon->getInteriorRingN( i )->getCoordinates()->getAt( j ).x );
+                        coordinatePair.append( polygon->getInteriorRingN( i )->getCoordinates()->getAt( j ).y );
+                        coordinatePair.append( polygon->getInteriorRingN( i )->getCoordinates()->getAt( j ).z );
+                        ringCoordinates.append(coordinatePair);
+                    }
+                    rings.append(ringCoordinates);
+                }
+
+                json_geometry.insert("coordinates", rings);
+                delete polygon;
+                return json_geometry;
         }
 
     } catch ( ... ){
         qWarning() << QString("Geometry type %1 parsing crashed").arg( QString::fromStdString( this->inner_geometry->getGeometryType() ) );
     }
 
-    return json_geometry;*/
+    return json_geometry;
 }
 
 QString GWSGeometry::toString() const{
@@ -134,57 +169,77 @@ QString GWSGeometry::toString() const{
  GETTERS
 **********************************************************************/
 
-GWSPoint GWSGeometry::getRepresentativePoint() const{
-    return GWSPoint( this->inner_geometry->getCoordinate()->x , this->inner_geometry->getCoordinate()->y , this->inner_geometry->getCoordinate()->z );
-}
-
 bool GWSGeometry::isValid() const{
     return this->inner_geometry ? this->inner_geometry->isValid() : false;
 }
 
-bool GWSGeometry::intersects( const GWSGeometry other ) const{
-    return this->inner_geometry->intersects( other.inner_geometry );
+bool GWSGeometry::intersects( const GWSGeometry* other ) const{
+    return this->inner_geometry->intersects( other->inner_geometry );
 }
 
-bool GWSGeometry::equals( const GWSGeometry other) const{
-    return this->inner_geometry->equals( other.inner_geometry );
+bool GWSGeometry::equals( const GWSGeometry* other) const{
+    return this->inner_geometry->equals( other->inner_geometry );
 }
 
 GWSAreaUnit GWSGeometry::getArea() const{
     return GWSAreaUnit( this->inner_geometry ? this->inner_geometry->getArea() : -1 );
 }
 
-GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry other) const{
-    return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other.inner_geometry ) * 110574 : -1 );
+GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
+    return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other->inner_geometry )  * 110574 : -1 );
+}
+
+double GWSGeometry::getMaxX() const{
+    if( this->inner_geometry ){
+        this->inner_geometry->getEnvelopeInternal()->getMaxX();
+    }
+}
+
+double GWSGeometry::getMinX() const{
+    if( this->inner_geometry ){
+        this->inner_geometry->getEnvelopeInternal()->getMinX();
+    }
+}
+
+double GWSGeometry::getMaxY() const{
+    if( this->inner_geometry ){
+        this->inner_geometry->getEnvelopeInternal()->getMaxY();
+    }
+}
+
+double GWSGeometry::getMinY() const{
+    if( this->inner_geometry ){
+        this->inner_geometry->getEnvelopeInternal()->getMinY();
+    }
+}
+
+GWSCoordinate GWSGeometry::getCentroid() const{
+    if( this && this->inner_geometry ){
+        geos::geom::Coordinate centroid;
+        this->inner_geometry->getCentroid( centroid );
+        return GWSCoordinate( centroid.x , centroid.y , centroid.z );
+    }
+    return GWSCoordinate();
 }
 
 /**********************************************************************
  SPATIAL TRANSFORMS
 **********************************************************************/
 
-GWSPoint GWSGeometry::getCentroid() const{
-    if( this && this->inner_geometry ){
-        geos::geom::Coordinate centroid;
-        this->inner_geometry->getCentroid( centroid );
-        return GWSPoint( centroid.x , centroid.y , centroid.z );
-    }
-    return GWSPoint( NAN , NAN , NAN );
+void GWSGeometry::transformBuffer( double threshold ){
+    geos::geom::Geometry* buffered = this->inner_geometry->buffer( threshold );
+    delete this->inner_geometry;
+    this->inner_geometry = buffered;
 }
 
-GWSGeometry GWSGeometry::getBuffer( double threshold ) const{
-    GWSGeometry geom = GWSGeometry( this->inner_geometry->buffer( threshold ) );
-    geom.setParent( this->parent() );
-    return geom;
+void GWSGeometry::transformUnion( const GWSGeometry* other){
+    geos::geom::Geometry* unioned = this->inner_geometry->Union( other->inner_geometry );
+    delete this->inner_geometry;
+    this->inner_geometry = unioned;
 }
 
-GWSGeometry GWSGeometry::getUnion(const GWSGeometry other) const{
-    GWSGeometry geom = GWSGeometry( this->inner_geometry->Union( other.inner_geometry ) );
-    geom.setParent( this->parent() );
-    return geom;
-}
-
-GWSGeometry GWSGeometry::getIntersection(const GWSGeometry other) const{
-    GWSGeometry geom = GWSGeometry( this->inner_geometry->intersection( other.inner_geometry ) );
-    geom.setParent( this->parent() );
-    return geom;
+void GWSGeometry::transformIntersection(const GWSGeometry* other){
+    geos::geom::Geometry* intersected = this->inner_geometry->intersection( other->inner_geometry );
+    delete this->inner_geometry;
+    this->inner_geometry = intersected;
 }

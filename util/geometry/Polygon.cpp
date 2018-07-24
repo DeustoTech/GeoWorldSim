@@ -5,6 +5,7 @@
 #include <QJsonArray>
 
 #include "geos/geom/LineString.h"
+#include "geos/geom/CoordinateSequence.h"
 
 #include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
@@ -125,6 +126,25 @@ QJsonObject GWSPolygon::serialize() const{
 }*/
 
 
+/**********************************************************************
+ GETTERS
+**********************************************************************/
+
+double GWSPolygon::getMinX() const{
+    return this->inner_geometry->getEnvelopeInternal()->getMinX();
+}
+
+double GWSPolygon::getMaxX() const{
+    return this->inner_geometry->getEnvelopeInternal()->getMaxX();
+}
+
+double GWSPolygon::getMinY() const{
+    return this->inner_geometry->getEnvelopeInternal()->getMinY();
+}
+
+double GWSPolygon::getMaxY() const{
+    return this->inner_geometry->getEnvelopeInternal()->getMaxY();
+}
 
 /**********************************************************************
  METHODS
