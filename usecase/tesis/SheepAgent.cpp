@@ -67,6 +67,42 @@ void SheepAgent::behave()
     */
 
 
+// Reproduction:
+/*
+SheepAgent::reproduce()
+{
+    for (int i = 0; i <= 3; i++)
+        {
+        for (int j = 0; j <= 3 ; j++ )
+            {
+            if (
+               (SheepFlock[i]->property("cell_x") == SheepFlock[j]->property("cell_x"))
+                &&
+               (SheepFlock[i]->property("cell_y") == SheepFlock[j]->property("cell_y"))
+                &&
+               (i != j)
+               )
+               {
+               SheepAgent* lambAgent = new SheepAgent();
+               lambAgent->setProperty("energy", 100);
+               lambAgent->setProperty("cell_x", this->property("cell_x"));
+               lambAgent->setProperty("cell_y", this->property("cell_y"));
+               this->setProperty("energy", this->property("energy").toFloat() / 2.0)
+               }
+           else
+               {
+               qDebug() << "Not overbooked yet!";
+               }
+            }
+}
+*/
+
+// Add offspring:
+//SheepAgent* agentOffspring = new SheepAgent();
+//agentOffspring->setProperty("energy", this->getProperty("energy")/2.0)
+
+
+
 
 /*
  *  The behaviours we want from sheep:
