@@ -7,7 +7,7 @@ SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
 
 void SheepAgent::behave()
 {
-    //do {
+
         qDebug() << "Soy oveja";
 
         // Get cell_X and cell_y
@@ -44,9 +44,12 @@ void SheepAgent::behave()
         qDebug() << "Energy after eating = " << finalEnergy;
 
         this-> setProperty("energy", finalEnergy);
-       // }
 
-    //while (this->property("energy").toFloat() >= 0.01);
+        if (this->property("energy") < 0)
+            {
+            this->setProperty(RUNNING_PROP, "FALSE");
+            qDebug() << "This Agent died!";
+            }
 
 }
     /* internal_clock = this->getInternalTime();
