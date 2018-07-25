@@ -49,7 +49,7 @@ private:
     ~GWSExecutionEnvironment();
 
     // RUNNING AGENTS
-    QHash<QString , GWSAgent*> running_agents;
+    QList<GWSAgent*> running_agents;
 
     // Timer to schedule ticks
     QTimer* timer = Q_NULLPTR;
