@@ -54,6 +54,11 @@ bool GWSExecutionEnvironment::isRunning() const{
     return this->timer ? true : false;
 }
 
+
+int GWSExecutionEnvironment::getTicksAmount() const{
+    return this->executed_ticks_amount;
+}
+
 /**********************************************************************
  AGENT METHODS
 **********************************************************************/

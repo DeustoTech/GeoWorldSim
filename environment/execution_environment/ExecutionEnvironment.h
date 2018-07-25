@@ -25,6 +25,7 @@ public:
     // GETTERS
     int getRunningAgents() const;
     bool isRunning() const;
+    int getTicksAmount() const;
 
     // METHODS
     virtual void registerAgent(GWSAgent* agent);
@@ -58,7 +59,7 @@ private:
 
     // Threshold from current_time
     // Otherwise only minest_tick agent is executed (1 per cycle)
-    const quint64 min_tick_threshold = 1*1000;
+    const quint64 min_tick_threshold = 5*1000;
 
     // Avoid more than one execution at a time
     mutable QMutex mutex;
