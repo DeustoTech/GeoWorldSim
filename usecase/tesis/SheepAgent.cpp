@@ -1,5 +1,8 @@
 #include "SheepAgent.h"
 #include "math.h"
+
+#include "../../environment/agent_environment/AgentEnvironment.h"
+
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
     qDebug() << "PASO";
 }
@@ -7,11 +10,11 @@ SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
 
 void SheepAgent::behave()
 {
-
-        qDebug() << "Soy oveja";
+        qDebug() << "-------------------------------------------------";
+        qDebug() << "Soy la oveja" << this->property("@id").toString();
 
         // Get cell_X and cell_y
-        qDebug() << "Initial position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")" << endl;
+        qDebug() << "Initial position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")";
 
         // Move randomly through random index generator:
         srand ( time(NULL) ); //initialize the random seed
@@ -20,11 +23,12 @@ void SheepAgent::behave()
         int RandIndexY = rand() % 3; //generates a random number between 0 and 2
 
         // Move coordinates either 0, 1 or -1 points
+        // Note that the final position should be checked to be within the grid!
         this->setProperty("cell_x", this->getProperty("cell_x").toInt() + direction[RandIndexX]);
         this->setProperty("cell_y", this->getProperty("cell_y").toInt() + direction[RandIndexY]);
 
         // Final position of the agent:
-        qDebug() << "Final position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")" << endl;
+        qDebug() << "Final position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")";
 
         // Get initial energy
         float initialEnergyFloat = this->getProperty("energy").toFloat();
@@ -45,13 +49,45 @@ void SheepAgent::behave()
 
         this-> setProperty("energy", finalEnergy);
 
-        if (this->property("energy") < 0)
+        // Generate a list with all the sheeps in the GWS world:
+        QList<GWSAgent*> sheeps = GWSAgentEnvironment::globalInstance()->getByClass( SheepAgent::staticMetaObject.className() );
+
+        // This list allows us to loop over all the existing sheeps and to check whether they share
+        // the same position!
+
+        /* TOMORROW HERE!
+        if ((this->property("cell_x") == theotherAgent->property("cell_x"))
+           &&
+           (this->property("cell_y") == theotherAgent->property("cell_y"))
+           &&
+           (theotherAgent->property("@type") == "SheepAgent")
+           &&
+           (theotherAgent->property("running") == "true"))
+           // And we should eventually add the condition of "reproduce only after x ticks"
+                {
+                this->setProperty("energy" , this->getProperty("energy") / 2.0);
+                theotherAgent->setProperty("energy" , theotherAgent->getProperty("energy") / 2.0);
+                SheepAgent* lambAgent = new SheepAgent();
+                GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent);
+                lambAgent->setProperty("energy", 100);
+                lambAgent->setProperty("cell_x", this->property("cell_x"));
+                lambAgent->setProperty("cell_y", this->property("cell_y"));
+                }
+        */
+
+
+        // Sheep die when:
+        if (this->property("energy") < 0.01)
             {
             this->setProperty(RUNNING_PROP, "FALSE");
-            qDebug() << "This Agent died!";
+            qDebug() << "RIP" << this->property("@id").toString();
             }
 
 }
+
+
+
+
     /* internal_clock = this->getInternalTime();
        if internal_clock >= reproduction_tick_threshold && another_sheep_in_cell;
             {
@@ -72,8 +108,40 @@ void SheepAgent::behave()
 
 // Reproduction:
 /*
-SheepAgent::reproduce()
-{
+ 1 - CHECK CELL OCCUPATION:
+
+    // check if the main agent's and the second agent's position is the same:
+    // but how can I know within the sheep class whether there is another agent in the cell?
+    // Perhaps I need to write these lines in main.cpp
+    1 ) if ((this->property("cell_x") == theotherAgent->property("cell_x"))
+        &&
+        (this->property("cell_y") == theotherAgent->property("cell_y"))
+        {
+        CHECK IF THE AGENT IS SHEEP through 2)
+        }
+
+ 2 - CHECK IF OCCUPIED BY SHEEP:
+    // And insert this as a method of the SheepAgent class:
+    2 )  if  ((theotherAgent->property("@type") == "SheepAgent")
+              &&
+              (theotherAgent->property("running") == "true"))
+                {
+                this->setProperty("energy" , this->getProperty("energy") / 2.0);
+                theotherAgent->setProperty("energy" , theotherAgent->getProperty("energy") / 2.0);
+                SheepAgent* lambAgent = new SheepAgent();
+                GWSExecutionEnvironment::globalInstance()->registerAgent( agent3 );
+                lambAgent->setProperty("energy", 100);
+                lambAgent->setProperty("cell_x", this->property("cell_x"));
+                lambAgent->setProperty("cell_y", this->property("cell_y"));
+                }
+
+
+    // This is another possibility that involves manually inputting the SheepAgents we register in our world
+    // into an array and checking whether at some point they are in the same position.
+    // The drawback is that this should be within the main.cpp file, because we need to hardcode
+    // the vector of agents...
+
+    GWSAgent* SheepFlock[3] = {agent1, agent2, agent3};
     for (int i = 0; i <= 3; i++)
         {
         for (int j = 0; j <= 3 ; j++ )
@@ -100,36 +168,4 @@ SheepAgent::reproduce()
 }
 */
 
-// Add offspring:
-//SheepAgent* agentOffspring = new SheepAgent();
-//agentOffspring->setProperty("energy", this->getProperty("energy")/2.0)
 
-
-
-
-/*
- *  The behaviours we want from sheep:
- *  1. Move
- *      1.1 Get position
- *      1.2 Change position to new position
- *      1.3 Lose energy from moving
- *      1.4 If energy < 0, die
- *      1.5 Go to next
- *  2. Eat
- *      2.1 Increment energy from nourishment
- *      2.2 Go to next
- *  3. Reproduce
- *      3.1 Only if another sheep in new position
- *      3.2 Only after a given number of moves
- *      3.3 Lose half of the energy
- *      3.4 If energy < 0, die
- *      3.5 Go to next
- */
-
-/* void SheepAgent::Move()
-        {
-        energy = this->getProperty( GWSAgent::ENERGY_PROPERTY );
-        this->setProperty( GWSAgent::ENERGY_PROPERTY , energy -= energy / 4.0);
-        GWSBehaviour::getNext();
-        }
-*/
