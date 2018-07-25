@@ -44,10 +44,7 @@ QJsonObject GWSExecutionEnvironment::serialize(){
 **********************************************************************/
 
 int GWSExecutionEnvironment::getRunningAgents() const{
-    this->mutex.lock();
-    int size = this->running_agents.keys().size();
-    this->mutex.unlock();
-    return size;
+    return this->running_agents.size();
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
@@ -76,7 +73,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
     // Store as running
     //this->mutex.lock();
-    this->running_agents.insert( agent->getId() , agent );
+    this->running_agents.append( agent );
     //this->mutex.unlock();
 
     // Calculate when to start the agent according to its next_tick_datetime
@@ -114,7 +111,7 @@ void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
     agent->setProperty( GWSAgent::RUNNING_PROP , false );
 
     // Remove from running lists
-    this->running_agents.remove( agent->getId() );
+    this->running_agents.removeAll( agent );
 
     // Stop agent
     qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
@@ -148,7 +145,7 @@ void GWSExecutionEnvironment::run(){
 void GWSExecutionEnvironment::tick(){
 
     //this->mutex.lock();
-    QList<GWSAgent*> currently_running_agents = this->running_agents.values();
+    QList<GWSAgent*> currently_running_agents = this->running_agents;
     //this->mutex.unlock();
 
     if( currently_running_agents.isEmpty() ){
