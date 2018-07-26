@@ -62,7 +62,7 @@ HEADERS += \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/agent_environment/AgentEnvironment.h \
-    #../../environment/physical_environment/PhysicalEnvironment.h \
+    ../../environment/physical_environment/PhysicalEnvironment.h \
     #../../environment/social_environment/SocialEnvironment.h \
     #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
@@ -107,7 +107,7 @@ SOURCES += main.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
-    #../../environment/physical_environment/PhysicalEnvironment.cpp \
+    ../../environment/physical_environment/PhysicalEnvironment.cpp \
     #../../environment/social_environment/SocialEnvironment.cpp \
     #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \

@@ -20,6 +20,7 @@ class GWSGeometry : public GWSObject
 
 public:
     Q_INVOKABLE explicit GWSGeometry();
+    GWSGeometry( GWSCoordinate coor ); // Point
     ~GWSGeometry();
 
     // IMPORTERS

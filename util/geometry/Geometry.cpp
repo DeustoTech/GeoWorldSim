@@ -22,6 +22,11 @@ GWSGeometry::GWSGeometry( const geos::geom::Geometry* inner_geometry ) : GWSObje
     this->inner_geometry = inner_geometry;
 }
 
+GWSGeometry::GWSGeometry(GWSCoordinate coor) : GWSObject(){
+    this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
+                geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) );
+}
+
 GWSGeometry::~GWSGeometry(){
     if( this->inner_geometry ){
         delete this->inner_geometry;
