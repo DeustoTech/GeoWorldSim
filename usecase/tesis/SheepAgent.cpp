@@ -100,8 +100,8 @@ void SheepAgent::behave()
               // this->setProperty("cell_y", this->getProperty("cell_y").toInt() + direction[RandIndexY]);
                this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
 
-               // Final position of the agent:
-               qDebug() << "Final position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")";
+               // Final position of the agent:                       
+               qDebug() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
                // Get initial energy
                float initialEnergyFloat = this->getProperty("energy").toFloat();
@@ -156,11 +156,10 @@ void SheepAgent::behave()
                   GWSExecutionEnvironment::globalInstance()->registerAgent(lambAgent);
                   GWSAgentEnvironment::globalInstance()->registerAgent( lambAgent );
                   lambAgent->setProperty("energy", 10);
-                  lambAgent->setProperty("cell_x", this->property("cell_x"));
-                  lambAgent->setProperty("cell_y", this->property("cell_y"));
-  //                lambAgent->transformMove( GWSCoordinate( this->property("cell_x") , this->property("cell_y") ) );
-
-
+                 // lambAgent->setProperty("cell_x", this->property("cell_x"));
+                 // lambAgent->setProperty("cell_y", this->property("cell_y"));
+                  lambAgent->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
+                  qDebug() << "Lamb position = (" << lambAgent->getCentroid().getX() << ", " << lambAgent->getCentroid().getY() << ")";
                   //  Reproductive constraints:
                   //  - Set internal time counter to 0
 
