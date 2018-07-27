@@ -71,7 +71,7 @@ HEADERS += \
     TerrainAgent.h \
     SheepAgent.h \
     TesisBehaviour.h \
-    WolfAgent.h
+    PredatorAgent.h
         # AGENTS
     #agent/person/Person.h
 
@@ -116,7 +116,7 @@ SOURCES += main.cpp \
     TerrainAgent.cpp \
     SheepAgent.cpp \
     TesisBehaviour.cpp \
-    WolfAgent.cpp
+    PredatorAgent.cpp
         # AGENTS
     #agent/person/Person.cpp
 

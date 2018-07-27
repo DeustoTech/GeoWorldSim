@@ -131,4 +131,6 @@ private:
     int busy_counter = 0;
 };
 
+Q_DECLARE_METATYPE(GWSAgent*) // REQUIRED IN EVERY CHILD
+
 #endif // GWSAGENT_H

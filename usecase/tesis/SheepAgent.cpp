@@ -75,7 +75,7 @@ void SheepAgent::behave()
                         }
                 }
 
-            qDebug() << "Target cell occupation = " << occupation;
+            qDebug() << "Target cell SheepAgent occupation = " << occupation;
 
             /*
              * Modify behaviour based on target cell occupation
@@ -138,9 +138,9 @@ void SheepAgent::behave()
                   /*
                    *  Breed!
                    */
-                  qDebug() << "**********************";
-                  qDebug() << "YAS! You get to breed!";
-                  qDebug() << "**********************";
+                  qDebug() << "************************************************************";
+                  qDebug() << "   YAS! You get to breed! Another sheep in the GWSWorld!     ";
+                  qDebug() << "************************************************************";
                   this->setProperty("energy" , this->getProperty("energy").toFloat() / 2.0);
 
                   // Welcome a lamb to the World:
@@ -148,7 +148,7 @@ void SheepAgent::behave()
                   GWSExecutionEnvironment::globalInstance()->registerAgent(lambAgent);
                   GWSAgentEnvironment::globalInstance()->registerAgent( lambAgent );
                   lambAgent->setProperty("energy", 10);
-                  lambAgent->transformMove( GWSCoordinate( getCentroid().getX() , getCentroid().getY() ) );
+                  lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
                   qDebug() << "Lamb position = (" << lambAgent->getCentroid().getX() << ", " << lambAgent->getCentroid().getY() << ")";
 
                   //  Reproductive constraints:

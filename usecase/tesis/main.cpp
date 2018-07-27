@@ -11,7 +11,9 @@
 #include "../../agent/Agent.h"
 #include "../../behaviour/Behaviour.h"
 
+// Agents
 #include "SheepAgent.h"
+#include "PredatorAgent.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
@@ -42,69 +44,101 @@ int main(int argc, char* argv[])
 
     // Init Object Factory
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
 
 
+    /* ----------
+    /* SheepAgents
+       ----------*/
 
-
+    /* Dolly1 */
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                    "\"@id\" : \"Dolly1\" , "
                                                   "\"energy\" : 10 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0] }"
                                                   "}" );
-    GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
-
-    QVariant v1 = agent1->property("@type");
-    qDebug()<< "I am Agent1 and I am of" << v1.toString() << "type, and my initial absize position is" << agent1->property("cell_x").toString();
+    GWSAgent* sheep1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
 
 
+    qDebug()<< "I am a GWSAgent of" << sheep1->property("@type").toString() << "type.";
 
-    GWSBehaviour* b1 = new GWSBehaviour( agent1 );
-    TesisBehaviour* b11 = new TesisBehaviour( agent1 );
-    TesisBehaviour* b12 = new TesisBehaviour( agent1 );
-    agent1->setStartBehaviour( b1 );
+    GWSBehaviour* b1 = new GWSBehaviour( sheep1 );
+    TesisBehaviour* b11 = new TesisBehaviour( sheep1 );
+    TesisBehaviour* b12 = new TesisBehaviour( sheep1 );
+    sheep1->setStartBehaviour( b1 );
     b1->addSubbehaviour( b11 );
     b1->addSubbehaviour( b12 );
 
-    TesisBehaviour* b2 = new TesisBehaviour( agent1 );
+    TesisBehaviour* b2 = new TesisBehaviour( sheep1 );
 
     b1->setNextBehaviour( b2 );
 
 
-
-    // Add second agent
+    /* Dolly2 */
     QJsonDocument json2 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly2\" , "
                                                   "\"energy\" : 5 , "
-                                                  "\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [  [[0,0], [1,0], [1,1], [0,1], [0,2], [0,0]]  ]}"
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
-    GWSAgent* agent2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
-
-    QVariant v2 = agent2->property("@type");
-    qDebug()<< "I am Agent2 and I am of" << v2.toString() << "type, and my initial absize position is" << agent2->property("cell_x").toString();
+    GWSAgent* sheep2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
+    qInfo()<< "I am a GWSAgent of" << sheep2->property("@type").toString() << "type.";
 
 
-    // Add third agent
+    /* Dolly3 */
     QJsonDocument json3 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly3\" , "
                                                   "\"energy\" : 20 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
-    GWSAgent* agent3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
+    GWSAgent* sheep3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
+    qInfo()<< "I am a GWSAgent of" << sheep3->property("@type").toString() << "type.";
 
-    QVariant v3 = agent3->property("@type");
-    qDebug()<< "I am Agent3 and I am of" << v3.toString() << "type, and my initial absize position is" << agent3->property("cell_x").toString();
+    /* ----------
+    /* WolfAgents
+       ----------*/
+
+    /* Nymeria1 */
+    QJsonDocument json4 = QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
+                                                  "\"@id\" : \"Nymeria1\" , "
+                                                  "\"energy\" : 20 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [2 , 2 , 0]}"
+                                                  "}" );
+    GWSAgent* predator1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
+    qInfo()<< "I am a GWSAgent of" << predator1->property("@type").toString() << "type.";
 
 
+    /* Nymeria2 */
+    QJsonDocument json5 = QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
+                                                  "\"@id\" : \"Nymeria2\" , "
+                                                  "\"energy\" : 15 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [1 , 2 , 0]}"
+                                                  "}" );
+    GWSAgent* predator2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json5.object() ) );
+    qInfo()<< "I am a GWSAgent of" << predator2->property("@type").toString() << "type.";
+
+    /* Nymeria3 */
+    QJsonDocument json6= QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
+                                                  "\"@id\" : \"Nymeria3\" , "
+                                                  "\"energy\" : 10 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [-2 , -2 , 0]}"
+                                                  "}" );
+    GWSAgent* predator3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json6.object() ) );
+    qInfo()<< "I am a GWSAgent of" << predator3->property("@type").toString() << "type.";
 
 
-
-    // Register in environments
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent1 );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( agent3 );
-    GWSAgentEnvironment::globalInstance()->registerAgent( agent1 );
-    GWSAgentEnvironment::globalInstance()->registerAgent( agent2 );
-    GWSAgentEnvironment::globalInstance()->registerAgent( agent3 );
+    // Register Agents in environments
+    GWSExecutionEnvironment::globalInstance()->registerAgent( sheep1 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( sheep2 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( sheep3 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( predator1 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( predator2 );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( predator3 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( sheep1 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( sheep2 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( sheep3 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( predator1 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( predator2 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( predator3 );
 
     QList<GWSAgent*> l = GWSAgentEnvironment::globalInstance()->getByClass<GWSAgent>( GWSAgent::staticMetaObject.className() );
 
@@ -117,31 +151,6 @@ int main(int argc, char* argv[])
     app->exec();
 
 
-    /* Generate subroutine for this method so that it can be generalized to all agents present.
-     *
 
-     Store all present agents in an array
-    GWSAgent* SheepFlock[3] = {agent1, agent2, agent3};
-    for (int i = 0; i <= 3; i++)
-        {
-        for (int j = 0; j <= 3 ; j++ )
-            {
-            if (
-               (SheepFlock[i]->property("cell_x") == SheepFlock[j]->property("cell_x"))
-                &&
-               (SheepFlock[i]->property("cell_y") == SheepFlock[j]->property("cell_y"))
-                &&
-               (i != j)
-               )
-               {
-               qDebug() << "This cell is too crowded!";
-               }
-           else
-               {
-               qDebug() << "Not overbooked yet!";
-               }
-            }
-        }
-   */
 
 }
