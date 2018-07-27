@@ -42,9 +42,9 @@ void GWSGeometry::deserialize(QJsonObject json){
         QJsonArray coors = json.value("coordinates").toArray();
         this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
                     geos::geom::Coordinate(
-                        coors.size() > 0 ? coors.at(0).toDouble() : NAN ,
-                        coors.size() > 1 ? coors.at(1).toDouble() : NAN ,
-                        coors.size() > 2 ? coors.at(2).toDouble() : NAN )
+                        coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
+                        coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
+                        coors.size() > 2 ? coors.at(2).toDouble() : 0 )
                     );
     } else if ( geom_type == "LineString" ){
 
