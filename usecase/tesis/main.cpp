@@ -78,11 +78,7 @@ int main(int argc, char* argv[])
                                                   "\"cell_x\" : 1 , "
                                                   "\"cell_y\" : 0 , "
                                                   "\"energy\" : 5 , "
-                                                  "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
-                                                  "\"grid\" : { \"@type\": \"GWSGrid\" , "
-                                                                "\"values\" : [ [1,2] , [3,4]] ,  "
-                                                                "\"max_value\": 100 , "
-                                                  "             \"min_value\" : 0 } "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
     GWSAgent* agent2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
 
@@ -96,11 +92,7 @@ int main(int argc, char* argv[])
                                                   "\"cell_x\" : 0 , "
                                                   "\"cell_y\" : 0 , "
                                                   "\"energy\" : 20 , "
-                                                  "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
-                                                  "\"grid\" : { \"@type\": \"GWSGrid\" , "
-                                                                "\"values\" : [ [1,2] , [3,4]] ,  "
-                                                                "\"max_value\": 100 , "
-                                                  "             \"min_value\" : 0 } "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
     GWSAgent* agent3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
 

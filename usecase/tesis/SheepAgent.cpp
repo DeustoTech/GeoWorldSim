@@ -16,7 +16,6 @@ void SheepAgent::behave()
 
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
-        qDebug() << this->serialize();
 
         /*
          *  Generate a list with all the sheeps in the GWS world.
@@ -97,9 +96,9 @@ void SheepAgent::behave()
                //if
                qDebug() << "Target not overbooked yet, you can move there"  ;
 
-               this->setProperty("cell_x", this->getProperty("cell_x").toInt() + direction[RandIndexX]);
-               this->setProperty("cell_y", this->getProperty("cell_y").toInt() + direction[RandIndexY]);
-               this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] , 0 ) );
+              // this->setProperty("cell_x", this->getProperty("cell_x").toInt() + direction[RandIndexX]);
+              // this->setProperty("cell_y", this->getProperty("cell_y").toInt() + direction[RandIndexY]);
+               this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
 
                // Final position of the agent:
                qDebug() << "Final position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")";
@@ -159,6 +158,7 @@ void SheepAgent::behave()
                   lambAgent->setProperty("energy", 10);
                   lambAgent->setProperty("cell_x", this->property("cell_x"));
                   lambAgent->setProperty("cell_y", this->property("cell_y"));
+  //                lambAgent->transformMove( GWSCoordinate( this->property("cell_x") , this->property("cell_y") ) );
 
 
                   //  Reproductive constraints:
