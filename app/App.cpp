@@ -40,7 +40,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
     // Redirect outputs to file
     if( this->property("console").toBool() ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= 1 ){
+            if( type >= 0 ){
                 GWSLogger::log( QString("[%1 - %2] %3").arg( QDateTime::currentDateTime().toString() ).arg( type ).arg( msg ) , QString("console.txt") ); Q_UNUSED( context );
             }
         } );
@@ -190,8 +190,8 @@ void GWSApp::socketReceivedData(){
 
 void GWSApp::pushAgent(QJsonObject entity_json){
 
-    QString entity_type = entity_json.value("type").toString();
-    QString entity_id = entity_json.value("id").toString();
+    QString entity_type = entity_json.value( GWSObject::GWS_TYPE_PROP ).toString();
+    QString entity_id = entity_json.value( GWSObject::GWS_ID_PROP ).toString();
     //entity_json.insert("time" , QString("%1ms").arg( GWSTimeEnvironment::globalInstance()->getCurrentDateTime() ) );
     if( entity_type.isEmpty() || entity_id.isEmpty() ){ return; }
     this->pushData( "entity" , entity_json );

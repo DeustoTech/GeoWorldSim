@@ -13,7 +13,7 @@ struct GWSCoordinate {
 
     // CONSTRUCTORS
     GWSCoordinate() : x(0) , y(0) , z(0){}
-    GWSCoordinate(double x, double y, double z) : x(x) , y(y) , z(z){}
+    GWSCoordinate(double x, double y, double z = 0.0) : x(x) , y(y) , z(z){}
     GWSCoordinate(const GWSCoordinate &other) : GWSCoordinate(other.x , other.y, other.z){}
     ~GWSCoordinate(){}
 

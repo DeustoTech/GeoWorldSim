@@ -47,9 +47,8 @@ int main(int argc, char* argv[])
 
 
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
-                                                  "\"cell_x\" : 0 , "
-                                                  "\"cell_y\" : 1 , "
-                                                  "\"energy\" : 100 , "
+                                                   "\"@id\" : \"Dolly1\" , "
+                                                  "\"energy\" : 10 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0] }"
                                                   "}" );
     GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
@@ -75,14 +74,8 @@ int main(int argc, char* argv[])
     // Add second agent
     QJsonDocument json2 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly2\" , "
-                                                  "\"cell_x\" : 1 , "
-                                                  "\"cell_y\" : 0 , "
                                                   "\"energy\" : 5 , "
-                                                  "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
-                                                  "\"grid\" : { \"@type\": \"GWSGrid\" , "
-                                                                "\"values\" : [ [1,2] , [3,4]] ,  "
-                                                                "\"max_value\": 100 , "
-                                                  "             \"min_value\" : 0 } "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
     GWSAgent* agent2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
 
@@ -93,14 +86,8 @@ int main(int argc, char* argv[])
     // Add third agent
     QJsonDocument json3 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly3\" , "
-                                                  "\"cell_x\" : 0 , "
-                                                  "\"cell_y\" : 0 , "
                                                   "\"energy\" : 20 , "
-                                                  "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
-                                                  "\"grid\" : { \"@type\": \"GWSGrid\" , "
-                                                                "\"values\" : [ [1,2] , [3,4]] ,  "
-                                                                "\"max_value\": 100 , "
-                                                  "             \"min_value\" : 0 } "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
                                                   "}" );
     GWSAgent* agent3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
 
