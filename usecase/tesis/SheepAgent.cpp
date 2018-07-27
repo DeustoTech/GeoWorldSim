@@ -16,6 +16,7 @@ void SheepAgent::behave()
 
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
+        qDebug() << this->serialize();
 
         /*
          *  Generate a list with all the sheeps in the GWS world.
@@ -98,6 +99,7 @@ void SheepAgent::behave()
 
                this->setProperty("cell_x", this->getProperty("cell_x").toInt() + direction[RandIndexX]);
                this->setProperty("cell_y", this->getProperty("cell_y").toInt() + direction[RandIndexY]);
+               this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] , 0 ) );
 
                // Final position of the agent:
                qDebug() << "Final position = (" << this->getProperty("cell_x").toString() << ", " << this->getProperty("cell_y").toString() << ")";
