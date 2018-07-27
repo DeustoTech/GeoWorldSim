@@ -1,26 +1,24 @@
 #ifndef GWSGEOMETRY_H
 #define GWSGEOMETRY_H
 
-#include "../../object/Object.h"
 #include "geos/geom/Geometry.h"
 
 #include <QJsonObject>
-#include <QPointF>
 #include <QImage>
 #include <QColor>
 
 #include "../units/Units.h"
 #include "Coordinate.h"
 
+QT_FORWARD_DECLARE_CLASS(GWSAgent)
+
 using namespace geos::geom;
 
-class GWSGeometry : public GWSObject
+class GWSGeometry
 {
-    Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GWSGeometry();
-    GWSGeometry( GWSCoordinate coor ); // Point
+    GWSGeometry( GWSAgent* agent );
     ~GWSGeometry();
 
     // IMPORTERS
@@ -32,12 +30,12 @@ public:
     virtual QString toString() const;
 
     // GETTERS
-    bool isValid() const;
+    bool isGeometryValid() const;
     GWSAreaUnit getArea() const;
-    double getMaxX() const;
-    double getMinX() const;
-    double getMaxY() const;
-    double getMinY() const;
+    double getGeometryMaxX() const;
+    double getGeometryMinX() const;
+    double getGeometryMaxY() const;
+    double getGeometryMinY() const;
     GWSCoordinate getCentroid() const;
 
     // SPATIAL COMPARATORS
@@ -51,12 +49,13 @@ public:
     void transformIntersection( const GWSGeometry* other );
 
 protected:
-    GWSGeometry(const geos::geom::Geometry* inner_geometry);
+    GWSGeometry(geos::geom::Geometry* inner_geometry);
+
+    // REF AGENT
+    GWSAgent* agent = Q_NULLPTR;
 
     // INNER GEOMETRY
-    const geos::geom::Geometry* inner_geometry = Q_NULLPTR;
+    geos::geom::Geometry* inner_geometry = Q_NULLPTR;
 };
-
-Q_DECLARE_METATYPE(GWSGeometry*)
 
 #endif // GWSGEOMETRY_H

@@ -15,8 +15,9 @@
 #include <QDebug>
 
 #include "./../object/Object.h"
+#include "./../../util/geometry/Geometry.h"
 //#include "utils/geometry/Coordinate.h"
-//#include "utils/geometry/Geometry.h"
+
 //#include "utils/conversors/custom_json/CustomJsonConversor.h"
 
 #include "./../util/units/Units.h"
@@ -33,7 +34,7 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 // Declare Coordinate to be used as QMETAPROPERTY
 //Q_DECLARE_METATYPE(GWSGeometry)
 
-class GWSAgent : public GWSObject
+class GWSAgent : public GWSObject , public GWSGeometry
 {
     friend class GWSEnvironment; // Environment will be able to overwrite the attributes
     friend class GWSPhysicalEnvironment;
@@ -65,7 +66,6 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 );
 
     // GETTERS
-    const GWSGeometry* getGeometry() const;
     //GWSCoordinate getRepresentativeCoordinate() const;
     bool isRunning() const;
     bool isBusy() const;

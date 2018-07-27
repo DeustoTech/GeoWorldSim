@@ -18,30 +18,17 @@ GWSGridEnvironment::~GWSGridEnvironment(){
 
 void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
 
-    /*GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
+    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
 
     if( grid ){
-
-        QStringList classes = agent->getInheritanceTree();
-        foreach(QString c , classes){
-
-            // Add grid
-            this->grids.insert( c , grid );
-        }
-    }*/
+        this->environment_grids->add( agent );
+    }
 }
 
 void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
-    /*GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
 
+    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
     if( grid ){
-
-        QStringList classes = agent->getInheritanceTree();
-        foreach(QString c , classes){
-
-            // Remove grid
-            this->grids.remove( c );
-
-        }
-    }*/
+        this->environment_grids->remove( agent );
+    }
 }

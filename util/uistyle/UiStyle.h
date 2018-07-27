@@ -16,15 +16,6 @@ public:
     explicit GWSUiStyle( GWSObject* parent );
     ~GWSUiStyle();
 
-    // PROPERTIES
-    static QString COLOR_PROP;
-    static QString BORDER_COLOR_PROP;
-    static QString BORDER_WEIGHT_PROP;
-    static QString DASH_ARRAY_PROP;
-    static QString ICON_URL_PROP;
-    static QString ICON_PROP;
-    static QString ZOOM_LEVEL_PROP;
-
     void deserialize(QJsonObject json);
 
     // METHODS

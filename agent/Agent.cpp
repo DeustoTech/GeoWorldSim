@@ -15,15 +15,13 @@ QString GWSAgent::GEOMETRY_PROP = "geo";
 QString GWSAgent::STYLE_PROP = "style";
 QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
-GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , busy_counter(0) {
+GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , busy_counter(0) {
 }
 
 GWSAgent::~GWSAgent() {
     // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , agent , &Agent::deleteLater );
 
     QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
-
-    //if( this->geometry ){ this->geometry->deleteLater(); }
     if( this->timer ){ this->timer->deleteLater(); }
 
     this->skills->deleteLater();
@@ -37,16 +35,21 @@ void GWSAgent::deserialize(QJsonObject json){
 
     GWSObject::deserialize( json );
 
-    // Set skills
+    // SKILLS
     QJsonArray skills = json.value("@skills").toArray();
     foreach( QJsonValue skill , skills ){
         qDebug() << "SKILL" << skill;
     }
 
-    // Set behaviour
+    // BEHAVIOUR
     QJsonArray behaviours = json.value("@behaviour").toArray();
     foreach( QJsonValue behaviour , behaviours ){
         qDebug() << "BEHAVIOUR" << behaviour;
+    }
+
+    // GEOMETRY
+    if( !json.value( GEOMETRY_PROP ).isNull() ){
+        GWSGeometry::deserialize( json.value( GEOMETRY_PROP ).toObject() );
     }
 }
 
@@ -63,6 +66,8 @@ void GWSAgent::deserialize(QJsonObject json){
 QJsonObject GWSAgent::serialize() const{
 
     QJsonObject json = GWSObject::serialize();
+
+    //Skills
     QJsonArray skills;
     if( this->skills ){
         foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
@@ -70,7 +75,14 @@ QJsonObject GWSAgent::serialize() const{
         }
     }
     json.insert( "@skills" , skills );
-    json.insert( "@busy" , this->busy_counter );
+
+    // BEHAVIOUR
+
+    // GEOMETRY
+    json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
+
+    // STYLE
+
     return json;
 }
 
@@ -97,10 +109,6 @@ bool GWSAgent::isBusy() const{
 
 qint64 GWSAgent::getInternalTime() const{
     return this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
-}
-
-const GWSGeometry* GWSAgent::getGeometry() const{
-    return this->getProperty( GEOMETRY_PROP ).value<GWSGeometry*>();
 }
 
 /**

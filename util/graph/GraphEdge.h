@@ -6,6 +6,7 @@
 
 #include "../../util/units/Units.h"
 
+QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
 using namespace geos::planargraph;
@@ -14,7 +15,7 @@ class GWSGraphEdge
 {
 
 public:
-    GWSGraphEdge();
+    GWSGraphEdge( GWSAgent* agent );
     ~GWSGraphEdge();
 
     // GETTERS
@@ -32,6 +33,9 @@ public:
     virtual double getCost( double accumulated_cost = 0 ) const; // To be implemented by each child
 
 private:
+
+    // REF AGENT
+    GWSAgent* agent;
 
     GWSGraphNode* from = Q_NULLPTR;
     GWSGraphNode* to = Q_NULLPTR;

@@ -55,7 +55,6 @@ HEADERS += \
     #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
-    ../../util/grid/GeoGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -66,7 +65,7 @@ HEADERS += \
     #../../environment/social_environment/SocialEnvironment.h \
     #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    #../../environment/grid_environment/GridEnvironment.h \
+    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     TerrainAgent.h \
@@ -100,7 +99,6 @@ SOURCES += main.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
-    ../../util/grid/GeoGrid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
@@ -113,7 +111,7 @@ SOURCES += main.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    #../../environment/grid_environment/GridEnvironment.cpp \
+    ../../environment/grid_environment/GridEnvironment.cpp \
     TerrainAgent.cpp \
     SheepAgent.cpp \
     TesisBehaviour.cpp

@@ -5,6 +5,7 @@
 
 #include "../util/geometry/Coordinate.h"
 
+QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
 
 class GWSGraphNode
@@ -12,7 +13,7 @@ class GWSGraphNode
     friend class GWSGraphEdge;
 
 public:
-    GWSGraphNode();
+    GWSGraphNode( GWSAgent* agent );
 
     // GETTERS
     virtual const QList<GWSGraphEdge*> getDepartingEdges() const;
@@ -31,6 +32,9 @@ public:
 private:
     void connectEdge(GWSGraphEdge* edge);
     void disconnectEdge(GWSGraphEdge* edge);
+
+    // REF AGENT
+    GWSAgent* agent;
 
     GWSCoordinate inner_coordinate;
     QList<GWSGraphEdge*> out_edges; // Departing edges

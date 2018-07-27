@@ -3,8 +3,9 @@
 
 #include "../../environment/Environment.h"
 
+#include "../../agent/Agent.h"
+#include "../../util/storage/ObjectStorage.h"
 #include "../../util/grid/Grid.h"
-#include "../../util/units/Units.h"
 
 class GWSGridEnvironment : public GWSEnvironment
 {
@@ -13,7 +14,10 @@ class GWSGridEnvironment : public GWSEnvironment
 public:
     static GWSGridEnvironment* globalInstance();
 
-protected:
+    // GETTERS
+
+
+    // METHODS
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);
 
@@ -23,7 +27,7 @@ private:
     ~GWSGridEnvironment();
 
 
-    QMap<QString, GWSGrid*> grids; // Grids
+    GWSObjectStorage* environment_grids; // Grids
 };
 
 #endif // GWSGRIDENVIRONMENT_H
