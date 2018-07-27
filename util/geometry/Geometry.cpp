@@ -5,20 +5,21 @@
 #include <QJsonArray>
 #include <QDebug>
 
-#include "Point.h"
-
+#include "../../agent/Agent.h"
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/CoordinateSequenceFactory.h"
 
+#include "geos/geom/Point.h"
 #include "geos/geom/LineString.h"
 #include "geos/geom/Polygon.h"
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSGeometry::GWSGeometry() : GWSObject(){
+GWSGeometry::GWSGeometry( GWSAgent* agent ){
+    this->agent = agent;
 }
 
-GWSGeometry::GWSGeometry( const geos::geom::Geometry* inner_geometry ) : GWSObject(){
+GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ){
     this->inner_geometry = inner_geometry;
 }
 
@@ -35,10 +36,22 @@ GWSGeometry::~GWSGeometry(){
 
 void GWSGeometry::deserialize(QJsonObject json){
 
-    double x = json.value("x").toDouble();
-    double y = json.value("y").toDouble();
+    QString geom_type = json.value("type").toString();
 
-    this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint( geos::geom::Coordinate( x , y ) );
+    if( geom_type == "Point" ){
+        QJsonArray coors = json.value("coordinates").toArray();
+        this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
+                    geos::geom::Coordinate(
+                        coors.size() > 0 ? coors.at(0).toDouble() : NAN ,
+                        coors.size() > 1 ? coors.at(1).toDouble() : NAN ,
+                        coors.size() > 2 ? coors.at(2).toDouble() : NAN )
+                    );
+    } else if ( geom_type == "LineString" ){
+
+    } else if ( geom_type == "Polygon" ){
+
+    }
+
 }
 
 /**********************************************************************
@@ -173,7 +186,7 @@ QString GWSGeometry::toString() const{
  GETTERS
 **********************************************************************/
 
-bool GWSGeometry::isValid() const{
+bool GWSGeometry::isGeometryValid() const{
     return this->inner_geometry ? this->inner_geometry->isValid() : false;
 }
 
@@ -193,25 +206,25 @@ GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
     return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other->inner_geometry )  * 110574 : -1 );
 }
 
-double GWSGeometry::getMaxX() const{
+double GWSGeometry::getGeometryMaxX() const{
     if( this->inner_geometry ){
         this->inner_geometry->getEnvelopeInternal()->getMaxX();
     }
 }
 
-double GWSGeometry::getMinX() const{
+double GWSGeometry::getGeometryMinX() const{
     if( this->inner_geometry ){
         this->inner_geometry->getEnvelopeInternal()->getMinX();
     }
 }
 
-double GWSGeometry::getMaxY() const{
+double GWSGeometry::getGeometryMaxY() const{
     if( this->inner_geometry ){
         this->inner_geometry->getEnvelopeInternal()->getMaxY();
     }
 }
 
-double GWSGeometry::getMinY() const{
+double GWSGeometry::getGeometryMinY() const{
     if( this->inner_geometry ){
         this->inner_geometry->getEnvelopeInternal()->getMinY();
     }

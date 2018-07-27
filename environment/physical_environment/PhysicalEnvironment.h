@@ -1,5 +1,5 @@
-#ifndef PHYSICALENVIRONMENT_H
-#define PHYSICALENVIRONMENT_H
+#ifndef GWSPHYSICALENVIRONMENT_H
+#define GWSPHYSICALENVIRONMENT_H
 
 #include <QMutex>
 
@@ -21,20 +21,16 @@ public:
 
     // SPATIAL GETTERS
     QList<GWSAgent*> orderByDistance( GWSAgent* source , QList<GWSAgent*> agents ) const;
-    QList<GWSAgent*> getAgentsInsideEnvelope( const GWSEnvelope envelope, QString class_name ) const;
+    //QList<GWSAgent*> getAgentsInsideEnvelope( const GWSEnvelope envelope, QString class_name ) const;
     //QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
-    GWSAgent* getNearestAgent( GeoCoordinates coor, QString class_name ) const;
-    GWSAgent* getNearestAgent( GeoCoordinates coor, QList<GWSAgent*> agents ) const;
-    QList<GWSAgent*> getNearestAgents( QList<GeoCoordinates> coors, QString class_name ) const;
-    QList<GWSAgent*> getNearestAgents( QList<GeoCoordinates> coors, QList<GWSAgent*> agents ) const;
+    GWSAgent* getNearestAgent( GWSCoordinate coor, QString class_name ) const;
+    GWSAgent* getNearestAgent( GWSCoordinate coor, QList<GWSAgent*> agents ) const;
+    QList<GWSAgent*> getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
+    QList<GWSAgent*> getNearestAgents( QList<GWSCoordinate> coors, QList<GWSAgent*> agents ) const;
     //GWSAgent* getAgentByGeometry( GWSGeometry* geometry, QString class_name ) const;
 
-    // GETTERS
-    GWSEnvelope getBounds() const;
-
     // SETTERS
-    void setBounds(GWSEnvelope bounds);
-    bool updateAgentGeometry( GWSAgent* agent , GeoCoordinates new_geom );
+    //bool updateAgentGeometry( GWSAgent* agent , GeoCoordinates new_geom );
     //bool updateAgentGeometry( GWSAgent* agent , GWSGeometry* new_geom );
 
 protected:
@@ -46,15 +42,12 @@ private:
     GWSPhysicalEnvironment(GWSPhysicalEnvironment const&);
     ~GWSPhysicalEnvironment();
 
-    // ENVIRONMENT BOUNDS
-    GWSEnvelope bounds;
-
     // SPATIAL INDEX
-    QMap<QString , GWSEnvelope> spatial_envelopes; // QMAP< AGENT_ID , ENVELOPE> Spatial envelopes
+    //QMap<QString , GWSEnvelope> spatial_envelopes; // QMAP< AGENT_ID , ENVELOPE> Spatial envelopes
     QMap<QString , GWSQuadtree*> spatial_index; // Spatial indexes
 
     // Mutex, for avoiding concurrency
     QMutex mutex;
 };
 
-#endif // PHYSICALENVIRONMENT_H
+#endif // GWSPHYSICALENVIRONMENT_H

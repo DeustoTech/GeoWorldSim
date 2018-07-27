@@ -1,15 +1,14 @@
 #ifndef GWSGRID_H
 #define GWSGRID_H
 
-#include "../../object/Object.h"
 #include <QVector>
 #include <QJsonObject>
 #include <QImage>
 
-class GWSGrid : public GWSObject
-{
-    Q_OBJECT
+QT_FORWARD_DECLARE_CLASS(GWSAgent)
 
+class GWSGrid
+{
     //[xy]
     //[03 , 13 , 23 , 33]
     //[02 , 12 , 22 , 32]
@@ -18,12 +17,12 @@ class GWSGrid : public GWSObject
 
 public:
     // CONSTRUCTORS
-    Q_INVOKABLE explicit GWSGrid();
+    GWSGrid( GWSAgent* agent );
 
     // PROPERTIES
-    static QString MAX_VALUE_PROP;
-    static QString MIN_VALUE_PROP;
-    static QString VALUES_PROP;
+    static QString GRID_MAX_VALUE_PROP;
+    static QString GRID_MIN_VALUE_PROP;
+    static QString GRID_VALUES_PROP;
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
@@ -33,20 +32,19 @@ public:
     //QImage toImage( const GWSEnvelope image_bounds , int image_width = 1024, int image_height = 1024 ) const;
 
     // GETTERS
-    bool isEmpty() const;
-    unsigned int getXSize() const;
-    unsigned int getYSize() const;
-    double getMaxValue() const;
-    double getMinValue() const;
-    double getCellValue( unsigned int grid_x , unsigned int grid_y ) const;
+    bool isGridEmpty() const;
+    unsigned int getGridXSize() const;
+    unsigned int getGridYSize() const;
+    double getGridMaxValue() const;
+    double getGridMinValue() const;
+    double getGridCellValue( unsigned int grid_x , unsigned int grid_y ) const;
 
     // SETTERS
-    //void setBounds( GWSEnvelope bounds );
-    void setMaxValue( double max );
-    void setMinValue( double min );
-    void setSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
+    void setGridMaxValue( double max );
+    void setGridMinValue( double min );
+    void setGridSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
     //void setCellValue( GWSCoordinate* coor , double v );
-    void setCellValue( unsigned int grid_x , unsigned int grid_y , double v);
+    void setGridCellValue( unsigned int grid_x , unsigned int grid_y , double v);
 
     // OPERATORS
     GWSGrid* operator+(const double number);
@@ -57,6 +55,12 @@ public:
     //QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
 
 private:
+
+    // REG AGENT
+    GWSAgent* agent;
+
+    double max_value;
+    double min_value;
     QVector< QVector<double> > values;
 };
 

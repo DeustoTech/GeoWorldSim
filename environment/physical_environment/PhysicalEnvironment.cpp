@@ -1,6 +1,5 @@
 
 #include "PhysicalEnvironment.h"
-#include "../../util/geometry/GeometryFactory.h"
 
 GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
     static GWSPhysicalEnvironment instance;
@@ -18,10 +17,6 @@ GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
 /***********************************************************************/
 // GETTERS
 /***********************************************************************/
-
-GWSEnvelope GWSPhysicalEnvironment::getBounds() const{
-    return this->bounds;
-}
 
 QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList<GWSAgent*> agents) const{
     QList<GWSAgent*> ordered;
@@ -50,21 +45,21 @@ QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList
 }
 
 
-QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelope envelope, QString class_name) const{
+/*QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelope envelope, QString class_name) const{
 
     QList<GWSAgent*> agents;
 
-    /*if( this->spatial_index.keys().contains(class_name) ){
+    if( this->spatial_index.keys().contains(class_name) ){
         foreach( void * o , this->spatial_index[class_name]->getElements( envelope ) ){
             GWSAgent* agent = ((GWSAgent*)o);
             if( envelope.contains( agent->getGeometry()->getEnvelope() ) ){
                 agents.append( agent );
             }
         }
-    }*/
+    }
 
     return agents;
-}
+}*/
 
 
 /*QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
@@ -87,16 +82,16 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelo
  * @param class_name ClassName of the agents in the environment from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GeoCoordinates> coors, QString class_name) const{
+QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QString class_name) const{
     QList<GWSAgent*> founds = QList<GWSAgent*>();
-    /*foreach(GWSCoordinate coor , coors){
+    foreach(GWSCoordinate coor , coors){
         founds.append( this->getNearestAgent( coor , class_name ) );
-    }*/
+    }
     return founds;
 }
 
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QList<GWSAgent*> agents) const{
-    QList<GeoCoordinates> coors;
+GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<GWSAgent*> agents) const{
+    QList<GWSCoordinate> coors;
     coors.append( coor );
     QList<GWSAgent*> nearests = this->getNearestAgents( coors , agents );
     if( !nearests.isEmpty() ){
@@ -112,24 +107,11 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QList<GWS
  * @param class_name ClassName of the agents in the environment from which to get the nearest for geometry
  * @return
  */
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QString class_name) const{
-    GWSAgent* found = 0;
-    /*if( this->spatial_index.keys().contains(class_name) ){
-
-        GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
-        QList<void *> objs = this->spatial_index.value(class_name)->getElements( env );
-
-        if( !objs.isEmpty() ){
-            found = ( (GWSAgent*) objs.at( qrand() % objs.size() ) );
-            foreach(void * o , objs){
-                GWSAgent* agent = ((GWSAgent*)o);
-                if( agent && coor.distance( agent->getRepresentativeCoordinate() ) < coor.distance( found->getRepresentativeCoordinate() )){
-                    found = agent;
-                }
-            }
-        }
-    }*/
-    return found;
+GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
+    if( this->spatial_index.keys().contains(class_name) ){
+        return this->spatial_index.value(class_name)->getNearestElement( coor );
+    }
+    return Q_NULLPTR;
 }
 
 /**
@@ -140,7 +122,7 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GeoCoordinates coor, QString c
  * @param agents List of agents from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GeoCoordinates> coors, QList<GWSAgent*> agents) const{
+QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<GWSAgent*> agents) const{
     QList<GWSAgent*> founds;
 
     /*GWSQuadtree* index = new GWSQuadtree();
@@ -188,13 +170,6 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GeoCoordinates> 
 }*/
 
 
-/***********************************************************************/
-// SETTERS
-/***********************************************************************/
-
-void GWSPhysicalEnvironment::setBounds(GWSEnvelope bounds){
-    this->bounds = bounds;
-}
 
 /**********************************************************************
  PRIVATE

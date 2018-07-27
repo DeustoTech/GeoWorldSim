@@ -10,12 +10,12 @@
 #include "../../util/grid/GridCoordinatesConversor.h"
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-QString GWSGrid::MAX_VALUE_PROP = "max_value";
-QString GWSGrid::MIN_VALUE_PROP = "min_value";
-QString GWSGrid::VALUES_PROP = "values";
+QString GWSGrid::GRID_MAX_VALUE_PROP = "grid_max_value";
+QString GWSGrid::GRID_MIN_VALUE_PROP = "grid_min_value";
+QString GWSGrid::GRID_VALUES_PROP = "grid_values";
 
-GWSGrid::GWSGrid() : GWSObject(){
-    qDebug() << "CONSTRUYO";
+GWSGrid::GWSGrid(GWSAgent *agent){
+    this->agent = agent;
 }
 
 /**********************************************************************
@@ -23,10 +23,11 @@ GWSGrid::GWSGrid() : GWSObject(){
 **********************************************************************/
 
 void GWSGrid::deserialize(QJsonObject json){
-    GWSObject::deserialize( json );
-    if( json.value( VALUES_PROP ).isArray() ){
+    this->max_value = json.value( GRID_MAX_VALUE_PROP ).toDouble();
+    this->min_value = json.value( GRID_MIN_VALUE_PROP ).toDouble();
+    if( json.value( GRID_VALUES_PROP ).isArray() ){
 
-        QJsonArray a1 = json.value( VALUES_PROP ).toArray();
+        QJsonArray a1 = json.value( GRID_VALUES_PROP ).toArray();
         this->values = QVector< QVector<double> >( a1.size() );
 
         for( int i = 0 ; i < a1.size() ; i++){
@@ -46,16 +47,18 @@ void GWSGrid::deserialize(QJsonObject json){
 **********************************************************************/
 
 QJsonObject GWSGrid::serialize() const{
-    QJsonObject json = GWSObject::serialize();
+    QJsonObject json;
+    json.insert( GRID_MAX_VALUE_PROP , this->max_value );
+    json.insert( GRID_MIN_VALUE_PROP , this->min_value );
     QJsonArray a1;
     for(int i = 0; i < this->values.size() ; i++){
         QJsonArray a2;
         for(int j = 0; j < this->values[i].size() ; j++){
-            a2.append( this->getCellValue( i , j ) );
+            a2.append( this->getGridCellValue( i , j ) );
         }
         a1.append( a2 );
     }
-    json.insert( VALUES_PROP , a1 );
+    json.insert( GRID_VALUES_PROP , a1 );
     return json;
 }
 
@@ -137,7 +140,7 @@ QJsonObject GWSGrid::serialize() const{
  GETTERS
 **********************************************************************/
 
-bool GWSGrid::isEmpty() const{
+bool GWSGrid::isGridEmpty() const{
     return this->values.isEmpty();
 }
 
@@ -145,17 +148,17 @@ bool GWSGrid::isEmpty() const{
     //return this->property( BOUNDS_PROP.toLatin1() ).value<GWSEnvelope*>();
 }*/
 
-unsigned int GWSGrid::getXSize() const{
+unsigned int GWSGrid::getGridXSize() const{
     return this->values.size();
 }
 
-unsigned int GWSGrid::getYSize() const{
+unsigned int GWSGrid::getGridYSize() const{
     if( this->values.isEmpty() ){ return 0; }
     return this->values.at(0).size();
 }
 
-double GWSGrid::getCellValue(unsigned int grid_x, unsigned int grid_y) const{
-    if( grid_x >= this->getXSize() || grid_y >= this->getYSize() ){
+double GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
+    if( grid_x >= this->getGridXSize() || grid_y >= this->getGridYSize() ){
         return NAN;
     }
     return this->values[grid_x][grid_y];
@@ -181,12 +184,12 @@ double GWSGrid::getCellValue(unsigned int grid_x, unsigned int grid_y) const{
     return GWSEnvelope( left , right , top , bottom );
 }*/
 
-double GWSGrid::getMaxValue() const {
-    return this->property( MAX_VALUE_PROP.toLatin1() ).toDouble();
+double GWSGrid::getGridMaxValue() const {
+    return this->max_value;
 }
 
-double GWSGrid::getMinValue() const{
-    return this->property( MIN_VALUE_PROP.toLatin1() ).toDouble();
+double GWSGrid::getGridMinValue() const{
+    return this->min_value;
 }
 
 /**********************************************************************
@@ -197,21 +200,21 @@ double GWSGrid::getMinValue() const{
     //this->setProperty( GWSGrid::BOUNDS_PROP.toLatin1() , bounds );
 }*/
 
-void GWSGrid::setMaxValue(double max){
-    this->setProperty( MAX_VALUE_PROP.toLatin1() , max );
+void GWSGrid::setGridMaxValue(double max){
+    this->max_value = max;
 }
 
-void GWSGrid::setMinValue(double min){
-    this->setProperty( MIN_VALUE_PROP.toLatin1() , min );
+void GWSGrid::setGridMinValue(double min){
+    this->min_value = min;
 }
 
-void GWSGrid::setSize(unsigned int x_size, unsigned int y_size){
+void GWSGrid::setGridSize(unsigned int x_size, unsigned int y_size){
     this->values.clear();
     this->values = QVector< QVector<double> >( x_size , QVector<double>( y_size , NAN ) );
 }
 
-void GWSGrid::setCellValue(unsigned int grid_x, unsigned int grid_y, double v){
-    if( v < this->getMinValue() || v > this->getMaxValue() ){
+void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, double v){
+    if( v < this->getGridMinValue() || v > this->getGridMaxValue() ){
         this->values[grid_x][grid_y] = NAN;
     } else {
         this->values[grid_x][grid_y] = v;
@@ -236,8 +239,8 @@ void GWSGrid::setCellValue(unsigned int grid_x, unsigned int grid_y, double v){
 GWSGrid* GWSGrid::operator +(double number){
     for(int i = 0; i < this->values.size() ; i++) {
         for( int j = 0; j < this->values[i].size() ; j++){
-            double value = this->getCellValue( i , j );
-            this->setCellValue( i , j , qMin( this->getMaxValue() , value+number ) );
+            double value = this->getGridCellValue( i , j );
+            this->setGridCellValue( i , j , qMin( this->getGridMaxValue() , value+number ) );
         }
     }
     return this;
@@ -246,8 +249,8 @@ GWSGrid* GWSGrid::operator +(double number){
 GWSGrid* GWSGrid::operator ++(){
     for(int i = 0; i < this->values.size() ; i++) {
         for( int j = 0; j < this->values[i].size() ; j++){
-            double value = this->getCellValue( i , j );
-            this->setCellValue( i , j , qMin( this->getMaxValue() , value++ ) );
+            double value = this->getGridCellValue( i , j );
+            this->setGridCellValue( i , j , qMin( this->getGridMaxValue() , value++ ) );
         }
     }
     return this;

@@ -1,8 +1,10 @@
 #include "GraphNode.h"
 
+#include "../../agent/Agent.h"
 #include "../../util/graph/GraphEdge.h"
 
-GWSGraphNode::GWSGraphNode(){
+GWSGraphNode::GWSGraphNode(GWSAgent* agent) {
+    this->agent = agent;
 }
 
 /**********************************************************************

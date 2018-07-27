@@ -1,9 +1,11 @@
 #include "GraphEdge.h"
 
 #include <QDebug>
+#include "../../agent/Agent.h"
 #include "../../util/graph/GraphNode.h"
 
-GWSGraphEdge::GWSGraphEdge() {
+GWSGraphEdge::GWSGraphEdge(GWSAgent* agent) {
+    this->agent = agent;
 }
 
 GWSGraphEdge::~GWSGraphEdge(){
