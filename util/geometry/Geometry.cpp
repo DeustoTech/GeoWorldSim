@@ -245,19 +245,14 @@ GWSCoordinate GWSGeometry::getCentroid() const{
 **********************************************************************/
 
 void GWSGeometry::transformMove(GWSCoordinate apply_movement){
-    if( !this->inner_geometry ){ return; }
-    geos::geom::CoordinateSequence* seq = this->inner_geometry->getCoordinates();
-    for( unsigned int i = 0 ; i < seq->size() ; i++ ){
-        qDebug() << "ORIGINAL" << QString::fromStdString( seq->getAt(i).toString() );
+    if( !this->inner_geometry ){
+        this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
+                    geos::geom::Coordinate( apply_movement.getX() , apply_movement.getY() , apply_movement.getZ()
+                    ) );
+        return;
     }
-
     TransformMoveFilter move = TransformMoveFilter( apply_movement );
     this->inner_geometry->apply_rw( move );
-
-    seq = this->inner_geometry->getCoordinates();
-    for( unsigned int i = 0 ; i < seq->size() ; i++ ){
-        qDebug() << "MOVED" << QString::fromStdString( seq->getAt(i).toString() );
-    }
 }
 
 void GWSGeometry::transformBuffer( double threshold ){
