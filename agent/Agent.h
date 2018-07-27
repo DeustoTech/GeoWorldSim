@@ -23,7 +23,7 @@
 #include "./../util/units/Units.h"
 #include "./../util/geometry/Geometry.h"
 #include "./../util/storage/ObjectStorage.h"
-#include "./../util/uistyle/UiStyle.h"
+#include "./../util/uistyle/Style.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSEnvironment)
 QT_FORWARD_DECLARE_CLASS(GWSPhysicalEnvironment)

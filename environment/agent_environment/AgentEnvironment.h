@@ -14,6 +14,9 @@ public:
 
     // GETTERS
     quint64 getAmount() const;
+    GWSAgent* getRandomByClass( QString class_name );
+    template <class T> T* getRandomByClass( QString class_name );
+
     GWSAgent* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
     template <class T> T* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
 

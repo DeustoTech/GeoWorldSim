@@ -1,5 +1,5 @@
-#ifndef GWSUISTYLE_H
-#define GWSUISTYLE_H
+#ifndef GWSSTYLE_H
+#define GWSSTYLE_H
 
 #include "../../object/Object.h"
 #include <QJsonObject>
@@ -7,14 +7,14 @@
 #include <QImage>
 #include <QColor>
 
-class GWSUiStyle : public GWSObject
+class GWSStyle : public GWSObject
 {
     Q_OBJECT
 
 public:
 
-    explicit GWSUiStyle( GWSObject* parent );
-    ~GWSUiStyle();
+    Q_INVOKABLE explicit GWSStyle( GWSObject* parent );
+    ~GWSStyle();
 
     void deserialize(QJsonObject json);
 
@@ -32,6 +32,6 @@ public:
     double zoom_level = 0;                  // Zoom level from which on to appear
 };
 
-Q_DECLARE_METATYPE(GWSUiStyle*)
+Q_DECLARE_METATYPE(GWSStyle*)
 
-#endif // GWSUISTYLE_H
+#endif // GWSSTYLE_H
