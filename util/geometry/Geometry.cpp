@@ -8,6 +8,7 @@
 #include "../../agent/Agent.h"
 #include "geos/geom/GeometryFactory.h"
 #include "geos/geom/CoordinateSequenceFactory.h"
+#include "geos/geom/CoordinateSequenceFilter.h"
 
 #include "geos/geom/Point.h"
 #include "geos/geom/LineString.h"
@@ -208,25 +209,25 @@ GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
 
 double GWSGeometry::getGeometryMaxX() const{
     if( this->inner_geometry ){
-        this->inner_geometry->getEnvelopeInternal()->getMaxX();
+        return this->inner_geometry->getEnvelopeInternal()->getMaxX();
     }
 }
 
 double GWSGeometry::getGeometryMinX() const{
     if( this->inner_geometry ){
-        this->inner_geometry->getEnvelopeInternal()->getMinX();
+        return this->inner_geometry->getEnvelopeInternal()->getMinX();
     }
 }
 
 double GWSGeometry::getGeometryMaxY() const{
     if( this->inner_geometry ){
-        this->inner_geometry->getEnvelopeInternal()->getMaxY();
+        return this->inner_geometry->getEnvelopeInternal()->getMaxY();
     }
 }
 
 double GWSGeometry::getGeometryMinY() const{
     if( this->inner_geometry ){
-        this->inner_geometry->getEnvelopeInternal()->getMinY();
+        return this->inner_geometry->getEnvelopeInternal()->getMinY();
     }
 }
 
@@ -242,6 +243,22 @@ GWSCoordinate GWSGeometry::getCentroid() const{
 /**********************************************************************
  SPATIAL TRANSFORMS
 **********************************************************************/
+
+void GWSGeometry::transformMove(GWSCoordinate apply_movement){
+    if( !this->inner_geometry ){ return; }
+    geos::geom::CoordinateSequence* seq = this->inner_geometry->getCoordinates();
+    for( unsigned int i = 0 ; i < seq->size() ; i++ ){
+        qDebug() << "ORIGINAL" << QString::fromStdString( seq->getAt(i).toString() );
+    }
+
+    TransformMoveFilter move = TransformMoveFilter( apply_movement );
+    this->inner_geometry->apply_rw( move );
+
+    seq = this->inner_geometry->getCoordinates();
+    for( unsigned int i = 0 ; i < seq->size() ; i++ ){
+        qDebug() << "MOVED" << QString::fromStdString( seq->getAt(i).toString() );
+    }
+}
 
 void GWSGeometry::transformBuffer( double threshold ){
     geos::geom::Geometry* buffered = this->inner_geometry->buffer( threshold );
@@ -260,3 +277,20 @@ void GWSGeometry::transformIntersection(const GWSGeometry* other){
     delete this->inner_geometry;
     this->inner_geometry = intersected;
 }
+
+/**********************************************************************
+ SPATIAL TRANSFORMS FILTERS
+**********************************************************************/
+
+TransformMoveFilter::TransformMoveFilter( GWSCoordinate move ) : geos::geom::CoordinateSequenceFilter() {
+    this->apply_movement = move;
+}
+
+void TransformMoveFilter::filter_rw(CoordinateSequence&  seq , std::size_t i ){
+    const geos::geom::Coordinate origin = seq.getAt(i);
+    geos::geom::Coordinate moved( origin.x + this->apply_movement.getX() , origin.y + this->apply_movement.getY() , origin.z + this->apply_movement.getZ() );
+    seq.setAt(moved, i);
+}
+void TransformMoveFilter::filter_ro(CoordinateSequence &seq, std::size_t i){}
+bool TransformMoveFilter::isDone() const {return true;}
+bool TransformMoveFilter::isGeometryChanged() const { return true; }

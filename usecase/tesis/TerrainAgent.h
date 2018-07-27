@@ -2,8 +2,9 @@
 #define TERRAINAGENT_H
 
 #include "../../agent/Agent.h"
+#include "../../util/grid/Grid.h"
 
-class TerrainAgent : public GWSAgent
+class TerrainAgent : public GWSAgent , public GWSGrid
 {
     Q_OBJECT // Needed macro
 

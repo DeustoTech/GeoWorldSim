@@ -2,6 +2,7 @@
 #define GWSGEOMETRY_H
 
 #include "geos/geom/Geometry.h"
+#include "geos/geom/CoordinateSequenceFilter.h"
 
 #include <QJsonObject>
 #include <QImage>
@@ -44,6 +45,7 @@ public:
     GWSLengthUnit getDistance( const GWSGeometry* other ) const;
 
     // SPATIAL TRANSFORMATIONS
+    void transformMove( GWSCoordinate apply_movement );
     void transformBuffer( double threshold );
     void transformUnion( const GWSGeometry* other );
     void transformIntersection( const GWSGeometry* other );
@@ -56,6 +58,17 @@ protected:
 
     // INNER GEOMETRY
     geos::geom::Geometry* inner_geometry = Q_NULLPTR;
+};
+
+// SPATIAL TRANSFORM FILTERS
+class TransformMoveFilter : public geos::geom::CoordinateSequenceFilter{
+public:
+    TransformMoveFilter( GWSCoordinate apply_movement );
+    virtual void filter_rw(CoordinateSequence&  seq , std::size_t i );
+    virtual void filter_ro(CoordinateSequence&  seq , std::size_t i );
+    virtual bool isDone() const;
+    virtual bool isGeometryChanged() const;
+    GWSCoordinate apply_movement;
 };
 
 #endif // GWSGEOMETRY_H

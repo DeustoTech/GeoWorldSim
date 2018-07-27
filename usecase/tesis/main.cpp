@@ -47,15 +47,10 @@ int main(int argc, char* argv[])
 
 
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
-                                                  "\"@id\" : \"mygrid\" , "
                                                   "\"cell_x\" : 0 , "
                                                   "\"cell_y\" : 1 , "
                                                   "\"energy\" : 100 , "
-                                                  "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
-                                                  "\"grid\" : { \"@type\": \"GWSGrid\" , "
-                                                                "\"values\" : [ [1,2] , [3,4]] ,  "
-                                                                "\"max_value\": 100 , "
-                                                  "             \"min_value\" : 0 } "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0] }"
                                                   "}" );
     GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
 
