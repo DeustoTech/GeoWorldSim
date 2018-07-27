@@ -47,10 +47,10 @@ int main(int argc, char* argv[])
 
 
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
-                                                  "\"@id\" : \"mygrid\" , "
+                                                  "\"@id\" : \"Dolly1\" , "
                                                   "\"cell_x\" : 0 , "
                                                   "\"cell_y\" : 1 , "
-                                                  "\"energy\" : 100 , "
+                                                  "\"energy\" : 10 , "
                                                   "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
                                                   "\"grid\" : { \"@type\": \"GWSGrid\" , "
                                                                 "\"values\" : [ [1,2] , [3,4]] ,  "
@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
 
     // Add second agent
     QJsonDocument json2 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
-                                                  "\"@id\" : \"mygrid\" , "
+                                                  "\"@id\" : \"Dolly2\" , "
                                                   "\"cell_x\" : 1 , "
                                                   "\"cell_y\" : 0 , "
-                                                  "\"energy\" : 100 , "
+                                                  "\"energy\" : 5 , "
                                                   "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
                                                   "\"grid\" : { \"@type\": \"GWSGrid\" , "
                                                                 "\"values\" : [ [1,2] , [3,4]] ,  "
@@ -97,10 +97,10 @@ int main(int argc, char* argv[])
 
     // Add third agent
     QJsonDocument json3 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
-                                                  "\"@id\" : \"mygrid\" , "
+                                                  "\"@id\" : \"Dolly3\" , "
                                                   "\"cell_x\" : 0 , "
                                                   "\"cell_y\" : 0 , "
-                                                  "\"energy\" : 100 , "
+                                                  "\"energy\" : 20 , "
                                                   "\"geo\" : { \"@type\" : \"GWSPoint\" } , "
                                                   "\"grid\" : { \"@type\": \"GWSGrid\" , "
                                                                 "\"values\" : [ [1,2] , [3,4]] ,  "
@@ -120,6 +120,9 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance()->registerAgent( agent1 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( agent2 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( agent3 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( agent1 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( agent2 );
+    GWSAgentEnvironment::globalInstance()->registerAgent( agent3 );
 
     QList<GWSAgent*> l = GWSAgentEnvironment::globalInstance()->getByClass<GWSAgent>( GWSAgent::staticMetaObject.className() );
 

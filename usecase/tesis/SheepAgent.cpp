@@ -44,7 +44,7 @@ void SheepAgent::behave()
 
 
         // The sheep will stay on same position:
-        if (direction[RandIndexX] == 0 && direction[RandIndexY] == 0)
+        if ((direction[RandIndexX] == 0) && (direction[RandIndexY] == 0))
            {
             /*
              *  We assume a sheep will only nourish when it moves to a different position.
