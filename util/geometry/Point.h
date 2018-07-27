@@ -9,7 +9,7 @@ class GWSPoint : public GWSGeometry
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GWSPoint( double x = NAN , double y = NAN , double z = NAN );
+    Q_INVOKABLE explicit GWSPoint( double x = 0 , double y = 0 , double z = 0 );
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
