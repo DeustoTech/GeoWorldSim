@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     QJsonDocument json2 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly2\" , "
                                                   "\"energy\" : 5 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0]}"
+                                                  "\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [  [[0,0], [1,0], [1,1], [0,1], [0,2], [0,0]]  ]}"
                                                   "}" );
     GWSAgent* agent2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
 
