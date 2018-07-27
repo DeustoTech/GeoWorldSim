@@ -22,6 +22,15 @@ quint64 GWSAgentEnvironment::getAmount() const{
     return this->environment_agents->getAmount();
 }
 
+GWSAgent* GWSAgentEnvironment::getRandomByClass(QString class_name){
+    return this->getRandomByClass<GWSAgent>( class_name );
+}
+
+template <class T> T* GWSAgentEnvironment::getRandomByClass( QString class_name ){
+    QList<T*> all = this->getByClass<T>( class_name );
+    return all.at( qrand() % all.size() );
+}
+
 GWSAgent* GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
     return this->getByClassAndId<GWSAgent>( class_name , id );
 }

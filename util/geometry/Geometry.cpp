@@ -12,6 +12,7 @@
 
 #include "geos/geom/Point.h"
 #include "geos/geom/LineString.h"
+#include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
@@ -38,10 +39,11 @@ GWSGeometry::~GWSGeometry(){
 void GWSGeometry::deserialize(QJsonObject json){
 
     QString geom_type = json.value("type").toString();
+    const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
+    QJsonArray coors = json.value("coordinates").toArray();
 
     if( geom_type == "Point" ){
-        QJsonArray coors = json.value("coordinates").toArray();
-        this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
+        this->inner_geometry = factory->createPoint(
                     geos::geom::Coordinate(
                         coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
                         coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
@@ -49,8 +51,43 @@ void GWSGeometry::deserialize(QJsonObject json){
                     );
     } else if ( geom_type == "LineString" ){
 
+        geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
+
+        for( int i = 0 ; i < coors.size() ; i++ ){
+            QJsonArray coor = coors.at( i ).toArray();
+            seq->add( geos::geom::Coordinate(
+                          coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
+                          coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
+                          coor.size() > 2 ? coor.at(2).toDouble() : 0 )
+                      );
+        }
+        this->inner_geometry = factory->createLineString( seq );
     } else if ( geom_type == "Polygon" ){
 
+        geos::geom::LinearRing* outer_ring = Q_NULLPTR;
+        std::vector<geos::geom::Geometry *>* holes = new std::vector<Geometry*>();
+
+        for( int i = 0 ; i < coors.size() ; i++ ){
+
+            QJsonArray ring = coors.at(i).toArray();
+            geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
+
+            for( int j = 0 ; j < ring.size() ; j ++ ){
+                QJsonArray coor = ring.at( i ).toArray();
+                seq->add( geos::geom::Coordinate(
+                              coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
+                              coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
+                              coor.size() > 2 ? coor.at(2).toDouble() : 0 )
+                          );
+            }
+
+            if( i == 0 ){
+                outer_ring = factory->createLinearRing( seq );
+            } else {
+                holes->push_back( factory->createLinearRing( seq ) );
+            }
+        }
+        this->inner_geometry = factory->createPolygon( outer_ring , holes );
     }
 
 }

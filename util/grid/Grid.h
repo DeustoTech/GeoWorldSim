@@ -18,6 +18,7 @@ class GWSGrid
 public:
     // CONSTRUCTORS
     GWSGrid( GWSAgent* agent );
+    ~GWSGrid();
 
     // PROPERTIES
     static QString GRID_MAX_VALUE_PROP;
@@ -37,18 +38,18 @@ public:
     unsigned int getGridYSize() const;
     double getGridMaxValue() const;
     double getGridMinValue() const;
-    double getGridCellValue( unsigned int grid_x , unsigned int grid_y ) const;
+    void* getGridCellValue( unsigned int grid_x , unsigned int grid_y ) const;
 
     // SETTERS
     void setGridMaxValue( double max );
     void setGridMinValue( double min );
     void setGridSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
     //void setCellValue( GWSCoordinate* coor , double v );
-    void setGridCellValue( unsigned int grid_x , unsigned int grid_y , double v);
+    void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
 
     // OPERATORS
-    GWSGrid* operator+(const double number);
-    GWSGrid* operator++();
+    //GWSGrid* operator+(const double number);
+    //GWSGrid* operator++();
 
     // METHODS
     //GWSGrid getSubGrid( GWSEnvelope bounds );
@@ -61,7 +62,7 @@ private:
 
     double max_value;
     double min_value;
-    QVector< QVector<double> > values;
+    QVector< QVector< void* > > values;
 };
 
 Q_DECLARE_METATYPE(GWSGrid*)

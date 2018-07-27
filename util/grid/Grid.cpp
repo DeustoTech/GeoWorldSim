@@ -18,6 +18,14 @@ GWSGrid::GWSGrid(GWSAgent *agent){
     this->agent = agent;
 }
 
+GWSGrid::~GWSGrid(){
+    for(int i = 0; i < this->values.size() ; i++){
+        for(int j = 0; j < this->values[i].size() ; j++){
+            delete this->values[i][j];
+        }
+    }
+}
+
 /**********************************************************************
  IMPORTERS
 **********************************************************************/
@@ -28,15 +36,15 @@ void GWSGrid::deserialize(QJsonObject json){
     if( json.value( GRID_VALUES_PROP ).isArray() ){
 
         QJsonArray a1 = json.value( GRID_VALUES_PROP ).toArray();
-        this->values = QVector< QVector<double> >( a1.size() );
+        this->values = QVector< QVector< void* > >( a1.size() );
 
         for( int i = 0 ; i < a1.size() ; i++){
 
             QJsonArray a2 = a1.at( i ).toArray();
-            this->values[i] = QVector<double>( a2.size() );
+            this->values[i] = QVector< void* >( a2.size() );
 
             for( int j = 0 ; j < a2.size() ; j++){
-                this->values[i][j] = a2.at( j ).toDouble();
+                //this->values[i][j] = a2.at( j ).toDouble();
             }
         }
     }
@@ -54,7 +62,7 @@ QJsonObject GWSGrid::serialize() const{
     for(int i = 0; i < this->values.size() ; i++){
         QJsonArray a2;
         for(int j = 0; j < this->values[i].size() ; j++){
-            a2.append( this->getGridCellValue( i , j ) );
+            //a2.append( this->getGridCellValue( i , j ) );
         }
         a1.append( a2 );
     }
@@ -157,9 +165,9 @@ unsigned int GWSGrid::getGridYSize() const{
     return this->values.at(0).size();
 }
 
-double GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
+void* GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
     if( grid_x >= this->getGridXSize() || grid_y >= this->getGridYSize() ){
-        return NAN;
+        return Q_NULLPTR;
     }
     return this->values[grid_x][grid_y];
 }
@@ -210,15 +218,11 @@ void GWSGrid::setGridMinValue(double min){
 
 void GWSGrid::setGridSize(unsigned int x_size, unsigned int y_size){
     this->values.clear();
-    this->values = QVector< QVector<double> >( x_size , QVector<double>( y_size , NAN ) );
+    //this->values = QVector< QVector< void* > >( x_size , QVector<void*>( y_size , NAN ) );
 }
 
-void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, double v){
-    if( v < this->getGridMinValue() || v > this->getGridMaxValue() ){
-        this->values[grid_x][grid_y] = NAN;
-    } else {
-        this->values[grid_x][grid_y] = v;
-    }
+void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, void* v){
+    this->values[grid_x][grid_y] = v;
 }
 
 /*void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
@@ -236,7 +240,7 @@ void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, double 
  OPERATORS
 **********************************************************************/
 
-GWSGrid* GWSGrid::operator +(double number){
+/*GWSGrid* GWSGrid::operator +(double number){
     for(int i = 0; i < this->values.size() ; i++) {
         for( int j = 0; j < this->values[i].size() ; j++){
             double value = this->getGridCellValue( i , j );
@@ -254,7 +258,7 @@ GWSGrid* GWSGrid::operator ++(){
         }
     }
     return this;
-}
+}*/
 
 
 /**********************************************************************

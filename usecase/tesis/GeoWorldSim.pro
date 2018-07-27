@@ -38,12 +38,12 @@ HEADERS += \
     ../../agent/Agent.h \
     ../../skill/Skill.h \
     ../../behaviour/Behaviour.h \
+    ../../util/uistyle/Style.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
-    ../../util/uistyle/UiStyle.h \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
@@ -84,11 +84,11 @@ SOURCES += main.cpp \
     ../../agent/Agent.cpp \
     ../../skill/Skill.cpp \
     ../../behaviour/Behaviour.cpp \
+    ../../util/uistyle/Style.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
-    ../../util/uistyle/UiStyle.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
