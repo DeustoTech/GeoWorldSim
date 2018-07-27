@@ -35,6 +35,10 @@ GWSGeometry::~GWSGeometry(){
 
 void GWSGeometry::deserialize(QJsonObject json){
 
+    double x = json.value("x").toDouble();
+    double y = json.value("y").toDouble();
+
+    this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint( geos::geom::Coordinate( x , y ) );
 }
 
 /**********************************************************************
