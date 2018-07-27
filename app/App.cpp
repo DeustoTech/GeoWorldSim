@@ -40,7 +40,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
     // Redirect outputs to file
     if( this->property("console").toBool() ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= 1 ){
+            if( type >= 0 ){
                 GWSLogger::log( QString("[%1 - %2] %3").arg( QDateTime::currentDateTime().toString() ).arg( type ).arg( msg ) , QString("console.txt") ); Q_UNUSED( context );
             }
         } );
