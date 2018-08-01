@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 
 #include "../../app/App.h"
+#include "../../agent/Agent.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../util/parallelism/ParallelismController.h"
 
@@ -18,9 +19,11 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
+    this->running_agents = new GWSObjectStorage( this );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
+    this->running_agents->deleteLater();
 }
 
 /**********************************************************************
@@ -30,7 +33,7 @@ GWSExecutionEnvironment::~GWSExecutionEnvironment(){
 QJsonObject GWSExecutionEnvironment::serializeMini(){
     QJsonObject json;
     json.insert( "running" , this->isRunning() );
-    json.insert( "running_agents_amount" , this->running_agents.size() );
+    json.insert( "running_agents_amount" , (qint64)this->running_agents->getAmount() );
     json.insert( "executed_ticks" , (qint64)this->executed_ticks_amount );
     return json;
 }
@@ -43,8 +46,20 @@ QJsonObject GWSExecutionEnvironment::serialize(){
  GETTERS
 **********************************************************************/
 
-int GWSExecutionEnvironment::getRunningAgents() const{
-    return this->running_agents.size();
+int GWSExecutionEnvironment::getRunningAgentsAmount() const{
+    return this->running_agents->getAmount();
+}
+
+QList<GWSAgent*> GWSExecutionEnvironment::getRunningAgents() const {
+    QList <GWSAgent*> list;
+    foreach (GWSObject* obj, this->running_agents->getByClass( GWSAgent::staticMetaObject.className() ) ) {
+        list.append( dynamic_cast<GWSAgent*>( obj ) );
+    }
+    return list;
+}
+
+template <class T> QList<T*> GWSExecutionEnvironment::getRunningAgentsByClass( QString class_name ) const{
+    return this->running_agents->getByClass<T>( class_name );
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
@@ -78,7 +93,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
     // Store as running
     //this->mutex.lock();
-    this->running_agents.append( agent );
+    this->running_agents->add( agent );
     //this->mutex.unlock();
 
     // Calculate when to start the agent according to its next_tick_datetime
@@ -116,7 +131,7 @@ void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
     agent->setProperty( GWSAgent::RUNNING_PROP , false );
 
     // Remove from running lists
-    this->running_agents.removeAll( agent );
+    this->running_agents->remove( agent );
 
     // Stop agent
     qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
@@ -150,7 +165,7 @@ void GWSExecutionEnvironment::run(){
 void GWSExecutionEnvironment::tick(){
 
     //this->mutex.lock();
-    QList<GWSAgent*> currently_running_agents = this->running_agents;
+    QList<GWSAgent*> currently_running_agents = this->getRunningAgents();
     //this->mutex.unlock();
 
     if( currently_running_agents.isEmpty() ){

@@ -1,6 +1,5 @@
 #include "Grid.h"
 
-#include <QJsonArray>
 #include <QColor>
 #include <QPainter>
 #include <QPen>
@@ -13,17 +12,14 @@
 QString GWSGrid::GRID_MAX_VALUE_PROP = "grid_max_value";
 QString GWSGrid::GRID_MIN_VALUE_PROP = "grid_min_value";
 QString GWSGrid::GRID_VALUES_PROP = "grid_values";
+QString GWSGrid::GRID_X_SIZE_PROP = "grid_x_size";
+QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
 
 GWSGrid::GWSGrid(GWSAgent *agent){
     this->agent = agent;
 }
 
 GWSGrid::~GWSGrid(){
-    for(int i = 0; i < this->values.size() ; i++){
-        for(int j = 0; j < this->values[i].size() ; j++){
-            delete this->values[i][j];
-        }
-    }
 }
 
 /**********************************************************************
@@ -33,21 +29,7 @@ GWSGrid::~GWSGrid(){
 void GWSGrid::deserialize(QJsonObject json){
     this->max_value = json.value( GRID_MAX_VALUE_PROP ).toDouble();
     this->min_value = json.value( GRID_MIN_VALUE_PROP ).toDouble();
-    if( json.value( GRID_VALUES_PROP ).isArray() ){
-
-        QJsonArray a1 = json.value( GRID_VALUES_PROP ).toArray();
-        this->values = QVector< QVector< void* > >( a1.size() );
-
-        for( int i = 0 ; i < a1.size() ; i++){
-
-            QJsonArray a2 = a1.at( i ).toArray();
-            this->values[i] = QVector< void* >( a2.size() );
-
-            for( int j = 0 ; j < a2.size() ; j++){
-                //this->values[i][j] = a2.at( j ).toDouble();
-            }
-        }
-    }
+    this->setGridSize( json.value( GRID_X_SIZE_PROP ).toInt() , json.value( GRID_Y_SIZE_PROP ).toInt() );
 }
 
 /**********************************************************************
@@ -58,15 +40,8 @@ QJsonObject GWSGrid::serialize() const{
     QJsonObject json;
     json.insert( GRID_MAX_VALUE_PROP , this->max_value );
     json.insert( GRID_MIN_VALUE_PROP , this->min_value );
-    QJsonArray a1;
-    for(int i = 0; i < this->values.size() ; i++){
-        QJsonArray a2;
-        for(int j = 0; j < this->values[i].size() ; j++){
-            //a2.append( this->getGridCellValue( i , j ) );
-        }
-        a1.append( a2 );
-    }
-    json.insert( GRID_VALUES_PROP , a1 );
+    json.insert( GRID_X_SIZE_PROP , (int)this->x_size );
+    json.insert( GRID_Y_SIZE_PROP , (int)this->y_size );
     return json;
 }
 
@@ -149,7 +124,7 @@ QJsonObject GWSGrid::serialize() const{
 **********************************************************************/
 
 bool GWSGrid::isGridEmpty() const{
-    return this->values.isEmpty();
+    return true;
 }
 
 /*const GWSEnvelope GWSGrid::getBounds() const{
@@ -157,20 +132,19 @@ bool GWSGrid::isGridEmpty() const{
 }*/
 
 unsigned int GWSGrid::getGridXSize() const{
-    return this->values.size();
+    return this->x_size;
 }
 
 unsigned int GWSGrid::getGridYSize() const{
-    if( this->values.isEmpty() ){ return 0; }
-    return this->values.at(0).size();
+    return this->y_size;
 }
 
-void* GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
+/*const void* GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
     if( grid_x >= this->getGridXSize() || grid_y >= this->getGridYSize() ){
         return Q_NULLPTR;
     }
     return this->values[grid_x][grid_y];
-}
+}*/
 
 /*double GWSGrid::getCellValue(GWSCoordinate* coor) const{
     if( this->isEmpty() ){ return 0; }
@@ -217,13 +191,13 @@ void GWSGrid::setGridMinValue(double min){
 }
 
 void GWSGrid::setGridSize(unsigned int x_size, unsigned int y_size){
-    this->values.clear();
-    //this->values = QVector< QVector< void* > >( x_size , QVector<void*>( y_size , NAN ) );
+    this->x_size = x_size;
+    this->y_size = y_size;
 }
 
-void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, void* v){
+/*void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, void* v){
     this->values[grid_x][grid_y] = v;
-}
+}*/
 
 /*void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
     if( !this->getBounds()->contains( coor ) ){

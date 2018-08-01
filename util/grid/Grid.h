@@ -24,6 +24,8 @@ public:
     static QString GRID_MAX_VALUE_PROP;
     static QString GRID_MIN_VALUE_PROP;
     static QString GRID_VALUES_PROP;
+    static QString GRID_X_SIZE_PROP;
+    static QString GRID_Y_SIZE_PROP;
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
@@ -33,19 +35,21 @@ public:
     //QImage toImage( const GWSEnvelope image_bounds , int image_width = 1024, int image_height = 1024 ) const;
 
     // GETTERS
-    bool isGridEmpty() const;
+    virtual bool isGridEmpty() const;
     unsigned int getGridXSize() const;
     unsigned int getGridYSize() const;
     double getGridMaxValue() const;
     double getGridMinValue() const;
-    void* getGridCellValue( unsigned int grid_x , unsigned int grid_y ) const;
+    //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
     // SETTERS
     void setGridMaxValue( double max );
     void setGridMinValue( double min );
-    void setGridSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
+    virtual void setGridSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
     //void setCellValue( GWSCoordinate* coor , double v );
-    void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
+    virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
+    virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
+    //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
 
     // OPERATORS
     //GWSGrid* operator+(const double number);
@@ -60,9 +64,10 @@ private:
     // REG AGENT
     GWSAgent* agent;
 
-    double max_value;
-    double min_value;
-    QVector< QVector< void* > > values;
+    double max_value = -1;
+    double min_value = -1;
+    unsigned int x_size = -1;
+    unsigned int y_size = -1;
 };
 
 Q_DECLARE_METATYPE(GWSGrid*)
