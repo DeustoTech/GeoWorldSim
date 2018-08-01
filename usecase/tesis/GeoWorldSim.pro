@@ -55,6 +55,8 @@ HEADERS += \
     #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
+    #../../util/grid/NumberGrid.h \
+    ../../util/grid/AgentGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -100,6 +102,8 @@ SOURCES += main.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
+    #../../util/grid/NumberGrid.cpp \
+    ../../util/grid/AgentGrid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \

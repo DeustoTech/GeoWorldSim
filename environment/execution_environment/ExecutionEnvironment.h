@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QTimer>
 
+#include "../../util/storage/ObjectStorage.h"
 #include "../../environment/Environment.h"
 
 class GWSExecutionEnvironment : public GWSEnvironment
@@ -23,7 +24,9 @@ public:
     virtual QJsonObject serialize();
 
     // GETTERS
-    int getRunningAgents() const;
+    int getRunningAgentsAmount() const;
+    QList<GWSAgent*> getRunningAgents() const;
+    template <class T> QList<T*> getRunningAgentsByClass( QString class_name ) const;
     bool isRunning() const;
     int getTicksAmount() const;
 
@@ -49,7 +52,7 @@ private:
     ~GWSExecutionEnvironment();
 
     // RUNNING AGENTS
-    QList<GWSAgent*> running_agents;
+    GWSObjectStorage* running_agents;
 
     // Timer to schedule ticks
     QTimer* timer = Q_NULLPTR;

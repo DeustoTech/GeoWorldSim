@@ -20,6 +20,9 @@ public:
     quint64 getAmount() const;
     const QStringList getClasses() const;
 
+    QList<GWSObject*> getAll() const;
+    template <class T> QList<T*> getAll() const;
+
     GWSObject* getByClassAndId( QString class_name , QString id ) const;
     template <class T> T* getByClassAndId( QString class_name , QString id ) const;
 

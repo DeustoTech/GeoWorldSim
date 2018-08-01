@@ -16,6 +16,18 @@ const QStringList GWSObjectStorage::getClasses() const{
     return this->classes_stored;
 }
 
+QList<GWSObject*> GWSObjectStorage::getAll() const{
+    return this->getByClass( GWSObject::staticMetaObject.className() );
+}
+
+template <class T> QList<T*> GWSObjectStorage::getAll() const{
+    QList<T*> list;
+    foreach( GWSObject* obj , this->getAll() ){
+        list.append( dynamic_cast<T*>( obj ) );
+    }
+    return list;
+}
+
 GWSObject* GWSObjectStorage::getByClassAndId( QString class_name , QString id) const{
     return this->getByClassAndId<GWSObject>( class_name , id );
 }
