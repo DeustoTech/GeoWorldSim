@@ -10,7 +10,6 @@
 QT_FORWARD_DECLARE_CLASS(GWSGeometry)
 
 using namespace geos::geom;
-using namespace geos::index::quadtree;
 
 class GWSPhysicalEnvironment : public GWSEnvironment
 {

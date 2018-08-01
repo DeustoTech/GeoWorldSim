@@ -8,6 +8,7 @@ GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
 
 GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
     qInfo() << "PhysicalEnvironment created";
+    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
@@ -176,6 +177,7 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 **********************************************************************/
 
 void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
+
     /*if( !agent->property( GWSPhysicalEnvironment::GEOMETRY_PROP ) ){
         qWarning() << QString("Tried to add agent %1 %2 without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
         return;
