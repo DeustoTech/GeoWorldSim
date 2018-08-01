@@ -69,6 +69,8 @@ public:
     virtual bool isDone() const;
     virtual bool isGeometryChanged() const;
     GWSCoordinate apply_movement;
+    QVector<int> moved_coor_indexes;
+    bool finished = false;
 };
 
 #endif // GWSGEOMETRY_H

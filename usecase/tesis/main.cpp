@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                    "\"@id\" : \"Dolly1\" , "
                                                   "\"energy\" : 10 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [0 , 0 , 0] }"
+                                                  "\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [[[0,0],[0,1],[1,1],[1,0],[0,0]]] }"
                                                   "}" );
     GWSAgent* agent1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
 

@@ -72,8 +72,8 @@ void GWSGeometry::deserialize(QJsonObject json){
             QJsonArray ring = coors.at(i).toArray();
             geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
 
-            for( int j = 0 ; j < ring.size() ; j ++ ){
-                QJsonArray coor = ring.at( i ).toArray();
+            for( int j = 0 ; j < ring.size() ; j++ ){
+                QJsonArray coor = ring.at( j ).toArray();
                 seq->add( geos::geom::Coordinate(
                               coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
                               coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
@@ -322,7 +322,9 @@ void TransformMoveFilter::filter_rw(CoordinateSequence&  seq , std::size_t i ){
     const geos::geom::Coordinate origin = seq.getAt(i);
     geos::geom::Coordinate moved( origin.x + this->apply_movement.getX() , origin.y + this->apply_movement.getY() , origin.z + this->apply_movement.getZ() );
     seq.setAt(moved, i);
+    this->moved_coor_indexes.append( i );
+    if( this->moved_coor_indexes.size() == seq.size() ){ this->finished = true; }
 }
 void TransformMoveFilter::filter_ro(CoordinateSequence &seq, std::size_t i){}
-bool TransformMoveFilter::isDone() const {return true;}
+bool TransformMoveFilter::isDone() const { return this->finished; }
 bool TransformMoveFilter::isGeometryChanged() const { return true; }
