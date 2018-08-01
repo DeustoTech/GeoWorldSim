@@ -28,7 +28,7 @@ void PredatorAgent::behave()
     /*
      *  Generate a list with all the wolves in the GWS world.
      *  This list allows us to loop over all the existing wolves
-     *  and to check whether they share the same position!
+     *  and to check whether they share the same position for breeding purposes!
      */
     QList<GWSAgent*> wolves = GWSAgentEnvironment::globalInstance()->getByClass( PredatorAgent::staticMetaObject.className() );
     qDebug() << "Number of running PredatorAgents in the field = "<< wolves.size() ;
@@ -38,7 +38,7 @@ void PredatorAgent::behave()
     qDebug() << "I am" << this->property("@id").toString();
     qDebug() << "Initial position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
-    // Move randomly through random index generator:
+    // Move randomly through random index generator. We get more realistic random behaviour if the seed is not initialized:
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
     int RandIndexX = rand() % 3; //generates a random number between 0 and 2
     int RandIndexY = rand() % 3; //generates a random number between 0 and 2
@@ -48,7 +48,7 @@ void PredatorAgent::behave()
     int TargetX = direction[RandIndexX];
     int TargetY = direction[RandIndexY];
     int PredatorOccupation = 0;
-    int SheepOccupation = 0;
+    //int SheepOccupation = 0;
 
     // The wolf will stay on same position:
     if ((TargetX == 0) && (TargetY == 0))
@@ -175,10 +175,10 @@ void PredatorAgent::behave()
 
 
 
-              }
+        }
 
     // Wolves die when:
-    if (this->property("energy") < 1)
+    if (this->property("energy") < 1.)
         {
         this->setProperty(RUNNING_PROP, "FALSE");
         qInfo() << "****************************************";

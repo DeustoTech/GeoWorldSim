@@ -8,7 +8,7 @@ class GWSAgentGrid : public GWSGrid
 
 public:
     GWSAgentGrid( GWSAgent* agent );
-    ~GWSAgentGrid();
+
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);

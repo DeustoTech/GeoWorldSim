@@ -12,6 +12,7 @@
 #include "../../behaviour/Behaviour.h"
 
 // Agents
+#include "TerrainAgent.h"
 #include "SheepAgent.h"
 #include "PredatorAgent.h"
 
@@ -37,18 +38,35 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
-
+    GWSGridEnvironment::globalInstance();
 
 
 
 
     // Init Object Factory
+    GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
 
 
+    /* -------------
+     * Terrain Agent
+     * -------------*/
+
+    QJsonDocument jsonTerrain = QJsonDocument::fromJson( "{ \"@type\" : \"TerrainAgent\" , "
+                                                   "\"@id\" : \"ThePlayground\" ,"
+                                                   "\"grid_x_size\" : 10, "
+                                                   "\"grid_y_size\" : 10  "
+                                                   "}" );
+    GWSAgent* terrain = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
+
+    qDebug()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
+    qDebug()<< "And my size is" << terrain->property("x_size").toInt() << "x"<< terrain->property("y_size").toInt();
+
+
+
     /* ----------
-    /* SheepAgents
+     * SheepAgents
        ----------*/
 
     /* Dolly1 */
@@ -94,7 +112,7 @@ int main(int argc, char* argv[])
     qInfo()<< "I am a GWSAgent of" << sheep3->property("@type").toString() << "type.";
 
     /* ----------
-    /* WolfAgents
+     * WolfAgents
        ----------*/
 
     /* Nymeria1 */
@@ -127,12 +145,18 @@ int main(int argc, char* argv[])
 
 
     // Register Agents in environments
+
+    //GWSGridEnvironment::globalInstance()->registerAgent( terrain );
+
+    GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
     GWSExecutionEnvironment::globalInstance()->registerAgent( sheep1 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( sheep2 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( sheep3 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( predator1 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( predator2 );
     GWSExecutionEnvironment::globalInstance()->registerAgent( predator3 );
+
+    GWSAgentEnvironment::globalInstance()->registerAgent( terrain );
     GWSAgentEnvironment::globalInstance()->registerAgent( sheep1 );
     GWSAgentEnvironment::globalInstance()->registerAgent( sheep2 );
     GWSAgentEnvironment::globalInstance()->registerAgent( sheep3 );
@@ -143,9 +167,6 @@ int main(int argc, char* argv[])
     QList<GWSAgent*> l = GWSAgentEnvironment::globalInstance()->getByClass<GWSAgent>( GWSAgent::staticMetaObject.className() );
 
     GWSExecutionEnvironment::globalInstance()->run();
-
-
-
 
 
     app->exec();

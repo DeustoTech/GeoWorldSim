@@ -4,6 +4,7 @@
 #include "../../app/App.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "TerrainAgent.h"
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
     qDebug() << "SHEEP";
@@ -17,6 +18,20 @@ void SheepAgent::behave()
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
+        // Number of agents in the simulation (all types):
+        qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
+        // The line above is equivalent to GWSExecutionEnvironment::globalInstance()->getRunningAgentsAmount()
+        //
+        //qDebug() << " GWSExecutionEnvironment::getRunningAgents() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgents();
+        //qDebug() << " GWSExecutionEnvironment::getRunningAgentsByClass() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass< SheepAgent >(SheepAgent::staticMetaObject.className());
+
+
+        GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
+        TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
+        QList<GWSAgent*> cellOccupation = terrain_agent->getGridCellValue(0, 0);
+       //qDebug() << "cellOccupation = " << cellOccupation.size();
+
+
         /*
          *  Generate a list with all the sheeps in the GWS world.
          *  This list allows us to loop over all the existing sheeps
@@ -24,7 +39,6 @@ void SheepAgent::behave()
          */
         QList<GWSAgent*> sheeps = GWSAgentEnvironment::globalInstance()->getByClass( SheepAgent::staticMetaObject.className() );
         qDebug() << "Number of running SheepAgents in the field = "<< sheeps.size() ;
-
         // Get cell_X and cell_y
         qDebug() << "I am" << this->property("@id").toString();
         qDebug() << "Initial position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";

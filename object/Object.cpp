@@ -123,6 +123,13 @@ QString GWSObject::getId() const{
 QStringList GWSObject::getInheritanceFamily() const{
     QStringList inheritance_family;
     inheritance_family.append( this->metaObject()->className() );
+    const QMetaObject* mobj = this->metaObject();
+    while( mobj ){
+        if( !inheritance_family.contains( mobj->className() ) ){
+            inheritance_family.append( mobj->className() );
+        }
+        mobj = mobj->superClass();
+    }
     foreach(QString s , this->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toStringList() ){
         if( !inheritance_family.contains( s ) ){
             inheritance_family.append( s );

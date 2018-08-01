@@ -1,9 +1,17 @@
 #include "TerrainAgent.h"
+#include "../../app/App.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
 
-TerrainAgent::TerrainAgent() : GWSAgent() , GWSGrid( this ) {
-
+TerrainAgent::TerrainAgent( QObject *parent ) : GWSAgent( parent ) , GWSAgentGrid( this ) {
+qInfo() << "PLAYGROUND";
     //QVariant grid_variant = QVariant::fromValue<GWSGrid>( GWSGrid() );
     //this->setProperty( "grid" , grid_variant );
+}
+
+
+void TerrainAgent::deserialize(QJsonObject json){
+    GWSAgent::deserialize( json );
+    GWSAgentGrid::deserialize( json );
 }
 
 void TerrainAgent::behave(){
@@ -14,5 +22,5 @@ void TerrainAgent::behave(){
         }
     }*/
 
-    this->incrementInternalTime( 5 );
+    //this->incrementInternalTime( 5 );
 }
