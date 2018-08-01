@@ -128,9 +128,12 @@ int main(int argc, char* argv[])
                                                   "\"energy\" : 20 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [2 , 2 , 0]}"
                                                   "}" );
+
     GWSAgent* predator1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
     qInfo()<< "I am a GWSAgent of" << predator1->property("@type").toString() << "type.";
 
+    // Notify the grid of the presence of a wolf at current position:
+    terrain->addGridCellValue(predator1->getCentroid().getX(), predator1->getCentroid().getY(), predator1);
 
     /* Nymeria2 */
     QJsonDocument json5 = QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
@@ -141,6 +144,9 @@ int main(int argc, char* argv[])
     GWSAgent* predator2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json5.object() ) );
     qInfo()<< "I am a GWSAgent of" << predator2->property("@type").toString() << "type.";
 
+    // Notify the grid of the presence of a wolf at current position:
+    terrain->addGridCellValue(predator2->getCentroid().getX(), predator2->getCentroid().getY(), predator2);
+
     /* Nymeria3 */
     QJsonDocument json6= QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
                                                   "\"@id\" : \"Nymeria3\" , "
@@ -149,6 +155,10 @@ int main(int argc, char* argv[])
                                                   "}" );
     GWSAgent* predator3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json6.object() ) );
     qInfo()<< "I am a GWSAgent of" << predator3->property("@type").toString() << "type.";
+
+    // Notify the grid of the presence of a wolf at current position:
+    //terrain->addGridCellValue(predator3->getCentroid().getX(), predator3->getCentroid().getY(), predator3);
+
 
 
     // Register Agents in environments

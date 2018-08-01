@@ -1,6 +1,8 @@
 #include "PredatorAgent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "TerrainAgent.h"
+
 
 PredatorAgent::PredatorAgent(QObject *parent) : GWSAgent( parent)
 {
@@ -25,6 +27,13 @@ void PredatorAgent::behave()
     // Send information to website
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
+
+    /* Register Terrain Agent so that we can add our sheep
+     * to a particular cell of the grid*/
+    GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
+    TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
+
+
     /*
      *  Generate a list with all the wolves in the GWS world.
      *  This list allows us to loop over all the existing wolves
@@ -48,7 +57,8 @@ void PredatorAgent::behave()
     int TargetX = direction[RandIndexX];
     int TargetY = direction[RandIndexY];
     int PredatorOccupation = 0;
-    //int SheepOccupation = 0;
+    int SheepOccupation = 0;
+    int occupation = 0;
 
     // The wolf will stay on same position:
     if ((TargetX == 0) && (TargetY == 0))
@@ -85,6 +95,28 @@ void PredatorAgent::behave()
             }
 
         qDebug() << "Target cell PredatorAgent occupation = " << PredatorOccupation;
+
+        /*
+         * Get target cell sheep occupation through AgentGrid methods
+         */
+
+        QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY  );
+
+        // Number of sheep in target cell:
+        for (int i = 0; i < targetCellOccupation.size(); ++i)
+            {
+            if (targetCellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
+                {
+                occupation += 1;
+                }
+            if (targetCellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
+                {
+                SheepOccupation += 1;
+                }
+            }
+
+        qDebug() << "Target cell PredatorAgent occupation = " << occupation;
+        qDebug() << "Target cell SheepAgent occupation = " << SheepOccupation;
 
         /*
          * Modify behaviour based on target cell occupation

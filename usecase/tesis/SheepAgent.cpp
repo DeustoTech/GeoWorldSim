@@ -23,22 +23,17 @@ void SheepAgent::behave()
         // Number of agents in the simulation (all types):
         qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
         // The line above is equivalent to GWSExecutionEnvironment::globalInstance()->getRunningAgentsAmount()
-        //
-        //qDebug() << " GWSExecutionEnvironment::getRunningAgents() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgents();
-        //qDebug() << " GWSExecutionEnvironment::getRunningAgentsByClass() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass< SheepAgent >(SheepAgent::staticMetaObject.className());
+
+        /*
+         * Note that the following can be useful for counting purposes:
+         *  GWSExecutionEnvironment::globalInstance()->getRunningAgents();
+         *  GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass< SheepAgent >(SheepAgent::staticMetaObject.className());
+         */
 
         /* Register Terrain Agent so that we can add our sheep
          * to a particular cell of the grid*/
         GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
         TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-
-        // Notify the grid of the presence of a sheep at current position:
-        //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-
-        /*
-        QList<GWSAgent*> cellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-        qDebug() << "cellOccupation = " << cellOccupation;
-        */
 
         /*
          *  Generate a list with all the sheeps in the GWS world.
@@ -47,6 +42,8 @@ void SheepAgent::behave()
          */
         QList<GWSAgent*> sheeps = GWSAgentEnvironment::globalInstance()->getByClass( SheepAgent::staticMetaObject.className() );
         qDebug() << "Number of running SheepAgents in the field = "<< sheeps.size() ;
+
+
         // Get cell_X and cell_y
         qDebug() << "I am" << this->property("@id").toString();
         qDebug() << "Initial position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -61,7 +58,7 @@ void SheepAgent::behave()
         int TargetX = direction[RandIndexX];
         int TargetY = direction[RandIndexY];
         int occupation = 0;
-
+        int sheepOccupation = 0;
 
         // The sheep will stay on same position:
         if ((TargetX == 0) && (TargetY == 0))
@@ -79,6 +76,7 @@ void SheepAgent::behave()
            {
            qDebug() << "Target movement = ("<< TargetX << "," << TargetY<< ")";
 
+           /*
            // Loop to see how many sheep are at the target point:
            for (int i = 0; i < sheeps.size(); ++i)
                 {
@@ -98,6 +96,24 @@ void SheepAgent::behave()
                 }
 
             qDebug() << "Target cell SheepAgent occupation = " << occupation;
+            */
+
+            /*
+             * Get target cell sheep occupation through AgentGrid methods
+             */
+
+            QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY  );
+
+            // Number of sheep in target cell:
+            for (int i = 0; i < targetCellOccupation.size(); ++i)
+                {
+                if (targetCellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
+                    {
+                    sheepOccupation += 1;
+                    }
+                }
+
+            qDebug() << "Target cell SheepAgent occupation = " << sheepOccupation;
 
             /*
              * Modify behaviour based on target cell occupation
@@ -105,13 +121,13 @@ void SheepAgent::behave()
              * sheep in the target cell, do nothing.
              */
 
-            if (occupation == 2)
+            if (sheepOccupation == 2)
                {
                qDebug() << "Target is too crowded, you would be a third wheel! Try another direction!"  ;
                qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
                }
-            if (occupation == 3)
+            if (sheepOccupation == 3)
                {
                qDebug() << "There is a family at the target position! Try another direction!"  ;
                qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -119,22 +135,19 @@ void SheepAgent::behave()
             else
                {              
                qDebug() << "Target not overbooked yet, you can move there"  ;
-               qDebug()<< "Origin Grid Cell occupation before move = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
                // Notify the grid that the sheep is leaving:
                terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-               qDebug()<< "Origin Grid Cell occupation after move = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-
 
                // Move
                this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
 
+               // Final position of the agent:
+               qDebug() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+
                // Notify the grid the sheep's new position:
                terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
                qDebug() << "Final Grid Cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-
-               // Final position of the agent:
-               qDebug() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
                // Get initial energy
                float initialEnergyFloat = this->getProperty("energy").toFloat();
@@ -156,7 +169,7 @@ void SheepAgent::behave()
                this-> setProperty("energy", finalEnergy);
 
                // Cell occupation constraints
-               if (occupation == 1)
+               if (sheepOccupation == 1)
                   {
                   qDebug() << this->property("@id").toString()<<", there is a living mate in your position! ";
                   /*
@@ -173,6 +186,7 @@ void SheepAgent::behave()
                   qDebug() << "************************************************************";
                   qDebug() << "   YAS! You get to breed! Another sheep in the GWSWorld!     ";
                   qDebug() << "************************************************************";
+
                   this->setProperty("energy" , this->getProperty("energy").toFloat() / 2.0);
 
                   // Welcome a lamb to the World:
@@ -185,7 +199,8 @@ void SheepAgent::behave()
 
                   // Notify the grid of new sheep's position:
                   terrain_agent->addGridCellValue(lambAgent->getCentroid().getX(), lambAgent->getCentroid().getY(), lambAgent);
-                  qDebug() << "Grid Cell occupation after breeding = " << terrain_agent->getGridCellValue(lambAgent->getCentroid().getX(), lambAgent->getCentroid().getY());
+                  //qDebug() << "Grid Cell occupation after breeding = " << terrain_agent->getGridCellValue(lambAgent->getCentroid().getX(), lambAgent->getCentroid().getY());
+
                   //  Reproductive constraints:
                   //  - Set internal time counter to 0
 
@@ -198,7 +213,7 @@ void SheepAgent::behave()
         // Sheep die when:
         if (this->property("energy") < 1)
             {
-            this->setProperty(RUNNING_PROP, "FALSE");
+            GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
             qDebug() << "RIP" << this->property("@id").toString();
             terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
             }

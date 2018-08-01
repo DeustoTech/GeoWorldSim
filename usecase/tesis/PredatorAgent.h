@@ -16,4 +16,6 @@ public:
     virtual void behave();
 };
 
+Q_DECLARE_METATYPE(PredatorAgent*) // REQUIRED IN EVERY CHILD
+
 #endif // PREDATORAGENT_H
