@@ -24,10 +24,6 @@ public slots:
     // METHODS
     int exec();
 
-    // TCP
-    //void socketPushData( QJsonValue json );
-    //void socketReceivedData();
-
     // SEND DATA
     void startSocket();
 

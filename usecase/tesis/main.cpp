@@ -41,8 +41,6 @@ int main(int argc, char* argv[])
     GWSGridEnvironment::globalInstance();
 
 
-
-
     // Init Object Factory
     GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );

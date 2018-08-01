@@ -175,7 +175,7 @@ void GWSGraph::removeEdge(GWSGraphEdge *edge){
 }
 
 void GWSGraph::addNode(GWSGraphNode *node){
-    this->nodes_index->insert( dynamic_cast<GWSAgent*>( node ) );
+    this->nodes_index->upsert( dynamic_cast<GWSAgent*>( node ) );
     this->nodes.append( node );
 }
 

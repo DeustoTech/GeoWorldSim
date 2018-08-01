@@ -8,6 +8,7 @@ GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
 
 GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
     qInfo() << "PhysicalEnvironment created";
+    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
@@ -176,62 +177,33 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 **********************************************************************/
 
 void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
-    /*if( !agent->property( GWSPhysicalEnvironment::GEOMETRY_PROP ) ){
+
+    if( !agent->isGeometryValid() ){
         qWarning() << QString("Tried to add agent %1 %2 without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
         return;
     }
 
+    foreach (QString s , agent->getInheritanceFamily()) {
+        if( !this->spatial_index.keys().contains(s) ){
+            this->spatial_index.insert( s , new GWSQuadtree() );
+        }
+    }
+
     this->mutex.lock();
-    this->spatial_envelopes.insert( agent->getId() , agent->geometry->getEnvelope() );
+    foreach (QString s , agent->getInheritanceFamily()) {
+        this->spatial_index[ s ]->upsert( agent );
+    }
     this->mutex.unlock();
-    agent->mutex.unlock();
-
-    const QMetaObject* class_type = agent->metaObject();
-    QList<QString> keys = this->spatial_index.keys();
-    while( class_type && !keys.contains( class_type->className() ) ){
-
-        // Insert new quadtree with the agents class
-        GWSQuadtree* index = new GWSQuadtree();
-        this->spatial_index.insert( class_type->className() , index );
-
-        class_type = class_type->superClass();
-    }
-
-    this->mutex.lock();
-    class_type = agent->metaObject();
-    GWSEnvelope env = this->spatial_envelopes.value( agent->getId() );
-    while( class_type ){
-
-        this->spatial_index[ class_type->className() ]->insert( env , agent );
-
-        class_type = class_type->superClass();
-    }
-    this->mutex.unlock();*/
 
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
 
-    // Retrieve its envelope
-    /*this->mutex.lock();
-    GWSEnvelope agent_geom_env = this->spatial_envelopes.value( agent->getId() );
-    this->mutex.unlock();
-
-    const QMetaObject* obj = agent->metaObject();
-    while( obj ){
-
-        // Remove from spatial index
-        this->mutex.lock();
-        GWSQuadtree* index = this->spatial_index.value( obj->className() );
-        if( index ){ index->remove( agent_geom_env , agent ); }
-        this->mutex.unlock();
-
-        obj = obj->superClass();
-    }
-
     this->mutex.lock();
-    this->spatial_envelopes.remove( agent->getId() );
-    this->mutex.unlock();*/
+    foreach (QString s , agent->getInheritanceFamily()) {
+        this->spatial_index[ s ]->remove( agent );
+    }
+    this->mutex.unlock();
 
 }
 

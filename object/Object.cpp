@@ -4,17 +4,18 @@
 #include <QDebug>
 
 #include "../../app/App.h"
-
+#include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
 QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@family";
+QString GWSObject::GWS_PARENT_PROP = "@parent";
 
 unsigned int GWSObject::counter = 0;
 
 GWSObject::GWSObject( QObject *parent ) : QObject( parent ){
-    QString generated_id = QString("SIM%1-OBJ%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
+    QString generated_id = QString("%1-%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
     this->setObjectName( generated_id );
 }
@@ -66,7 +67,7 @@ QJsonObject GWSObject::serialize() const{
             default:
 
                 if( GWSObject* obj = qvariant_cast<GWSObject*>( property_value ) ){
-                    json.insert( property_name , obj->serialize() );
+                    json.insert( property_name , obj->serializeMini() );
                 } else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
@@ -100,11 +101,23 @@ void GWSObject::deserialize(QJsonObject json){
                 //this->setProperty( property_name , property_value.toArray() );
                 break; }
         case QJsonValue::Object: {
-                GWSObject* obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this );
+
+                QJsonObject json_object = property_value.toObject();
+                GWSObject* obj = Q_NULLPTR;
+
+                // If it makes reference to an existing agent
+                if( !json_object.value( GWS_TYPE_PROP ).isNull() && !json_object.value( GWS_ID_PROP ).isNull() ){
+                    obj = GWSAgentEnvironment::globalInstance()->getByClassAndId( json_object.value( GWS_TYPE_PROP ).toString() , json_object.value( GWS_ID_PROP ).toString() );
+                }
+
+                if( !obj ){ obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this ); }
+
                 if( !obj ){ break; }
+
                 QVariant obj_variant = QVariant::fromValue<GWSObject*>( obj );
                 this->setProperty( property_name , obj_variant ); break; }
         default: {
+
                 qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
                 this->setProperty( property_name , property_value.toVariant() ); break; }
         }

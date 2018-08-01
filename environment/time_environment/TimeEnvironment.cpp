@@ -10,6 +10,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , started_datetime_msecs( QDateTime::currentDateTime().toMSecsSinceEpoch() ) {
     qInfo() << "TimeEnvironment created";
+    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSTimeEnvironment::~GWSTimeEnvironment(){

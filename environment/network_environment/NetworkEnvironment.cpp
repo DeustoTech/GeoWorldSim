@@ -7,6 +7,7 @@ GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
 
 GWSNetworkEnvironment::GWSNetworkEnvironment() : GWSEnvironment(){
     qInfo() << "NetworkEnvironment created";
+    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSNetworkEnvironment::~GWSNetworkEnvironment(){

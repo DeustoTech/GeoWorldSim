@@ -2,6 +2,7 @@
 #define GWSQUADTREE_H
 
 #include <QMutex>
+#include <QMap>
 
 #include "../../object/Object.h"
 #include "../../agent/Agent.h"
@@ -26,13 +27,14 @@ public:
     GWSAgent* getNearestElement( GWSGeometry* geometry ) const;
 
     // SETTERS
-    void insert( GWSAgent* agent );
+    void upsert( GWSAgent* agent );
     void remove( GWSAgent* agent );
 
 private:
     QList<GWSAgent*> getElements( double minX, double maxX, double minY, double maxY ) const;
 
     geos::index::quadtree::Quadtree* inner_index;
+    QMap<GWSAgent* , geos::geom::Envelope> registered_envelopes;
 
     //QMutex mutex;
 };
