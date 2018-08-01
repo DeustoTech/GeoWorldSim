@@ -15,6 +15,8 @@ void SheepAgent::behave()
 {
         qDebug() << "--------------- Sheep ---------------------------";
 
+
+
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
@@ -25,12 +27,18 @@ void SheepAgent::behave()
         //qDebug() << " GWSExecutionEnvironment::getRunningAgents() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgents();
         //qDebug() << " GWSExecutionEnvironment::getRunningAgentsByClass() = " << GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass< SheepAgent >(SheepAgent::staticMetaObject.className());
 
-
+        /* Register Terrain Agent so that we can add our sheep
+         * to a particular cell of the grid*/
         GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
         TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-        QList<GWSAgent*> cellOccupation = terrain_agent->getGridCellValue(0, 0);
-       //qDebug() << "cellOccupation = " << cellOccupation.size();
 
+        // Notify the grid of the presence of a sheep at current position:
+        //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+
+        /*
+        QList<GWSAgent*> cellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+        qDebug() << "cellOccupation = " << cellOccupation;
+        */
 
         /*
          *  Generate a list with all the sheeps in the GWS world.
@@ -111,11 +119,21 @@ void SheepAgent::behave()
             else
                {              
                qDebug() << "Target not overbooked yet, you can move there"  ;
+               qDebug()<< "Origin Grid Cell occupation before move = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+
+               // Notify the grid that the sheep is leaving:
+               terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+               qDebug()<< "Origin Grid Cell occupation after move = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+
 
                // Move
                this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
 
-               // Final position of the agent:                       
+               // Notify the grid the sheep's new position:
+               terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+               qDebug() << "Final Grid Cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+
+               // Final position of the agent:
                qDebug() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
                // Get initial energy
@@ -165,6 +183,9 @@ void SheepAgent::behave()
                   lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
                   qDebug() << "Lamb position = (" << lambAgent->getCentroid().getX() << ", " << lambAgent->getCentroid().getY() << ")";
 
+                  // Notify the grid of new sheep's position:
+                  terrain_agent->addGridCellValue(lambAgent->getCentroid().getX(), lambAgent->getCentroid().getY(), lambAgent);
+                  qDebug() << "Grid Cell occupation after breeding = " << terrain_agent->getGridCellValue(lambAgent->getCentroid().getX(), lambAgent->getCentroid().getY());
                   //  Reproductive constraints:
                   //  - Set internal time counter to 0
 
@@ -179,6 +200,7 @@ void SheepAgent::behave()
             {
             this->setProperty(RUNNING_PROP, "FALSE");
             qDebug() << "RIP" << this->property("@id").toString();
+            terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
             }
 
 }
