@@ -70,7 +70,8 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     TerrainAgent.h \
     SheepAgent.h \
-    TesisBehaviour.h
+    TesisBehaviour.h \
+    PredatorAgent.h
         # AGENTS
     #agent/person/Person.h
 
@@ -114,7 +115,8 @@ SOURCES += main.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
     TerrainAgent.cpp \
     SheepAgent.cpp \
-    TesisBehaviour.cpp
+    TesisBehaviour.cpp \
+    PredatorAgent.cpp
         # AGENTS
     #agent/person/Person.cpp
 

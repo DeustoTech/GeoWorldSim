@@ -6,13 +6,13 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
-    qDebug() << "PASO";
+    qDebug() << "SHEEP";
 }
 
 
 void SheepAgent::behave()
 {
-        qDebug() << "-------------------------------------------------";
+        qDebug() << "--------------- Sheep ---------------------------";
 
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
@@ -30,8 +30,6 @@ void SheepAgent::behave()
         qDebug() << "Initial position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
         // Move randomly through random index generator:
-
-       // srand ( this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).toLongLong() ); //initialize the random seed
         int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
         int RandIndexX = rand() % 3; //generates a random number between 0 and 2
         int RandIndexY = rand() % 3; //generates a random number between 0 and 2
@@ -58,8 +56,8 @@ void SheepAgent::behave()
         else
            {
            qDebug() << "Target movement = ("<< TargetX << "," << TargetY<< ")";
-           // Loop to see how many sheep are at the target point:
 
+           // Loop to see how many sheep are at the target point:
            for (int i = 0; i < sheeps.size(); ++i)
                 {
                 if (
@@ -77,12 +75,13 @@ void SheepAgent::behave()
                         }
                 }
 
-            qDebug() << "Target cell occupation = " << occupation;
+            qDebug() << "Target cell SheepAgent occupation = " << occupation;
 
-            // Modify behaviour based on target cell occupation
-
-            // If there are 2 or more (max of 3 considering that offspring is generated in the same cell
-            // sheep in the target cell, do nothing.
+            /*
+             * Modify behaviour based on target cell occupation
+             * If there are 2 or more (max of 3 considering that offspring is generated in the same cell)
+             * sheep in the target cell, do nothing.
+             */
 
             if (occupation == 2)
                {
@@ -94,15 +93,12 @@ void SheepAgent::behave()
                {
                qDebug() << "There is a family at the target position! Try another direction!"  ;
                qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
                }
-
             else
-               {
-               //if
+               {              
                qDebug() << "Target not overbooked yet, you can move there"  ;
 
-
+               // Move
                this->transformMove( GWSCoordinate( direction[RandIndexX] , direction[RandIndexY] ) );
 
                // Final position of the agent:                       
@@ -127,17 +123,10 @@ void SheepAgent::behave()
 
                this-> setProperty("energy", finalEnergy);
 
-               // Iterate over list to see where are the sheep:
-               //for (int i = 0; i < sheeps.size(); ++i)
-
-               //{
-
-               // Position and suitability constraints
+               // Cell occupation constraints
                if (occupation == 1)
                   {
                   qDebug() << this->property("@id").toString()<<", there is a living mate in your position! ";
-
-
                   /*
                    *  Reproductive constraints:
                    *   - Internal time threshold
@@ -149,20 +138,19 @@ void SheepAgent::behave()
                   /*
                    *  Breed!
                    */
-                  qDebug() << "**********************";
-                  qDebug() << "YAS! You get to breed!";
-                  qDebug() << "**********************";
+                  qDebug() << "************************************************************";
+                  qDebug() << "   YAS! You get to breed! Another sheep in the GWSWorld!     ";
+                  qDebug() << "************************************************************";
                   this->setProperty("energy" , this->getProperty("energy").toFloat() / 2.0);
-                  //sheeps.at(i)->setProperty("energy" , sheeps.at(i)->getProperty("energy").toFloat() / 2.0);
 
                   // Welcome a lamb to the World:
-
                   SheepAgent* lambAgent = new SheepAgent();
                   GWSExecutionEnvironment::globalInstance()->registerAgent(lambAgent);
                   GWSAgentEnvironment::globalInstance()->registerAgent( lambAgent );
                   lambAgent->setProperty("energy", 10);
-                  lambAgent->transformMove( GWSCoordinate( getCentroid().getX() , getCentroid().getY() ) );
+                  lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
                   qDebug() << "Lamb position = (" << lambAgent->getCentroid().getX() << ", " << lambAgent->getCentroid().getY() << ")";
+
                   //  Reproductive constraints:
                   //  - Set internal time counter to 0
 
@@ -173,48 +161,11 @@ void SheepAgent::behave()
 
 
         // Sheep die when:
-        if (this->property("energy") < 0.01)
+        if (this->property("energy") < 1)
             {
             this->setProperty(RUNNING_PROP, "FALSE");
             qDebug() << "RIP" << this->property("@id").toString();
             }
 
 }
-
-
-
-/* internal_clock = this->getInternalTime();
-   if internal_clock >= reproduction_tick_threshold && another_sheep_in_cell;
-        {
- *      SheepAgent::Reproduce(  );
- *      GWSBehaviour::getNext();
- *      }
-   void SheepAgent::Reproduce(  )
-        {
-        energy = this->getProperty( SheepAgent::ENERGY_PROPERTY );
-        this->setProperty( SheepAgent::ENERGY_PROPERTY , energy -= energy / 2.0);
-        SheepAgent* lamb = new SheepAgent();
-        lambEnergy = getProperty(lamb::ENERGY_PROPERTY)
-        lamb->setProperty(SheepAgent::ENERGY_PROPERTY, lambEnergy == this->getProperty( SheepAgent::ENERGY_PROPERTY )/ 2.0)
-        GWSBehaviour::getNext();
-        }
-*/
-
-
-
-/*for (int i = 0; i < sheeps.size(); ++i)
-    {
-    if
-      (
-      // ... you share my X coordinate
-      (sheeps.at(i)->property("cell_x") == this->property("cell_x"))
-      && // ... and my Y coordinate
-      (sheeps.at(i)->property("cell_y") == this->property("cell_y"))
-      && // ... and you are not myself
-      (sheeps.at(i)->property("@id") != this->property("@id"))
-      && // ... and you are not dead
-      (sheeps.at(i)->property("running") == "true")
-      )
-      {*/
-
 
