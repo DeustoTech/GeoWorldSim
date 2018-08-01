@@ -42,7 +42,6 @@ private:
     ~GWSPhysicalEnvironment();
 
     // SPATIAL INDEX
-    //QMap<QString , GWSEnvelope> spatial_envelopes; // QMAP< AGENT_ID , ENVELOPE> Spatial envelopes
     QMap<QString , GWSQuadtree*> spatial_index; // Spatial indexes
 
     // Mutex, for avoiding concurrency

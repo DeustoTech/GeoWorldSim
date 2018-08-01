@@ -10,7 +10,12 @@
 #include <QDateTime>
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/grid_environment/GridEnvironment.h"
+#include "../../environment/network_environment/NetworkEnvironment.h"
+#include "../../environment/social_environment/SocialEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/io/log/Logger.h"

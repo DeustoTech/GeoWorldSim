@@ -98,23 +98,24 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
     return found;
 }
 
-void GWSQuadtree::insert(GWSAgent* agent){
+void GWSQuadtree::upsert(GWSAgent* agent){
     //this->mutex.lock();
-    if( const GWSGeometry* geom = agent ){
-        geos::geom::Envelope* e = new geos::geom::Envelope( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() );
-        this->inner_index->insert( e , agent );
-        delete e;
+    // Check if exists
+    if( !this->registered_envelopes.value( agent ).isNull() ){
+        geos::geom::Envelope e = this->registered_envelopes.value( agent );
+        this->inner_index->remove( &e , agent );
     }
+
+    geos::geom::Envelope e = geos::geom::Envelope( agent->getGeometryMinX() , agent->getGeometryMaxX() , agent->getGeometryMinY() , agent->getGeometryMaxY() );
+    this->registered_envelopes.insert( agent , e );
+    this->inner_index->insert( &e , agent );
     //this->mutex.unlock();
 }
 
-
 void GWSQuadtree::remove(GWSAgent* agent){
     //this->mutex.lock();
-    if( const GWSGeometry* geom = agent ){
-        geos::geom::Envelope* e = new geos::geom::Envelope( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() );
-        this->inner_index->remove( e , agent );
-        delete e;
-    }
+    geos::geom::Envelope e = this->registered_envelopes.value( agent );
+    this->inner_index->remove( &e , agent );
+    this->registered_envelopes.remove( agent );
     //this->mutex.unlock();
 }
