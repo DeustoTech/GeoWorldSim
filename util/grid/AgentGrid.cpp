@@ -15,11 +15,8 @@ void GWSAgentGrid::deserialize(QJsonObject json){
     if( json.value( GWSGrid::GRID_VALUES_PROP ).isArray() ){
 
         QJsonArray a1 = json.value( GWSGrid::GRID_VALUES_PROP ).toArray();
-
         for( int i = 0 ; i < a1.size() ; i++){
-
             QJsonArray a2 = a1.at( i ).toArray();
-
             for( int j = 0 ; j < a2.size() ; j++){
                 //this->values[i][j] = a2.at( j ).toDouble();
             }

@@ -47,8 +47,8 @@ public:
     void setGridMinValue( double min );
     virtual void setGridSize( unsigned int x_size = 100 , unsigned int y_size = 100 );
     //void setCellValue( GWSCoordinate* coor , double v );
-    virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
-    virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
+    //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
+    //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
 
     // OPERATORS

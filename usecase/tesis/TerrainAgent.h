@@ -2,16 +2,24 @@
 #define TERRAINAGENT_H
 
 #include "../../agent/Agent.h"
-#include "../../util/grid/Grid.h"
+#include "../../util/grid/AgentGrid.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
 
-class TerrainAgent : public GWSAgent , public GWSGrid
+class TerrainAgent : public GWSAgent , public GWSAgentGrid
 {
     Q_OBJECT // Needed macro
 
-    virtual void behave();
-
 public:
-    TerrainAgent();
+
+    // CONSTRUCTOR
+    Q_INVOKABLE explicit TerrainAgent(QObject* parent = Q_NULLPTR );
+
+    // IMPORTERS
+    void deserialize(QJsonObject json);
+
+    virtual void behave();
 };
+
+Q_DECLARE_METATYPE(TerrainAgent*) // REQUIRED IN EVERY CHILD
 
 #endif // TERRAINAGENT_H
