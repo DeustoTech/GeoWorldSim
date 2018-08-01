@@ -17,6 +17,9 @@ void SheepAgent::behave()
         // Send information to website
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
+
+        qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
+
         /*
          *  Generate a list with all the sheeps in the GWS world.
          *  This list allows us to loop over all the existing sheeps
@@ -24,7 +27,6 @@ void SheepAgent::behave()
          */
         QList<GWSAgent*> sheeps = GWSAgentEnvironment::globalInstance()->getByClass( SheepAgent::staticMetaObject.className() );
         qDebug() << "Number of running SheepAgents in the field = "<< sheeps.size() ;
-
         // Get cell_X and cell_y
         qDebug() << "I am" << this->property("@id").toString();
         qDebug() << "Initial position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";

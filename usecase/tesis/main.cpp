@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 
     /* ----------
-    /* SheepAgents
+     * SheepAgents
        ----------*/
 
     /* Dolly1 */
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     qInfo()<< "I am a GWSAgent of" << sheep3->property("@type").toString() << "type.";
 
     /* ----------
-    /* WolfAgents
+     * WolfAgents
        ----------*/
 
     /* Nymeria1 */
@@ -143,9 +143,6 @@ int main(int argc, char* argv[])
     QList<GWSAgent*> l = GWSAgentEnvironment::globalInstance()->getByClass<GWSAgent>( GWSAgent::staticMetaObject.className() );
 
     GWSExecutionEnvironment::globalInstance()->run();
-
-
-
 
 
     app->exec();
