@@ -63,9 +63,15 @@ void GWSAgentGrid::setGridSize(unsigned int x_size, unsigned int y_size){
 }
 
 void GWSAgentGrid::addGridCellValue(unsigned int grid_x, unsigned int grid_y, GWSAgent *v){
+    if( grid_x < 0 || grid_x > this->values.size() || grid_y < 0 || grid_y > this->values[0].size() ){
+        return;
+    }
     this->values[grid_x][grid_y].append( v );
 }
 
 void GWSAgentGrid::removeGridCellValue(unsigned int grid_x, unsigned int grid_y, GWSAgent *v){
+    if( grid_x < 0 || grid_x > this->values.size() || grid_y < 0 || grid_y > this->values[0].size() ){
+        return;
+    }
     this->values[grid_x][grid_y].removeAll( v );
 }
