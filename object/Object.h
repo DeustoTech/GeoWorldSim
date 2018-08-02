@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMetaProperty>
 #include <QJsonValue>
+#include "../../util/units/Units.h"
 
 class GWSObject : public QObject
 {
@@ -38,6 +39,7 @@ public:
     const QVariant operator[]( QString name ) const;
 
     // SETTERS
+    bool setProperty(const QString name, const GWSUnit &value);
     bool setProperty(const QString name, const QVariant &value);
     bool setProperty(const QString name, GWSObject* value);
     void copyProperties(const GWSObject &other );

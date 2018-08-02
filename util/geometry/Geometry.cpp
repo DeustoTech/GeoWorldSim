@@ -42,14 +42,14 @@ void GWSGeometry::deserialize(QJsonObject json){
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();
 
-    if( geom_type == "Point" ){
+    if( geom_type.toLower() == "point" ){
         this->inner_geometry = factory->createPoint(
                     geos::geom::Coordinate(
                         coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
                         coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
                         coors.size() > 2 ? coors.at(2).toDouble() : 0 )
                     );
-    } else if ( geom_type == "LineString" ){
+    } else if ( geom_type.toLower() == "linestring" ){
 
         geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
 
@@ -62,7 +62,7 @@ void GWSGeometry::deserialize(QJsonObject json){
                       );
         }
         this->inner_geometry = factory->createLineString( seq );
-    } else if ( geom_type == "Polygon" ){
+    } else if ( geom_type.toLower() == "polygon" ){
 
         geos::geom::LinearRing* outer_ring = Q_NULLPTR;
         std::vector<geos::geom::Geometry *>* holes = new std::vector<Geometry*>();
@@ -282,6 +282,7 @@ GWSCoordinate GWSGeometry::getCentroid() const{
 **********************************************************************/
 
 void GWSGeometry::transformMove(GWSCoordinate apply_movement){
+    if( !apply_movement.isValid() ){ return; }
     if( !this->inner_geometry ){
         this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
                     geos::geom::Coordinate( apply_movement.getX() , apply_movement.getY() , apply_movement.getZ()

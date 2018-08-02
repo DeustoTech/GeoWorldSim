@@ -1,7 +1,7 @@
 #ifndef MOVEBEHAVIOUR_H
 #define MOVEBEHAVIOUR_H
 
-#include "../behaviour/Behaviour.h"
+#include "../../behaviour/Behaviour.h"
 
 class MoveBehaviour : public GWSBehaviour
 {
@@ -9,11 +9,11 @@ class MoveBehaviour : public GWSBehaviour
 
 public:
 
-    MoveBehaviour( GWSAgent* behaving_agent );
+    Q_INVOKABLE explicit MoveBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
     // PROPERTIES
-    static QString DESTINATION_X;
-    static QString DESTINATION_Y;
+    static QString DESTINATION_X_PROP;
+    static QString DESTINATION_Y_PROP;
 
     // GETTERS
     virtual bool finished();

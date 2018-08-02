@@ -58,7 +58,7 @@ GWSObject* GWSObjectFactory::fromType( QString type , GWSObject* parent ){
 GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
 
     if( json.isEmpty() ){
-        qDebug() << QString("Empty JSON");
+        qDebug() << QString("Object Factory received empty JSON");
         return 0;
     }
 

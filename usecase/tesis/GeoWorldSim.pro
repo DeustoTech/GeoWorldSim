@@ -36,8 +36,12 @@ HEADERS += \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
     ../../agent/Agent.h \
+        # SKILLS
     ../../skill/Skill.h \
+    ../../skill/move/MoveSkill.h \
+        # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/spatial/MoveBehaviour.h \
     ../../util/uistyle/Style.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -85,8 +89,12 @@ SOURCES += main.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
     ../../agent/Agent.cpp \
+        # SKILLS
     ../../skill/Skill.cpp \
+    ../../skill/move/MoveSkill.cpp \
+        # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/spatial/MoveBehaviour.cpp \
     ../../util/uistyle/Style.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
