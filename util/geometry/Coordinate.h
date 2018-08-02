@@ -18,10 +18,12 @@ struct GWSCoordinate {
     ~GWSCoordinate(){}
 
     // GETTERS
+    bool isValid() const;
     double getX() const;
     double getY() const;
     double getZ() const;
     GWSLengthUnit getDistance( GWSCoordinate other ) const;
+    double getLatLngDistance( GWSCoordinate other ) const;
 
     // OPERATORS
     bool operator == (const GWSCoordinate&) const;

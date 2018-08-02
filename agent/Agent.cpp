@@ -7,6 +7,8 @@
 #include <QPainter>
 #include <QThread>
 
+#include "../../app/App.h"
+#include "../../object/ObjectFactory.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
 
@@ -36,15 +38,17 @@ void GWSAgent::deserialize(QJsonObject json){
     GWSObject::deserialize( json );
 
     // SKILLS
-    QJsonArray skills = json.value("@skills").toArray();
-    foreach( QJsonValue skill , skills ){
-        qDebug() << "SKILL" << skill;
+    QJsonArray jskills = json.value("@skills").toArray();
+    foreach( QJsonValue js , jskills ){
+        GWSSkill* skill = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+        if( !skill ){ continue; }
+        this->addSkill( skill );
     }
 
     // BEHAVIOUR
-    QJsonArray behaviours = json.value("@behaviour").toArray();
-    foreach( QJsonValue behaviour , behaviours ){
-        qDebug() << "BEHAVIOUR" << behaviour;
+    if( json.keys().contains( "@behaviour" ) ){
+        GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( json.value( "@behaviour" ).toObject() , this ) );
+        if( behaviour ){ this->setStartBehaviour( behaviour ); }
     }
 
     // GEOMETRY
@@ -236,6 +240,8 @@ void GWSAgent::tick(){
         qInfo() << "Agent is not running, skipping behaviour";
         return;
     }
+
+    emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
     this->incrementBusy();
     this->behave();

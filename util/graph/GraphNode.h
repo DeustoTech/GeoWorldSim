@@ -3,7 +3,7 @@
 
 #include <QList>
 
-#include "../util/geometry/Coordinate.h"
+#include "../../util/geometry/Coordinate.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)

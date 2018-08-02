@@ -10,7 +10,7 @@ class GWSBehaviour : public GWSObject
     friend class GWSAgent; // Agent can check behaviour insides
 
 public:
-    Q_INVOKABLE explicit GWSBehaviour( GWSAgent* behaving_agent );
+    Q_INVOKABLE explicit GWSBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);

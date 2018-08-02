@@ -19,7 +19,7 @@ struct GWSUnit {
     ~GWSUnit(){}
 
     // GETTERS
-    double number(){ return value; }
+    double number() const { return value; }
 
     // SETTERS
     GWSUnit operator =(const double value){
@@ -53,6 +53,9 @@ struct GWSUnit {
     bool operator ==(const GWSUnit other) const{
         Q_ASSERT( unit == other.unit );
         return this->value == other.value;
+    }
+    bool operator ==(const double other) const{
+        return this->value == other;
     }
 
     // MATH
@@ -180,8 +183,8 @@ struct GWSFrequencyUnit : GWSUnit {
     GWSFrequencyUnit() : GWSFrequencyUnit(0){}
 };
 
-// Declare Units to be used as QMETAPROPERTY
-Q_DECLARE_METATYPE(GWSUnit)
+// DO NOT Declare Units to be used as QMETAPROPERTY
+// NEED TO BE STORED AS DOUBLE, TO BE SERIALIZABLE
 
 #endif // GWSUNITS
 

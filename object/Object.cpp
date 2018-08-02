@@ -66,9 +66,13 @@ QJsonObject GWSObject::serialize() const{
                 json.insert( property_name , this->getProperty( property_name ).toString() ); break;
             default:
 
-                if( GWSObject* obj = qvariant_cast<GWSObject*>( property_value ) ){
+                // case GWSOBJECT
+                if( property_value.typeName() == "GWSObject*" ){
+                    GWSObject* obj = qvariant_cast<GWSObject*>( property_value );
                     json.insert( property_name , obj->serializeMini() );
-                } else {
+                }
+
+                else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
                 }
@@ -88,6 +92,8 @@ void GWSObject::deserialize(QJsonObject json){
     // Set properties
     foreach( QString property_name , json.keys() ){
 
+        if( property_name.contains('@') ){ continue; }
+
         QJsonValue property_value = json.value( property_name );
 
         switch ( property_value.type() ) {
@@ -106,11 +112,13 @@ void GWSObject::deserialize(QJsonObject json){
                 GWSObject* obj = Q_NULLPTR;
 
                 // If it makes reference to an existing agent
-                if( !json_object.value( GWS_TYPE_PROP ).isNull() && !json_object.value( GWS_ID_PROP ).isNull() ){
+                if( json_object.keys().contains( GWS_TYPE_PROP ) && json_object.keys().contains( GWS_ID_PROP ) ){
                     obj = GWSAgentEnvironment::globalInstance()->getByClassAndId( json_object.value( GWS_TYPE_PROP ).toString() , json_object.value( GWS_ID_PROP ).toString() );
                 }
 
-                if( !obj ){ obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this ); }
+                if( !obj && json_object.keys().contains( GWS_TYPE_PROP ) ){
+                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this );
+                }
 
                 if( !obj ){ break; }
 
@@ -162,6 +170,10 @@ const QVariant GWSObject::operator []( QString name ) const{
 /**********************************************************************
  SETTERS
 **********************************************************************/
+
+bool GWSObject::setProperty(const QString name, const GWSUnit &value){
+    return this->setProperty( name , value.number() );
+}
 
 bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
