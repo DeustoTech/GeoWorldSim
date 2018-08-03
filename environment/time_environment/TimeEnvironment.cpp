@@ -17,6 +17,16 @@ GWSTimeEnvironment::~GWSTimeEnvironment(){
 }
 
 /**********************************************************************
+   IMPORTERS
+**********************************************************************/
+
+void GWSTimeEnvironment::deserialize(QJsonObject json){
+    if( json.contains("speed") ){
+        this->setTimeSpeed( qMax( json["speed"].toObject()["value"].toDouble() , 0.1) );
+    }
+}
+
+/**********************************************************************
    EXPORTERS
 **********************************************************************/
 
@@ -25,12 +35,6 @@ QJsonObject GWSTimeEnvironment::serialize(){
     json.insert( "datetime" , (qint64)this->getCurrentDateTime() );
     json.insert( "speed" , this->getTimeSpeed() );
     return json;
-}
-
-void GWSTimeEnvironment::deserialize(QJsonObject json){
-    if( json.contains("speed") ){
-        this->setTimeSpeed( qMax( json["speed"].toObject()["value"].toDouble() , 0.1) );
-    }
 }
 
 /**********************************************************************
@@ -63,3 +67,14 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
+/**********************************************************************
+ METHODS
+**********************************************************************/
+
+void GWSTimeEnvironment::registerAgent(GWSAgent *agent){
+    GWSEnvironment::registerAgent( agent );
+}
+
+void GWSTimeEnvironment::unregisterAgent(GWSAgent *agent){
+    GWSEnvironment::unregisterAgent( agent );
+}

@@ -3,11 +3,15 @@
 #include <QJsonDocument>
 
 #include "../../agent/Agent.h"
+#include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
 GWSExternalListener::GWSExternalListener(QString simulation_id ) : QObject(){
+    // Listening to yourself would be a loop
+    Q_ASSERT( simulation_id != GWSApp::globalInstance()->getAppId() );
+
     this->listening_simulation_id = simulation_id;
     this->startSocket();
 }
@@ -41,50 +45,27 @@ void GWSExternalListener::messageReceived(const QString message){
     qInfo() << "Received message" << message;
     QJsonObject json = QJsonDocument::fromJson( message.toLatin1() ).object();
 
-    // Remove skills and behaviour
-    json.remove( "@skills" );
-    json.remove( "@behaviour" );
 
-    QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
-    QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
-    QString operation = json.value("operation").toString();
+    // RECEIVED AN AGENT
+    if( json.value("signal") == "entity" ){
+        json = json.value("body").toObject();
 
-    GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id );
+        QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
+        QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
 
-    if( !agent ){
-        GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json ) );
-    } else {
-        agent->deserialize( json );
-    }
-
-
-    /*if( type == GWSEnvironment::globalInstance()->metaObject()->className() ){
-        if( operation == "GET" ){ GWSEnvironment::globalInstance()->pushToInterfaceSignal( GWSEnvironment::globalInstance()->toJSON() ); }
-        if( operation == "RUN" ){ GWSExecutionEnvironment::globalInstance()->run(); }
-        if( operation == "STOP" ){ GWSExecutionEnvironment::globalInstance()->stop(); }
-    }
-    else
-    {
-        QString id = json.value("id").toString();
-        GWSAgent* agent = Q_NULLPTR;
-        QList<GWSAgent*> agents;
-        if( id.isEmpty() ){
-            agents = GWSEnvironment::globalInstance()->getByClass( type );
-        } else {
-            agent = GWSEnvironment::globalInstance()->getByClassAndId( type , id );
+        GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id ) );
+        if( agent ){
+            agent->deserialize( json );
+            return;
         }
 
-        if( operation == "RUN" && agent ){ GWSExecutionEnvironment::globalInstance()->runAgent( agent ); }
-        if( operation == "RUN" && !agents.isEmpty() ){ GWSExecutionEnvironment::globalInstance()->runAgents( agents ); }
-        if( operation == "STOP" && agent ){ GWSExecutionEnvironment::globalInstance()->stopAgent( agent ); }
-        if( operation == "STOP" && !agents.isEmpty() ){ GWSExecutionEnvironment::globalInstance()->stopAgents( agents ); }
-
-        if( agent ){ GWSEnvironment::globalInstance()->pushToInterfaceSignal( agent->toJSON() ); }
-        if( !agents.isEmpty() ){
-            QJsonArray arr;
-            foreach( GWSAgent* agent , agents ){ arr.append( agent->toJSON() );}
-            GWSEnvironment::globalInstance()->pushToInterfaceSignal( arr );
+        if( !agent ){
+            agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json ) );
         }
-    }*/
+
+        if( agent ){
+            GWSEnvironment::globalInstance()->registerAgent( agent );
+        }
+    }
 
 }

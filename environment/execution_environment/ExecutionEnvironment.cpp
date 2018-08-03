@@ -31,16 +31,12 @@ GWSExecutionEnvironment::~GWSExecutionEnvironment(){
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSExecutionEnvironment::serializeMini(){
-    QJsonObject json;
-    json.insert( "running" , this->isRunning() );
-    json.insert( "running_agents_amount" , (qint64)this->running_agents->getAmount() );
-    json.insert( "executed_ticks" , (qint64)this->executed_ticks_amount );
+QJsonObject GWSExecutionEnvironment::serialize() const{
+    QJsonObject json = GWSEnvironment::serializeMini();
+    json.insert( "running_amount" , this->getRunningAgentsAmount() );
+    json.insert( "ticks_amount" , this->getTicksAmount() );
+    json.insert( "time" , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     return json;
-}
-
-QJsonObject GWSExecutionEnvironment::serialize(){
-    return this->serializeMini();
 }
 
 /**********************************************************************
@@ -93,9 +89,8 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     if( !agent || agent->deleted ){ return; }
 
     // Store as running
-    //this->mutex.lock();
+    GWSEnvironment::registerAgent( agent );
     this->running_agents->add( agent );
-    //this->mutex.unlock();
 
     // Calculate when to start the agent according to its next_tick_datetime
     qint64 msecs = agent->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<quint64>() - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
@@ -132,6 +127,7 @@ void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
     agent->setProperty( GWSAgent::RUNNING_PROP , false );
 
     // Remove from running lists
+    GWSEnvironment::unregisterAgent( agent );
     this->running_agents->remove( agent );
 
     // Stop agent
@@ -153,7 +149,9 @@ void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
 
 void GWSExecutionEnvironment::run(){
 
-    if( this->timer ){ qDebug() << QString("%1 is already running").arg( this->metaObject()->className() ); return; }
+    if( this->isRunning() ){ qDebug() << QString("%1 is already running").arg( this->metaObject()->className() ); return; }
+
+    this->setProperty( GWSAgent::RUNNING_PROP , true );
 
     qInfo() << QString("Running %1").arg( this->metaObject()->className() );
     emit GWSApp::globalInstance()->pushDataSignal( "message" , "Running simulation" );
@@ -163,15 +161,14 @@ void GWSExecutionEnvironment::run(){
     emit this->runningExecutionSignal();
 }
 
-void GWSExecutionEnvironment::tick(){
+void GWSExecutionEnvironment::behave(){
 
-    //this->mutex.lock();
     QList<GWSAgent*> currently_running_agents = this->getRunningAgents();
-    //this->mutex.unlock();
 
-    if( currently_running_agents.isEmpty() ){
-        qInfo() << QString("%1 has no agents to run").arg( this->metaObject()->className() );
-        this->stop(); return;
+    if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
+        qInfo() << QString("%1 has no agents to run. Finising Simulation.").arg( this->metaObject()->className() );
+        this->stop();
+        GWSApp::exit( 0 );
     }
 
     // Wait for agents that are delayed.
@@ -213,7 +210,7 @@ void GWSExecutionEnvironment::tick(){
     }
 
     // Calculate to call again this function in (cycleFrequency - spent time) time
-    if( this->timer ){
+    if( this->isRunning() ){
         this->timer->singleShot( (1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
@@ -229,7 +226,8 @@ void GWSExecutionEnvironment::tick(){
 
 void GWSExecutionEnvironment::stop(){
 
-    if( !this->timer ){ return; }
+    if( !this->isRunning() ){ return; }
+    this->setProperty( GWSAgent::RUNNING_PROP , false );
 
     qInfo() << QString("Stopping %1").arg( this->metaObject()->className() );
     this->timer->deleteLater();

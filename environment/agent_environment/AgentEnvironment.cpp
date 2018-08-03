@@ -73,10 +73,12 @@ template <class T> T* GWSAgentEnvironment::getByName(QString agent_name) const{
 **********************************************************************/
 
 void GWSAgentEnvironment::registerAgent(GWSAgent *agent){
+    GWSEnvironment::registerAgent( agent );
     this->environment_agents->add( agent );
 }
 
 void GWSAgentEnvironment::unregisterAgent(GWSAgent *agent){
+    GWSEnvironment::unregisterAgent( agent );
     this->environment_agents->remove( agent );
 }
 

@@ -34,7 +34,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
         if( arg.contains( "-id=" ) ){ this->app_id = arg.replace( "-id=" , "" ); }
         if( arg.contains( "-user=" ) ){ this->setProperty( "user" , arg.replace( "-user=" , "" ) ); }
         if( arg.contains( "-autorun=" ) ){ this->setProperty( "autorun" , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
-        if( arg.contains( "-live=" ) ){ this->setProperty( "live " , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
+        if( arg.contains( "-live=" ) ){ this->setProperty( "live" , arg.replace( "-live=" , "" ) == "1" ? true : false ); }
         if( arg.contains( "-console=" ) ){ this->setProperty( "console" , arg.replace( "-console=" , "" ) == "1" ? true : false ); }
         if( arg.contains( "-speed=" ) ){ this->setProperty( "speed" , arg.replace( "-speed=" , "" ).toDouble() ); }
         if( arg.contains( "-debug=" ) ){ this->setProperty( "debug" , arg.replace( "-debug=" , "" ).toInt() ); }
@@ -117,10 +117,13 @@ void GWSApp::startSocket(){
         this->pushData( "join" , QJsonObject() );
         this->pushData( "message" , "Simulation connected" );
 
-        // If Autorun
+
         qInfo() << QString("Connected App %1, took %2 miliseconds for %3 agents").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ).arg( GWSAgentEnvironment::globalInstance()->getAmount() );
+
+        // If Autorun
         if( this->property("autorun").toBool() ){
             QTimer::singleShot( 10000 , [this](){
+                GWSEnvironment::globalInstance();
                 GWSExecutionEnvironment::globalInstance()->run();
             });
         }

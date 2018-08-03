@@ -17,9 +17,11 @@ class GWSTimeEnvironment : public GWSEnvironment
 public:
     static GWSTimeEnvironment* globalInstance();
 
+    // IMPORTERS
+    void deserialize(QJsonObject json);
+
     // EXPORTERS
     virtual QJsonObject serialize();
-    void deserialize(QJsonObject json);
 
     // GETTERS
     qint64 getCurrentDateTime() const;
@@ -28,6 +30,10 @@ public:
     // SETTERS
     void setDatetime( quint64 current_datetime_msecs );
     void setTimeSpeed(double time_speed = 1);
+
+    // METHODS
+    virtual void registerAgent( GWSAgent* agent );
+    virtual void unregisterAgent( GWSAgent* agent );
 
 private:
     GWSTimeEnvironment();

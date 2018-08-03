@@ -6,10 +6,7 @@
 
 #include "../../object/ObjectFactory.h"
 #include "../../agent/Agent.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
-#include "../../environment/grid_environment/GridEnvironment.h"
-#include "../../environment/network_environment/NetworkEnvironment.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/Environment.h"
 
 GWSDatasourceReader::GWSDatasourceReader(QString datasource_url) : QObject(){
     this->datasource_url = datasource_url;
@@ -33,10 +30,7 @@ void GWSDatasourceReader::dataReceived(){
         GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( j.toObject() ) );
         if( agent ){
             // TODO
-            GWSAgentEnvironment::globalInstance()->registerAgent( agent );
-            GWSGridEnvironment::globalInstance()->registerAgent( agent );
-            GWSNetworkEnvironment::globalInstance()->registerAgent( agent );
-            GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
+            GWSEnvironment::globalInstance()->registerAgent( agent );
         }
     }
 

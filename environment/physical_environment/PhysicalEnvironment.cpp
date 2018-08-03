@@ -190,6 +190,7 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
     }
 
     this->mutex.lock();
+    GWSEnvironment::registerAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
         this->spatial_index[ s ]->upsert( agent );
     }
@@ -200,6 +201,7 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
 void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
 
     this->mutex.lock();
+    GWSEnvironment::unregisterAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
         this->spatial_index[ s ]->remove( agent );
     }

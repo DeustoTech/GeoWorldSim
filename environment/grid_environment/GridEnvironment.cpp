@@ -18,7 +18,7 @@ GWSGridEnvironment::~GWSGridEnvironment(){
 **********************************************************************/
 
 void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
-
+    GWSEnvironment::registerAgent( agent );
     GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
 
     if( grid ){
@@ -27,7 +27,7 @@ void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
 }
 
 void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
-
+    GWSEnvironment::unregisterAgent( agent );
     GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
     if( grid ){
         this->environment_grids->remove( agent );
