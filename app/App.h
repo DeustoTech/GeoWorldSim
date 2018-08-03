@@ -26,6 +26,7 @@ public slots:
 
     // SEND DATA
     void startSocket();
+    void reconnectSocket();
 
 signals:
     void pushAgentSignal( QJsonObject agent_json );

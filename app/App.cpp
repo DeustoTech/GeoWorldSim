@@ -122,10 +122,12 @@ void GWSApp::startSocket(){
 
         // If Autorun
         if( this->property("autorun").toBool() ){
+
             QTimer::singleShot( 10000 , [this](){
                 GWSEnvironment::globalInstance();
                 GWSExecutionEnvironment::globalInstance()->run();
             });
+
         }
 
     });
@@ -137,8 +139,12 @@ void GWSApp::startSocket(){
         qWarning() << "Error connecting websocket" << error;
         this->startSocket();
     });*/
-    //QObject::connect( &this->websocket , &QWebSocket::disconnected , this , &GWSApp::startSocket );
+    QObject::connect( &this->websocket , &QWebSocket::disconnected , this , &GWSApp::reconnectSocket );
 
+    this->reconnectSocket();
+}
+
+void GWSApp::reconnectSocket(){
     this->websocket.open( QUrl( "ws://sockets.deusto.io" )); //ws://localhost:8070" ) );
 }
 

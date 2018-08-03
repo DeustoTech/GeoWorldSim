@@ -29,14 +29,22 @@ void GWSExternalListener::startSocket(){
         this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
     });
 
+    // Keep alive
     QObject::connect( &this->websocket , &QWebSocket::pong , [this](quint64 elapsedTime, const QByteArray &payload){
         Q_UNUSED(elapsedTime); Q_UNUSED(payload);
         emit this->websocket.ping();
     });
 
+    // Events
     QObject::connect( &this->websocket , &QWebSocket::textMessageReceived , this , &GWSExternalListener::messageReceived );
-    QObject::connect( &this->websocket , &QWebSocket::disconnected , this , &GWSExternalListener::startSocket );
+    QObject::connect( &this->websocket , &QWebSocket::disconnected , [this](){
+        QTimer::singleShot( 10*1000 , this , &GWSExternalListener::reconnectSocket );
+    });
 
+    this->reconnectSocket();
+}
+
+void GWSExternalListener::reconnectSocket(){
     this->websocket.open( QUrl( "ws://sockets.deusto.io" ));
 }
 
@@ -52,9 +60,20 @@ void GWSExternalListener::messageReceived(const QString message){
 
         QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
+        QJsonObject geo = json.value( GWSAgent::GEOMETRY_PROP ).toObject();
 
-        GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id ) );
-        if( agent ){
+        GWSAgent* agent = Q_NULLPTR;
+
+        if( !type.isEmpty() && !id.isEmpty() ){
+            agent = dynamic_cast<GWSAgent*>( GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id ) );
+        }
+
+        if( agent && geo.isEmpty() ){
+            agent->deleteLater();
+            return;
+        }
+
+        if( agent && !geo.isEmpty() ){
             agent->deserialize( json );
             return;
         }
@@ -65,6 +84,9 @@ void GWSExternalListener::messageReceived(const QString message){
 
         if( agent ){
             GWSEnvironment::globalInstance()->registerAgent( agent );
+            if( agent->isRunning() ){
+                GWSExecutionEnvironment::globalInstance()->registerAgent( agent );
+            }
         }
     }
 

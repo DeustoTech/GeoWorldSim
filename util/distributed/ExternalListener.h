@@ -14,12 +14,13 @@ public:
 public slots:
 
     void startSocket();
+    void reconnectSocket();
     void messageReceived(const QString message);
 
 private:
     QString listening_simulation_id;
     QWebSocket websocket; // WS to sockets.deusto.io
-
+    bool reconnecting = false; // Flag
 };
 
 #endif // GWSEXTERNALLISTENER_H
