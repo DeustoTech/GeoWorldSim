@@ -72,12 +72,6 @@ QJsonObject GWSObject::serialize() const{
                     json.insert( property_name , obj->serializeMini() );
                 }
 
-                // case GWSStyle
-                else if( property_value.typeName() == "GWSStyle*" ){
-                    GWSObject* obj = qvariant_cast<GWSStyle*>( property_value );
-                    json.insert( property_name , obj->serializeMini() );
-                }
-
                 else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;

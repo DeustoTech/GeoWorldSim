@@ -22,6 +22,7 @@
 
 #include "./../util/units/Units.h"
 #include "./../util/geometry/Geometry.h"
+#include "./../util/uistyle/Style.h"
 #include "./../util/storage/ObjectStorage.h"
 #include "./../util/uistyle/Style.h"
 
@@ -34,7 +35,7 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 // Declare Coordinate to be used as QMETAPROPERTY
 // Q_DECLARE_METATYPE(GWSGeometry)
 
-class GWSAgent : public GWSObject , public GWSGeometry
+class GWSAgent : public GWSObject , public GWSGeometry , public GWSStyle
 {
     friend class GWSEnvironment; // Environment will be able to overwrite the attributes
     friend class GWSPhysicalEnvironment;
@@ -66,7 +67,7 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 );
 
     // GETTERS
-    GWSStyle* getStyle() const;
+    QList<GWSEnvironment*> getEnvironments() const;
     bool isRunning() const;
     bool isBusy() const;
     qint64 getInternalTime() const;
@@ -80,7 +81,7 @@ public:
 
     // SETTERS
     //virtual void setGeometry( GSSGeometry* geometry );
-    void setStartBehaviour( GWSBehaviour* start_behaviour );
+    void addBehaviour( GWSBehaviour* behaviour );
     void setInternalTime( qint64 datetime );
     void incrementInternalTime( GWSTimeUnit seconds = GWSTimeUnit(0) );
     void incrementBusy();
@@ -89,8 +90,8 @@ public:
     void removeSkill( GWSSkill* skill );
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
-    void tick(); // Acts as a behave() wrapper
-    virtual void behave(); // Behaviour, To be implemented by children, must be synchronous because tick is already asyncrhonous
+    virtual void tick() final; // Acts as a behave() wrapper
+    virtual void behave(); // Behaviour, To be implemented by children, must be synchronous because tick is already invoked asyncrhonously
 
 signals:
     void agentStartedSignal();
@@ -98,6 +99,8 @@ signals:
     void agentEndedSignal();
 
 protected:
+
+    QList<GWSEnvironment*> environments_registerd_in; // List of environments it lives in
 
     /**
      * @brief Agent skills storage
@@ -107,7 +110,7 @@ protected:
     /**
      * @brief Agent behaviour
      */
-    GWSBehaviour* start_behaviour = Q_NULLPTR;
+    QList<GWSBehaviour*> behaviours;
 
     /**
       * Mutex for paralelism

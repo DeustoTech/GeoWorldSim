@@ -18,7 +18,7 @@ public:
     static GWSNetworkEnvironment* globalInstance();
 
     // EXPORTERS
-    QJsonObject serialize() const;
+    virtual QJsonObject serialize() const;
     void deserialize(QJsonObject json);
 
     // GETTERS

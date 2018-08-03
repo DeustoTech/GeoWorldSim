@@ -20,8 +20,7 @@ public:
     static QString RUNNING_PROP;
 
     // EXPORTERS
-    virtual QJsonObject serializeMini();
-    virtual QJsonObject serialize();
+    virtual QJsonObject serialize() const;
 
     // GETTERS
     int getRunningAgentsAmount() const;
@@ -44,7 +43,7 @@ public slots:
     void stop();
 
 private slots:
-    void tick();
+    void behave();
 
 private:
     GWSExecutionEnvironment();

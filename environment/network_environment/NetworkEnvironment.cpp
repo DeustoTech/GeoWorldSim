@@ -79,6 +79,7 @@ void GWSNetworkEnvironment::registerAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
+        GWSEnvironment::registerAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
         QList<QString> keys = this->network_graphs.keys();
 
@@ -113,6 +114,7 @@ void GWSNetworkEnvironment::unregisterAgent( GWSAgent *agent ){
 
     if( edge || node ){
 
+        GWSEnvironment::unregisterAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
         foreach(QString c , classes){
 

@@ -1,18 +1,24 @@
 #ifndef GWSSTYLE_H
 #define GWSSTYLE_H
 
-#include "../../object/Object.h"
+#include <QString>
+#include <QColor>
+#include <QJsonObject>
 
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 
-class GWSStyle : public GWSObject
+class GWSStyle
 {
-    Q_OBJECT
 
 public:
 
-    Q_INVOKABLE explicit GWSStyle( GWSAgent* styled_agent = Q_NULLPTR );
-    ~GWSStyle();
+    GWSStyle( GWSAgent* styled_agent );
+
+    // IMPORTERS
+    virtual void deserialize(QJsonObject json);
+
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
 
     // PROPERTIES
     static QString COLOR_PROP;
@@ -26,14 +32,17 @@ public:
     static QColor getRandomColor();
     static QString toHTML(QColor color);
 
-private:
+public:
 
-    //QColor color = QColor("Gray");          // Agent geometry inner color
-    //QColor border_color = QColor("Black");  // Agent geometry border color
-    //int border_weight = 5;                  // Agent geometry border weight
-    //QString dash_array;                     // Agent geometry line format
-    //QString icon_url;                       // Agent icon_url (only for points)
-    //double zoom_level = 0;                  // Zoom level from which on to appear
+    // REF AGENT
+    //GWSAgent* agent = Q_NULLPTR;
+
+    QColor color;                           // Agent geometry inner color
+    QColor border_color;                    // Agent geometry border color
+    int border_weight = -1;                 // Agent geometry border weight
+    QString dash_array;                     // Agent geometry line format
+    QString icon_url;                       // Agent icon_url (only for points)
+    double zoom_level = -1;                 // Zoom level from which on to appear
 };
 
 #endif // GWSSTYLE_H

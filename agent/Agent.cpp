@@ -9,6 +9,7 @@
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
+#include "../../environment/Environment.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
 
@@ -17,16 +18,24 @@ QString GWSAgent::GEOMETRY_PROP = "geo";
 QString GWSAgent::STYLE_PROP = "style";
 QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
-GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , busy_counter(0) {
+GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , GWSStyle( this ) , busy_counter(0) {
 }
 
 GWSAgent::~GWSAgent() {
     // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , agent , &Agent::deleteLater );
 
+    foreach (GWSEnvironment* env , this->environments_registerd_in ) {
+        env->unregisterAgent( this );
+    }
+
+    // Emit withoug 'geo' property to be removed
+    emit GWSApp::globalInstance()->pushAgentSignal( this->serializeMini() );
+
     QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }
 
     this->skills->deleteLater();
+
 }
 
 /**********************************************************************
@@ -45,10 +54,12 @@ void GWSAgent::deserialize(QJsonObject json){
         this->addSkill( skill );
     }
 
-    // BEHAVIOUR
-    if( json.keys().contains( "@behaviour" ) ){
-        GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( json.value( "@behaviour" ).toObject() , this ) );
-        if( behaviour ){ this->setStartBehaviour( behaviour ); }
+    // BEHAVIOURS
+    QJsonArray jsbehaviours = json.value("@behaviours").toArray();
+    foreach( QJsonValue js , jsbehaviours ){
+        GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+        if( !behaviour ){ continue; }
+        this->addBehaviour( behaviour );
     }
 
     // GEOMETRY
@@ -58,8 +69,7 @@ void GWSAgent::deserialize(QJsonObject json){
 
     // STYLE
     if( !json.value( STYLE_PROP ).isNull() ){
-        GWSStyle* style = dynamic_cast<GWSStyle*>( GWSObjectFactory::globalInstance()->fromJSON( json.value( STYLE_PROP ).toObject() , this ) );
-        if( style ){ this->setProperty( STYLE_PROP , style ); }
+        GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );
     }
 }
 
@@ -92,9 +102,7 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
 
     // STYLE
-    if( GWSStyle* style = this->getStyle() ){
-        json.insert( STYLE_PROP , style->serialize() );
-    }
+    json.insert( STYLE_PROP , GWSStyle::serialize() );
 
     return json;
 }
@@ -112,8 +120,8 @@ QJsonObject GWSAgent::serialize() const{
  GETTERS
 **********************************************************************/
 
-GWSStyle* GWSAgent::getStyle() const{
-    return this->getProperty( STYLE_PROP ).value<GWSStyle*>();
+QList<GWSEnvironment*> GWSAgent::getEnvironments() const{
+    return this->environments_registerd_in;
 }
 
 bool GWSAgent::isRunning() const{
@@ -175,41 +183,8 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
  SETTERS
 **********************************************************************/
 
-/**
- * @brief GraphNode::setGeometry
- * WARNING, agent will take ownership of the geometry, Do not use
- * shared geometries, make a clone before passing it to agent!!
- * WARNING, Too much concurrency, always ensure the agent has a geometry
- * @param geom
- */
-/*void Agent::setGeometry(GSSGeometry* new_geometry){
-
-    if( this->geometry == new_geometry ){ return; }
-
-    if( this->environment ){
-
-        // Environment ensures geometry correction and index, etc.
-        this->environment->setAgentGeometry( this , new_geometry );
-        emit this->environment->pushToInterfaceSignal( this->toMiniJSON() , "UPDATE" );
-
-    } else {
-
-        // Can have whatever geometry
-        this->mutex.lock();
-        if( this->geometry ){
-            this->geometry->deleteLater();
-            this->geometry = 0;
-        }
-        if( new_geometry ){
-            this->geometry = new_geometry->createCopy();
-            new_geometry->deleteLater();
-        }
-        this->mutex.unlock();
-    }
-}*/
-
-void GWSAgent::setStartBehaviour(GWSBehaviour *start_behaviour){
-    this->start_behaviour = start_behaviour;
+void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
+    this->behaviours.append( behaviour );
 }
 
 void GWSAgent::setInternalTime( const qint64 datetime ){
@@ -265,19 +240,21 @@ void GWSAgent::tick(){
 
 void GWSAgent::behave(){
 
-    GWSBehaviour* next_execute_behaviour = this->start_behaviour;
-    while( next_execute_behaviour && next_execute_behaviour->finished() ){
-        next_execute_behaviour = next_execute_behaviour->getNext();
+    // No behaviours
+    if( this->behaviours.isEmpty() ){
+        return;
+    }
+
+    GWSBehaviour* next_execute_behaviour = Q_NULLPTR;
+    foreach (GWSBehaviour* b , this->behaviours) {
+        if( !b->finished() ){
+            next_execute_behaviour = b;
+            break;
+        }
     }
 
     if( next_execute_behaviour ){
         qDebug() << QString("Executing behaviour %1 %2").arg( next_execute_behaviour->metaObject()->className() ).arg( next_execute_behaviour->getId() );
         this->timer->singleShot( 10 + (qrand() % 100) , next_execute_behaviour , &GWSBehaviour::tick );
     }
-
-    // No behaviour, not busy anymore
-    if( !this->start_behaviour ){
-        this->busy_counter = 0;
-    }
-
 }
