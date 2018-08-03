@@ -107,7 +107,7 @@ void SheepAgent::behave()
               /* Unregister the prey */
               qInfo() << "RIP" << this->property("@id").toString();
               terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              //QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
+              QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
               return;
               }
            }
@@ -119,7 +119,7 @@ void SheepAgent::behave()
           {
           qInfo() << "You choose to move but target cell is too crowded with sheep! Try another direction!"  ;
           qInfo() << "";
-          return;
+          //return;
           }
        else
           {
@@ -176,13 +176,12 @@ void SheepAgent::behave()
 
 
            /* Sheep die when */
-               if (this->property("energy") < 1)
+               if (this->property("energy") < 1.)
                   {
                   qInfo() << "RIP" << this->property("@id").toString();
                   terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
                   QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
                   }
-            return;
           }
 
 

@@ -108,8 +108,8 @@ void PredatorAgent::behave()
                 /* Unregister the prey */                
                 qInfo() << "RIP" << targetCellOccupation.at(i)->property("@id").toString();
                 terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
-                targetCellOccupation.at(i)->deleteLater();
-                return;
+                QTimer::singleShot( 1000 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
+                //return;
                 }
             }
 
@@ -190,7 +190,7 @@ void PredatorAgent::behave()
                {
                qInfo() << "RIP" << this->property("@id").toString();
                terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-               this->deleteLater();
+               QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );;
                }
 
            }
