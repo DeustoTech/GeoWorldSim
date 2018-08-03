@@ -74,11 +74,6 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 
 void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
-    if( agent->isRunning() ){
-        qDebug() << QString("Agent %1 %2 is already running").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        return;
-    }
-
     agent->incrementBusy();
 
     // Create agent's own timer to schedule its slots

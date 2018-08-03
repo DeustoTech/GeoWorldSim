@@ -9,7 +9,7 @@ GWSObjectStorage::GWSObjectStorage( GWSObject* parent ) : GWSObject( parent ){
 **********************************************************************/
 
 quint64 GWSObjectStorage::getAmount() const{
-    return this->amount_stored;
+    return this->objects.value( GWSObject::staticMetaObject.className() ).size();
 }
 
 const QStringList GWSObjectStorage::getClasses() const{
@@ -122,9 +122,6 @@ void GWSObjectStorage::add( GWSObject* object ){
 
         this->mutex.unlock();
     }
-
-    this->amount_stored++;
-
 }
 
 void GWSObjectStorage::remove( GWSObject* object ){
@@ -140,7 +137,5 @@ void GWSObjectStorage::remove( GWSObject* object ){
 
         this->mutex.unlock();
     }
-
-    this->amount_stored--;
 }
 

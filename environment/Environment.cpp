@@ -12,7 +12,6 @@ GWSEnvironment* GWSEnvironment::globalInstance(){
 }
 
 GWSEnvironment::GWSEnvironment() : GWSAgent( Q_NULLPTR ){
-    this->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
     emit this->environmentCreatedSignal();
 }
 
