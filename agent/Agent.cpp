@@ -31,7 +31,7 @@ GWSAgent::~GWSAgent() {
     // Emit withoug 'geo' property to be removed
     emit GWSApp::globalInstance()->pushAgentSignal( this->serializeMini() );
 
-    QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
+    qDebug() << QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }
 
     this->skills->deleteLater();
