@@ -14,7 +14,7 @@
 
 QString GWSAgent::RUNNING_PROP = "running";
 QString GWSAgent::GEOMETRY_PROP = "geo";
-QString GWSAgent::STYLE_PROP = "style";
+QString GWSAgent::STYLE_PROP = "@style";
 QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
 
 GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , busy_counter(0) {

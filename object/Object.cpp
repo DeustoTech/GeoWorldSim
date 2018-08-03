@@ -58,6 +58,7 @@ QJsonObject GWSObject::serialize() const{
             case QVariant::Int:
             case QVariant::UInt:
             case QVariant::Double:
+                json.insert( property_name , this->getProperty( property_name ).toDouble() ); break;
             case QVariant::LongLong:
                 json.insert( property_name , this->getProperty( property_name ).toLongLong() ); break;
             case QVariant::Bool:

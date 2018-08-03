@@ -71,9 +71,9 @@ int main(int argc, char* argv[])
     /* Dolly1 */
     QJsonDocument json1 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                    "\"@id\" : \"Dolly1\" , "
-                                                  "\"energy\" : 10 , "
+                                                  "\"energy\" : 10.0 , "
                                                    "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 50 , 0]} , "
-                                                   "\"style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" );
+                                                   "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" );
                                                     //"\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [[[0,0],[0,1],[1,1],[1,0],[0,0]]] }"
     GWSAgent* sheep1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
 
@@ -97,9 +97,9 @@ int main(int argc, char* argv[])
     /* Dolly2 */
     QJsonDocument json2 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly2\" , "
-                                                  "\"energy\" : 5 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 50 , 0]} , "
-                                                  "\"style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
+                                                  "\"energy\" : 5.0 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [51 , 51 , 0]} , "
+                                                  "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
                                                   "}" );
     GWSAgent* sheep2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
     qInfo()<< "I am a GWSAgent of" << sheep2->property("@type").toString() << "type.";
@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
     /* Dolly3 */
     QJsonDocument json3 = QJsonDocument::fromJson( "{ \"@type\" : \"SheepAgent\" , "
                                                   "\"@id\" : \"Dolly3\" , "
-                                                  "\"energy\" : 20 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 50 , 0]} , "
-                                                  "\"style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
+                                                  "\"energy\" : 20.0 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [49 , 49 , 0]} , "
+                                                  "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
                                                   "}" );
     GWSAgent* sheep3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
     qInfo()<< "I am a GWSAgent of" << sheep3->property("@type").toString() << "type.";
@@ -128,8 +128,8 @@ int main(int argc, char* argv[])
     /* Nymeria1 */
     QJsonDocument json4 = QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
                                                   "\"@id\" : \"Nymeria1\" , "
-                                                  "\"energy\" : 20 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 45 , 0]}"
+                                                  "\"energy\" : 20.0 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 49 , 0]}"
                                                   "}" );
 
     GWSAgent* predator1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
     /* Nymeria2 */
     QJsonDocument json5 = QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
                                                   "\"@id\" : \"Nymeria2\" , "
-                                                  "\"energy\" : 15 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [49 , 55 , 0]}"
+                                                  "\"energy\" : 15.0 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [49 , 51 , 0]}"
                                                   "}" );
     GWSAgent* predator2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json5.object() ) );
     qInfo()<< "I am a GWSAgent of" << predator2->property("@type").toString() << "type.";
@@ -157,8 +157,8 @@ int main(int argc, char* argv[])
     /* Nymeria3 */
     QJsonDocument json6= QJsonDocument::fromJson( "{ \"@type\" : \"PredatorAgent\" , "
                                                   "\"@id\" : \"Nymeria3\" , "
-                                                  "\"energy\" : 10 , "
-                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [55 , 53 , 0]}"
+                                                  "\"energy\" : 10.0 , "
+                                                  "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [51 , 45 , 0]}"
                                                   "}" );
     GWSAgent* predator3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json6.object() ) );
     qInfo()<< "I am a GWSAgent of" << predator3->property("@type").toString() << "type.";

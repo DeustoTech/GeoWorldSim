@@ -41,9 +41,13 @@ void PredatorAgent::behave()
     qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
     /* Move randomly through random index generator */
+    srand ( time(NULL) );
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
     int RandIndexX = rand() % 3; //generates a random number between 0 and 2
     int RandIndexY = rand() % 3; //generates a random number between 0 and 2
+
+    qDebug() << "RandIndexX = " << RandIndexX;
+    qDebug() << "RandIndexY = " << RandIndexY;
 
     /* Move coordinates according to random index */
     int TargetX = direction[RandIndexX];
