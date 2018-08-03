@@ -5,6 +5,7 @@
 #include "../../agent/Agent.h"
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
+#include "../../util/uistyle/Style.h"
 
 #include "../../util/geometry/Point.h"
 #include "../../util/geometry/LineString.h"
@@ -26,6 +27,7 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSAgent::staticMetaObject );
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
+    this->registerType( GWSStyle::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

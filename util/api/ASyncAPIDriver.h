@@ -1,7 +1,7 @@
 #ifndef GWSASYNCAPIDRIVER_H
 #define GWSASYNCAPIDRIVER_H
 
-#include "utils/api/APIDriver.h"
+#include "../../util/api/APIDriver.h"
 
 class GWSASyncAPIDriver : public GWSAPIDriver
 {

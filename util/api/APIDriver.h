@@ -1,7 +1,7 @@
 #ifndef GWSAPIDRIVER_H
 #define GWSAPIDRIVER_H
 
-#include "utils/object/Object.h"
+#include <QObject>
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QUrlQuery>
@@ -9,9 +9,10 @@
 #include <QNetworkReply>
 #include <QBuffer>
 
-class GWSAPIDriver : public GWSObject
+class GWSAPIDriver : public QObject
 {
     Q_OBJECT
+
 public:
     GWSAPIDriver(QObject* parent = 0);
     ~GWSAPIDriver();

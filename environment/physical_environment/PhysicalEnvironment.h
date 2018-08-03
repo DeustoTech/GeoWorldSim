@@ -32,7 +32,7 @@ public:
     //bool updateAgentGeometry( GWSAgent* agent , GeoCoordinates new_geom );
     //bool updateAgentGeometry( GWSAgent* agent , GWSGeometry* new_geom );
 
-protected:
+    // METHODS
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);
 
