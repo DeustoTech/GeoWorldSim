@@ -131,11 +131,11 @@ bool GWSGrid::isGridEmpty() const{
     //return this->property( BOUNDS_PROP.toLatin1() ).value<GWSEnvelope*>();
 }*/
 
-unsigned int GWSGrid::getGridXSize() const{
+int GWSGrid::getGridXSize() const{
     return this->x_size;
 }
 
-unsigned int GWSGrid::getGridYSize() const{
+int GWSGrid::getGridYSize() const{
     return this->y_size;
 }
 

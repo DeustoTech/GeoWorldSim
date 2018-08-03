@@ -10,6 +10,12 @@ qInfo() << "WOLF";
 }
 
 
+PredatorAgent::~PredatorAgent(){
+    GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
+    TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
+    terrain_agent->removeGridCellValue( this->getCentroid().getX() , this->getCentroid().getY() , this );
+}
+
 
 void PredatorAgent::behave()
 {
@@ -39,10 +45,9 @@ void PredatorAgent::behave()
 
 
     /* Move randomly through random index generator */    
-    srand ( time(NULL) );
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
-    int RandIndexX = rand() % 3; //generates a random number between 0 and 2
-    int RandIndexY = rand() % 3; //generates a random number between 0 and 2
+    int RandIndexX = qrand() % 3; //generates a random number between 0 and 2
+    int RandIndexY = qrand() % 3; //generates a random number between 0 and 2
 
 
     /* Move coordinates according to random index */
@@ -67,7 +72,7 @@ void PredatorAgent::behave()
         * Get target cell occupation through AgentGrid methods
         */
        QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY  );
-       qInfo()  << "Target cell occupation = " << targetCellOccupation;
+       //qInfo()  << "Target cell occupation = " << targetCellOccupation;
        int PredatorOccupation = 0;
 
        /*Number of sheep and wolves in target cell */
@@ -108,8 +113,8 @@ void PredatorAgent::behave()
                 /* Unregister the prey */                
                 qInfo() << "RIP" << targetCellOccupation.at(i)->property("@id").toString();
                 terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
-                QTimer::singleShot( 1000 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
-                //return;
+                QTimer::singleShot( 0 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
+                return;
                 }
             }
 
@@ -190,7 +195,7 @@ void PredatorAgent::behave()
                {
                qInfo() << "RIP" << this->property("@id").toString();
                terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-               QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );;
+               QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                }
 
            }

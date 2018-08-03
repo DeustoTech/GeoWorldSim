@@ -20,7 +20,6 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage( this );
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){

@@ -7,10 +7,12 @@ GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
 
 GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
     qInfo() << "Grid environment created";
+    this->environment_grids = new GWSObjectStorage( this );
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSGridEnvironment::~GWSGridEnvironment(){
+    this->environment_grids->deleteLater();
 }
 
 /**********************************************************************

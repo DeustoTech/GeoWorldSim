@@ -44,12 +44,13 @@ public:
     bool setProperty(const QString name, GWSObject* value);
     void copyProperties(const GWSObject &other );
 
+    bool deleted = true; // IMPORTANT
+
 private:
 
     // AUTOINCREMENTAL FOR IDS
     static unsigned int counter;
 
-    bool deleted = false;
 };
 
 Q_DECLARE_METATYPE(GWSObject*) // REQUIRED IN EVERY CHILD

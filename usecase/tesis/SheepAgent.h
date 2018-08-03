@@ -12,6 +12,7 @@ public:
 
     // CONSTRUCTOR
     Q_INVOKABLE explicit SheepAgent( QObject* parent = Q_NULLPTR );
+    ~SheepAgent();
 
     virtual void behave();
 };

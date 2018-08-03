@@ -12,6 +12,7 @@ public:
 
     // CONSTRUCTOR
     Q_INVOKABLE explicit PredatorAgent( QObject* parent = Q_NULLPTR );
+    ~PredatorAgent();
 
     virtual void behave();
 };

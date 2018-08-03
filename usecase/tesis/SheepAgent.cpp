@@ -14,6 +14,11 @@ SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
     qInfo() << "SHEEP";
 }
 
+SheepAgent::~SheepAgent(){
+    GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
+    TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
+    terrain_agent->removeGridCellValue( this->getCentroid().getX() , this->getCentroid().getY() , this );
+}
 
 void SheepAgent::behave()
 {
@@ -38,14 +43,13 @@ void SheepAgent::behave()
     /* Get Sheep's cell_X and cell_y and original cell occupation */
     qInfo() << "I am" << this->property("@id").toString();
     qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-    qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+    //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
 
     /* Move randomly through random index generator */
-    srand ( time(NULL) );
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
-    int RandIndexX = rand() % 3; //generates a random number between 0 and 2
-    int RandIndexY = rand() % 3; //generates a random number between 0 and 2
+    int RandIndexX = qrand() % 3; //generates a random number between 0 and 2
+    int RandIndexY = qrand() % 3; //generates a random number between 0 and 2
 
 
     /* Move coordinates according to random index */
@@ -66,19 +70,19 @@ void SheepAgent::behave()
     else /* And sometimes they will choose to move */
        {
        /* Get target cell occupation through AgentGrid methods */
-       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY  );
-       qInfo()  << "Target cell occupation = " << targetCellOccupation;
+       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY );
+       //qInfo()  << "Target cell occupation = " << targetCellOccupation;
 
        int sheepOccupation = 0;
 
        /* Number of sheep in target cell */
        for (int i = 0; i < targetCellOccupation.size(); ++i)
            {
-           if (targetCellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
+           if (!targetCellOccupation.at(i)->deleted && targetCellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
               {
               sheepOccupation += 1;
               }
-           if (targetCellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
+           if (!targetCellOccupation.at(i)->deleted && targetCellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
               {
               /* You move to die*/
 
@@ -106,8 +110,8 @@ void SheepAgent::behave()
 
               /* Unregister the prey */
               qInfo() << "RIP" << this->property("@id").toString();
-              terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
+              terrain_agent->removeGridCellValue( this->getCentroid().getX(), this->getCentroid().getY(), this);
+              QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
               return;
               }
            }
@@ -136,7 +140,7 @@ void SheepAgent::behave()
 
           /* Notify the grid of the sheep's new position */
           terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-          qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+          //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
           /* Moving consumes energy */
           double initialEnergy = this->getProperty("energy").toDouble();
@@ -170,7 +174,7 @@ void SheepAgent::behave()
              lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
 
              /* Notify the grid of new lamb's position */
-             terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);            
+             terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
              }
 
 
@@ -178,9 +182,10 @@ void SheepAgent::behave()
            /* Sheep die when */
                if (this->property("energy") < 1.)
                   {
-                  qInfo() << "RIP" << this->property("@id").toString();
-                  terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-                  QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
+                    qInfo() << "RIP" << this->property("@id").toString();
+                    terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+                    QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
+                    return;
                   }
           }
 

@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QJsonObject>
 #include <QImage>
+#include <QMutex>
 
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 
@@ -36,8 +37,8 @@ public:
 
     // GETTERS
     virtual bool isGridEmpty() const;
-    unsigned int getGridXSize() const;
-    unsigned int getGridYSize() const;
+    int getGridXSize() const;
+    int getGridYSize() const;
     double getGridMaxValue() const;
     double getGridMinValue() const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
@@ -58,6 +59,10 @@ public:
     // METHODS
     //GWSGrid getSubGrid( GWSEnvelope bounds );
     //QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );
+
+protected:
+
+    QMutex mutex; // To manage concurrency
 
 private:
 
