@@ -10,7 +10,7 @@
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
 QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@family";
-QString GWSObject::GWS_PARENT_PROP = "@parent";
+QString GWSObject::GWS_PARENT_PROP = "parent";
 
 unsigned int GWSObject::counter = 0;
 
@@ -89,10 +89,14 @@ QJsonObject GWSObject::serialize() const{
 
 void GWSObject::deserialize(QJsonObject json){
 
+    if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
+    if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
+    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){ this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray().toVariantList() ); }
+
     // Set properties
     foreach( QString property_name , json.keys() ){
 
-        //if( property_name.contains('@') ){ continue; }
+        if( property_name.contains('@') ){ continue; }
 
         QJsonValue property_value = json.value( property_name );
 
