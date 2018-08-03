@@ -24,3 +24,14 @@ void TerrainAgent::behave(){
 
     //this->incrementInternalTime( 5 );
 }
+
+
+
+/* QUESTION:
+
+   Eventually should not we add the 'greenness' of each cell grid as a property to
+   enable or prevent sheep from feeding? This would undoubtedly control their life-span.
+
+   Otherwise one could add a GrassAgent that has the greenness as a parameter to each of
+   the grid cell elements, and the sheep would be able to access that property and modify it.
+   This seems similar to the behaviour of trash containers, with whom humans can interact*/
