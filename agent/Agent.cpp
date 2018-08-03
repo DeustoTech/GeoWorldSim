@@ -55,10 +55,16 @@ void GWSAgent::deserialize(QJsonObject json){
     if( !json.value( GEOMETRY_PROP ).isNull() ){
         GWSGeometry::deserialize( json.value( GEOMETRY_PROP ).toObject() );
     }
+
+    // STYLE
+    if( !json.value( STYLE_PROP ).isNull() ){
+        GWSStyle* style = dynamic_cast<GWSStyle*>( GWSObjectFactory::globalInstance()->fromJSON( json.value( STYLE_PROP ).toObject() , this ) );
+        if( style ){ this->setProperty( STYLE_PROP , style ); }
+    }
 }
 
 /**********************************************************************
- EXPOERTERS
+ EXPORTERS
 **********************************************************************/
 
 /**
@@ -86,6 +92,9 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
 
     // STYLE
+    if( GWSStyle* style = this->getStyle() ){
+        json.insert( STYLE_PROP , style->serialize() );
+    }
 
     return json;
 }

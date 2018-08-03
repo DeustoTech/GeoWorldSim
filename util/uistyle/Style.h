@@ -36,6 +36,4 @@ private:
     //double zoom_level = 0;                  // Zoom level from which on to appear
 };
 
-Q_DECLARE_METATYPE(GWSStyle*)
-
 #endif // GWSSTYLE_H
