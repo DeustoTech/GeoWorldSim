@@ -7,7 +7,7 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-GWSExternalListener::GWSExternalListener(QString simulation_id ){
+GWSExternalListener::GWSExternalListener(QString simulation_id ) : QObject(){
     this->listening_simulation_id = simulation_id;
     this->startSocket();
 }

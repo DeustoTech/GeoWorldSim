@@ -2,22 +2,21 @@
 
 #include <QStringList>
 #include <QJsonArray>
+#include <QColor>
 
-GWSStyle::GWSStyle(GWSObject *parent) : GWSObject( parent ){
+#include "../../agent/Agent.h"
+
+QString GWSStyle::COLOR_PROP = "color";
+QString GWSStyle::BORDER_COLOR_PROP = "border_color";
+QString GWSStyle::BORDER_WEIGHT_PROP = "border_weight";
+QString GWSStyle::DASH_ARRAY_PROP = "dash_array";
+QString GWSStyle::ICON_URL_PROP = "icon_url";
+QString GWSStyle::ZOOM_LEVEL_PROP = "zoom_level";
+
+GWSStyle::GWSStyle(GWSAgent *styled_agent) : GWSObject( styled_agent ){
 }
 
 GWSStyle::~GWSStyle(){
-}
-
-void GWSStyle::deserialize( QJsonObject json ){
-    if( json.contains("color") ) { this->color = QColor( json["color"].toObject()["value"].toString() ); }
-    if( json.contains("fill_opacity") ) { this->color.setAlpha( json["fill_opacity"].toObject()["value"].toString().toDouble() * 255 ); } // To be between 0 and 255
-    if( json.contains("border_color") ) { this->border_color = QColor( json["border_color"].toObject()["value"].toString() ); }
-    if( json.contains("border_opacity") ) { this->border_color.setAlpha( json["border_opacity"].toObject()["value"].toString().toDouble() * 255 ); } // To be between 0 and 255
-    if( json.contains("weight") ) { this->border_weight = json["weight"].toObject()["value"].toString().toInt(); }
-    if( json.contains("icon_url") ) { this->icon_url = json["icon_url"].toObject()["value"].toString(); }
-    if( json.contains("dash_array") ) { this->dash_array = json["dash_array"].toObject()["value"].toString(); }
-    if( json.contains("zoom_level") ) { this->zoom_level = json["zoom_level"].toObject()["value"].toInt(); }
 }
 
 /**********************************************************************

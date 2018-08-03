@@ -2,10 +2,9 @@
 #define GWSEXTERNALLISTENER_H
 
 #include <QWebSocket>
+#include <QObject>
 
-#include "../../object/Object.h"
-
-class GWSExternalListener : public GWSObject
+class GWSExternalListener : public QObject
 {
     Q_OBJECT
 

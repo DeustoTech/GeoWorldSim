@@ -3,7 +3,7 @@
 #include <QNetworkProxyFactory>
 #include <QNetworkProxy>
 
-GWSAPIDriver::GWSAPIDriver(QObject *parent) : GWSObject( parent ){
+GWSAPIDriver::GWSAPIDriver(QObject *parent) : QObject( parent ){
 
     QNetworkProxyQuery npq( QUrl( "http://www.google.com" ) );
     QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );

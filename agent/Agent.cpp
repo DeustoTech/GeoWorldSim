@@ -103,6 +103,10 @@ QJsonObject GWSAgent::serialize() const{
  GETTERS
 **********************************************************************/
 
+GWSStyle* GWSAgent::getStyle() const{
+    return this->getProperty( STYLE_PROP ).value<GWSStyle*>();
+}
+
 bool GWSAgent::isRunning() const{
     return this->getProperty( GWSAgent::RUNNING_PROP ).toBool();
 }
