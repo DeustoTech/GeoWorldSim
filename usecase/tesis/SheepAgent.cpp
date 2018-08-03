@@ -1,4 +1,7 @@
 #include "SheepAgent.h"
+
+#include <QTimer>
+
 #include "math.h"
 #include <algorithm>    // std::count_if
 #include "../../app/App.h"
@@ -23,15 +26,8 @@ void SheepAgent::behave()
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 
 
-    /* Number of agents in the simulation (all types).
-    /* NOTE: The following is equivalent to
-     * GWSExecutionEnvironment::globalInstance()->getRunningAgentsAmount() */
+    /* Number of agents in the simulation (all types) */
     qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
-
-
-    /* NOTE: The following can be useful for counting purposes:
-     *        GWSExecutionEnvironment::globalInstance()->getRunningAgents();
-     *        GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass<SheepAgent>(SheepAgent::staticMetaObject.className());*/
 
 
     /* Register Terrain Agent so that we can add our sheep to a particular cell of the grid */
@@ -51,8 +47,6 @@ void SheepAgent::behave()
     int RandIndexX = rand() % 3; //generates a random number between 0 and 2
     int RandIndexY = rand() % 3; //generates a random number between 0 and 2
 
-    qDebug() << "RandIndexX = " << RandIndexX;
-    qDebug() << "RandIndexY = " << RandIndexY;
 
     /* Move coordinates according to random index */
     int TargetX = direction[RandIndexX];
@@ -101,33 +95,25 @@ void SheepAgent::behave()
               terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
               qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
-              qDebug() << "****************************";
               qDebug() << "   Oh no! You become food...";
-              qDebug() << "****************************";
 
               /* Eating supplies energy to the PredatorAgent in question */
-              float foodGains = targetCellOccupation.at(i)->getProperty("energy").toFloat() / 2.0;
+              double foodGains = targetCellOccupation.at(i)->getProperty("energy").toDouble() / 2.0;
 
               /* Predator's final energy after eating */
-              float finalEnergy = targetCellOccupation.at(i)->getProperty("energy").toFloat() + foodGains;
+              double finalEnergy = targetCellOccupation.at(i)->getProperty("energy").toDouble() + foodGains;
               targetCellOccupation.at(i)-> setProperty("energy", finalEnergy);
-              qInfo() << "Wolf's energy after eating = " << finalEnergy;
 
               /* Unregister the prey */
               qInfo() << "RIP" << this->property("@id").toString();
               terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
-              qDebug() << "Target cell occupation after eating = " << terrain_agent->getGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY());
+              QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
               return;
               }
            }
 
        qInfo()  << "Target cell SheepAgent occupation = " << sheepOccupation;
 
-       /* Modify behaviour based on target cell occupation
-        * If there are 2 or more (max of 3 considering that
-        * offspring is generated in the same cell)
-        * sheep in the target cell, do nothing. */
 
        if (sheepOccupation >= 2)
           {
@@ -139,81 +125,62 @@ void SheepAgent::behave()
           {
           qInfo() << "Target cell not overbooked yet, you can move there!"  ;
 
-          // Notify the grid that the sheep is leaving:
+          /* Notify the grid that the sheep is leaving */
           terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
-          // Move
+          /* Move */
           this->transformMove( GWSCoordinate( TargetX , TargetY ) );
 
-          // Final position of the agent:
+          /* Final position of the agent*/
           qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
-          // Notify the grid of the sheep's new position:
+          /* Notify the grid of the sheep's new position */
           terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
           qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
-          // Final energy after moving:
-          float finalEnergy = this->getProperty("energy").toFloat() - this->getProperty("energy").toFloat() / 8.0;
+          /* Moving consumes energy */
+          double initialEnergy = this->getProperty("energy").toDouble();
+          double moveLosses = this->getProperty("energy").toDouble() / 8.0;
+          double finalEnergy = initialEnergy - moveLosses;
           qInfo() << "Energy after moving = " << finalEnergy;
 
-          // Eating supplies energy:
-          float foodGains = finalEnergy / 12.0;
-
-          // The final energy after eating:
+          /* Eating supplies energy */
+          double foodGains = finalEnergy / 12.0;
           finalEnergy = finalEnergy + foodGains;
           qInfo() << "Energy after eating = " << finalEnergy;
-
           this-> setProperty("energy", finalEnergy);
 
-          // Moreover, if there is just another sheep at target -> Breed!
+          /* Moreover, if there is just another sheep at target -> Breed!*/
           if (sheepOccupation == 1)
              {
-             qInfo() << this->property("@id").toString()<<", there is a living mate in your position! ";
+             qInfo() << this->property("@id").toString()<<", there is a living mate in your position! Move!";
+             qInfo() << "   You get to breed! Another sheep in the GWSWorld!     ";
 
-             /*
-              *  Reproductive constraints:
-              *   - Internal time threshold
-              *   - Energy threshold
-              */
+             /* Breeding consumes energy */
+             this->setProperty("energy" , this->getProperty("energy").toDouble() / 2.0);
 
-             // TO BE CONSIDERED!
-
-             /*
-              *  Breed!
-              */
-             qInfo() << "************************************************************";
-             qInfo() << "   YAS! You get to breed! Another sheep in the GWSWorld!     ";
-             qInfo() << "************************************************************";
-
-             this->setProperty("energy" , this->getProperty("energy").toFloat() / 2.0);
-
-             // Welcome a lamb to the World:
+             /* Add a lamb to the World */
              SheepAgent* lambAgent = new SheepAgent();
              GWSExecutionEnvironment::globalInstance()->registerAgent(lambAgent);
              GWSAgentEnvironment::globalInstance()->registerAgent( lambAgent );
+
+             /* Set lamb's properties */
              lambAgent->setProperty("energy", 10);
              lambAgent->setProperty("@type", "SheepAgent");
              lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
-             qDebug() << "Lamb position = (" << lambAgent->getCentroid().getX() << ", " << lambAgent->getCentroid().getY() << ")";
 
-             // Notify the grid of new sheep's position:
-             terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
-             qDebug() << "Cell occupation after breeding = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-
-             /*  Reproductive constraints:
-              *  - Set internal time counter to 0 */
+             /* Notify the grid of new lamb's position */
+             terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);            
              }
 
 
 
-           // Sheep die when:
+           /* Sheep die when */
                if (this->property("energy") < 1)
                   {
-                  GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
-                  terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-                  qInfo() << "****************************************";
                   qInfo() << "RIP" << this->property("@id").toString();
-                  qInfo() << "****************************************";
+                  terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+                  QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
                   }
             return;
           }
@@ -225,6 +192,10 @@ void SheepAgent::behave()
 }
 
 
+
+/* NOTE: The following can be useful for counting purposes:
+ *        GWSExecutionEnvironment::globalInstance()->getRunningAgents();
+ *        GWSExecutionEnvironment::globalInstance()->getRunningAgentsByClass<SheepAgent>(SheepAgent::staticMetaObject.className());*/
 
 
 
