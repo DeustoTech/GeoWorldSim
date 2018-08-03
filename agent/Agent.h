@@ -32,7 +32,7 @@ QT_FORWARD_DECLARE_CLASS(GWSSkill)
 QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 
 // Declare Coordinate to be used as QMETAPROPERTY
-//Q_DECLARE_METATYPE(GWSGeometry)
+// Q_DECLARE_METATYPE(GWSGeometry)
 
 class GWSAgent : public GWSObject , public GWSGeometry
 {
@@ -49,8 +49,8 @@ public:
 
     // PROPERTIES
     static QString RUNNING_PROP;
-    static QString GEOMETRY_PROP;
     static QString STYLE_PROP;
+    static QString GEOMETRY_PROP;
         /**
         * @brief next_operation_datetime Agent's tick will be called when this datetime has been reached
         * To be compared with the TimeEnvironment and call this agent's tick
@@ -66,7 +66,7 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 );
 
     // GETTERS
-    //GWSCoordinate getRepresentativeCoordinate() const;
+    GWSStyle* getStyle() const;
     bool isRunning() const;
     bool isBusy() const;
     qint64 getInternalTime() const;
@@ -115,11 +115,6 @@ protected:
     mutable QMutex mutex;
 
 private:
-
-     /**
-     * @brief Agent's geometry
-     */
-    //GWSGeometry* geometry = Q_NULLPTR; // Agents geometry
 
     /**
      * @brief timer

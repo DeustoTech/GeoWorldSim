@@ -34,7 +34,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
         if( arg.contains( "-id=" ) ){ this->app_id = arg.replace( "-id=" , "" ); }
         if( arg.contains( "-user=" ) ){ this->setProperty( "user" , arg.replace( "-user=" , "" ) ); }
         if( arg.contains( "-autorun=" ) ){ this->setProperty( "autorun" , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
-        if( arg.contains( "-live=" ) ){ this->setProperty( "live" , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
+        if( arg.contains( "-live=" ) ){ this->setProperty( "live " , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
         if( arg.contains( "-console=" ) ){ this->setProperty( "console" , arg.replace( "-console=" , "" ) == "1" ? true : false ); }
         if( arg.contains( "-speed=" ) ){ this->setProperty( "speed" , arg.replace( "-speed=" , "" ).toDouble() ); }
         if( arg.contains( "-debug=" ) ){ this->setProperty( "debug" , arg.replace( "-debug=" , "" ).toInt() ); }

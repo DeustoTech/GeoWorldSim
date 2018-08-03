@@ -92,7 +92,7 @@ void GWSObject::deserialize(QJsonObject json){
     // Set properties
     foreach( QString property_name , json.keys() ){
 
-        if( property_name.contains('@') ){ continue; }
+        //if( property_name.contains('@') ){ continue; }
 
         QJsonValue property_value = json.value( property_name );
 
