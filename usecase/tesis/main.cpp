@@ -55,7 +55,8 @@ int main(int argc, char* argv[])
                                                    "\"@id\" : \"ThePlayground\" ,"
                                                    "\"grid_x_size\" : 100, "
                                                    "\"grid_y_size\" : 100  "
-                                                   "}" );
+                                                   "}"
+                                                   );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
 
     qDebug()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
