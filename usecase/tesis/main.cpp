@@ -73,23 +73,13 @@ int main(int argc, char* argv[])
                                                    "\"@id\" : \"Dolly1\" , "
                                                   "\"energy\" : 10.0 , "
                                                    "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [50 , 50 , 0]} , "
-                                                   "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" );
+                                                   "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" );
                                                     //"\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [[[0,0],[0,1],[1,1],[1,0],[0,0]]] }"
     GWSAgent* sheep1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
 
 
     qDebug()<< "I am a GWSAgent of" << sheep1->property("@type").toString() << "type.";
 
-    GWSBehaviour* b1 = new GWSBehaviour( sheep1 );
-    TesisBehaviour* b11 = new TesisBehaviour( sheep1 );
-    TesisBehaviour* b12 = new TesisBehaviour( sheep1 );
-    sheep1->setStartBehaviour( b1 );
-    b1->addSubbehaviour( b11 );
-    b1->addSubbehaviour( b12 );
-
-    TesisBehaviour* b2 = new TesisBehaviour( sheep1 );
-
-    b1->setNextBehaviour( b2 );
 
     // Notify the grid of the presence of a sheep at current position:
     terrain->addGridCellValue(sheep1->getCentroid().getX(), sheep1->getCentroid().getY(), sheep1);
@@ -99,7 +89,7 @@ int main(int argc, char* argv[])
                                                   "\"@id\" : \"Dolly2\" , "
                                                   "\"energy\" : 5.0 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [51 , 51 , 0]} , "
-                                                  "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
+                                                  "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
                                                   "}" );
     GWSAgent* sheep2 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json2.object() ) );
     qInfo()<< "I am a GWSAgent of" << sheep2->property("@type").toString() << "type.";
@@ -112,7 +102,7 @@ int main(int argc, char* argv[])
                                                   "\"@id\" : \"Dolly3\" , "
                                                   "\"energy\" : 20.0 , "
                                                   "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [49 , 49 , 0]} , "
-                                                  "\"@style\" : { \"@type\" : \"GWSStyle\" , \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
+                                                  "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } "
                                                   "}" );
     GWSAgent* sheep3 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json3.object() ) );
     qInfo()<< "I am a GWSAgent of" << sheep3->property("@type").toString() << "type.";
