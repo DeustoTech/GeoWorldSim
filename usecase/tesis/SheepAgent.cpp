@@ -11,7 +11,7 @@
 #include <ctime>
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
-    qDebug() << "SHEEP";
+    qInfo() << "SHEEP";
 }
 
 
@@ -27,7 +27,7 @@ void SheepAgent::behave()
 
 
     /* Number of agents in the simulation (all types) */
-    qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
+    qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
 
 
     /* Register Terrain Agent so that we can add our sheep to a particular cell of the grid */
@@ -95,7 +95,7 @@ void SheepAgent::behave()
               terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
               qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
-              qDebug() << "   Oh no! You become food...";
+              qInfo() << "Oh no! You become food...";
 
               /* Eating supplies energy to the PredatorAgent in question */
               double foodGains = targetCellOccupation.at(i)->getProperty("energy").toDouble() / 2.0;
@@ -107,7 +107,7 @@ void SheepAgent::behave()
               /* Unregister the prey */
               qInfo() << "RIP" << this->property("@id").toString();
               terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
+              //QTimer::singleShot( 1000 , this , &GWSAgent::deleteLater );
               return;
               }
            }

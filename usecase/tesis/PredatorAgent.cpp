@@ -23,7 +23,7 @@ void PredatorAgent::behave()
 
 
     /* Number of agents in the simulation (all types) */
-    qDebug() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
+    qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
 
 
     /* Register Terrain Agent so that we can add our sheep
@@ -147,7 +147,7 @@ void PredatorAgent::behave()
         if (PredatorOccupation == 1)
            {
            /* Move and breed! */
-           qDebug() << this->property("@id").toString()<<", there is a living mate at target! Move and breed!";
+           qInfo() << this->property("@id").toString()<<", there is a living mate at target! Move and breed!";
 
            /* Notify the grid that the wolf is leaving */
            terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
