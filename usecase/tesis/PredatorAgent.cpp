@@ -47,7 +47,7 @@ void PredatorAgent::behave()
     qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
     qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
-
+    qInfo() << "Initial energy = " << this->getProperty("energy");
     /* Move randomly through random index generator */    
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
     int RandIndexX = qrand() % 3; //generates a random number between 0 and 2
@@ -66,7 +66,8 @@ void PredatorAgent::behave()
     if ((TargetX == 0) && (TargetY == 0))  /* Sometimes the wolf will "choose" to stay on same position */
        {
         qInfo() << "";
-        qInfo() << "You choose to stay at the same position. No energy lost, nor gained, no breeding.";
+        qInfo() << "You choose to stay at the same position. You will eventually die of starvation.";
+        this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble()/4.);
         qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
         qInfo() << "";
        }   
@@ -113,8 +114,9 @@ void PredatorAgent::behave()
                 double foodGains = finalEnergy / 2.0;
                 finalEnergy = finalEnergy + foodGains;
                 this-> setProperty("energy", finalEnergy);
+                this-> setProperty("energy", finalEnergy);
 
-                /* Unregister the prey */                
+                /* Unregister the prey */
                 qInfo() << "RIP" << targetCellOccupation.at(i)->getProperty("@id").toString();
                 //terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
                 QTimer::singleShot( 0 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
@@ -126,8 +128,9 @@ void PredatorAgent::behave()
 
         if (PredatorOccupation >= 2)
            {
-           qInfo() << " You chose to move but target cell is too crowded with wolves! Try another direction!";
+           qInfo() << " You chose to move but target cell is too crowded with wolves! Try another direction or you will eventually die of starvation.";
            qInfo() << "";
+           this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble()/4.);
            }
         if (PredatorOccupation == 0)
            { 
@@ -153,7 +156,7 @@ void PredatorAgent::behave()
             double finalEnergy = initialEnergyDouble - moveLosses;
             this-> setProperty("energy", finalEnergy);
             }
-        if (PredatorOccupation == 1)
+        if ((PredatorOccupation == 1) && (this-> getProperty("energy").toDouble() >=100.))
            {
            /* Move and breed! */
            qInfo() << this->getProperty("@id").toString()<<", there is a living mate at target! Move and breed!";
@@ -187,14 +190,16 @@ void PredatorAgent::behave()
 
 
            /* Set cub's properties */
-           cubAgent->setProperty("energy", 10);
+           cubAgent->setProperty("energy", 200.);
            cubAgent->setProperty("@type", "PredatorAgent");
            cubAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
            cubAgent->icon_url = this->icon_url;
            /* Notify the grid of new cub's position */
            //terrain_agent->addGridCellValue(cubAgent->getCentroid().getX(), cubAgent->getCentroid().getY(), cubAgent);
-           }
+           qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
+            }
+           qInfo() << "Energy = " << this->getProperty("energy");
            /* Wolves die when */
            if (this->getProperty("energy") < 1.)
                {

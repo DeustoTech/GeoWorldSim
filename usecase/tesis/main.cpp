@@ -56,13 +56,15 @@ int main(int argc, char* argv[])
 
     QJsonDocument jsonTerrain = QJsonDocument::fromJson( "{ \"@type\" : \"TerrainAgent\" , "
                                                    "\"@id\" : \"ThePlayground\" ,"
-                                                   "\"grid_x_size\" : 10000, "
-                                                   "\"grid_y_size\" : 10000  "
+                                                   "\"grid_x_size\" : 10, "
+                                                   "\"grid_y_size\" : 10  "
                                                    "}"
                                                    );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
     GWSEnvironment::globalInstance()->registerAgent( terrain );
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
+
+   // terrain->setGridSize(200, 200);
 
     qInfo()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
 
@@ -72,19 +74,18 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 25 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                      "\"energy\" : 100.0 , "
+                                                      "\"energy\" : 200.0 , "
                                                        "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
-                                                       .arg( qrand() % 100 )
-                                                       .arg( qrand() % 100 )
+                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 10 )
                                                        .toLatin1()
                                                        );
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
-        qInfo()<< "I am a GWSAgent of" << sheep->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a sheep at current position*/
         terrain->addGridCellValue(sheep->getCentroid().getX(), sheep->getCentroid().getY(), sheep);
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 5 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -107,14 +108,12 @@ int main(int argc, char* argv[])
                                                       "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
                                                       "}")
-                                                       .arg( qrand() % 100 )
-                                                       .arg( qrand() % 100 )
+                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 10 )
                                                        .toLatin1()
                                                        );
 
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
-
-        qInfo()<< "I am a GWSAgent of" << predator->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a wolf at current position */
         terrain->addGridCellValue( predator->getCentroid().getX(), predator->getCentroid().getY(), predator );
