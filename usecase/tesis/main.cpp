@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 100.0 , "
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "

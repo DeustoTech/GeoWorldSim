@@ -189,6 +189,10 @@ void GWSExecutionEnvironment::behave(){
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 
+            if( agent->deleted ){
+                continue;
+            }
+
             qint64 agent_next_tick = agent->getInternalTime();
             if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
 

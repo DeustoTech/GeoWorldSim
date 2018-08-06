@@ -14,6 +14,20 @@ void TerrainAgent::deserialize(QJsonObject json){
     GWSAgentGrid::deserialize( json );
 }
 
+void TerrainAgent::watchAgentGeometry(GWSAgent * agent){
+
+    agent->connect( agent , &GWSAgent::agentGeometryAboutToChangeSignal , [ agent,this ](){
+        qDebug() << "AUTO REMOVING";
+        this->removeGridCellValue( agent->getCentroid().getX() , agent->getCentroid().getY() , agent );
+    });
+
+    agent->connect( agent , &GWSAgent::agentGeometryChangedSignal , [ agent,this ](){
+        qDebug() << "AUTO ADDING";
+         this->addGridCellValue( agent->getCentroid().getX() , agent->getCentroid().getY() , agent );
+    });
+
+}
+
 void TerrainAgent::behave(){
 
     /*for( int i = 0 ; i < this->getXSize() ; i ++ ){

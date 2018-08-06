@@ -283,6 +283,8 @@ GWSCoordinate GWSGeometry::getCentroid() const{
 
 void GWSGeometry::transformMove(GWSCoordinate apply_movement){
     if( !apply_movement.isValid() ){ return; }
+
+    emit this->agent->agentGeometryAboutToChangeSignal();
     if( !this->inner_geometry ){
         this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
                     geos::geom::Coordinate( apply_movement.getX() , apply_movement.getY() , apply_movement.getZ()
@@ -291,6 +293,7 @@ void GWSGeometry::transformMove(GWSCoordinate apply_movement){
     }
     TransformMoveFilter move = TransformMoveFilter( apply_movement );
     this->inner_geometry->apply_rw( move );
+    emit this->agent->agentGeometryChangedSignal();
 }
 
 void GWSGeometry::transformBuffer( double threshold ){

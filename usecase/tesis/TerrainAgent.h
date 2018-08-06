@@ -17,6 +17,8 @@ public:
     // IMPORTERS
     void deserialize(QJsonObject json);
 
+    // METHODS
+    void watchAgentGeometry( GWSAgent* agent );
     virtual void behave();
 };
 

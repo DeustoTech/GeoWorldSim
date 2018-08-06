@@ -96,6 +96,8 @@ private slots: // SLOTS, always invoke them by SLOT, it will make to be executed
 signals:
     void agentStartedSignal();
     void agentBehavedSignal();
+    void agentGeometryAboutToChangeSignal();
+    void agentGeometryChangedSignal();
     void agentEndedSignal();
 
 protected:
