@@ -66,6 +66,8 @@ int main(int argc, char* argv[])
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
 
+   // terrain->setGridSize(200, 200);
+
     qInfo()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
 
 
@@ -77,11 +79,11 @@ int main(int argc, char* argv[])
     for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                      "\"energy\" : 100.0 , "
+                                                      "\"energy\" : 200.0 , "
                                                        "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
-                                                       .arg( qrand() % 100 )
-                                                       .arg( qrand() % 100 )
+                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 10 )
                                                        .toLatin1()
                                                        );
 
@@ -108,14 +110,12 @@ int main(int argc, char* argv[])
                                                       "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
                                                       "}")
-                                                       .arg( qrand() % 100 )
-                                                       .arg( qrand() % 100 )
+                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 10 )
                                                        .toLatin1()
                                                        );
 
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
-
-        qInfo()<< "I am a GWSAgent of" << predator->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a wolf at current position */
         //terrain->addGridCellValue( predator->getCentroid().getX(), predator->getCentroid().getY(), predator );

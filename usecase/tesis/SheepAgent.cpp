@@ -68,9 +68,11 @@ void SheepAgent::behave()
 
     if ((TargetX == 0) && (TargetY == 0)) /* Sometimes the sheep will choose to stay on same position */
        {
-       qInfo() << "You choose to stay at the same position. No energy lost, nor gained, no breeding.";
+       qInfo() << "You choose to stay at the same position. You will eventually die of starvation..";
        qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
        qInfo() << "";
+       this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble() /6.);
+       qInfo() << "Energy = " << this->getProperty("energy").toDouble();
        }
     else /* And sometimes they will choose to move */
        {
@@ -126,8 +128,10 @@ void SheepAgent::behave()
 
        if (sheepOccupation >= 2)
           {
-          qInfo() << "You choose to move but target cell is too crowded with sheep! Try another direction!"  ;
+          qInfo() << "You choose to move but target cell is too crowded with sheep! Try another direction or you will eventually die of starvation."  ;
           qInfo() << "";
+          this-> setProperty("energy", this->getProperty("energy").toDouble()  - this->getProperty("energy").toDouble() /6.);
+          qInfo() << "Energy = " << this->getProperty("energy").toDouble();
           //return;
           }
        else
@@ -149,7 +153,7 @@ void SheepAgent::behave()
 
           /* Moving consumes energy */
           double initialEnergy = this->getProperty("energy").toDouble();
-          double moveLosses = this->getProperty("energy").toDouble() / 8.0;
+          double moveLosses = this->getProperty("energy").toDouble() / 4.0;
           double finalEnergy = initialEnergy - moveLosses;
           qInfo() << "Energy after moving = " << finalEnergy;
 
@@ -160,7 +164,7 @@ void SheepAgent::behave()
           this-> setProperty("energy", finalEnergy);
 
           /* Moreover, if there is just another sheep at target -> Breed!*/
-          if (sheepOccupation == 1)
+          if ((sheepOccupation == 1) && (this-> getProperty("energy").toDouble() >= 50.))
              {
              qInfo() << this->getProperty("@id").toString()<<", there is a living mate in your position! Move!";
              qInfo() << "You get to breed! Another sheep in the GWSWorld!     ";
@@ -174,16 +178,18 @@ void SheepAgent::behave()
              GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent );
 
              /* Set lamb's properties */
-             lambAgent->setProperty("energy", 10);
+             lambAgent->setProperty("energy", 200.);
              lambAgent->setProperty("@type", "SheepAgent");
              GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
              lambAgent->icon_url = this->icon_url;
 
              /* Notify the grid of new lamb's position */
              //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
+             qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+
              }
 
-
+           qInfo() << "Energy = " << this->getProperty("energy");
            /* Sheep die when */
                if (this->getProperty("energy") < 1.)
                   {

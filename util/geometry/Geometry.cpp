@@ -308,6 +308,7 @@ void GWSGeometry::transformMove(GWSCoordinate apply_movement){
                     ) );
         return;
     }
+    // Else
     TransformMoveFilter move = TransformMoveFilter( apply_movement );
     this->inner_geometry->apply_rw( move );
 }

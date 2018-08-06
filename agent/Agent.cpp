@@ -116,7 +116,10 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );
 
     // GEOMETRY
-    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->serialize() );
+    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this );
+    if( geom ){
+        json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
+    }
 
     // STYLE
     json.insert( STYLE_PROP , GWSStyle::serialize() );
