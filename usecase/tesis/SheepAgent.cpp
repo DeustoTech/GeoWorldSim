@@ -41,7 +41,7 @@ void SheepAgent::behave()
 
 
     /* Get Sheep's cell_X and cell_y and original cell occupation */
-    qInfo() << "I am" << this->property("@id").toString();
+    qInfo() << "I am" << this->getProperty("@id").toString();
     qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
     //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
@@ -109,7 +109,7 @@ void SheepAgent::behave()
               targetCellOccupation.at(i)-> setProperty("energy", finalEnergy);
 
               /* Unregister the prey */
-              qInfo() << "RIP" << this->property("@id").toString();
+              qInfo() << "RIP" << this->getProperty("@id").toString();
               terrain_agent->removeGridCellValue( this->getCentroid().getX(), this->getCentroid().getY(), this);
               QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
               return;
@@ -157,32 +157,32 @@ void SheepAgent::behave()
           /* Moreover, if there is just another sheep at target -> Breed!*/
           if (sheepOccupation == 1)
              {
-             qInfo() << this->property("@id").toString()<<", there is a living mate in your position! Move!";
-             qInfo() << "   You get to breed! Another sheep in the GWSWorld!     ";
+             qInfo() << this->getProperty("@id").toString()<<", there is a living mate in your position! Move!";
+             qInfo() << "You get to breed! Another sheep in the GWSWorld!     ";
 
              /* Breeding consumes energy */
              this->setProperty("energy" , this->getProperty("energy").toDouble() / 2.0);
 
              /* Add a lamb to the World */
              SheepAgent* lambAgent = new SheepAgent();
-             GWSExecutionEnvironment::globalInstance()->registerAgent(lambAgent);
-             GWSAgentEnvironment::globalInstance()->registerAgent( lambAgent );
+             GWSEnvironment::globalInstance()->registerAgent( lambAgent );
+             GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent );
 
              /* Set lamb's properties */
              lambAgent->setProperty("energy", 10);
              lambAgent->setProperty("@type", "SheepAgent");
              lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
+             lambAgent->setProperty("style", "https://image.flaticon.com/icons/png/512/924/924391.png");
 
              /* Notify the grid of new lamb's position */
              terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
              }
 
 
-
            /* Sheep die when */
-               if (this->property("energy") < 1.)
+               if (this->getProperty("energy") < 1.)
                   {
-                    qInfo() << "RIP" << this->property("@id").toString();
+                    qInfo() << "RIP" << this->getProperty("@id").toString();
                     terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
                     QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                     return;

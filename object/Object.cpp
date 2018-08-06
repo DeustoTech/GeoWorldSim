@@ -91,7 +91,7 @@ QJsonObject GWSObject::serialize() const{
 void GWSObject::deserialize(QJsonObject json){
 
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
-    if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
+    if( json.keys().contains( GWS_TYPE_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){ this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray().toVariantList() ); }
 
     // Set properties

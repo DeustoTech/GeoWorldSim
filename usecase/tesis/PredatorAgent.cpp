@@ -39,7 +39,7 @@ void PredatorAgent::behave()
 
 
     /* Print wolf's cell_X and cell_y and original cell occupation */
-    qInfo() << "I am" << this->property("@id").toString();
+    qInfo() << "I am" << this->getProperty("@id").toString();
     qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
     qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
@@ -111,7 +111,7 @@ void PredatorAgent::behave()
                 this-> setProperty("energy", finalEnergy);
 
                 /* Unregister the prey */                
-                qInfo() << "RIP" << targetCellOccupation.at(i)->property("@id").toString();
+                qInfo() << "RIP" << targetCellOccupation.at(i)->getProperty("@id").toString();
                 terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
                 QTimer::singleShot( 0 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
                 return;
@@ -152,7 +152,7 @@ void PredatorAgent::behave()
         if (PredatorOccupation == 1)
            {
            /* Move and breed! */
-           qInfo() << this->property("@id").toString()<<", there is a living mate at target! Move and breed!";
+           qInfo() << this->getProperty("@id").toString()<<", there is a living mate at target! Move and breed!";
 
            /* Notify the grid that the wolf is leaving */
            terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
@@ -178,22 +178,23 @@ void PredatorAgent::behave()
 
            /* Add a cub to the World */
            PredatorAgent* cubAgent = new PredatorAgent();
-           GWSExecutionEnvironment::globalInstance()->registerAgent(cubAgent);
-           GWSAgentEnvironment::globalInstance()->registerAgent( cubAgent );
+           GWSEnvironment::globalInstance()->registerAgent( cubAgent );
+           GWSExecutionEnvironment::globalInstance()->registerAgent( cubAgent );
+
 
            /* Set cub's properties */
            cubAgent->setProperty("energy", 10);
            cubAgent->setProperty("@type", "PredatorAgent");
            cubAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
-
+           cubAgent->setProperty("style", "icon_url\" : \"https://image.flaticon.com/icons/svg/616/616457.svg" );
            /* Notify the grid of new cub's position */
            terrain_agent->addGridCellValue(cubAgent->getCentroid().getX(), cubAgent->getCentroid().getY(), cubAgent);
            }
 
            /* Wolves die when */
-           if (this->property("energy") < 1.)
+           if (this->getProperty("energy") < 1.)
                {
-               qInfo() << "RIP" << this->property("@id").toString();
+               qInfo() << "RIP" << this->getProperty("@id").toString();
                terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
                QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                }

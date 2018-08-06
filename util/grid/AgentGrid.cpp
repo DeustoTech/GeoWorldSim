@@ -51,7 +51,7 @@ QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned in
     if( grid_x < 0 || grid_x > this->getGridXSize() || grid_y < 0 || grid_y > this->getGridYSize() ){
         return QList<GWSAgent*>();
     }
-    qDebug() << grid_x << grid_y << this->getGridXSize() << this->getGridYSize();
+    //qDebug() << grid_x << grid_y << this->getGridXSize() << this->getGridYSize();
     return this->values.value(grid_x).value(grid_y);
 }
 

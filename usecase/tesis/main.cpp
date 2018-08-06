@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
 
     QJsonDocument jsonTerrain = QJsonDocument::fromJson( "{ \"@type\" : \"TerrainAgent\" , "
                                                    "\"@id\" : \"ThePlayground\" ,"
-                                                   "\"grid_x_size\" : 100, "
-                                                   "\"grid_y_size\" : 100  "
+                                                   "\"grid_x_size\" : 10000, "
+                                                   "\"grid_y_size\" : 10000  "
                                                    "}"
                                                    );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
@@ -65,8 +65,6 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
 
     qInfo()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
-    qInfo()<< "And my size is" << terrain->property("grid_x_size").toInt() << "x"<< terrain->property("grid_y_size").toInt();
-
 
 
     /* ----------
@@ -74,7 +72,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 100 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 100.0 , "
@@ -83,11 +81,10 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 100 )
                                                        .arg( qrand() % 100 )
                                                        .toLatin1()
-
                                                        );
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
-        qInfo()<< "I am a GWSAgent of" << sheep->property("@type").toString() << "type.";
+        qInfo()<< "I am a GWSAgent of" << sheep->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a sheep at current position*/
         terrain->addGridCellValue(sheep->getCentroid().getX(), sheep->getCentroid().getY(), sheep);
@@ -102,7 +99,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 100 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -113,18 +110,17 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 100 )
                                                        .arg( qrand() % 100 )
                                                        .toLatin1()
-
                                                        );
 
-        GWSAgent* predator1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
+        GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
 
-        qInfo()<< "I am a GWSAgent of" << predator1->property("@type").toString() << "type.";
+        qInfo()<< "I am a GWSAgent of" << predator->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a wolf at current position */
-        terrain->addGridCellValue(predator1->getCentroid().getX(), predator1->getCentroid().getY(), predator1);
+        terrain->addGridCellValue( predator->getCentroid().getX(), predator->getCentroid().getY(), predator );
 
-        GWSEnvironment::globalInstance()->registerAgent( predator1 );
-        GWSExecutionEnvironment::globalInstance()->registerAgent( predator1 );
+        GWSEnvironment::globalInstance()->registerAgent( predator );
+        GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
 
