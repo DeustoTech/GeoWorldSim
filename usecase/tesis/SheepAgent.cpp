@@ -157,7 +157,7 @@ void SheepAgent::behave()
           qInfo() << "Energy after moving = " << finalEnergy;
 
           /* Eating supplies energy */
-          double foodGains = finalEnergy / 12.0;
+          double foodGains = 30;
           finalEnergy = finalEnergy + foodGains;
           qInfo() << "Energy after eating = " << finalEnergy;
           this-> setProperty("energy", finalEnergy);

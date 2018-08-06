@@ -111,7 +111,7 @@ void PredatorAgent::behave()
                 this-> setProperty("energy", finalEnergy);
 
                 /* Feeding supplies energy */
-                double foodGains = finalEnergy / 2.0;
+                double foodGains = 50;
                 finalEnergy = finalEnergy + foodGains;
                 this-> setProperty("energy", finalEnergy);
                 this-> setProperty("energy", finalEnergy);
