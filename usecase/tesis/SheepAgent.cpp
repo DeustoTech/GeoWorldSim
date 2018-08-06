@@ -78,7 +78,7 @@ void SheepAgent::behave()
     else /* And sometimes they will choose to move */
        {
        /* Get target cell occupation through AgentGrid methods */
-        GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+       GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
        QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( centroid.getX() + TargetX, centroid.getY() + TargetY );
        //qInfo()  << "Target cell occupation = " << targetCellOccupation;
 
@@ -119,7 +119,7 @@ void SheepAgent::behave()
 
               /* Unregister the prey */
               qInfo() << "RIP" << this->getProperty("@id").toString();
-              //terrain_agent->removeGridCellValue( this->getCentroid().getX(), this->getCentroid().getY(), this);
+              terrain_agent->exit( this );
               QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
               return;
               }
@@ -196,7 +196,7 @@ void SheepAgent::behave()
                if (this->getProperty("energy") < 1.)
                   {
                     qInfo() << "RIP" << this->getProperty("@id").toString();
-                    //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
+                    terrain_agent->exit( this );
                     QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                     return;
                   }
