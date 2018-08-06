@@ -1,6 +1,7 @@
 #include "MoveBehaviour.h"
 
 #include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
@@ -19,7 +20,7 @@ bool MoveBehaviour::finished(){
     if( this->getProperty( DESTINATION_X_PROP ).isNull() || this->getProperty( DESTINATION_Y_PROP ).isNull() ){
         return true;
     }
-    return this->getAgent()->getCentroid() == GWSCoordinate( this->getProperty( DESTINATION_X_PROP ).toDouble() , this->getProperty( DESTINATION_Y_PROP ).toDouble() );
+    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid() == GWSCoordinate( this->getProperty( DESTINATION_X_PROP ).toDouble() , this->getProperty( DESTINATION_Y_PROP ).toDouble() );
 }
 
 /**********************************************************************
@@ -40,7 +41,7 @@ bool MoveBehaviour::behave(){
 
     // Calculate speed
     GWSCoordinate destination_coor = GWSCoordinate( this->getProperty( DESTINATION_X_PROP ).toDouble() , this->getProperty( DESTINATION_Y_PROP ).toDouble() );
-    GWSLengthUnit distance = this->getAgent()->getCentroid().getDistance( destination_coor );
+    GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );
     }
@@ -49,5 +50,5 @@ bool MoveBehaviour::behave(){
     move_skill->moveTowards( destination_coor , duration_of_movement );
 
     // Increment internal time
-    this->getAgent()->incrementInternalTime( duration_of_movement );
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getAgent() , duration_of_movement );
 }

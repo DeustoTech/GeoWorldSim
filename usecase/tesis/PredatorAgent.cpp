@@ -106,6 +106,10 @@ void PredatorAgent::behave()
 
                 /* Unregister the prey */
                 qInfo() << "RIP" << targetCellOccupation.at(i)->getProperty("@id").toString();
+<<<<<<< HEAD
+=======
+                terrain_agent->exit(  targetCellOccupation.at(i) );
+>>>>>>> 617688a2f83572a101c81ef890500eb5f664c8fa
                 QTimer::singleShot( 1000 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
                 return;
                 }
@@ -172,6 +176,10 @@ void PredatorAgent::behave()
            if (this->getProperty("energy") < 1.)
                {
                qInfo() << "RIP" << this->getProperty("@id").toString();
+<<<<<<< HEAD
+=======
+               terrain_agent->exit( this );
+>>>>>>> 617688a2f83572a101c81ef890500eb5f664c8fa
                QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                }
 

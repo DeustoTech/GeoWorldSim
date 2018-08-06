@@ -103,6 +103,10 @@ void SheepAgent::behave()
 
               /* Unregister the prey */
               qInfo() << "RIP" << this->getProperty("@id").toString();
+<<<<<<< HEAD
+=======
+              terrain_agent->exit( this );
+>>>>>>> 617688a2f83572a101c81ef890500eb5f664c8fa
               QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
               return;
               }
@@ -163,6 +167,10 @@ void SheepAgent::behave()
                if (this->getProperty("energy") < 1.)
                   {
                     qInfo() << "RIP" << this->getProperty("@id").toString();
+<<<<<<< HEAD
+=======
+                    terrain_agent->exit( this );
+>>>>>>> 617688a2f83572a101c81ef890500eb5f664c8fa
                     QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                     return;
                   }

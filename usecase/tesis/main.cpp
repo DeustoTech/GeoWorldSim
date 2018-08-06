@@ -75,11 +75,11 @@ int main(int argc, char* argv[])
     for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                      "\"energy\" : 200.0 , "
+                                                      "\"energy\" : 2000.0 , "
                                                        "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
-                                                       .arg( qrand() % 10 )
-                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 50 )
+                                                       .arg( qrand() % 50 )
                                                        .toLatin1()
                                                        );
 
@@ -102,8 +102,8 @@ int main(int argc, char* argv[])
                                                       "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
                                                       "}")
-                                                       .arg( qrand() % 10 )
-                                                       .arg( qrand() % 10 )
+                                                       .arg( qrand() % 50 )
+                                                       .arg( qrand() % 50 )
                                                        .toLatin1()
                                                        );
 
