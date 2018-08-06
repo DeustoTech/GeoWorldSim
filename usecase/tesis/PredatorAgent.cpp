@@ -36,7 +36,6 @@ void PredatorAgent::behave()
 
     /* Number of agents in the simulation (all types) */
     qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
-//    qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getByClass(PredatorAgent::staticMetaObject.className()).size() << "wolves.";
 
 
     /* Register Terrain Agent so that we can add our sheep
@@ -45,12 +44,8 @@ void PredatorAgent::behave()
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
 
 
-    /* Print wolf's cell_X and cell_y and original cell occupation */
-    qInfo() << "I am" << this->getProperty("@id").toString();
-    //qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-    //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-
     qInfo() << "Initial energy = " << this->getProperty("energy");
+
     /* Move randomly through random index generator */    
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
     int RandIndexX = qrand() % 3; //generates a random number between 0 and 2
@@ -71,7 +66,6 @@ void PredatorAgent::behave()
         qInfo() << "";
         qInfo() << "You choose to stay at the same position. You will eventually die of starvation.";
         this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble()/4.);
-        //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
         qInfo() << "";
        }   
     else  /* And sometimes it will "choose" to move */
@@ -79,9 +73,9 @@ void PredatorAgent::behave()
        /*
         * Get target cell occupation through AgentGrid methods
         */
-        GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+       GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
        QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( centroid.getX() + TargetX, centroid.getY() + TargetY  );
-       //qInfo()  << "Target cell occupation = " << targetCellOccupation;
+
        int PredatorOccupation = 0;
 
        /*Number of sheep and wolves in target cell */
@@ -95,18 +89,9 @@ void PredatorAgent::behave()
                 {                
                 qInfo() << "Found sheep at target! Move and eat!";
 
-                /* Notify the grid that the wolf is leaving */
-                //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-
                 /* Move */
                 GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
-                /* Final position of the agent */
-                //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
-                /* Notify the grid of the wolf's new position */
-                //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-                //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
                 /* Moving consumes energy */
                 double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -118,11 +103,9 @@ void PredatorAgent::behave()
                 double foodGains = 50;
                 finalEnergy = finalEnergy + foodGains;
                 this-> setProperty("energy", finalEnergy);
-                this-> setProperty("energy", finalEnergy);
 
                 /* Unregister the prey */
                 qInfo() << "RIP" << targetCellOccupation.at(i)->getProperty("@id").toString();
-                //terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
                 QTimer::singleShot( 1000 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
                 return;
                 }
@@ -136,23 +119,15 @@ void PredatorAgent::behave()
            qInfo() << "";
            this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble()/4.);
            }
+
         if (PredatorOccupation == 0)
            { 
-            /* Move! */
             qInfo() << "Target is empty! Move!";
 
-            /* Notify the grid that the wolf is leaving */
-            //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
             /* Move */
             GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
-            /* Final position of the agent */
-            //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
-            /* Notify the grid of the wolf's new position */
-            //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-            //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
             /* Moving consumes energy */
             double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -160,23 +135,13 @@ void PredatorAgent::behave()
             double finalEnergy = initialEnergyDouble - moveLosses;
             this-> setProperty("energy", finalEnergy);
             }
+
         if ((PredatorOccupation == 1) && (this-> getProperty("energy").toDouble() >=100.))
            {
            /* Move and breed! */
            qInfo() << this->getProperty("@id").toString()<<", there is a living mate at target! Move and breed!";
 
-           /* Notify the grid that the wolf is leaving */
-           //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-
-           /* Move */
            GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
-
-           /* Final position of the agent */
-           //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
-           /* Notify the grid of the wolf's new position */
-           //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-           //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
            /* Moving consumes energy */
            double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -198,17 +163,15 @@ void PredatorAgent::behave()
            cubAgent->setProperty("@type", "PredatorAgent");
            GWSPhysicalEnvironment::globalInstance()->transformMove( cubAgent , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid() );
            cubAgent->icon_url = this->icon_url;
-           /* Notify the grid of new cub's position */
-           //terrain_agent->addGridCellValue(cubAgent->getCentroid().getX(), cubAgent->getCentroid().getY(), cubAgent);
-           //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
-            }
+           }
+
            qInfo() << "Energy = " << this->getProperty("energy");
+
            /* Wolves die when */
            if (this->getProperty("energy") < 1.)
                {
                qInfo() << "RIP" << this->getProperty("@id").toString();
-               //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
                QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                }
 
@@ -217,28 +180,6 @@ void PredatorAgent::behave()
 
 
 
-
-
-/*
-// Loop to see how many wolves are at the target point:
-for (int i = 0; i < wolves.size(); ++i)
-     {
-     if (
-          // There is a PredatorAgent that shares your X coord
-          (wolves.at(i)->getCentroid().getX() == this->getCentroid().getX() + TargetX)
-          && // ... and your Y coord
-          (wolves.at(i)->getCentroid().getY() == this->getCentroid().getY() + TargetY)
-          && // ... and it is not yourself
-          (wolves.at(i)->property("@id") != this->property("@id"))
-          && // ... and it is not dead
-          (wolves.at(i)->property("running") == "true"))
-             {
-             // Increase the occupation
-             PredatorOccupation += 1;
-             }
-     }
-
- qDebug() << "Target cell PredatorAgent occupation = " << PredatorOccupation;*/
 
 
 
