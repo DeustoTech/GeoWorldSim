@@ -148,15 +148,6 @@ bool GWSAgent::isBusy() const{
     return busy_counter > 0;
 }
 
-/**
- * @brief Agent::getCoordinate
- * Representative Coordinate of this agents location, USED FOR GRAPHS AND ROUTING
- * @return
- */
-GWSCoordinate GWSAgent::getCentroid() const{
-    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
-}
-
 bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
 }

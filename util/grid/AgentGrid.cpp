@@ -37,8 +37,13 @@ QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned in
     double minY = agent_geom->getGeometryMinY();
     double maxY = agent_geom->getGeometryMaxY();
 
+    double cell_minX = GWSGridCoordinatesConversor::x2lon( grid_x , minX , maxX , this->getGridXSize() );
+    double cell_maxX = GWSGridCoordinatesConversor::x2lon( grid_x+1 , minX , maxX , this->getGridXSize() );
+    double cell_minY = GWSGridCoordinatesConversor::x2lon( grid_y , minY , maxY , this->getGridYSize() );
+    double cell_maxY = GWSGridCoordinatesConversor::x2lon( grid_y+1 , minY , maxY , this->getGridYSize() );
+
     foreach (GWSAgent* agent , this->agents_inside) {
-        if( agent_geom->intersects( minX , maxX , minY , maxY ) ){
+        if( agent_geom->intersects( cell_minX , cell_maxX , cell_minY , cell_maxY ) ){
             agents.append( agent );
         }
     }

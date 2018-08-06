@@ -31,6 +31,7 @@ void SheepAgent::behave()
     qInfo() << "                 Sheep                           ";
     qInfo() << "                 -----                           ";
 
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , qrand() % 3 );
 
     /* Send information to website */
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
@@ -47,7 +48,7 @@ void SheepAgent::behave()
 
     /* Get Sheep's cell_X and cell_y and original cell occupation */
     qInfo() << "I am" << this->getProperty("@id").toString();
-    qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+    //qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
     //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
 
@@ -69,7 +70,7 @@ void SheepAgent::behave()
     if ((TargetX == 0) && (TargetY == 0)) /* Sometimes the sheep will choose to stay on same position */
        {
        qInfo() << "You choose to stay at the same position. You will eventually die of starvation..";
-       qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+       //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
        qInfo() << "";
        this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble() /6.);
        qInfo() << "Energy = " << this->getProperty("energy").toDouble();
@@ -77,7 +78,8 @@ void SheepAgent::behave()
     else /* And sometimes they will choose to move */
        {
        /* Get target cell occupation through AgentGrid methods */
-       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY );
+        GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( centroid.getX() + TargetX, centroid.getY() + TargetY );
        //qInfo()  << "Target cell occupation = " << targetCellOccupation;
 
        int sheepOccupation = 0;
@@ -100,11 +102,11 @@ void SheepAgent::behave()
               GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
               /* Final position of the sheep */
-              qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+              //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
               /* Notify the grid of the sheep's new position */
               //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+              //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
               qInfo() << "Oh no! You become food...";
 
@@ -145,7 +147,7 @@ void SheepAgent::behave()
           GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
           /* Final position of the agent*/
-          qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+          //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
           /* Notify the grid of the sheep's new position */
           //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
@@ -180,12 +182,12 @@ void SheepAgent::behave()
              /* Set lamb's properties */
              lambAgent->setProperty("energy", 200.);
              lambAgent->setProperty("@type", "SheepAgent");
-             GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
+             GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid() );
              lambAgent->icon_url = this->icon_url;
 
              /* Notify the grid of new lamb's position */
              //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
-             qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+             //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
              }
 

@@ -59,7 +59,6 @@ public:
 
     // GETTERS
     QList<GWSEnvironment*> getEnvironments() const;
-    GWSCoordinate getCentroid() const;
     bool isBusy() const;
 
     // SKILLS

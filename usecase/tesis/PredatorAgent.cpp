@@ -28,6 +28,7 @@ void PredatorAgent::behave()
     qInfo() << "                 Wolf                           ";
     qInfo() << "                 ----                           ";
 
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , qrand() % 3 );
 
     /* Send information to website */
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
@@ -46,8 +47,8 @@ void PredatorAgent::behave()
 
     /* Print wolf's cell_X and cell_y and original cell occupation */
     qInfo() << "I am" << this->getProperty("@id").toString();
-    qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-    qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+    //qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+    //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
     qInfo() << "Initial energy = " << this->getProperty("energy");
     /* Move randomly through random index generator */    
@@ -70,7 +71,7 @@ void PredatorAgent::behave()
         qInfo() << "";
         qInfo() << "You choose to stay at the same position. You will eventually die of starvation.";
         this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble()/4.);
-        qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+        //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
         qInfo() << "";
        }   
     else  /* And sometimes it will "choose" to move */
@@ -78,7 +79,8 @@ void PredatorAgent::behave()
        /*
         * Get target cell occupation through AgentGrid methods
         */
-       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue(this->getCentroid().getX() + TargetX, this->getCentroid().getY() + TargetY  );
+        GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+       QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( centroid.getX() + TargetX, centroid.getY() + TargetY  );
        //qInfo()  << "Target cell occupation = " << targetCellOccupation;
        int PredatorOccupation = 0;
 
@@ -100,11 +102,11 @@ void PredatorAgent::behave()
                 GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
                 /* Final position of the agent */
-                qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+                //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
                 /* Notify the grid of the wolf's new position */
                 //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-                qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+                //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
                 /* Moving consumes energy */
                 double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -146,11 +148,11 @@ void PredatorAgent::behave()
             GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
             /* Final position of the agent */
-            qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+            //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
             /* Notify the grid of the wolf's new position */
             //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-            qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+            //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
             /* Moving consumes energy */
             double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -170,11 +172,11 @@ void PredatorAgent::behave()
            GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
            /* Final position of the agent */
-           qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
+           //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
 
            /* Notify the grid of the wolf's new position */
            //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-           qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+           //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
            /* Moving consumes energy */
            double initialEnergyDouble = this->getProperty("energy").toDouble();
@@ -194,11 +196,11 @@ void PredatorAgent::behave()
            /* Set cub's properties */
            cubAgent->setProperty("energy", 200.);
            cubAgent->setProperty("@type", "PredatorAgent");
-           GWSPhysicalEnvironment::globalInstance()->transformMove( cubAgent , GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
+           GWSPhysicalEnvironment::globalInstance()->transformMove( cubAgent , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid() );
            cubAgent->icon_url = this->icon_url;
            /* Notify the grid of new cub's position */
            //terrain_agent->addGridCellValue(cubAgent->getCentroid().getX(), cubAgent->getCentroid().getY(), cubAgent);
-           qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+           //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
             }
            qInfo() << "Energy = " << this->getProperty("energy");

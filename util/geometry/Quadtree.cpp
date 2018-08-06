@@ -53,14 +53,14 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = found->getCentroid().getDistance( coor );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getCentroid().getDistance( coor );
 
     for(int i = 0 ; i < agents.size() ; i++){
         GWSAgent* g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = coor.getDistance( g->getCentroid() );
+                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getCentroid() );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
