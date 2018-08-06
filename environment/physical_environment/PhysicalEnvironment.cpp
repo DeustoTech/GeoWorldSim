@@ -14,18 +14,19 @@ GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
-    qDeleteAll(this->spatial_index.values());
+    qDeleteAll( this->spatial_index.values() );
+    qDeleteAll( this->agent_geometries.values() );
 }
 
 /***********************************************************************/
 // GETTERS
 /***********************************************************************/
 
-const GWSGeometry* GWSPhysicalEnvironment::getAgentGeometry(const GWSAgent *agent) const{
-    return this->getAgentGeometry( agent->getId() );
+const GWSGeometry* GWSPhysicalEnvironment::getGeometry(const GWSAgent *agent) const{
+    return this->getGeometry( agent->getId() );
 }
 
-const GWSGeometry* GWSPhysicalEnvironment::getAgentGeometry(QString agent_id) const{
+const GWSGeometry* GWSPhysicalEnvironment::getGeometry(QString agent_id) const{
     return this->agent_geometries.value( agent_id , 0 );
 }
 
@@ -183,10 +184,14 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 
 
 /**********************************************************************
- PRIVATE
+ METHODS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
+void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , QJsonObject geojson){
+
+    GWSGeometry* geom = this->agent_geometries.value( agent->getId() , new GWSGeometry() );
+    geom->deserialize( geojson );
+    this->agent_geometries.insert( agent->getId() , geom );
 
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){
@@ -197,11 +202,9 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
     this->mutex.lock();
     GWSEnvironment::registerAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
-        this->spatial_index[ s ]->upsert( agent );
+        this->spatial_index.value( s )->upsert( agent );
     }
     this->mutex.unlock();
-
-    this->agent_geometries.insert( agent->getId() , GWSGeometry() );
 
 }
 
@@ -210,7 +213,7 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
     this->mutex.lock();
     GWSEnvironment::unregisterAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
-        this->spatial_index[ s ]->remove( agent );
+        this->spatial_index.value( s )->remove( agent );
     }
     this->mutex.unlock();
 
@@ -218,6 +221,43 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
     this->agent_geometries.remove( agent->getId() );
 
 }
+
+
+/**********************************************************************
+ SPATIAL OPERATIONS
+**********************************************************************/
+
+void GWSPhysicalEnvironment::transformMove(GWSAgent *agent, GWSCoordinate apply_movement){
+    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+    if( geom ){
+        foreach (QString s , agent->getInheritanceFamily()) {
+            this->spatial_index.value( s )->upsert( agent );
+        }
+        geom->transformMove( apply_movement );
+    }
+}
+
+void GWSPhysicalEnvironment::transformBuffer(GWSAgent *agent, double threshold){
+    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+    if( geom ){
+        geom->transformBuffer( threshold );
+    }
+}
+
+void GWSPhysicalEnvironment::transformUnion(GWSAgent *agent, const GWSGeometry *other){
+    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+    if( geom ){
+        geom->transformUnion( other );
+    }
+}
+
+void GWSPhysicalEnvironment::transformIntersection(GWSAgent *agent, const GWSGeometry *other){
+    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+    if( geom ){
+        geom->transformIntersection( other );
+    }
+}
+
 
 /*bool GWSPhysicalEnvironment::updateAgentGeometry(GWSAgent *agent, GWSCoordinate new_geom){
     return this->updateAgentGeometry( agent , GWSGeometryFactory::globalInstance()->createPoint( new_geom ) );

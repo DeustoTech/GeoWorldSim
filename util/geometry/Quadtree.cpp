@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "geos/geom/Envelope.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 
 GWSQuadtree::GWSQuadtree() : GWSObject(){
@@ -80,14 +81,14 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = found->getDistance( geometry );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getDistance( geometry );
 
     for(int i = 0 ; i < agents.size() ; i++){
         GWSAgent* g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = geometry->getDistance( g );
+                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getDistance( geometry );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -106,7 +107,11 @@ void GWSQuadtree::upsert(GWSAgent* agent){
         this->inner_index->remove( &e , agent );
     }
 
-    geos::geom::Envelope e = geos::geom::Envelope( agent->getGeometryMinX() , agent->getGeometryMaxX() , agent->getGeometryMinY() , agent->getGeometryMaxY() );
+    geos::geom::Envelope e = geos::geom::Envelope(
+                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX() ,
+                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxX() ,
+                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY() ,
+                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY() );
     this->registered_envelopes.insert( agent , e );
     this->inner_index->insert( &e , agent );
     //this->mutex.unlock();

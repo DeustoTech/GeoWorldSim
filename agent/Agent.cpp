@@ -13,9 +13,10 @@
 #include "../../skill/Skill.h"
 
 #include "../../environment/Environment.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSAgent::RUNNING_PROP = "running";
 QString GWSAgent::STYLE_PROP = "style";
 
 GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSStyle( this ) , busy_counter(0) {
@@ -46,6 +47,9 @@ void GWSAgent::deserialize(QJsonObject json){
 
     GWSObject::deserialize( json );
 
+    // Add to environments
+    GWSEnvironment::globalInstance()->registerAgent( this );
+
     // SKILLS
     QJsonArray jskills = json.value("@skills").toArray();
     foreach( QJsonValue js , jskills ){
@@ -64,17 +68,22 @@ void GWSAgent::deserialize(QJsonObject json){
 
     // INTERNAL TIME
     if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
-
+        GWSTimeEnvironment::globalInstance()->registerAgent( this , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
     }
 
     // GEOMETRY
-    if( !json.value( GEOMETRY_PROP ).isNull() ){
-        GWSGeometry::deserialize( json.value( GEOMETRY_PROP ).toObject() );
+    if( json.keys().contains( GWSPhysicalEnvironment::GEOMETRY_PROP ) ){
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( this , json.value( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     }
 
     // STYLE
     if( !json.value( STYLE_PROP ).isNull() ){
         GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );
+    }
+
+    // RUNNING
+    if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
+        GWSExecutionEnvironment::globalInstance()->registerAgent( this );
     }
 }
 
@@ -107,7 +116,7 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );
 
     // GEOMETRY
-    json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
+    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->serialize() );
 
     // STYLE
     json.insert( STYLE_PROP , GWSStyle::serialize() );
@@ -132,10 +141,6 @@ QList<GWSEnvironment*> GWSAgent::getEnvironments() const{
     return this->environments_registerd_in;
 }
 
-bool GWSAgent::isRunning() const{
-    return this->getProperty( GWSAgent::RUNNING_PROP ).toBool();
-}
-
 bool GWSAgent::isBusy() const{
     return busy_counter > 0;
 }
@@ -145,12 +150,9 @@ bool GWSAgent::isBusy() const{
  * Representative Coordinate of this agents location, USED FOR GRAPHS AND ROUTING
  * @return
  */
-/*GWSCoordinate GWSAgent::getRepresentativeCoordinate() const{
-    if( this->geometry ){
-        return this->geometry->getRepresentativeCoordinate();
-    }
-    return GWSCoordinate(0,0,0);
-}*/
+GWSCoordinate GWSAgent::getCentroid() const{
+    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+}
 
 bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
@@ -218,11 +220,6 @@ void GWSAgent::removeSkill(GWSSkill *skill){
  * This method is a wrapper slot to be invoked by the Environment for behave() to be executed in the agents thread.
  **/
 void GWSAgent::tick(){
-
-    if( !this->isRunning() ){
-        qInfo() << "Agent is not running, skipping behaviour";
-        return;
-    }
 
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 

@@ -10,10 +10,9 @@ class GWSEnvironment : public GWSAgent
 public:
     static GWSEnvironment* globalInstance();
 
-    // METHODS
+    void registerSubenvironment( GWSEnvironment* subenvironment );
     virtual void registerAgent( GWSAgent* agent );
     virtual void unregisterAgent( GWSAgent* agent );
-    void registerSubenvironment( GWSEnvironment* subenvironment );
 
 signals:
     void environmentCreatedSignal();

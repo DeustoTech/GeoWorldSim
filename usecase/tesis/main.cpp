@@ -18,6 +18,7 @@
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/grid_environment/GridEnvironment.h"
 
 #include "../../util/geometry/Coordinate.h"
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
+    GWSPhysicalEnvironment::globalInstance();
     GWSGridEnvironment::globalInstance();
 
 
@@ -62,12 +64,9 @@ int main(int argc, char* argv[])
                                                    "}"
                                                    );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
-    GWSEnvironment::globalInstance()->registerAgent( terrain );
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
 
     qInfo()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
-    qInfo()<< "And my size is" << terrain->property("grid_x_size").toInt() << "x"<< terrain->property("grid_y_size").toInt();
-
 
 
     /* ----------
@@ -84,16 +83,14 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 100 )
                                                        .arg( qrand() % 100 )
                                                        .toLatin1()
-
                                                        );
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
-        qInfo()<< "I am a GWSAgent of" << sheep->property("@type").toString() << "type.";
+        qInfo()<< "I am a GWSAgent of" << sheep->getProperty( GWSAgent::GWS_TYPE_PROP ).toString() << "type.";
 
         /* Notify the grid of the presence of a sheep at current position*/
-        terrain->addGridCellValue(sheep->getCentroid().getX(), sheep->getCentroid().getY(), sheep);
+        //terrain->addGridCellValue(sheep->getCentroid().getX(), sheep->getCentroid().getY(), sheep);
 
-        GWSEnvironment::globalInstance()->registerAgent( sheep );
         GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
 
     }
@@ -114,18 +111,16 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 100 )
                                                        .arg( qrand() % 100 )
                                                        .toLatin1()
-
                                                        );
 
-        GWSAgent* predator1 = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
+        GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
 
-        qInfo()<< "I am a GWSAgent of" << predator1->property("@type").toString() << "type.";
+        qInfo()<< "I am a GWSAgent of" << predator->getProperty( GWSAgent::GWS_TYPE_PROP ) << "type.";
 
         /* Notify the grid of the presence of a wolf at current position */
-        terrain->addGridCellValue(predator1->getCentroid().getX(), predator1->getCentroid().getY(), predator1);
+        //terrain->addGridCellValue( predator->getCentroid().getX(), predator->getCentroid().getY(), predator );
 
-        GWSEnvironment::globalInstance()->registerAgent( predator1 );
-        GWSExecutionEnvironment::globalInstance()->registerAgent( predator1 );
+        GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
 

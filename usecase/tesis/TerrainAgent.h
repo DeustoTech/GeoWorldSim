@@ -18,6 +18,7 @@ public:
     void deserialize(QJsonObject json);
     virtual QJsonObject serialize() const;
 
+    // METHODS
     virtual void behave();
 };
 

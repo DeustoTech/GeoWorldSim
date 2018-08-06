@@ -33,9 +33,9 @@ public:
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
-    //QImage toImage( const GWSEnvelope image_bounds , int image_width = 1024, int image_height = 1024 ) const;
 
     // GETTERS
+    GWSAgent* getAgent() const;
     virtual bool isGridEmpty() const;
     int getGridXSize() const;
     int getGridYSize() const;

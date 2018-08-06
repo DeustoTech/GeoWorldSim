@@ -52,7 +52,6 @@ protected:
     QHash<QString, QList< GWSObject* > > objects;  // QMAP<ClassName, QList<OBJECT>>
     QHash<QString, QHash< QString , GWSObject* > > object_ids;  // QMAP< QMAP< ID , OBJECT>>
     QHash<QString, QHash< QString , GWSObject* > > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
-    quint64 amount_stored = 0;
 
     QMutex mutex;
 };

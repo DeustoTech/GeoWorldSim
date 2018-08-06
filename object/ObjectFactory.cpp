@@ -44,12 +44,6 @@ const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
     return this->constructors.value( type_name );
 }
 
-/*GWSObject* GWSObjectFactory::create( QString type , GWSObject* parent ){
-    QJsonObject json;
-    json.insert( GWSObject::GWS_TYPE_PROP , type );
-    return this->create( json , parent );
-}*/
-
 GWSObject* GWSObjectFactory::fromType( QString type , GWSObject* parent ){
     QJsonObject json;
     json.insert( GWSObject::GWS_TYPE_PROP , type );

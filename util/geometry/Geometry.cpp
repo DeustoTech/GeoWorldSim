@@ -37,6 +37,8 @@ GWSGeometry::~GWSGeometry(){
 
 void GWSGeometry::deserialize(QJsonObject json){
 
+    if( this->inner_geometry ){ delete this->inner_geometry; }
+
     QString geom_type = json.value("type").toString();
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();
@@ -223,24 +225,13 @@ QString GWSGeometry::toString() const{
  GETTERS
 **********************************************************************/
 
+
 bool GWSGeometry::isGeometryValid() const{
     return this->inner_geometry ? this->inner_geometry->isValid() : false;
 }
 
-bool GWSGeometry::intersects( const GWSGeometry* other ) const{
-    return this->inner_geometry->intersects( other->inner_geometry );
-}
-
-bool GWSGeometry::equals( const GWSGeometry* other) const{
-    return this->inner_geometry->equals( other->inner_geometry );
-}
-
 GWSAreaUnit GWSGeometry::getArea() const{
     return GWSAreaUnit( this->inner_geometry ? this->inner_geometry->getArea() : -1 );
-}
-
-GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
-    return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other->inner_geometry )  * 110574 : -1 );
 }
 
 double GWSGeometry::getGeometryMaxX() const{
@@ -277,11 +268,40 @@ GWSCoordinate GWSGeometry::getCentroid() const{
 }
 
 /**********************************************************************
+ SPATIAL COMPARATORS
+**********************************************************************/
+
+bool GWSGeometry::isInBounds(double minX, double maxX, double minY, double maxY) const{
+    return this->inner_geometry ?
+                geos::geom::Envelope( minX , maxX , minY , maxY ).contains( *this->inner_geometry->getEnvelopeInternal() )
+              : false;
+}
+
+bool GWSGeometry::intersects( const GWSGeometry* other ) const{
+    return this->inner_geometry ? this->inner_geometry->intersects( other->inner_geometry ) : false;
+}
+
+bool GWSGeometry::intersects( double minX, double maxX, double minY, double maxY) const{
+    return this->inner_geometry ?
+                this->inner_geometry->getEnvelopeInternal()->intersects( geos::geom::Envelope( minX , maxX , minY , maxY ) )
+                : false;
+}
+
+bool GWSGeometry::equals( const GWSGeometry* other) const{
+    return this->inner_geometry ? this->inner_geometry->equals( other->inner_geometry ) : false;
+}
+
+GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
+    return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other->inner_geometry )  * 110574 : -1 );
+}
+
+/**********************************************************************
  SPATIAL TRANSFORMS
 **********************************************************************/
 
 void GWSGeometry::transformMove(GWSCoordinate apply_movement){
     if( !apply_movement.isValid() ){ return; }
+
     if( !this->inner_geometry ){
         this->inner_geometry = geos::geom::GeometryFactory::getDefaultInstance()->createPoint(
                     geos::geom::Coordinate( apply_movement.getX() , apply_movement.getY() , apply_movement.getZ()

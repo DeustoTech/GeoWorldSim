@@ -44,8 +44,8 @@ public:
     void setAgentInternalTime( const GWSAgent* agent , const qint64 datetime );
     void incrementAgentInternalTime( const GWSAgent* agent , GWSTimeUnit seconds );
 
-    // METHODS
-    virtual void registerAgent( GWSAgent* agent );
+    // REGISTRATION
+    virtual void registerAgent( GWSAgent* agent , quint64 agent_internal_time = 0 );
     virtual void unregisterAgent( GWSAgent* agent );
 
 private:
@@ -60,7 +60,7 @@ private:
     double time_speed = 2;
 
     // Agent internal times
-    QMap<QString , quint64> agent_times;
+    QMap<QString , quint64> agent_internal_times;
 
 };
 

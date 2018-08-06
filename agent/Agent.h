@@ -38,7 +38,6 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 class GWSAgent : public GWSObject , public GWSStyle
 {
     friend class GWSEnvironment; // Environment will be able to overwrite the attributes
-    friend class GWSPhysicalEnvironment;
     friend class GWSExecutionEnvironment;
 
     Q_OBJECT // Required for every child!! Adds Qt extra functionality like SIGNAL/SLOTS
@@ -49,7 +48,6 @@ public:
     ~GWSAgent();
 
     // PROPERTIES
-    static QString RUNNING_PROP;
     static QString STYLE_PROP;
 
     // IMPORTERS
@@ -61,7 +59,7 @@ public:
 
     // GETTERS
     QList<GWSEnvironment*> getEnvironments() const;
-    bool isRunning() const;
+    GWSCoordinate getCentroid() const;
     bool isBusy() const;
 
     // SKILLS

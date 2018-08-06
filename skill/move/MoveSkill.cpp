@@ -82,7 +82,7 @@ void MoveSkill::moveTowards(GWSCoordinate destination_coor, GWSTimeUnit movement
             * movement_duration.number();
 
     // Current position
-    GWSCoordinate current_coor = this->getAgent()->getCentroid();
+    GWSCoordinate current_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid();
 
     // Distance
     double meter_distance = current_coor.getDistance( destination_coor ).number();
@@ -98,7 +98,7 @@ void MoveSkill::moveTowards(GWSCoordinate destination_coor, GWSTimeUnit movement
 
     // Set the agents position
     GWSCoordinate position = GWSCoordinate( x_move , y_move );
-    this->getAgent()->transformMove( position );
+    GWSPhysicalEnvironment::globalInstance()->transformMove( this->getAgent() , position );
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 

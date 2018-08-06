@@ -17,7 +17,7 @@ public:
     // GETTERS
 
 
-    // METHODS
+protected:
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);
 

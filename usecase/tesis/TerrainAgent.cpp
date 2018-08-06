@@ -24,7 +24,6 @@ QJsonObject TerrainAgent::serialize() const{
     return json;
 }
 
-
 void TerrainAgent::behave(){
 
     /*for( int i = 0 ; i < this->getXSize() ; i ++ ){

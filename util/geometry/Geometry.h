@@ -38,7 +38,9 @@ public:
     GWSCoordinate getCentroid() const;
 
     // SPATIAL COMPARATORS
+    bool isInBounds( double minX , double maxX , double minY , double maxY ) const;
     bool intersects( const GWSGeometry* other) const;
+    bool intersects( double minX , double maxX , double minY , double maxY ) const;
     bool equals( const GWSGeometry* other ) const;
     GWSLengthUnit getDistance( const GWSGeometry* other ) const;
 

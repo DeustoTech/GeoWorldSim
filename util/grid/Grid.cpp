@@ -7,8 +7,8 @@
 #include <QDebug>
 
 #include "../../agent/Agent.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
-//#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
 QString GWSGrid::GRID_MAX_VALUE_PROP = "grid_max_value";
 QString GWSGrid::GRID_MIN_VALUE_PROP = "grid_min_value";
@@ -49,10 +49,10 @@ QJsonObject GWSGrid::serialize() const{
     QJsonArray geometries;
 
     // BOUNDS
-    double left = agent->getGeometryMinX();
-    double right = agent->getGeometryMaxX();
-    double top = agent->getGeometryMaxY();
-    double bottom = agent->getGeometryMinY();
+    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMinX();
+    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMaxX();
+    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMaxY();
+    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMinY();
 
     for(int i = 0 ; i < this->getGridXSize() ; i++){
         for(int j = 0 ; j < this->getGridYSize() ; j++ ){
@@ -83,88 +83,18 @@ QJsonObject GWSGrid::serialize() const{
         }
     }
     geojson.insert( "geometries" , geometries );
-    json.insert( GWSAgent::GEOMETRY_PROP , geojson );
+    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );
 
     return json;
 }
 
-/*QImage GWSGrid::toImage(const GWSEnvelope image_bounds, int image_width, int image_height) const{
-
-    // Image to be retured
-    QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
-    image.fill( QColor( 0 , 0 , 0 , 0 ) );
-
-    // Painter
-    QPainter painter( &image );
-    painter.setRenderHint( QPainter::Antialiasing );
-    int num_points = 20;
-
-    for( int i = 0 ; i < num_points ; i++ ){
-        for( int j = 0 ; j < num_points ; j++ ){
-
-            double lat_diff = (image_bounds.getMaxY() - image_bounds.getMinY()) / num_points;
-            double lon_diff = (image_bounds.getMaxX() - image_bounds.getMinX()) / num_points;
-
-            GWSCoordinate coor = GWSCoordinate( image_bounds.getMinX() + (j*lon_diff) , image_bounds.getMinY() + (i*lat_diff) );
-
-            double value = this->getValue( coor );
-
-            double diff_max = this->getMaxValue() - this->getMinValue();
-            QPoint p = ImageCoordinatesConversor::reprojectPoint( coor->getY() , coor->getX() , image_bounds.getMaxY() , image_bounds.getMinY() , image_bounds.getMaxX() , image_bounds.getMinX() , image_width , image_height );
-
-            if ( value == value && value <= this->getMaxValue() && value >= this->getMinValue() ){
-
-                QColor fill = QColor( qFloor( 255 * (value / diff_max ) ) , qFloor( 255 * ( 1 - (value / diff_max) ) ) , 64 , 128 );
-                QPen pen;
-                pen.setColor( fill );
-                pen.setWidth( image_width / num_points );
-                painter.setPen( pen );
-                painter.drawPoint( p );
-
-            } else {
-
-                QPen pen;
-                pen.setColor( QColor("black") );
-                pen.setWidth( 5 );
-                painter.setPen( pen );
-                painter.drawPoint( p );
-
-            }
-        }
-    }*/
-
-    /*int grid_min_x = GridCoordinatesConversor::lon2x( left , grid.getBounds()->getMinX() , grid.getBounds()->getMaxX() , grid.getXSize() );
-    int grid_max_x = GridCoordinatesConversor::lon2x( right , grid.getBounds()->getMinX() , grid.getBounds()->getMaxX() , grid.getXSize() );
-    int grid_min_y = GridCoordinatesConversor::lat2y( bottom , grid.getBounds()->getMinY() , grid.getBounds()->getMaxY() , grid.getYSize() );
-    int grid_max_y = GridCoordinatesConversor::lat2y( top , grid.getBounds()->getMinY() , grid.getBounds()->getMaxY() , grid.getYSize() );
-
-    for(int x = grid_min_x; x <= grid_max_x; x++){
-        for(int y = grid_min_y; y <= grid_max_y; y++){
-
-            geos::geom::Envelope envelope = grid.getCellEnvelope( x, y );
-
-            geos::geom::Coordinate envelope_centroid;
-            envelope.centre( envelope_centroid );
-            double value = grid.getValue( envelope_centroid );
-
-            double diff_max = grid.getMaxValue() - grid.getMinValue();
-            double diff_value = grid.getMaxValue() - value;
-
-            QColor fill;
-            if ( value == value && value <= grid.getMaxValue() && value >= grid.getMinValue() ){
-                fill = QColor( qFloor( 255 * 1 - ( diff_value / diff_max ) ) , qFloor( 255 * diff_value / diff_max ), qFloor( 255 * diff_value / diff_max ) );
-                painter.drawImage( 0 , 0 , QImageExporter::format( envelope , image_bounds , image_width , image_height , fill , fill ) );
-            } else {
-                painter.drawImage( 0 , 0 , QImageExporter::format( envelope , image_bounds , image_width , image_height , QColor("black") , QColor( 0 , 0 , 0 , 0 ) ) );
-            }
-        }
-    }
-    return image;
-}*/
-
 /**********************************************************************
  GETTERS
 **********************************************************************/
+
+GWSAgent* GWSGrid::getAgent() const{
+    return this->agent;
+}
 
 bool GWSGrid::isGridEmpty() const{
     return true;

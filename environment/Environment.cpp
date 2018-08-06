@@ -24,10 +24,11 @@ GWSEnvironment::~GWSEnvironment(){
 **********************************************************************/
 
 void GWSEnvironment::registerAgent(GWSAgent *agent){
-    agent->environments_registerd_in.append( this );
+
     foreach( GWSEnvironment* e , this->sub_environments ){
         e->registerAgent( agent );
     }
+    agent->environments_registerd_in.append( this );
 }
 
 void GWSEnvironment::unregisterAgent(GWSAgent *agent){
