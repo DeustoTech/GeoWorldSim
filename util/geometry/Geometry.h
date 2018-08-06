@@ -11,15 +11,13 @@
 #include "../units/Units.h"
 #include "Coordinate.h"
 
-QT_FORWARD_DECLARE_CLASS(GWSAgent)
-
 using namespace geos::geom;
 
 class GWSGeometry
 {
 
 public:
-    GWSGeometry( GWSAgent* agent );
+    GWSGeometry();
     ~GWSGeometry();
 
     // IMPORTERS
@@ -40,7 +38,9 @@ public:
     GWSCoordinate getCentroid() const;
 
     // SPATIAL COMPARATORS
+    bool isInBounds( double minX , double maxX , double minY , double maxY ) const;
     bool intersects( const GWSGeometry* other) const;
+    bool intersects( double minX , double maxX , double minY , double maxY ) const;
     bool equals( const GWSGeometry* other ) const;
     GWSLengthUnit getDistance( const GWSGeometry* other ) const;
 
@@ -52,9 +52,6 @@ public:
 
 protected:
     GWSGeometry(geos::geom::Geometry* inner_geometry);
-
-    // REF AGENT
-    GWSAgent* agent = Q_NULLPTR;
 
     // INNER GEOMETRY
     geos::geom::Geometry* inner_geometry = Q_NULLPTR;

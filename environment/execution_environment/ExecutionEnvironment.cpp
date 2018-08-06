@@ -42,6 +42,10 @@ QJsonObject GWSExecutionEnvironment::serialize() const{
  GETTERS
 **********************************************************************/
 
+bool GWSExecutionEnvironment::containsAgent(GWSAgent *agent) const{
+    return this->running_agents->contains( agent );
+}
+
 int GWSExecutionEnvironment::getRunningAgentsAmount() const{
     return this->running_agents->getAmount();
 }
@@ -87,7 +91,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     this->running_agents->add( agent );
 
     // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = agent->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<quint64>() - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     if( msecs < 0 ){
         msecs = 0;
     }
@@ -107,7 +111,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
         }
 
         // Run agent
-        agent->setProperty( GWSAgent::RUNNING_PROP , true );
+        agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
         agent->decrementBusy();
         emit agent->agentStartedSignal();
 
@@ -118,7 +122,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
 
     agent->incrementBusy();
-    agent->setProperty( GWSAgent::RUNNING_PROP , false );
+    agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
 
     // Remove from running lists
     GWSEnvironment::unregisterAgent( agent );
@@ -144,8 +148,6 @@ void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
 void GWSExecutionEnvironment::run(){
 
     if( this->isRunning() ){ qDebug() << QString("%1 is already running").arg( this->metaObject()->className() ); return; }
-
-    this->setProperty( GWSAgent::RUNNING_PROP , true );
 
     qInfo() << QString("Running %1").arg( this->metaObject()->className() );
     emit GWSApp::globalInstance()->pushDataSignal( "message" , "Running simulation" );
@@ -175,8 +177,9 @@ void GWSExecutionEnvironment::behave(){
     foreach( GWSAgent* agent , currently_running_agents ){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
-            if( agent->getInternalTime() > 0 ){
-                min_tick = qMin( min_tick , agent->getInternalTime() );
+            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+            if( agent_time > 0 ){
+                min_tick = qMin( min_tick , agent_time );
             }
         }
     }
@@ -189,20 +192,17 @@ void GWSExecutionEnvironment::behave(){
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 
-            if( agent->deleted ){
-                continue;
-            }
+            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
 
-            qint64 agent_next_tick = agent->getInternalTime();
-            if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
+            if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
 
-                    // Set agent to advance to last min_tick, in case it was set to 0
-                    agent->setInternalTime( qMax( agent_next_tick , min_tick ) );
+                // Set agent to advance to last min_tick, in case it was set to 0
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , qMax( agent_next_tick , min_tick ) );
 
-                    // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
-                    agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
+                // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
+                agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
 
-                    ticked_agents++;
+                ticked_agents++;
             }
         }
     }
@@ -225,7 +225,6 @@ void GWSExecutionEnvironment::behave(){
 void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
-    this->setProperty( GWSAgent::RUNNING_PROP , false );
 
     qInfo() << QString("Stopping %1").arg( this->metaObject()->className() );
     this->timer->deleteLater();

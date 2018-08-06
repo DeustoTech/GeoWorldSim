@@ -24,6 +24,7 @@ struct GWSCoordinate {
     double getZ() const;
     GWSLengthUnit getDistance( GWSCoordinate other ) const;
     double getLatLngDistance( GWSCoordinate other ) const;
+    bool isInBounds( double minX , double maxX , double minY , double maxY) const;
 
     // OPERATORS
     bool operator == (const GWSCoordinate&) const;

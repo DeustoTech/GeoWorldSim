@@ -1,27 +1,28 @@
 #include "SheepAgent.h"
 
-#include <QTimer>
 
 #include "math.h"
 #include <algorithm>    // std::count_if
 #include "../../app/App.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
+
 #include "TerrainAgent.h"
-#include <ctime>
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
     qInfo() << "SHEEP";
 
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-    terrain_agent->watchAgentGeometry( this );
+    terrain_agent->enter( this );
 }
 
 SheepAgent::~SheepAgent(){
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-    terrain_agent->removeGridCellValue( this->getCentroid().getX() , this->getCentroid().getY() , this );
+    terrain_agent->exit( this );
 }
 
 void SheepAgent::behave()
@@ -96,7 +97,7 @@ void SheepAgent::behave()
               //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
               /* Move */
-              this->transformMove( GWSCoordinate( TargetX , TargetY ) );
+              GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
               /* Final position of the sheep */
               qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -141,7 +142,7 @@ void SheepAgent::behave()
           //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
           /* Move */
-          this->transformMove( GWSCoordinate( TargetX , TargetY ) );
+          GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
           /* Final position of the agent*/
           qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -179,7 +180,7 @@ void SheepAgent::behave()
              /* Set lamb's properties */
              lambAgent->setProperty("energy", 200.);
              lambAgent->setProperty("@type", "SheepAgent");
-             lambAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
+             GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
              lambAgent->icon_url = this->icon_url;
 
              /* Notify the grid of new lamb's position */

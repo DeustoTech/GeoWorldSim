@@ -9,16 +9,17 @@
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
-#include "../../environment/Environment.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
 
-QString GWSAgent::RUNNING_PROP = "running";
-QString GWSAgent::GEOMETRY_PROP = "geo";
-QString GWSAgent::STYLE_PROP = "style";
-QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
+#include "../../environment/Environment.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
-GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , GWSStyle( this ) , busy_counter(0) {
+QString GWSAgent::STYLE_PROP = "style";
+
+GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSStyle( this ) , busy_counter(0) {
 }
 
 GWSAgent::~GWSAgent() {
@@ -46,6 +47,9 @@ void GWSAgent::deserialize(QJsonObject json){
 
     GWSObject::deserialize( json );
 
+    // Add to environments
+    GWSEnvironment::globalInstance()->registerAgent( this );
+
     // SKILLS
     QJsonArray jskills = json.value("@skills").toArray();
     foreach( QJsonValue js , jskills ){
@@ -62,14 +66,24 @@ void GWSAgent::deserialize(QJsonObject json){
         this->addBehaviour( behaviour );
     }
 
+    // INTERNAL TIME
+    if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
+        GWSTimeEnvironment::globalInstance()->registerAgent( this , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
+    }
+
     // GEOMETRY
-    if( !json.value( GEOMETRY_PROP ).isNull() ){
-        GWSGeometry::deserialize( json.value( GEOMETRY_PROP ).toObject() );
+    if( json.keys().contains( GWSPhysicalEnvironment::GEOMETRY_PROP ) ){
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( this , json.value( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     }
 
     // STYLE
     if( !json.value( STYLE_PROP ).isNull() ){
         GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );
+    }
+
+    // RUNNING
+    if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
+        GWSExecutionEnvironment::globalInstance()->registerAgent( this );
     }
 }
 
@@ -98,8 +112,14 @@ QJsonObject GWSAgent::serialize() const{
 
     // BEHAVIOUR
 
+    // INTERNAL TIME
+    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );
+
     // GEOMETRY
-    json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
+    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this );
+    if( geom ){
+        json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
+    }
 
     // STYLE
     json.insert( STYLE_PROP , GWSStyle::serialize() );
@@ -124,16 +144,8 @@ QList<GWSEnvironment*> GWSAgent::getEnvironments() const{
     return this->environments_registerd_in;
 }
 
-bool GWSAgent::isRunning() const{
-    return this->getProperty( GWSAgent::RUNNING_PROP ).toBool();
-}
-
 bool GWSAgent::isBusy() const{
     return busy_counter > 0;
-}
-
-qint64 GWSAgent::getInternalTime() const{
-    return this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
 /**
@@ -141,12 +153,9 @@ qint64 GWSAgent::getInternalTime() const{
  * Representative Coordinate of this agents location, USED FOR GRAPHS AND ROUTING
  * @return
  */
-/*GWSCoordinate GWSAgent::getRepresentativeCoordinate() const{
-    if( this->geometry ){
-        return this->geometry->getRepresentativeCoordinate();
-    }
-    return GWSCoordinate(0,0,0);
-}*/
+GWSCoordinate GWSAgent::getCentroid() const{
+    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+}
 
 bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
@@ -187,15 +196,6 @@ void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
     this->behaviours.append( behaviour );
 }
 
-void GWSAgent::setInternalTime( const qint64 datetime ){
-    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
-}
-
-void GWSAgent::incrementInternalTime( GWSTimeUnit seconds ){
-    qint64 datetime = this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
-    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
-}
-
 void GWSAgent::incrementBusy(){
     this->busy_counter++;
 }
@@ -223,11 +223,6 @@ void GWSAgent::removeSkill(GWSSkill *skill){
  * This method is a wrapper slot to be invoked by the Environment for behave() to be executed in the agents thread.
  **/
 void GWSAgent::tick(){
-
-    if( !this->isRunning() ){
-        qInfo() << "Agent is not running, skipping behaviour";
-        return;
-    }
 
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
 

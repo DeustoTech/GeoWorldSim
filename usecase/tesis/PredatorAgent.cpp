@@ -1,6 +1,8 @@
 #include "PredatorAgent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 #include "TerrainAgent.h"
 
 
@@ -9,14 +11,14 @@ PredatorAgent::PredatorAgent(QObject *parent) : GWSAgent( parent)
     qInfo() << "WOLF";
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-    terrain_agent->watchAgentGeometry( this );
+    terrain_agent->enter( this );
 }
 
 
 PredatorAgent::~PredatorAgent(){
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-    terrain_agent->removeGridCellValue( this->getCentroid().getX() , this->getCentroid().getY() , this );
+    terrain_agent->exit( this );
 }
 
 
@@ -95,7 +97,7 @@ void PredatorAgent::behave()
                 //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
                 /* Move */
-                this->transformMove( GWSCoordinate( TargetX , TargetY ) );
+                GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
                 /* Final position of the agent */
                 qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -119,7 +121,7 @@ void PredatorAgent::behave()
                 /* Unregister the prey */
                 qInfo() << "RIP" << targetCellOccupation.at(i)->getProperty("@id").toString();
                 //terrain_agent->removeGridCellValue(targetCellOccupation.at(i)->getCentroid().getX(), targetCellOccupation.at(i)->getCentroid().getY(), targetCellOccupation.at(i));
-                QTimer::singleShot( 0 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
+                QTimer::singleShot( 1000 , targetCellOccupation.at(i) , &GWSAgent::deleteLater );
                 return;
                 }
             }
@@ -141,7 +143,7 @@ void PredatorAgent::behave()
             //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
             /* Move */
-            this->transformMove( GWSCoordinate( TargetX , TargetY ) );
+            GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
             /* Final position of the agent */
             qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -165,7 +167,7 @@ void PredatorAgent::behave()
            //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
 
            /* Move */
-           this->transformMove( GWSCoordinate( TargetX , TargetY ) );
+           GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
 
            /* Final position of the agent */
            qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
@@ -192,7 +194,7 @@ void PredatorAgent::behave()
            /* Set cub's properties */
            cubAgent->setProperty("energy", 200.);
            cubAgent->setProperty("@type", "PredatorAgent");
-           cubAgent->transformMove( GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
+           GWSPhysicalEnvironment::globalInstance()->transformMove( cubAgent , GWSCoordinate( this->getCentroid().getX() , this->getCentroid().getY() ) );
            cubAgent->icon_url = this->icon_url;
            /* Notify the grid of new cub's position */
            //terrain_agent->addGridCellValue(cubAgent->getCentroid().getX(), cubAgent->getCentroid().getY(), cubAgent);

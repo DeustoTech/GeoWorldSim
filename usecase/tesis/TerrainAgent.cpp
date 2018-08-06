@@ -1,6 +1,7 @@
 #include "TerrainAgent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
 TerrainAgent::TerrainAgent( QObject *parent ) : GWSAgent( parent ) , GWSAgentGrid( this ) {
 qInfo() << "PLAYGROUND";
@@ -14,18 +15,13 @@ void TerrainAgent::deserialize(QJsonObject json){
     GWSAgentGrid::deserialize( json );
 }
 
-void TerrainAgent::watchAgentGeometry(GWSAgent * agent){
-
-    agent->connect( agent , &GWSAgent::agentGeometryAboutToChangeSignal , [ agent,this ](){
-        qDebug() << "AUTO REMOVING";
-        this->removeGridCellValue( agent->getCentroid().getX() , agent->getCentroid().getY() , agent );
-    });
-
-    agent->connect( agent , &GWSAgent::agentGeometryChangedSignal , [ agent,this ](){
-        qDebug() << "AUTO ADDING";
-         this->addGridCellValue( agent->getCentroid().getX() , agent->getCentroid().getY() , agent );
-    });
-
+QJsonObject TerrainAgent::serialize() const{
+    QJsonObject json = GWSAgent::serialize();
+    QJsonObject gridjson = GWSAgentGrid::serialize();
+    foreach( QString key , gridjson.keys() ){
+        json.insert( key , gridjson.value( key ) );
+    }
+    return json;
 }
 
 void TerrainAgent::behave(){
@@ -36,6 +32,7 @@ void TerrainAgent::behave(){
         }
     }*/
 
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , 5 );
     //this->incrementInternalTime( 5 );
 }
 

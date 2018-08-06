@@ -5,6 +5,7 @@
 #include "../../agent/Agent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
@@ -60,7 +61,7 @@ void GWSExternalListener::messageReceived(const QString message){
 
         QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
-        QJsonObject geo = json.value( GWSAgent::GEOMETRY_PROP ).toObject();
+        QJsonObject geo = json.value( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
 
         GWSAgent* agent = Q_NULLPTR;
 
@@ -80,13 +81,6 @@ void GWSExternalListener::messageReceived(const QString message){
 
         if( !agent ){
             agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json ) );
-        }
-
-        if( agent ){
-            GWSEnvironment::globalInstance()->registerAgent( agent );
-            if( agent->isRunning() ){
-                GWSExecutionEnvironment::globalInstance()->registerAgent( agent );
-            }
         }
     }
 

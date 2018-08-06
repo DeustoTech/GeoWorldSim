@@ -33,6 +33,10 @@ double GWSCoordinate::getLatLngDistance(GWSCoordinate other) const{
             .distance( geos::geom::Coordinate( other.x , other.y , other.z ) );
 }
 
+bool GWSCoordinate::isInBounds(double minX, double maxX, double minY, double maxY) const{
+    return minX <= this->getX() && this->getX() <= maxX && minY <= this->getY() && this->getY() <= maxY;
+}
+
 /**********************************************************************
  OPERATORS
 **********************************************************************/

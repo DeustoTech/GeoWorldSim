@@ -23,6 +23,7 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
+    bool containsAgent( GWSAgent* agent ) const;
     int getRunningAgentsAmount() const;
     QList<GWSAgent*> getRunningAgents() const;
     template <class T> QList<T*> getRunningAgentsByClass( QString class_name ) const;
