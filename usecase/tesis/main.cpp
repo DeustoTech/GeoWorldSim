@@ -56,8 +56,9 @@ int main(int argc, char* argv[])
 
     QJsonDocument jsonTerrain = QJsonDocument::fromJson( "{ \"@type\" : \"TerrainAgent\" , "
                                                    "\"@id\" : \"ThePlayground\" ,"
-                                                   "\"grid_x_size\" : 100, "
-                                                   "\"grid_y_size\" : 100  "
+                                                   "\"grid_x_size\" : 50, "
+                                                   "\"grid_y_size\" : 50, "
+                                                   "\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [ [[0,0] , [0,50] , [50,50] , [50,0] , [0,0]] ] } "
                                                    "}"
                                                    );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
@@ -74,7 +75,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 100 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 100.0 , "
@@ -102,7 +103,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 100 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "

@@ -16,6 +16,7 @@ public:
 
     // IMPORTERS
     void deserialize(QJsonObject json);
+    virtual QJsonObject serialize() const;
 
     virtual void behave();
 };

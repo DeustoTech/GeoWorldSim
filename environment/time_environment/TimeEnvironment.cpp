@@ -3,6 +3,8 @@
 
 #include "TimeEnvironment.h"
 
+QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "internal_time";
+
 GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     static GWSTimeEnvironment instance;
     return &instance;
@@ -51,6 +53,14 @@ double GWSTimeEnvironment::getTimeSpeed() const{
     return this->time_speed;
 }
 
+qint64 GWSTimeEnvironment::getAgentInternalTime(const GWSAgent *agent) const{
+    return this->getAgentInternalTime( agent->getId() );
+}
+
+qint64 GWSTimeEnvironment::getAgentInternalTime(QString agent_id) const{
+    return this->agent_times.value( agent_id , 0 );
+}
+
 /**********************************************************************
  SETTERS
 **********************************************************************/
@@ -67,14 +77,24 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
+void GWSTimeEnvironment::setAgentInternalTime(const GWSAgent *agent, const qint64 datetime){
+    this->agent_times.insert( agent->getId() , datetime );
+}
+
+void GWSTimeEnvironment::incrementAgentInternalTime(const GWSAgent* agent , GWSTimeUnit seconds){
+    this->agent_times.insert( agent->getId() , this->agent_times.value( agent->getId() , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
+}
+
 /**********************************************************************
  METHODS
 **********************************************************************/
 
 void GWSTimeEnvironment::registerAgent(GWSAgent *agent){
     GWSEnvironment::registerAgent( agent );
+    this->agent_times.insert( agent->getId() , this->getCurrentDateTime() );
 }
 
 void GWSTimeEnvironment::unregisterAgent(GWSAgent *agent){
     GWSEnvironment::unregisterAgent( agent );
+    this->agent_times.remove( agent->getId() );
 }

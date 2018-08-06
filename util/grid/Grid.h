@@ -41,6 +41,7 @@ public:
     int getGridYSize() const;
     double getGridMaxValue() const;
     double getGridMinValue() const;
+    virtual double getGridCellValue( int grid_x , int grid_y ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
     // SETTERS

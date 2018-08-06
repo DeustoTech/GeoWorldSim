@@ -9,16 +9,16 @@
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
-#include "../../environment/Environment.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
 
-QString GWSAgent::RUNNING_PROP = "running";
-QString GWSAgent::GEOMETRY_PROP = "geo";
-QString GWSAgent::STYLE_PROP = "style";
-QString GWSAgent::INTERNAL_TIME_PROP = "internal_time";
+#include "../../environment/Environment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
-GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSGeometry( this ) , GWSStyle( this ) , busy_counter(0) {
+QString GWSAgent::RUNNING_PROP = "running";
+QString GWSAgent::STYLE_PROP = "style";
+
+GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSStyle( this ) , busy_counter(0) {
 }
 
 GWSAgent::~GWSAgent() {
@@ -62,6 +62,11 @@ void GWSAgent::deserialize(QJsonObject json){
         this->addBehaviour( behaviour );
     }
 
+    // INTERNAL TIME
+    if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
+
+    }
+
     // GEOMETRY
     if( !json.value( GEOMETRY_PROP ).isNull() ){
         GWSGeometry::deserialize( json.value( GEOMETRY_PROP ).toObject() );
@@ -98,6 +103,9 @@ QJsonObject GWSAgent::serialize() const{
 
     // BEHAVIOUR
 
+    // INTERNAL TIME
+    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );
+
     // GEOMETRY
     json.insert( GEOMETRY_PROP , GWSGeometry::serialize() );
 
@@ -130,10 +138,6 @@ bool GWSAgent::isRunning() const{
 
 bool GWSAgent::isBusy() const{
     return busy_counter > 0;
-}
-
-qint64 GWSAgent::getInternalTime() const{
-    return this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
 }
 
 /**
@@ -185,15 +189,6 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
 
 void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
     this->behaviours.append( behaviour );
-}
-
-void GWSAgent::setInternalTime( const qint64 datetime ){
-    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime );
-}
-
-void GWSAgent::incrementInternalTime( GWSTimeUnit seconds ){
-    qint64 datetime = this->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<qint64>();
-    this->setProperty( GWSAgent::INTERNAL_TIME_PROP , datetime += ( qMax( 0.01 , seconds.number() ) * 1000 ) );  // Min 10 milliseconds
 }
 
 void GWSAgent::incrementBusy(){

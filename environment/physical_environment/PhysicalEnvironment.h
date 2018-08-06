@@ -3,13 +3,10 @@
 
 #include <QMutex>
 
+#include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"
-
-QT_FORWARD_DECLARE_CLASS(GWSGeometry)
-
-using namespace geos::geom;
 
 class GWSPhysicalEnvironment : public GWSEnvironment
 {
@@ -18,7 +15,12 @@ class GWSPhysicalEnvironment : public GWSEnvironment
 public:
     static GWSPhysicalEnvironment* globalInstance();
 
+    // PROPERTIES
+    static QString GEOMETRY_PROP = "geo";
+
     // SPATIAL GETTERS
+    const GWSGeometry* getAgentGeometry( const GWSAgent* agent ) const;
+    const GWSGeometry* getAgentGeometry( QString agent_id ) const;
     QList<GWSAgent*> orderByDistance( GWSAgent* source , QList<GWSAgent*> agents ) const;
     //QList<GWSAgent*> getAgentsInsideEnvelope( const GWSEnvelope envelope, QString class_name ) const;
     //QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
@@ -46,6 +48,9 @@ private:
 
     // Mutex, for avoiding concurrency
     QMutex mutex;
+
+    // Agent geometries
+    QMap<QString , GWSGeometry> agent_geometries;
 };
 
 #endif // GWSPHYSICALENVIRONMENT_H

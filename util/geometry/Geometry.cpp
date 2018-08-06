@@ -17,8 +17,7 @@
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSGeometry::GWSGeometry( GWSAgent* agent ){
-    this->agent = agent;
+GWSGeometry::GWSGeometry(){
 }
 
 GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ){

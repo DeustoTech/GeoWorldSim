@@ -15,7 +15,7 @@ bool TesisBehaviour::behave(){
 
     qDebug() << 1;
     this->setProperty( COUTDOWN_PROP , this->getProperty( COUTDOWN_PROP ).toInt() - 1 );
-    this->getAgent()->incrementInternalTime( 1 );
+    //this->getAgent()->incrementInternalTime( 1 );
 
     this->getAgent()->decrementBusy();
     return true;

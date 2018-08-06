@@ -87,7 +87,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     this->running_agents->add( agent );
 
     // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = agent->getProperty( GWSAgent::INTERNAL_TIME_PROP ).value<quint64>() - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     if( msecs < 0 ){
         msecs = 0;
     }
@@ -175,8 +175,9 @@ void GWSExecutionEnvironment::behave(){
     foreach( GWSAgent* agent , currently_running_agents ){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
-            if( agent->getInternalTime() > 0 ){
-                min_tick = qMin( min_tick , agent->getInternalTime() );
+            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+            if( agent_time > 0 ){
+                min_tick = qMin( min_tick , agent_time );
             }
         }
     }
@@ -189,16 +190,16 @@ void GWSExecutionEnvironment::behave(){
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 
-            qint64 agent_next_tick = agent->getInternalTime();
+            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
             if( agent && !agent->deleted && agent->isRunning() && !agent->isBusy() && agent_next_tick <= limit ){
 
-                    // Set agent to advance to last min_tick, in case it was set to 0
-                    agent->setInternalTime( qMax( agent_next_tick , min_tick ) );
+                // Set agent to advance to last min_tick, in case it was set to 0
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , qMax( agent_next_tick , min_tick ) );
 
-                    // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
-                    agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
+                // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
+                agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
 
-                    ticked_agents++;
+                ticked_agents++;
             }
         }
     }

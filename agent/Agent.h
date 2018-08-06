@@ -35,7 +35,7 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 // Declare Coordinate to be used as QMETAPROPERTY
 // Q_DECLARE_METATYPE(GWSGeometry)
 
-class GWSAgent : public GWSObject , public GWSGeometry , public GWSStyle
+class GWSAgent : public GWSObject , public GWSStyle
 {
     friend class GWSEnvironment; // Environment will be able to overwrite the attributes
     friend class GWSPhysicalEnvironment;
@@ -51,13 +51,6 @@ public:
     // PROPERTIES
     static QString RUNNING_PROP;
     static QString STYLE_PROP;
-    static QString GEOMETRY_PROP;
-        /**
-        * @brief next_operation_datetime Agent's tick will be called when this datetime has been reached
-        * To be compared with the TimeEnvironment and call this agent's tick
-        * IMPORTANT Given in MSecsSinceEpoch
-        */
-    static QString INTERNAL_TIME_PROP;
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
@@ -70,7 +63,6 @@ public:
     QList<GWSEnvironment*> getEnvironments() const;
     bool isRunning() const;
     bool isBusy() const;
-    qint64 getInternalTime() const;
 
     // SKILLS
     bool hasSkill( QString class_name ) const;
@@ -80,10 +72,7 @@ public:
     template <class T> QList<T*> getSkills( QString class_name ) const;
 
     // SETTERS
-    //virtual void setGeometry( GSSGeometry* geometry );
     void addBehaviour( GWSBehaviour* behaviour );
-    void setInternalTime( qint64 datetime );
-    void incrementInternalTime( GWSTimeUnit seconds = GWSTimeUnit(0) );
     void incrementBusy();
     void decrementBusy();
     void addSkill( GWSSkill* skill );

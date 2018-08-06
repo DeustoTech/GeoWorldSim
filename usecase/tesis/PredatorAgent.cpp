@@ -1,6 +1,7 @@
 #include "PredatorAgent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 #include "TerrainAgent.h"
 
 

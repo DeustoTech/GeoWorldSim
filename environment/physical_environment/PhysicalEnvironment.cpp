@@ -1,6 +1,8 @@
 
 #include "PhysicalEnvironment.h"
 
+QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geo";
+
 GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
     static GWSPhysicalEnvironment instance;
     return &instance;
@@ -18,6 +20,14 @@ GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
 /***********************************************************************/
 // GETTERS
 /***********************************************************************/
+
+const GWSGeometry* GWSPhysicalEnvironment::getAgentGeometry(const GWSAgent *agent) const{
+    return this->getAgentGeometry( agent->getId() );
+}
+
+const GWSGeometry* GWSPhysicalEnvironment::getAgentGeometry(QString agent_id) const{
+    return this->agent_geometries.value( agent_id , 0 );
+}
 
 QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList<GWSAgent*> agents) const{
     QList<GWSAgent*> ordered;
@@ -178,11 +188,6 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 
 void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
 
-    if( !agent->isGeometryValid() ){
-        qWarning() << QString("Tried to add agent %1 %2 without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        return;
-    }
-
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){
             this->spatial_index.insert( s , new GWSQuadtree() );
@@ -196,6 +201,8 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent){
     }
     this->mutex.unlock();
 
+    this->agent_geometries.insert( agent->getId() , GWSGeometry() );
+
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
@@ -206,6 +213,9 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
         this->spatial_index[ s ]->remove( agent );
     }
     this->mutex.unlock();
+
+    delete this->agent_geometries.value( agent->getId() );
+    this->agent_geometries.remove( agent->getId() );
 
 }
 

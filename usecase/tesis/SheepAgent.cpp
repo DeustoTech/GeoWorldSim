@@ -1,14 +1,14 @@
 #include "SheepAgent.h"
 
-#include <QTimer>
 
 #include "math.h"
 #include <algorithm>    // std::count_if
 #include "../../app/App.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
+
 #include "TerrainAgent.h"
-#include <ctime>
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
     qInfo() << "SHEEP";

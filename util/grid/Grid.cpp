@@ -6,6 +6,7 @@
 #include <QtMath>
 #include <QDebug>
 
+#include "../../agent/Agent.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
@@ -42,6 +43,48 @@ QJsonObject GWSGrid::serialize() const{
     json.insert( GRID_MIN_VALUE_PROP , this->min_value );
     json.insert( GRID_X_SIZE_PROP , (int)this->x_size );
     json.insert( GRID_Y_SIZE_PROP , (int)this->y_size );
+
+    QJsonObject geojson;
+    geojson.insert( "type" , "GeometryCollection" );
+    QJsonArray geometries;
+
+    // BOUNDS
+    double left = agent->getGeometryMinX();
+    double right = agent->getGeometryMaxX();
+    double top = agent->getGeometryMaxY();
+    double bottom = agent->getGeometryMinY();
+
+    for(int i = 0 ; i < this->getGridXSize() ; i++){
+        for(int j = 0 ; j < this->getGridYSize() ; j++ ){
+            QJsonObject geometry;
+            geometry.insert( "type" , "Polygon" );
+            QJsonArray coordinates;
+
+            double lon1 = GWSGridCoordinatesConversor::x2lon( i , left , right , this->getGridXSize() );
+            double lat1 = GWSGridCoordinatesConversor::y2lat( j , bottom , top , this->getGridYSize() );
+            double lon2 = GWSGridCoordinatesConversor::x2lon( i+1 , left , right , this->getGridXSize() );
+            double lat2 = GWSGridCoordinatesConversor::y2lat( j+1 , bottom , top , this->getGridYSize() );
+
+            // COOR1
+            QJsonArray coor1; coor1 << lon1 << lat1;
+            QJsonArray coor2; coor2 << lon1 << lat2;
+            QJsonArray coor3; coor3 << lon2 << lat2;
+            QJsonArray coor4; coor4 << lon2 << lat1;
+
+            coordinates << coor1 << coor2 << coor3 << coor4 << coor1;
+
+            QJsonArray polygons; polygons << coordinates;
+            geometry.insert( "coordinates" , polygons );
+
+            QJsonObject properties; properties.insert( "color" , "#00ff00" );
+            geometry.insert( "properties" , properties );
+
+            geometries.append( geometry );
+        }
+    }
+    geojson.insert( "geometries" , geometries );
+    json.insert( GWSAgent::GEOMETRY_PROP , geojson );
+
     return json;
 }
 
@@ -172,6 +215,12 @@ double GWSGrid::getGridMaxValue() const {
 
 double GWSGrid::getGridMinValue() const{
     return this->min_value;
+}
+
+double GWSGrid::getGridCellValue(int grid_x, int grid_y) const{
+    Q_UNUSED( grid_x );
+    Q_UNUSED( grid_y );
+    return 0;
 }
 
 /**********************************************************************
