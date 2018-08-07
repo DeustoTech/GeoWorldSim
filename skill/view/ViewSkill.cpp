@@ -32,5 +32,5 @@ QList<GWSAgent*> ViewSkill::getViewingAgents(){
     geom->transformMove( GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid() );
 
     // Query viewing agents
-    GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( geom , agent_type );
+    return GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( geom , agent_type );
 }
