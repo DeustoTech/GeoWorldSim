@@ -217,8 +217,8 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
     }
     this->mutex.unlock();
 
-    delete this->agent_geometries.value( agent->getId() );
-    this->agent_geometries.remove( agent->getId() );
+    //delete this->agent_geometries.value( agent->getId() );
+    //this->agent_geometries.remove( agent->getId() );
 
 }
 

@@ -13,6 +13,7 @@
 
 // Agents
 #include "TerrainAgent.h"
+#include "PastureAgent.h"
 #include "SheepAgent.h"
 #include "PredatorAgent.h"
 
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
 
     // Init Object Factory
     GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PastureAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
 
@@ -65,6 +67,31 @@ int main(int argc, char* argv[])
                                                    );
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
+
+
+    /* -------------
+     * Grass Agents
+     * -------------*/
+
+    // Populate a zone of size A x B with GrassAgents
+
+    for( int i = 0 ; i < 10 ; i ++ ){
+       for( int j = 0 ; j < 10 ; j++ ){
+
+           QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , "
+                                                       "\"energy\" : 100, "
+                                                       " \"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } }")
+                                                       .arg( i )
+                                                       .arg( j )
+                                                       .toLatin1()
+                                                       );
+
+           PastureAgent* pasture = dynamic_cast<PastureAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ) );
+           GWSExecutionEnvironment::globalInstance()->registerAgent( pasture );
+    }
+    }
+
 
 
     /* ----------
