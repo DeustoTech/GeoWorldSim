@@ -13,6 +13,7 @@
 
 // Agents
 #include "TerrainAgent.h"
+#include "PastureAgent.h"
 #include "SheepAgent.h"
 #include "PredatorAgent.h"
 
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
 
     // Init Object Factory
     GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PastureAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
 
@@ -66,9 +68,30 @@ int main(int argc, char* argv[])
     TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
     GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
 
-   // terrain->setGridSize(200, 200);
 
-    qInfo()<< "I am a GWSAgent of" << terrain->property("@type").toString() << "type.";
+    /* -------------
+     * Grass Agents
+     * -------------*/
+
+    // Populate a zone of size A x B with GrassAgents
+
+    for( int i = 0 ; i < 10 ; i ++ ){
+       for( int j = 0 ; j < 10 ; j++ ){
+
+           QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , "
+                                                       "\"energy\" : 100, "
+                                                       " \"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } }")
+                                                       .arg( i )
+                                                       .arg( j )
+                                                       .toLatin1()
+                                                       );
+
+           PastureAgent* pasture = dynamic_cast<PastureAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ) );
+           GWSExecutionEnvironment::globalInstance()->registerAgent( pasture );
+    }
+    }
+
 
 
     /* ----------
@@ -88,10 +111,6 @@ int main(int argc, char* argv[])
                                                        );
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
-        qInfo()<< "I am a GWSAgent of" << sheep->getProperty( GWSAgent::GWS_TYPE_PROP ).toString() << "type.";
-
-        /* Notify the grid of the presence of a sheep at current position*/
-        //terrain->addGridCellValue(sheep->getCentroid().getX(), sheep->getCentroid().getY(), sheep);
 
         GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
 
@@ -117,8 +136,6 @@ int main(int argc, char* argv[])
 
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
 
-        /* Notify the grid of the presence of a wolf at current position */
-        //terrain->addGridCellValue( predator->getCentroid().getX(), predator->getCentroid().getY(), predator );
 
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 

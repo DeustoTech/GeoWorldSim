@@ -12,7 +12,6 @@
 #include "TerrainAgent.h"
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
-    qInfo() << "SHEEP";
 
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
     TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
@@ -39,7 +38,7 @@ void SheepAgent::behave()
 
     /* Number of agents in the simulation (all types) */
     qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
-    //qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getByClass(SheepAgent::staticMetaObject.className()).size() << "sheeps.";
+
 
     /* Register Terrain Agent so that we can add our sheep to a particular cell of the grid */
     GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
@@ -48,8 +47,6 @@ void SheepAgent::behave()
 
     /* Get Sheep's cell_X and cell_y and original cell occupation */
     qInfo() << "I am" << this->getProperty("@id").toString();
-    //qInfo() << "Original cell = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-    //qInfo() << "Occupation of original cell = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
 
     /* Move randomly through random index generator */
@@ -70,7 +67,6 @@ void SheepAgent::behave()
     if ((TargetX == 0) && (TargetY == 0)) /* Sometimes the sheep will choose to stay on same position */
        {
        qInfo() << "You choose to stay at the same position. You will eventually die of starvation..";
-       //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
        qInfo() << "";
        this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble() /6.);
        qInfo() << "Energy = " << this->getProperty("energy").toDouble();
@@ -80,7 +76,6 @@ void SheepAgent::behave()
        /* Get target cell occupation through AgentGrid methods */
        GWSCoordinate centroid = GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
        QList<GWSAgent*> targetCellOccupation = terrain_agent->getGridCellValue( centroid.getX() + TargetX, centroid.getY() + TargetY );
-       //qInfo()  << "Target cell occupation = " << targetCellOccupation;
 
        int sheepOccupation = 0;
 
@@ -94,19 +89,7 @@ void SheepAgent::behave()
            if (!targetCellOccupation.at(i)->deleted && targetCellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
               {
               /* You move to die*/
-
-              /* Notify the grid that the sheep is leaving */
-              //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-
-              /* Move */
               GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
-
-              /* Final position of the sheep */
-              //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
-              /* Notify the grid of the sheep's new position */
-              //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-              //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
 
               qInfo() << "Oh no! You become food...";
 
@@ -119,6 +102,7 @@ void SheepAgent::behave()
 
               /* Unregister the prey */
               qInfo() << "RIP" << this->getProperty("@id").toString();
+
               terrain_agent->exit( this );
               QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
               return;
@@ -134,24 +118,13 @@ void SheepAgent::behave()
           qInfo() << "";
           this-> setProperty("energy", this->getProperty("energy").toDouble()  - this->getProperty("energy").toDouble() /6.);
           qInfo() << "Energy = " << this->getProperty("energy").toDouble();
-          //return;
           }
        else
           {
           qInfo() << "Target cell not overbooked yet, you can move there!"  ;
 
-          /* Notify the grid that the sheep is leaving */
-          //terrain_agent->removeGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-
           /* Move */
-          GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );
-
-          /* Final position of the agent*/
-          //qInfo() << "Final position = (" << this->getCentroid().getX() << ", " << this->getCentroid().getY() << ")";
-
-          /* Notify the grid of the sheep's new position */
-          //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), this);
-          //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
+          GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX , TargetY ) );       
 
           /* Moving consumes energy */
           double initialEnergy = this->getProperty("energy").toDouble();
@@ -184,11 +157,6 @@ void SheepAgent::behave()
              lambAgent->setProperty("@type", "SheepAgent");
              GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid() );
              lambAgent->icon_url = this->icon_url;
-
-             /* Notify the grid of new lamb's position */
-             //terrain_agent->addGridCellValue(this->getCentroid().getX(), this->getCentroid().getY(), lambAgent);
-             //qInfo() << "Final cell occupation = " << terrain_agent->getGridCellValue(this->getCentroid().getX(), this->getCentroid().getY());
-
              }
 
            qInfo() << "Energy = " << this->getProperty("energy");
@@ -216,28 +184,3 @@ void SheepAgent::behave()
 
 
 
-/*
- *  Generate a list with all the sheeps in the GWS world.
- *  This list allows us to loop over all the existing sheeps
- *  and to check whether they share the same position!
-
-// Loop to see how many sheep are at the target point:
-for (int i = 0; i < sheeps.size(); ++i)
-    {
-    if (
-       // There is a SheepAgent that shares your X coord
-       (sheeps.at(i)->getCentroid().getX() == this->getCentroid().getX() + TargetX)
-       && // ... and your Y coord
-       (sheeps.at(i)->getCentroid().getY() == this->getCentroid().getY() + TargetY)
-       && // ... and it is not yourself
-       (sheeps.at(i)->property("@id") != this->property("@id"))
-       && // ... and it is not dead
-       (sheeps.at(i)->property("running") == "true"))
-       {
-       // Increase the occupation
-       occupation += 1;
-       }
-    }
-
-qDebug() << "Target cell SheepAgent occupation = " << occupation;
-*/
