@@ -22,8 +22,8 @@ public:
     const GWSGeometry* getGeometry( const GWSAgent* agent ) const;
     const GWSGeometry* getGeometry( QString agent_id ) const;
     QList<GWSAgent*> orderByDistance( GWSAgent* source , QList<GWSAgent*> agents ) const;
-    //QList<GWSAgent*> getAgentsInsideEnvelope( const GWSEnvelope envelope, QString class_name ) const;
-    //QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
+    QList<GWSAgent*> getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
+    QList<GWSAgent*> getAgentsIntersecting( const GWSGeometry* geometry, QString class_name ) const;
     GWSAgent* getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     GWSAgent* getNearestAgent( GWSCoordinate coor, QList<GWSAgent*> agents ) const;
     QList<GWSAgent*> getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
@@ -41,7 +41,7 @@ public:
     void transformIntersection(  GWSAgent* agent, const GWSGeometry* other );
 
     // REGISTRATION
-    virtual void registerAgent(GWSAgent *agent , QJsonObject geojson = QJsonObject() );
+    virtual void registerAgent(GWSAgent *agent , GWSGeometry* init_geom = Q_NULLPTR );
     virtual void unregisterAgent(GWSAgent *agent);
 
 private:

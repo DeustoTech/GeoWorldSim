@@ -22,7 +22,8 @@ public:
 
     // GETTERS
     QList<GWSAgent*> getElements( GWSCoordinate coor ) const;
-    QList<GWSAgent*> getElements( GWSGeometry* geometry ) const;
+    QList<GWSAgent*> getElements( const GWSGeometry* geometry ) const;
+    QList<GWSAgent*> getElements( double minX, double maxX, double minY, double maxY ) const;
     GWSAgent* getNearestElement( GWSCoordinate coor ) const;
     GWSAgent* getNearestElement( GWSGeometry* geometry ) const;
 
@@ -31,7 +32,6 @@ public:
     void remove( GWSAgent* agent );
 
 private:
-    QList<GWSAgent*> getElements( double minX, double maxX, double minY, double maxY ) const;
 
     geos::index::quadtree::Quadtree* inner_index;
     QMap<GWSAgent* , geos::geom::Envelope> registered_envelopes;

@@ -71,9 +71,10 @@ void GWSAgent::deserialize(QJsonObject json){
         GWSTimeEnvironment::globalInstance()->registerAgent( this , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
     }
 
-    // GEOMETRY
-    if( json.keys().contains( GWSPhysicalEnvironment::GEOMETRY_PROP ) ){
-        GWSPhysicalEnvironment::globalInstance()->registerAgent( this , json.value( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
+    if( GWSGeometry* geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value<GWSGeometry*>() ){
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( this , geom );
+        this->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
     }
 
     // STYLE

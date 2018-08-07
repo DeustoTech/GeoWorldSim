@@ -19,8 +19,14 @@ QList<GWSAgent *> GWSQuadtree::getElements(GWSCoordinate coor) const{
     return this->getElements( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
 }
 
-QList<GWSAgent *> GWSQuadtree::getElements(GWSGeometry* geometry) const{
-    return this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() );
+QList<GWSAgent *> GWSQuadtree::getElements(const GWSGeometry* geometry) const{
+    QList<GWSAgent *> intersecting_agents;
+    foreach( GWSAgent* a , this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() ) ){
+        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a ) ) ){
+            intersecting_agents.append( a );
+        }
+    }
+    return intersecting_agents;
 }
 
 QList<GWSAgent *> GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{

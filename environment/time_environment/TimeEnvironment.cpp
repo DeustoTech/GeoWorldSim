@@ -89,9 +89,9 @@ void GWSTimeEnvironment::incrementAgentInternalTime(const GWSAgent* agent , GWST
  METHODS
 **********************************************************************/
 
-void GWSTimeEnvironment::registerAgent(GWSAgent *agent, quint64 agent_internal_time) {
+void GWSTimeEnvironment::registerAgent(GWSAgent *agent, quint64 init_internal_time) {
     GWSEnvironment::registerAgent( agent );
-    this->agent_internal_times.insert( agent->getId() , agent_internal_time );
+    this->agent_internal_times.insert( agent->getId() , init_internal_time );
 }
 
 void GWSTimeEnvironment::unregisterAgent(GWSAgent *agent){

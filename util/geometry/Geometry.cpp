@@ -17,10 +17,10 @@
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSGeometry::GWSGeometry(){
+GWSGeometry::GWSGeometry( QObject* parent ) : GWSObject( parent ){
 }
 
-GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ){
+GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ) : GWSObject( Q_NULLPTR ){
     this->inner_geometry = inner_geometry;
 }
 
@@ -39,6 +39,7 @@ void GWSGeometry::deserialize(QJsonObject json){
 
     if( this->inner_geometry ){ delete this->inner_geometry; }
 
+    GWSObject::deserialize( json );
     QString geom_type = json.value("type").toString();
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();
@@ -132,7 +133,7 @@ void GWSGeometry::deserialize(QJsonObject json){
 
 QJsonObject GWSGeometry::serialize() const{
 
-    QJsonObject json_geometry;
+    QJsonObject json_geometry = GWSObject::serialize();
     if( !this->inner_geometry ){ return json_geometry; }
 
     try {

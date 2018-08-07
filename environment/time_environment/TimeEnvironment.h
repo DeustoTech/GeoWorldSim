@@ -45,7 +45,7 @@ public:
     void incrementAgentInternalTime( const GWSAgent* agent , GWSTimeUnit seconds );
 
     // REGISTRATION
-    virtual void registerAgent( GWSAgent* agent , quint64 agent_internal_time = 0 );
+    virtual void registerAgent( GWSAgent* agent , quint64 init_internal_time = 0 );
     virtual void unregisterAgent( GWSAgent* agent );
 
 private:

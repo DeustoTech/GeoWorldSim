@@ -8,16 +8,18 @@
 #include <QImage>
 #include <QColor>
 
+#include "../../object/Object.h"
 #include "../units/Units.h"
 #include "Coordinate.h"
 
 using namespace geos::geom;
 
-class GWSGeometry
+class GWSGeometry : public GWSObject
 {
+    Q_OBJECT
 
 public:
-    GWSGeometry();
+    Q_INVOKABLE explicit GWSGeometry( QObject* parent = Q_NULLPTR );
     ~GWSGeometry();
 
     // IMPORTERS
@@ -69,5 +71,7 @@ public:
     QVector<int> moved_coor_indexes;
     bool finished = false;
 };
+
+Q_DECLARE_METATYPE(GWSGeometry*)
 
 #endif // GWSGEOMETRY_H

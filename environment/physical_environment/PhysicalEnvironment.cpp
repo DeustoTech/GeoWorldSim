@@ -57,34 +57,20 @@ QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList
 }
 
 
-/*QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideEnvelope(const GWSEnvelope envelope, QString class_name) const{
-
-    QList<GWSAgent*> agents;
-
+QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
     if( this->spatial_index.keys().contains(class_name) ){
-        foreach( void * o , this->spatial_index[class_name]->getElements( envelope ) ){
-            GWSAgent* agent = ((GWSAgent*)o);
-            if( envelope.contains( agent->getGeometry()->getEnvelope() ) ){
-                agents.append( agent );
-            }
-        }
+        return this->spatial_index[class_name]->getElements( minX , maxX , minY , maxY );
     }
+    return QList<GWSAgent*>();
+}
 
-    return agents;
-}*/
 
-
-/*QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
-    QList<GWSAgent*> agents;
-
-    // Precisely compare inside geom
-    foreach(GWSAgent* agent , this->getAgentsInsideEnvelope( geometry->getEnvelope() , class_name ) ){
-        if( geometry->intersects( agent->getGeometry() ) ){
-            agents.append( agent );
-        }
+QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
+    if( this->spatial_index.keys().contains( class_name ) ){
+        return this->spatial_index[class_name]->getElements( geometry );
     }
-    return agents;
-}*/
+    return QList<GWSAgent*>();
+}
 
 /**
  * @brief PhysicalEnvironment::getNearestAgents Given a list of geometries and the class_name of agents in the
@@ -187,11 +173,9 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
  METHODS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , QJsonObject geojson){
+void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_geom ){
 
-    GWSGeometry* geom = this->agent_geometries.value( agent->getId() , new GWSGeometry() );
-    geom->deserialize( geojson );
-    this->agent_geometries.insert( agent->getId() , geom );
+    this->agent_geometries.insert( agent->getId() , init_geom ? init_geom : new GWSGeometry() );
 
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){

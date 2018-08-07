@@ -67,8 +67,14 @@ QJsonObject GWSObject::serialize() const{
                 json.insert( property_name , this->getProperty( property_name ).toString() ); break;
             default:
 
-                // case GWSOBJECT
-                if( property_value.typeName() == "GWSObject*" ){
+                // case GWSGeometry
+                if( QString( property_value.typeName() ) == "GWSGeometry*" ){
+                    GWSGeometry* obj = qvariant_cast<GWSGeometry*>( property_value );
+                    json.insert( property_name , obj->serialize() );
+                }
+
+                // case GWSObject
+                else if( QString( property_value.typeName() ) == "GWSObject*" ){
                     GWSObject* obj = qvariant_cast<GWSObject*>( property_value );
                     json.insert( property_name , obj->serializeMini() );
                 }
