@@ -68,6 +68,9 @@ public:
     QList<GWSSkill*> getSkills( QString class_name ) const;
     template <class T> QList<T*> getSkills( QString class_name ) const;
 
+    // BEHAVIOURS
+    GWSBehaviour* getBehaviour( QString id ) const;
+
     // SETTERS
     void addBehaviour( GWSBehaviour* behaviour );
     void incrementBusy();
@@ -96,7 +99,7 @@ protected:
     /**
      * @brief Agent behaviour
      */
-    QList<GWSBehaviour*> behaviours;
+    GWSObjectStorage* behaviours = Q_NULLPTR;
 
     /**
       * Mutex for paralelism

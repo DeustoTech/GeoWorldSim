@@ -17,6 +17,7 @@ public:
     explicit GWSObjectStorage( GWSObject* parent = Q_NULLPTR );
 
     // GETTERS
+    bool isEmpty() const;
     quint64 getAmount() const;
     const QStringList getClasses() const;
 

@@ -12,6 +12,10 @@ class GWSBehaviour : public GWSObject
 public:
     Q_INVOKABLE explicit GWSBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
+    // PROPERTIES
+    static QString INCREMENT_AGENT_TIME_PROP; // In seconds
+    static QString SUB_BEHAVIOURS_PROP;
+
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
 
@@ -20,6 +24,7 @@ public:
 
     // GETTERS
     GWSAgent* getAgent();
+    quint64 getBehavingTime() const;
     GWSBehaviour* getNext();
     virtual bool finished(); // Behaviour finished check
 
@@ -33,9 +38,11 @@ protected:
     GWSBehaviour* next_behaviour = Q_NULLPTR;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
-    bool tick(); // Acts as a behave() wrapper
+    bool tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
     virtual bool behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asyncrhonous
 
+private:
+    quint64 behaving_time = 0;
 };
 
 #endif // GWSBEHAVIOUR_H
