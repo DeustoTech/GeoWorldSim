@@ -90,7 +90,7 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     this->getAgent()->decrementBusy();
 
     // Calculate how much to increment agent internal time
-    qint64 increment_time = this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt();
+    qint64 increment_time = qMax( 10 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() );
     qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
 
     // Compare how much has been spent or if some other behaviour incremented the time
