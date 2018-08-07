@@ -19,6 +19,8 @@
 
 #include "../../skill/view/ViewSkill.h"
 
+#include "../../behaviour/property/IncrementPropertyBehaviour.h"
+
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -52,6 +54,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -64,13 +67,15 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = 0 ; i < 10 ; i ++ ){
-       for( int j = 0 ; j < 10 ; j++ ){
+    for( int i = 0 ; i < 5 ; i ++ ){
+       for( int j = 0 ; j < 5 ; j++ ){
 
-           QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , "
-                                                       "\"energy\" : 100, "
-                                                       " \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } }")
+           QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
+                                                       \"energy\" : 7, \
+                                                       \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
+                                                       \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
+                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1 , \"max\" : 15 , \"increment_time\" : 1000 } ] \
+                                                       } ")
                                                        .arg( i )
                                                        .arg( j )
                                                        .toLatin1()
@@ -88,15 +93,15 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 20 ; i++ ){
+    for( int i = 0 ; i < 5 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 50.0 , "
                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
                                                        "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
-                                                       .arg( qrand() % 50 )
-                                                       .arg( qrand() % 50 )
+                                                       .arg( qrand() % 5 )
+                                                       .arg( qrand() % 5 )
                                                        .toLatin1()
                                                        );
 

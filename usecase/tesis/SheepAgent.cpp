@@ -15,16 +15,11 @@
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
 
-    //GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
-    //TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-    //terrain_agent->enter( this );
+
 }
 
 SheepAgent::~SheepAgent(){
-    //GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
-    //TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
 
-    //terrain_agent->exit( this );
 }
 
 void SheepAgent::behave()
@@ -41,15 +36,8 @@ void SheepAgent::behave()
 
     /* Number of agents in the simulation (all types) */
     qInfo() << "Your GWS has " << GWSAgentEnvironment::globalInstance()->getAmount() << "agents.";
-
-
-    /* Register Terrain Agent so that we can add our sheep to a particular cell of the grid */
-   // GWSAgent* agent = GWSAgentEnvironment::globalInstance()->getByClassAndId(  TerrainAgent::staticMetaObject.className() , "ThePlayground" );
-    //TerrainAgent* terrain_agent = dynamic_cast<TerrainAgent*>( agent );
-
-
-    /* Get Sheep's cell_X and cell_y and original cell occupation */
     qInfo() << "I am" << this->getProperty("@id").toString();
+
 
 
     /* Move randomly through random index generator */
@@ -69,52 +57,55 @@ void SheepAgent::behave()
 
     if ((TargetX == 0) && (TargetY == 0)) /* Sometimes the sheep will choose to stay on same position */
        {
-       qInfo() << "You choose to stay at the same position. You will eventually die of starvation..";
-       qInfo() << "";
-       this-> setProperty("energy", this->getProperty("energy").toDouble() - this->getProperty("energy").toDouble() /6.);
-       qInfo() << "Energy = " << this->getProperty("energy").toDouble();
+       qInfo() << "You choose to stay at the same position. You will eventually die of starvation.";
+       this-> setProperty("energy", this->getProperty("energy").toDouble() * 0.6);
        }
     else /* And sometimes they will choose to move */
        {
-       GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX, TargetY ) );
-       /* Moving consumes energy */
-        double initialEnergy = this->getProperty("energy").toDouble();
-        double moveLosses = initialEnergy / 4.0;
-        double finalEnergy = initialEnergy - moveLosses;
-        this-> setProperty("energy", finalEnergy);
+        // Move
+        GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX, TargetY ) );
+        //qInfo() << "Final position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
+
+        // And see what is around you:
+        QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
+        qInfo() << "Cell Occupation = " << CellOccupation;
 
         int SheepOccupation = 0;
-        int PredatorOccupation = 0;
-        /* Now look at what else is within the cell you just moved to */
-        QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
+
         for (int i = 0; i < CellOccupation.size(); i++)
-             {
-             if (CellOccupation.at(i)->getProperty("@type").toString() == "PastureAgent")
+            {
+            if (CellOccupation.at(i)->getProperty("@type").toString() == "PastureAgent")
                 {
-                // There is grass at your position:
-                double foodGains = 30.;
-                /* Final energy of SheepAgent*/
+                qInfo() << "Sheep's energy before eating = " << this->getProperty("energy");
+                // Eat
+                double foodGains = 1.;
+
+                // Final energy of SheepAgent
                 double finalEnergy = this->getProperty("energy").toDouble() + foodGains;
                 this-> setProperty("energy", finalEnergy);
-                /* Less grass = less energy of PastureAgent */
-                CellOccupation.at(i)->setProperty( "energy", CellOccupation.at(i)->getProperty("energy").toDouble() * 0.9 );
-                }
-             if (CellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
-                {
-                SheepOccupation +=1;
-                }
-             if (CellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
-                {
-                PredatorOccupation +=1;
-                }
-             }
 
-        if (SheepOccupation == 1) //&& (this-> getProperty("energy").toDouble() >= 20.))
+                /* Less grass = less energy of PastureAgent */
+                CellOccupation.at(i)->setProperty( "energy", CellOccupation.at(i)->getProperty("energy").toDouble() - 1.0 );
+
+                qInfo() << "Final sheep energy after eating = " << this->getProperty("energy");
+                qInfo() << "Energy left in pasture = " << CellOccupation.at(i)->getProperty("energy");
+                }
+
+            if (CellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
+               {
+               SheepOccupation +=1;
+               }
+
+            }
+
+
+            if (SheepOccupation == 1)
             {
+            //Breed
             qInfo() << "You get to breed! Another sheep in the GWSWorld!     ";
 
             /* Breeding consumes energy */
-            this->setProperty("energy" , this->getProperty("energy").toDouble() / 2.0);
+            this->setProperty("energy" , this->getProperty("energy").toDouble() * 0.5);
 
             /* Add a lamb to the World */
             SheepAgent* lambAgent = new SheepAgent();
@@ -127,17 +118,7 @@ void SheepAgent::behave()
             lambAgent->icon_url = this->icon_url;
             }
 
-        if (SheepOccupation >= 2)
-           {
-           qInfo() << "Target cell is too crowded with sheep! Try another direction or you will eventually die of starvation."  ;
-           qInfo() << "";
-           this-> setProperty("energy", this->getProperty("energy").toDouble() * 0.6);
-           qInfo() << "Energy = " << this->getProperty("energy").toDouble();
-           }
-        }
 
-
-    qInfo() << "Energy = " << this->getProperty("energy");
     /* Sheep die when */
         if (this->getProperty("energy") < 1.)
            {
@@ -147,6 +128,7 @@ void SheepAgent::behave()
              return;
            }
 
+    }
 }
 
 
@@ -271,10 +253,10 @@ void SheepAgent::behave()
           //}
 
 
-      }
+      //}
 
 
-}
+//}
 
 
 

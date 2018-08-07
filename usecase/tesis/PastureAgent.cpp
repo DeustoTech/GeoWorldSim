@@ -12,12 +12,3 @@ PastureAgent::PastureAgent(QObject* parent) : GWSAgent( parent ){
 
 
 
-void PastureAgent::behave(){
-
-    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , 5);
-
-    /* Send information to website */
-    emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
-
-
-}

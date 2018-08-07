@@ -42,6 +42,7 @@ HEADERS += \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
     ../../util/uistyle/Style.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -96,6 +97,7 @@ SOURCES += main.cpp \
     ../../skill/view/ViewSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
     ../../util/uistyle/Style.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
