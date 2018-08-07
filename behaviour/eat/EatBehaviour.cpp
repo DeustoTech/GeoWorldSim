@@ -1,6 +1,5 @@
 #include "EatBehaviour.h"
 
-EatBehaviour::EatBehaviour(){
-
+EatBehaviour::EatBehaviour(GWSAgent *behaving_agent) : GWSBehaviour(){
 }
 

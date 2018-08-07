@@ -51,7 +51,7 @@ QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
     for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
 
-        const char* property_name = this->dynamicPropertyNames().at( i );
+        QString property_name = this->dynamicPropertyNames().at( i );
         const QVariant property_value = this->getProperty( property_name );
 
         switch ( property_value.type() ) {
@@ -70,13 +70,13 @@ QJsonObject GWSObject::serialize() const{
                 // case GWSGeometry
                 if( QString( property_value.typeName() ) == "GWSGeometry*" ){
                     GWSGeometry* obj = qvariant_cast<GWSGeometry*>( property_value );
-                    json.insert( property_name , obj->serialize() );
+                    if( obj ){ json.insert( property_name , obj->serialize() ); }
                 }
 
                 // case GWSObject
                 else if( QString( property_value.typeName() ) == "GWSObject*" ){
                     GWSObject* obj = qvariant_cast<GWSObject*>( property_value );
-                    json.insert( property_name , obj->serializeMini() );
+                    if( obj ){ json.insert( property_name , obj->serializeMini() ); }
                 }
 
                 else {

@@ -186,9 +186,6 @@ void GWSExecutionEnvironment::behave(){
 
     if( agents_to_tick ){
 
-        // Update TimeEnvironment datetime, before calling agents
-        GWSTimeEnvironment::globalInstance()->setDatetime( min_tick + 1000 );
-
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 

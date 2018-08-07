@@ -180,12 +180,19 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
     return s;
 }
 
+GWSBehaviour* GWSAgent::getBehaviour(QString id) const{
+    //return this->behaviours->getByClassAndId<GWSBehaviour>( GWSBehaviour::staticMetaObject.className() , id );
+}
+
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
 void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
-    this->behaviours.append( behaviour );
+    if( !this->behaviours ){
+        this->behaviours = new GWSObjectStorage( this );
+    }
+    this->behaviours->add( behaviour );
 }
 
 void GWSAgent::incrementBusy(){
@@ -228,13 +235,14 @@ void GWSAgent::tick(){
 void GWSAgent::behave(){
 
     // No behaviours
-    if( this->behaviours.isEmpty() ){
+    if( this->behaviours->isEmpty() ){
         return;
     }
 
     GWSBehaviour* next_execute_behaviour = Q_NULLPTR;
-    foreach (GWSBehaviour* b , this->behaviours) {
-        if( !b->finished() ){
+    foreach (GWSObject* o , this->behaviours->getAll() ){
+        GWSBehaviour* b = dynamic_cast<GWSBehaviour*>(o);
+        if( b && !b->finished() ){
             next_execute_behaviour = b;
             break;
         }
@@ -242,6 +250,9 @@ void GWSAgent::behave(){
 
     if( next_execute_behaviour ){
         qDebug() << QString("Executing behaviour %1 %2").arg( next_execute_behaviour->metaObject()->className() ).arg( next_execute_behaviour->getId() );
-        this->timer->singleShot( 10 + (qrand() % 100) , next_execute_behaviour , &GWSBehaviour::tick );
+        this->timer->singleShot( 10 + (qrand() % 100) , [this , next_execute_behaviour](){
+            qint64 start_internal_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
+            next_execute_behaviour->tick( start_internal_time );
+        });
     }
 }

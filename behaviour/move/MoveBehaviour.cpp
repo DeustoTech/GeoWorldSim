@@ -49,6 +49,5 @@ bool MoveBehaviour::behave(){
     // Move towards
     move_skill->moveTowards( destination_coor , duration_of_movement );
 
-    // Increment internal time
-    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getAgent() , duration_of_movement );
+    return true;
 }

@@ -8,6 +8,10 @@ GWSObjectStorage::GWSObjectStorage( GWSObject* parent ) : GWSObject( parent ){
  GETTERS
 **********************************************************************/
 
+bool GWSObjectStorage::isEmpty() const{
+    return this->objects.value( GWSObject::staticMetaObject.className() ).isEmpty();
+}
+
 quint64 GWSObjectStorage::getAmount() const{
     return this->objects.value( GWSObject::staticMetaObject.className() ).size();
 }

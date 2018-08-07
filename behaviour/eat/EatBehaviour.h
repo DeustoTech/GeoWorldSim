@@ -14,7 +14,7 @@ public:
     static QString EAT_AGENT_TYPE_PROP;
 
     // GETTERS
-    virtual bool finished();
+    //virtual bool finished();
 };
 
 #endif // EATBEHAVIOUR_H
