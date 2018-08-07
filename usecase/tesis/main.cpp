@@ -6,25 +6,27 @@
 #include <QJsonDocument>
 #include <QProcess>
 
-#include "TerrainAgent.h"
+
 #include "TesisBehaviour.h"
 #include "../../agent/Agent.h"
 #include "../../behaviour/Behaviour.h"
 
 // Agents
-#include "TerrainAgent.h"
+//#include "TerrainAgent.h"
 #include "PastureAgent.h"
 #include "SheepAgent.h"
 #include "PredatorAgent.h"
 
+#include "../../skill/view/ViewSkill.h"
+
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/grid_environment/GridEnvironment.h"
+//#include "../../environment/grid_environment/GridEnvironment.h"
 
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
-#include "../../util/grid/Grid.h"
+//#include "../../util/grid/Grid.h"
 
 #include <time.h>
 #include <iostream>
@@ -41,32 +43,19 @@ int main(int argc, char* argv[])
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
-    GWSGridEnvironment::globalInstance();
+    //GWSGridEnvironment::globalInstance();
 
 
     // Init Object Factory
-    GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PastureAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
 
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
-
-    /* -------------
-     * Terrain Agent
-     * -------------*/
-
-    QJsonDocument jsonTerrain = QJsonDocument::fromJson( "{ \"@type\" : \"TerrainAgent\" , "
-                                                   "\"@id\" : \"ThePlayground\" ,"
-                                                   "\"grid_x_size\" : 50, "
-                                                   "\"grid_y_size\" : 50, "
-                                                   "\"geo\" : { \"type\" : \"Polygon\" , \"coordinates\" : [ [[0,0] , [0,50] , [50,50] , [50,0] , [0,0]] ] } "
-                                                   "}"
-                                                   );
-    TerrainAgent* terrain = dynamic_cast<TerrainAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonTerrain.object() ) );
-    GWSExecutionEnvironment::globalInstance()->registerAgent( terrain );
 
 
     /* -------------
@@ -80,7 +69,7 @@ int main(int argc, char* argv[])
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , "
                                                        "\"energy\" : 100, "
-                                                       " \"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                       " \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } }")
                                                        .arg( i )
                                                        .arg( j )
@@ -99,11 +88,12 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 20 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                      "\"energy\" : 2000.0 , "
-                                                       "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                      "\"energy\" : 50.0 , "
+                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
+                                                       "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
                                                        .arg( qrand() % 50 )
                                                        .arg( qrand() % 50 )
@@ -121,12 +111,12 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 20 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
                                                       "\"energy\" : 200.0 , "
-                                                      "\"geo\" : { \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                      "\"geo\" : {  \"@type\" : \"GWSGeometry\", \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
                                                       "}")
                                                        .arg( qrand() % 50 )
@@ -137,7 +127,7 @@ int main(int argc, char* argv[])
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
 
 
-        GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
+        //GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
 

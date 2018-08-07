@@ -37,6 +37,10 @@ bool GWSCoordinate::isInBounds(double minX, double maxX, double minY, double max
     return minX <= this->getX() && this->getX() <= maxX && minY <= this->getY() && this->getY() <= maxY;
 }
 
+QString GWSCoordinate::toString() const{
+    return QString("%1,%2,%3").arg( this->getX() ).arg( this->getY() ).arg( this->getZ() );
+}
+
 /**********************************************************************
  OPERATORS
 **********************************************************************/

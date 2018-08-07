@@ -39,6 +39,7 @@ HEADERS += \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
+    ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../util/uistyle/Style.h \
@@ -92,6 +93,7 @@ SOURCES += main.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
+    ../../skill/view/ViewSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../util/uistyle/Style.cpp \
