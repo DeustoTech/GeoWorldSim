@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = 0 ; i < 5 ; i ++ ){
-       for( int j = 0 ; j < 5 ; j++ ){
+    for( int i = 0 ; i < 10 ; i ++ ){
+       for( int j = 0 ; j < 10 ; j++ ){
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 15 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 50.0 , "
@@ -116,11 +116,11 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 15 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
-                                                      "\"energy\" : 50.0 , "
+                                                      "\"energy\" : 250.0 , "
                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
                                                       "\"geo\" : {  \"@type\" : \"GWSGeometry\", \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
