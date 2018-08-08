@@ -300,7 +300,7 @@ GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
  SPATIAL TRANSFORMS
 **********************************************************************/
 
-void GWSGeometry::transformMove(GWSCoordinate apply_movement){
+void GWSGeometry::transformMove(const GWSCoordinate &apply_movement){
     if( !apply_movement.isValid() ){ return; }
 
     if( !this->inner_geometry ){
@@ -336,7 +336,7 @@ void GWSGeometry::transformIntersection(const GWSGeometry* other){
  SPATIAL TRANSFORMS FILTERS
 **********************************************************************/
 
-TransformMoveFilter::TransformMoveFilter( GWSCoordinate move ) : geos::geom::CoordinateSequenceFilter() {
+TransformMoveFilter::TransformMoveFilter(const GWSCoordinate &move ) : geos::geom::CoordinateSequenceFilter() {
     this->apply_movement = move;
 }
 

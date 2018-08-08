@@ -47,7 +47,7 @@ public:
     GWSLengthUnit getDistance( const GWSGeometry* other ) const;
 
     // SPATIAL TRANSFORMATIONS
-    void transformMove( GWSCoordinate apply_movement );
+    void transformMove( const GWSCoordinate &apply_movement );
     void transformBuffer( double threshold );
     void transformUnion( const GWSGeometry* other );
     void transformIntersection( const GWSGeometry* other );
@@ -62,7 +62,7 @@ protected:
 // SPATIAL TRANSFORM FILTERS
 class TransformMoveFilter : public geos::geom::CoordinateSequenceFilter{
 public:
-    TransformMoveFilter( GWSCoordinate apply_movement );
+    TransformMoveFilter(const GWSCoordinate &apply_movement );
     virtual void filter_rw(CoordinateSequence&  seq , std::size_t i );
     virtual void filter_ro(CoordinateSequence&  seq , std::size_t i );
     virtual bool isDone() const;

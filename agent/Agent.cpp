@@ -106,7 +106,7 @@ QJsonObject GWSAgent::serialize() const{
     QJsonArray skills;
     if( this->skills ){
         foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
-            skills.append( s->serializeMini() );
+            skills.append( s->serialize() );
         }
     }
     json.insert( "@skills" , skills );
@@ -236,6 +236,7 @@ void GWSAgent::behave(){
 
     // No behaviours
     if( this->behaviours->isEmpty() ){
+        qWarning() << QString("Agent %1 %2 has no behaviour, probablly will block execution time").arg( this->metaObject()->className() ).arg( this->getId() );
         return;
     }
 
@@ -254,5 +255,7 @@ void GWSAgent::behave(){
             qint64 start_internal_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
             next_execute_behaviour->tick( start_internal_time );
         });
+    } else {
+        GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     }
 }

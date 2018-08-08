@@ -10,6 +10,7 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../object/ObjectFactory.h"
 
 #include "TerrainAgent.h"
 
@@ -64,10 +65,9 @@ void SheepAgent::behave()
        {
         // Move
         GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX, TargetY ) );
-        //qInfo() << "Final position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid();
 
         // And see what is around you:
-        QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
+        QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();        
         qInfo() << "Cell Occupation = " << CellOccupation;
 
         int SheepOccupation = 0;
@@ -98,28 +98,27 @@ void SheepAgent::behave()
 
             }
 
+        qInfo() << "Sheeps in your cell = " << SheepOccupation;
 
             if (SheepOccupation == 1)
-            {
-            //Breed
-            qInfo() << "You get to breed! Another sheep in the GWSWorld!     ";
+                {
+                //Breed
+                qInfo() << "You get to breed! Another sheep in the GWSWorld!     ";
 
-            /* Breeding consumes energy */
-            this->setProperty("energy" , this->getProperty("energy").toDouble() * 0.5);
+                /* Breeding consumes energy */
+                this->setProperty("energy" , this->getProperty("energy").toDouble() * 0.5);
 
-            /* Add a lamb to the World */
-            SheepAgent* lambAgent = new SheepAgent();
-            GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent );
+                /* Add a lamb to the World */
+                QJsonObject this_json = this->serialize();
+                this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
+                SheepAgent* lambAgent = dynamic_cast<SheepAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
+                GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent );
+                qInfo() << "Lamb's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( lambAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( lambAgent )->getCentroid().getY() << ")";
 
-            /* Set lamb's properties */
-            lambAgent->setProperty("energy", 20.);
-            lambAgent->setProperty("@type", "SheepAgent");
-            GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSPhysicalEnvironment::globalInstance()->getGeometry( this )->getCentroid() );
-            lambAgent->icon_url = this->icon_url;
-            }
+                }
 
-
-    /* Sheep die when */
+        }
+        // Sheep die when
         if (this->getProperty("energy") < 1.)
            {
              qInfo() << "RIP" << this->getProperty("@id").toString();
@@ -128,7 +127,7 @@ void SheepAgent::behave()
              return;
            }
 
-    }
+
 }
 
 

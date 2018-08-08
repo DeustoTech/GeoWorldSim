@@ -76,7 +76,7 @@ QJsonObject GWSObject::serialize() const{
                 // case GWSObject
                 else if( QString( property_value.typeName() ) == "GWSObject*" ){
                     GWSObject* obj = qvariant_cast<GWSObject*>( property_value );
-                    if( obj ){ json.insert( property_name , obj->serializeMini() ); }
+                    if( obj ){ json.insert( property_name , obj->serialize() ); }
                 }
 
                 else {

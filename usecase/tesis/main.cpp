@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
                                                        \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
-                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1 , \"max\" : 15 , \"increment_time\" : 1000 } ] \
+                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 15. , \"increment_time\" : 1000 } ] \
                                                        } ")
                                                        .arg( i )
                                                        .arg( j )
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 5 ; i++ ){
+    for( int i = 0 ; i < 15 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 50.0 , "
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 20 ; i++ ){
+    for( int i = 0 ; i < 15 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
 
 
-        //GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
+        GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
 
