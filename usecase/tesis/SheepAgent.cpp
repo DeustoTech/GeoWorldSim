@@ -23,7 +23,7 @@ SheepAgent::~SheepAgent(){
 
 }
 
-void SheepAgent::behave()
+void SheepAgent::behaveOld()
 {
     qInfo() << """""""""""""""""""""""""""""""""""""""""""""""""";
     qInfo() << "                 Sheep                           ";

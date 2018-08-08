@@ -10,11 +10,10 @@ class EatBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit EatBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
-    // PROPERTIES
-    static QString EAT_AGENT_TYPE_PROP;
+    virtual bool finished();
 
-    // GETTERS
-    //virtual bool finished();
+private slots:
+    virtual bool behave();
 };
 
 #endif // EATBEHAVIOUR_H

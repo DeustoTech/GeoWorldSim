@@ -33,9 +33,9 @@ QList<GWSAgent*> ViewSkill::getViewingAgents(){
     GWSCoordinate agent_centroid = agent_geom->getCentroid();
     GWSCoordinate view_skill_centroid = geom->getCentroid();
     GWSCoordinate apply_movement = agent_centroid - view_skill_centroid;
-    qDebug() << geom->toString() << apply_movement.toString();
+    //qDebug() << geom->toString() << apply_movement.toString();
     geom->transformMove( apply_movement );
-    qDebug() << geom->toString();
+    //qDebug() << geom->toString();
 
     // Query viewing agents
     return GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( geom , agent_type );

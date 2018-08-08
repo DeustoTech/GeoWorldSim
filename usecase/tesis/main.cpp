@@ -20,6 +20,7 @@
 #include "../../skill/view/ViewSkill.h"
 
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
+#include "../../behaviour/eat/EatBehaviour.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
@@ -55,6 +56,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( EatBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -93,13 +95,15 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 50.0 , "
                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
                                                        "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" }  }" )
+                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
+                                                       "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 } ] "
+                                                       "}" )
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )
                                                        .toLatin1()
@@ -116,14 +120,15 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
                                                       "\"energy\" : 250.0 , "
                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
                                                       "\"geo\" : {  \"@type\" : \"GWSGeometry\", \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "
+                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
+                                                      "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 } ] "
                                                       "}")
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )

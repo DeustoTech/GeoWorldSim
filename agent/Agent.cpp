@@ -112,6 +112,13 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( "@skills" , skills );
 
     // BEHAVIOUR
+    QJsonArray behaviours;
+    if( this->behaviours ){
+        foreach (GWSObject* s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
+            behaviours.append( s->serialize() );
+        }
+    }
+    json.insert( "@behaviours" , behaviours );
 
     // INTERNAL TIME
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );

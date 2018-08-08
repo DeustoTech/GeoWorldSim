@@ -80,7 +80,8 @@ HEADERS += \
     SheepAgent.h \
     TesisBehaviour.h \
     PredatorAgent.h \
-    PastureAgent.h
+    PastureAgent.h \
+    ../../behaviour/eat/EatBehaviour.h
         # AGENTS
     #agent/person/Person.h
 
@@ -134,7 +135,8 @@ SOURCES += main.cpp \
     SheepAgent.cpp \
     TesisBehaviour.cpp \
     PredatorAgent.cpp \
-    PastureAgent.cpp
+    PastureAgent.cpp \
+    ../../behaviour/eat/EatBehaviour.cpp
         # AGENTS
     #agent/person/Person.cpp
 
