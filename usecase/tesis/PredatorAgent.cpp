@@ -89,7 +89,7 @@ void PredatorAgent::behave()
                // Eat!
                qInfo() << "You get to eat!     ";
                /* Feeding supplies energy */
-               double foodGains = 5.;
+               double foodGains = 50.;
                finalEnergy = finalEnergy + foodGains;
                this-> setProperty("energy", finalEnergy);
                qInfo() << "RIP" << CellOccupation.at(i)->getProperty("@id").toString();

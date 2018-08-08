@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
         /* Nymeria1 */
         QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
-                                                      "\"energy\" : 200.0 , "
+                                                      "\"energy\" : 50.0 , "
                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
                                                       "\"geo\" : {  \"@type\" : \"GWSGeometry\", \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } "

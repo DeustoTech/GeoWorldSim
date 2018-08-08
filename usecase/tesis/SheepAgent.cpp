@@ -86,7 +86,7 @@ void SheepAgent::behave()
                 {
                 qInfo() << "Sheep's energy before eating = " << this->getProperty("energy");
                 // Eat
-                double foodGains = 1.;
+                double foodGains = 25.;
 
                 // Final energy of SheepAgent
                 double finalEnergy = this->getProperty("energy").toDouble() + foodGains;
@@ -104,16 +104,6 @@ void SheepAgent::behave()
                SheepOccupation +=1;
                }
 
-            if (CellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
-               {
-                // Become food!
-                /* Feeding supplies energy */
-                double foodGains = 5.;
-                finalEnergy = finalEnergy + foodGains;
-                CellOccupation.at(i)-> setProperty("energy", finalEnergy);
-                qInfo() << "RIP" << this->getProperty("@id").toString();
-                QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
-               }
 
             }
 
