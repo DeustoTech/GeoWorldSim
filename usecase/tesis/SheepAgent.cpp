@@ -56,7 +56,7 @@ void SheepAgent::behave()
     qInfo() << "Target movement = ("<< TargetX << "," << TargetY<< ")";
 
 
-    if ((TargetX == 0) && (TargetY == 0)) /* Sometimes the sheep will choose to stay on same position */
+    if ((TargetX == 0) && (TargetY == 0)) // Sometimes the sheep will choose to stay on same position
        {
        qInfo() << "You choose to stay at the same position. You will eventually die of starvation.";
        this-> setProperty("energy", this->getProperty("energy").toDouble() * 0.6);
@@ -65,6 +65,14 @@ void SheepAgent::behave()
        {
         // Move
         GWSPhysicalEnvironment::globalInstance()->transformMove( this , GWSCoordinate( TargetX, TargetY ) );
+
+        //Moving consumes energy
+        double initialEnergy = this->getProperty("energy").toDouble();
+        double moveLosses = initialEnergy * 0.25;
+
+        //Final energy of SheepAgent*/
+        double finalEnergy = initialEnergy - moveLosses;
+        this-> setProperty("energy", finalEnergy);
 
         // And see what is around you:
         QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();        
@@ -94,6 +102,17 @@ void SheepAgent::behave()
             if (CellOccupation.at(i)->getProperty("@type").toString() == "SheepAgent")
                {
                SheepOccupation +=1;
+               }
+
+            if (CellOccupation.at(i)->getProperty("@type").toString() == "PredatorAgent")
+               {
+                // Become food!
+                /* Feeding supplies energy */
+                double foodGains = 5.;
+                finalEnergy = finalEnergy + foodGains;
+                CellOccupation.at(i)-> setProperty("energy", finalEnergy);
+                qInfo() << "RIP" << this->getProperty("@id").toString();
+                QTimer::singleShot( 0 , this , &GWSAgent::deleteLater );
                }
 
             }
