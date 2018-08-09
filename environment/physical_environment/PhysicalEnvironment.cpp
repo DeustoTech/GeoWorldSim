@@ -218,7 +218,7 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
  SPATIAL OPERATIONS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::transformMove(GWSAgent *agent, GWSCoordinate apply_movement){
+void GWSPhysicalEnvironment::transformMove(GWSAgent *agent, const GWSCoordinate &apply_movement){
     GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
         foreach (QString s , agent->getInheritanceFamily()) {

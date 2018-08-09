@@ -43,6 +43,7 @@ HEADERS += \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
     ../../util/uistyle/Style.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -80,7 +81,8 @@ HEADERS += \
     SheepAgent.h \
     TesisBehaviour.h \
     PredatorAgent.h \
-    PastureAgent.h
+    PastureAgent.h \
+    ../../behaviour/eat/EatBehaviour.h
         # AGENTS
     #agent/person/Person.h
 
@@ -98,6 +100,7 @@ SOURCES += main.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
     ../../util/uistyle/Style.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
@@ -134,7 +137,8 @@ SOURCES += main.cpp \
     SheepAgent.cpp \
     TesisBehaviour.cpp \
     PredatorAgent.cpp \
-    PastureAgent.cpp
+    PastureAgent.cpp \
+    ../../behaviour/eat/EatBehaviour.cpp
         # AGENTS
     #agent/person/Person.cpp
 

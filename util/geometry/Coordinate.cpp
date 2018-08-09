@@ -9,7 +9,7 @@ using namespace geos::geom;
 **********************************************************************/
 
 bool GWSCoordinate::isValid() const{
-    return !(this->x != this->x || this->y != this->y || this->z != this->z);
+    return !(this->x != this->x || this->y != this->y );
 }
 
 double GWSCoordinate::getX() const{
@@ -57,5 +57,19 @@ GWSCoordinate& GWSCoordinate::operator = (const GWSCoordinate& other){
     this->x = other.x;
     this->y = other.y;
     this->z = other.z;
+    return *this;
+}
+
+GWSCoordinate& GWSCoordinate::operator+ (const GWSCoordinate& other){
+    this->x += other.x;
+    this->y += other.y;
+    this->z += other.z;
+    return *this;
+}
+
+GWSCoordinate& GWSCoordinate::operator- (const GWSCoordinate& other){
+    this->x -= other.x;
+    this->y -= other.y;
+    this->z -= other.z;
     return *this;
 }

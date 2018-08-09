@@ -35,7 +35,7 @@ public:
     //bool updateAgentGeometry( GWSAgent* agent , GWSGeometry* new_geom );
 
     // SPATIAL OPERATIONS
-    void transformMove( GWSAgent* agent, GWSCoordinate apply_movement );
+    void transformMove( GWSAgent* agent, const GWSCoordinate &apply_movement );
     void transformBuffer(  GWSAgent* agent, double threshold );
     void transformUnion(  GWSAgent* agent, const GWSGeometry* other );
     void transformIntersection(  GWSAgent* agent, const GWSGeometry* other );

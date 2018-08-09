@@ -13,7 +13,9 @@ struct GWSCoordinate {
 
     // CONSTRUCTORS
     GWSCoordinate() : x(0) , y(0) , z(0){}
-    GWSCoordinate(double x, double y, double z = 0.0) : x(x) , y(y) , z(z){}
+    GWSCoordinate(double x, double y, double z = 0.0) : x(x) , y(y) , z(z){
+        if(this->z != this->z ){ this->z = 0; }
+    }
     GWSCoordinate(const GWSCoordinate &other) : GWSCoordinate(other.x , other.y, other.z){}
     ~GWSCoordinate(){}
 
@@ -31,6 +33,8 @@ struct GWSCoordinate {
     bool operator == (const GWSCoordinate&) const;
     bool operator != (const GWSCoordinate&) const;
     GWSCoordinate& operator= (const GWSCoordinate&);
+    GWSCoordinate& operator+ (const GWSCoordinate&);
+    GWSCoordinate& operator- (const GWSCoordinate&);
 
 };
 
