@@ -18,9 +18,13 @@
 #include "PredatorAgent.h"
 
 #include "../../skill/view/ViewSkill.h"
+#include "../../skill/move/MoveSkill.h"
 
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/eat/EatBehaviour.h"
+#include "../../behaviour/move/MoveBehaviour.h"
+#include "../../behaviour/move/SelectDestinationBehaviour.h"
+#include  "../../behaviour/alive/CheckAliveBehaviour.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
@@ -51,12 +55,22 @@ int main(int argc, char* argv[])
 
     // Init Object Factory
     //GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
+
+    // Agents
     GWSObjectFactory::globalInstance()->registerType( PastureAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SheepAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PredatorAgent::staticMetaObject );
+
+    // Skills
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
+
+    // Behaviours
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckAliveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EatBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SelectDestinationBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -76,7 +90,7 @@ int main(int argc, char* argv[])
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
                                                        \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
-                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 15. , \"increment_time\" : 1000 } ] \
+                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 15. , \"@forward_time\" : 1000 } ] \
                                                        } ")
                                                        .arg( i )
                                                        .arg( j )
@@ -97,19 +111,26 @@ int main(int argc, char* argv[])
     /* Dolly1 */
     for( int i = 0 ; i < 10 ; i++ ){
 
-        QJsonDocument json1 = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
+        QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                       "\"energy\" : 50.0 , "
-                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
+                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
+                                                                      "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
                                                        "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
-                                                       "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 } ] "
-                                                       "}" )
+                                                       "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 } , "
+                                                                           "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
+                                                                           "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
+                                                                           "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
+                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } "
+                                                                           "] } ]"
+                                                        "}" )
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )
                                                        .toLatin1()
                                                        );
+                                                                          // "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 } ] "
 
-        GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json1.object() ) );
+        GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
 
         GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
 
@@ -123,19 +144,28 @@ int main(int argc, char* argv[])
     for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
-        QJsonDocument json4 = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
-                                                      "\"energy\" : 250.0 , "
-                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } ] ,"
-                                                      "\"geo\" : {  \"@type\" : \"GWSGeometry\", \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
-                                                      "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 } ] "
-                                                      "}")
-                                                       .arg( qrand() % 5 )
-                                                       .arg( qrand() % 5 )
-                                                       .toLatin1()
-                                                       );
+        QJsonDocument jsonPredator =  QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
+                                                                       "\"energy\" : 50.0 , "
+                                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
+                                                                                       "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
+                                                                        "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
+                                                                       "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 } , "
+                                                                                           "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
+                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
+                                                                                           "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
+                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -1. , \"@forward_time\" : 1000 } "
+                                                                                           "] } ]"
+                                                                        "}" )
+                                                                       .arg( qrand() % 5 )
+                                                                       .arg( qrand() % 5 )
+                                                                       .toLatin1()
+                                                                       );
 
-        GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json4.object() ) );
+
+                                                                         // "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 } ] "
+
+        GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPredator.object() ) );
 
 
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );

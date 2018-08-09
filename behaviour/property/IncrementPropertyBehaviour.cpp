@@ -16,7 +16,8 @@ bool IncrementPropertyBehaviour::finished(){
     GWSAgent* agent = this->getAgent();
     QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );
-    return value == max_value;
+    QVariant min_value = this->getProperty( MAX_VALUE_PROP );
+    return value >= max_value && value <= min_value;
 }
 
 bool IncrementPropertyBehaviour::behave(){
@@ -25,7 +26,7 @@ bool IncrementPropertyBehaviour::behave(){
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
     QVariant value = agent->getProperty( property_name );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );
-    QVariant incremented = value.toLongLong() + this->getProperty( INCREMENT_VALUE_PROP ).toLongLong();
+    QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
     this->getAgent()->setProperty( property_name , incremented );
 

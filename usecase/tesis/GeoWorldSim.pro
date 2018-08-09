@@ -82,7 +82,10 @@ HEADERS += \
     TesisBehaviour.h \
     PredatorAgent.h \
     PastureAgent.h \
-    ../../behaviour/eat/EatBehaviour.h
+    ../../behaviour/eat/EatBehaviour.h \
+    ../../behaviour/move/ChangeDestinationBehaviour.h \
+    ../../behaviour/move/SelectDestinationBehaviour.h \
+    ../../behaviour/alive/CheckAliveBehaviour.h
         # AGENTS
     #agent/person/Person.h
 
@@ -138,7 +141,10 @@ SOURCES += main.cpp \
     TesisBehaviour.cpp \
     PredatorAgent.cpp \
     PastureAgent.cpp \
-    ../../behaviour/eat/EatBehaviour.cpp
+    ../../behaviour/eat/EatBehaviour.cpp \
+    ../../behaviour/move/ChangeDestinationBehaviour.cpp \
+    ../../behaviour/move/SelectDestinationBehaviour.cpp \
+    ../../behaviour/alive/CheckAliveBehaviour.cpp
         # AGENTS
     #agent/person/Person.cpp
 

@@ -9,14 +9,11 @@
 #include "../../object/ObjectFactory.h"
 
 
-PredatorAgent::PredatorAgent(QObject *parent) : GWSAgent( parent)
-{
-
+PredatorAgent::PredatorAgent(QObject *parent) : GWSAgent( parent){
 }
 
 
 PredatorAgent::~PredatorAgent(){
-
 }
 
 

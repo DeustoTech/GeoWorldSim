@@ -44,6 +44,9 @@ GWSTimeUnit MoveSkill::getAccTime() const{
 }
 
 GWSCoordinate MoveSkill::getDestination() const{
+    if( this->getProperty( DESTINATION_X_PROP ).isNull() || this->getProperty( DESTINATION_Y_PROP ).isNull() ){
+        return GWSCoordinate( NAN , NAN , NAN );
+    }
     return GWSCoordinate( this->getProperty( DESTINATION_X_PROP ) .toDouble( ) , this->getProperty( DESTINATION_Y_PROP ).toDouble( ) , 0 );
 }
 
@@ -107,6 +110,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     // Set the agents position
     GWSCoordinate position = GWSCoordinate( x_move , y_move );
     GWSPhysicalEnvironment::globalInstance()->transformMove( this->getAgent() , position );
+    qDebug() << position.toString();
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 

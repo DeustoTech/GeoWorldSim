@@ -15,12 +15,9 @@
 #include "TerrainAgent.h"
 
 SheepAgent::SheepAgent(QObject *parent) : GWSAgent( parent ) {
-
-
 }
 
 SheepAgent::~SheepAgent(){
-
 }
 
 void SheepAgent::behaveOld()
