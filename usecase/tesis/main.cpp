@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
                                                        \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
-                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 15. , \"@forward_time\" : 1000 } ] \
+                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"@forward_time\" : 1000 } ] \
                                                        } ")
                                                        .arg( i )
                                                        .arg( j )
@@ -112,23 +112,22 @@ int main(int argc, char* argv[])
     for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                      "\"energy\" : 50.0 , "
-                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
-                                                                      "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
-                                                       "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                       "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
-                                                       "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 } , "
-                                                                           "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
-                                                                           "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
-                                                                           "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
-                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } "
-                                                                           "] } ]"
-                                                        "}" )
+                                                                     "\"energy\" : 50.0 , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
+                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
+                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
+                                                                     "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 } , "
+                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
+                                                                                                                                                "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
+                                                                                                                                                "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
+                                                                                                                                                "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } , "
+                                                                                                                                                "{ \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 }  "
+                                                                                                                                                "]  } ] } ")
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )
                                                        .toLatin1()
-                                                       );
-                                                                          // "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 } ] "
+                                                       );                                                                       
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
 
@@ -141,10 +140,10 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 5 ; i++ ){
 
         /* Nymeria1 */
-        QJsonDocument jsonPredator =  QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
+        QJsonDocument jsonPredator =  QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
                                                                        "\"energy\" : 50.0 , "
                                                                        "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
                                                                                        "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
@@ -152,11 +151,11 @@ int main(int argc, char* argv[])
                                                                         "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
                                                                        "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 } , "
                                                                                            "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
-                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
-                                                                                           "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
-                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -1. , \"@forward_time\" : 1000 } "
-                                                                                           "] } ]"
-                                                                        "}" )
+                                                                                                                                                  "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
+                                                                                                                                                  "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
+                                                                                                                                                  "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } , "
+                                                                                                                                                  "{ \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 }  "
+                                                                                                                                                  "]  } ] } ")
                                                                        .arg( qrand() % 5 )
                                                                        .arg( qrand() % 5 )
                                                                        .toLatin1()
