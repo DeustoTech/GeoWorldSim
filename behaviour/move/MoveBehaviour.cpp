@@ -6,9 +6,6 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
-QString MoveBehaviour::DESTINATION_X_PROP = "destination_x";
-QString MoveBehaviour::DESTINATION_Y_PROP = "destination_y";
-
 MoveBehaviour::MoveBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behaving_agent ){
 }
 
@@ -17,10 +14,16 @@ MoveBehaviour::MoveBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behavin
 **********************************************************************/
 
 bool MoveBehaviour::finished(){
-    if( this->getProperty( DESTINATION_X_PROP ).isNull() || this->getProperty( DESTINATION_Y_PROP ).isNull() ){
+    MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
+    // No move skill
+    if( !mv ){
+        qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( this->getAgent()->staticMetaObject.className() ).arg( this->getId() );
         return true;
     }
-    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid() == GWSCoordinate( this->getProperty( DESTINATION_X_PROP ).toDouble() , this->getProperty( DESTINATION_Y_PROP ).toDouble() );
+    if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
+        return true;
+    }
+    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
 }
 
 /**********************************************************************
@@ -40,14 +43,14 @@ bool MoveBehaviour::behave(){
     }
 
     // Calculate speed
-    GWSCoordinate destination_coor = GWSCoordinate( this->getProperty( DESTINATION_X_PROP ).toDouble() , this->getProperty( DESTINATION_Y_PROP ).toDouble() );
+    GWSCoordinate destination_coor = move_skill->getDestination();
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );
     }
 
     // Move towards
-    move_skill->moveTowards( destination_coor , duration_of_movement );
+    move_skill->move( duration_of_movement );
 
     return true;
 }

@@ -143,3 +143,7 @@ void GWSObjectStorage::remove( GWSObject* object ){
     }
 }
 
+void GWSObjectStorage::deleteAll(){
+    qDeleteAll( this->getByClass( GWSObject::staticMetaObject.className() ) );
+}
+

@@ -77,6 +77,11 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 
 void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
+    // If already registered
+    if( agent->getEnvironments().contains( this ) ){
+        return;
+    }
+
     agent->incrementBusy();
 
     // Create agent's own timer to schedule its slots
@@ -192,9 +197,6 @@ void GWSExecutionEnvironment::behave(){
             qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
-
-                // Set agent to advance to last min_tick, in case it was set to 0
-                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , qMax( agent_next_tick , min_tick ) );
 
                 // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
                 agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );

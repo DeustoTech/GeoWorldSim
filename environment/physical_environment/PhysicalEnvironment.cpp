@@ -175,6 +175,13 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 
 void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_geom ){
 
+    // Remove if existing
+    if( this->agent_geometries.keys().contains( agent->getId() ) ){
+        delete this->agent_geometries.value( agent->getId() );
+        this->agent_geometries.remove( agent->getId() );
+    }
+
+    // Add the new agents geometry
     this->agent_geometries.insert( agent->getId() , init_geom ? init_geom : new GWSGeometry() );
 
     foreach (QString s , agent->getInheritanceFamily()) {

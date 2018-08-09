@@ -11,10 +11,6 @@ public:
 
     Q_INVOKABLE explicit MoveBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
-    // PROPERTIES
-    static QString DESTINATION_X_PROP;
-    static QString DESTINATION_Y_PROP;
-
     // GETTERS
     virtual bool finished();
 

@@ -43,6 +43,7 @@ public:
     // SETTERS
     virtual void add( GWSObject* object );
     virtual void remove( GWSObject* object );
+    virtual void deleteAll();
 
 protected:
 

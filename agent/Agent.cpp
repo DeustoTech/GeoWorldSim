@@ -34,8 +34,8 @@ GWSAgent::~GWSAgent() {
 
     qDebug() << QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }
-
-    this->skills->deleteLater();
+    if( this->skills ){ this->skills->deleteAll(); this->skills->deleteLater(); }
+    if( this->behaviours ){ this->behaviours->deleteAll(); this->behaviours->deleteLater(); }
 
 }
 
@@ -51,6 +51,10 @@ void GWSAgent::deserialize(QJsonObject json){
     GWSEnvironment::globalInstance()->registerAgent( this );
 
     // SKILLS
+    if( this->skills ){
+        this->skills->deleteAll();
+        this->skills->deleteLater();
+    }
     QJsonArray jskills = json.value("@skills").toArray();
     foreach( QJsonValue js , jskills ){
         GWSSkill* skill = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
@@ -59,6 +63,10 @@ void GWSAgent::deserialize(QJsonObject json){
     }
 
     // BEHAVIOURS
+    if( this->behaviours ){
+        this->behaviours->deleteAll();
+        this->behaviours->deleteLater();
+    }
     QJsonArray jsbehaviours = json.value("@behaviours").toArray();
     foreach( QJsonValue js , jsbehaviours ){
         GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
@@ -69,12 +77,16 @@ void GWSAgent::deserialize(QJsonObject json){
     // INTERNAL TIME
     if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
         GWSTimeEnvironment::globalInstance()->registerAgent( this , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
+    } else {
+        GWSTimeEnvironment::globalInstance()->unregisterAgent( this );
     }
 
     // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
     if( GWSGeometry* geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value<GWSGeometry*>() ){
         GWSPhysicalEnvironment::globalInstance()->registerAgent( this , geom );
         this->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
+    } else {
+        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this );
     }
 
     // STYLE
@@ -85,6 +97,8 @@ void GWSAgent::deserialize(QJsonObject json){
     // RUNNING
     if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
         GWSExecutionEnvironment::globalInstance()->registerAgent( this );
+    } else {
+        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
     }
 }
 
@@ -235,7 +249,7 @@ void GWSAgent::tick(){
 void GWSAgent::behave(){
 
     // No behaviours
-    if( this->behaviours->isEmpty() ){
+    if( !this->behaviours || this->behaviours->isEmpty() ){
         return;
     }
 
@@ -249,10 +263,12 @@ void GWSAgent::behave(){
     }
 
     if( next_execute_behaviour ){
+
         qDebug() << QString("Executing behaviour %1 %2").arg( next_execute_behaviour->metaObject()->className() ).arg( next_execute_behaviour->getId() );
         this->timer->singleShot( 10 + (qrand() % 100) , [this , next_execute_behaviour](){
             qint64 start_internal_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
             next_execute_behaviour->tick( start_internal_time );
         });
+
     }
 }

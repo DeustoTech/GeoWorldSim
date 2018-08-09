@@ -3,7 +3,7 @@
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "increment_time";
+QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "@forward_time";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 
 GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agent ){
@@ -90,7 +90,7 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     this->getAgent()->decrementBusy();
 
     // Calculate how much to increment agent internal time
-    qint64 increment_time = qMax( 10 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() );
+    qint64 increment_time = qMax( 100 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() ); // At least 0.1 seconds
     qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
 
     // Compare how much has been spent or if some other behaviour incremented the time

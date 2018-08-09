@@ -24,6 +24,9 @@ GWSEnvironment::~GWSEnvironment(){
 **********************************************************************/
 
 void GWSEnvironment::registerAgent(GWSAgent *agent){
+    if( agent->environments_registerd_in.contains( this ) ){
+        return;
+    }
 
     foreach( GWSEnvironment* e , this->sub_environments ){
         e->registerAgent( agent );

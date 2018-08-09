@@ -9,6 +9,9 @@ QString MoveSkill::MAX_SPEED_PROP = "maxspeed";
 QString MoveSkill::CURRENT_SPEED_PROP = "speed";
 QString MoveSkill::ACCUMULATED_DISTANCE_PROP = "accumulated_distance";
 QString MoveSkill::ACCUMULATED_TIME_PROP = "accumulated_time";
+QString MoveSkill::DESTINATION_X_PROP = "destination_x";
+QString MoveSkill::DESTINATION_Y_PROP = "destination_y";
+
 
 MoveSkill::MoveSkill(GWSAgent* skilled_agent) : GWSSkill( skilled_agent ){
     this->setProperty( MoveSkill::MAX_SPEED_PROP , GWSSpeedUnit( 4 / 3.6 ) );
@@ -38,6 +41,10 @@ GWSLengthUnit MoveSkill::getAccDistance() const{
 
 GWSTimeUnit MoveSkill::getAccTime() const{
     return this->getProperty( MoveSkill::ACCUMULATED_TIME_PROP ).toDouble();
+}
+
+GWSCoordinate MoveSkill::getDestination() const{
+    return GWSCoordinate( this->getProperty( DESTINATION_X_PROP ) .toDouble( ) , this->getProperty( DESTINATION_Y_PROP ).toDouble( ) , 0 );
 }
 
 /**********************************************************************
@@ -75,7 +82,7 @@ GWSSpeedUnit MoveSkill::brakeToStop(){
     return GWSSpeedUnit( 0 );
 }
 
-void MoveSkill::moveTowards(GWSCoordinate destination_coor, GWSTimeUnit movement_duration){
+void MoveSkill::move( GWSTimeUnit movement_duration ){
 
     GWSSpeedUnit speed = this->getCurrentSpeed();
     double meters = speed.number() // meters moved in 1 second
@@ -83,9 +90,10 @@ void MoveSkill::moveTowards(GWSCoordinate destination_coor, GWSTimeUnit movement
 
     // Current position
     GWSCoordinate current_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid();
+    GWSCoordinate destination_coor = this->getDestination();
 
     // Distance
-    double meter_distance = current_coor.getDistance( destination_coor ).number();
+    double meter_distance = current_coor.getDistance( this->getDestination() ).number();
     double distance_percentage = (meters / meter_distance);
 
     distance_percentage = qMin( distance_percentage , 1.0 );

@@ -82,7 +82,9 @@ void GWSTimeEnvironment::setAgentInternalTime(const GWSAgent *agent, const qint6
 }
 
 void GWSTimeEnvironment::incrementAgentInternalTime(const GWSAgent* agent , GWSTimeUnit seconds){
-    this->agent_internal_times.insert( agent->getId() , this->agent_internal_times.value( agent->getId() , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
+    if( this->agent_internal_times.value( agent->getId() ) > 0 ){
+        this->agent_internal_times.insert( agent->getId() , this->agent_internal_times.value( agent->getId() , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
+    }
 }
 
 /**********************************************************************

@@ -39,7 +39,6 @@ void GWSGeometry::deserialize(QJsonObject json){
 
     if( this->inner_geometry ){ delete this->inner_geometry; }
 
-    GWSObject::deserialize( json );
     QString geom_type = json.value("type").toString();
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();

@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "../../app/App.h"
+#include "../../util/geometry/Geometry.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
@@ -134,7 +135,9 @@ void GWSObject::deserialize(QJsonObject json){
                 if( !obj ){ break; }
 
                 QVariant obj_variant = QVariant::fromValue<GWSObject*>( obj );
-                this->setProperty( property_name , obj_variant ); break; }
+                this->setProperty( property_name , obj_variant ); break;
+
+        }
         default: {
 
                 qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
