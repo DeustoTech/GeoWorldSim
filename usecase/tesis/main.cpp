@@ -24,7 +24,7 @@
 #include "../../behaviour/eat/EatBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
-#include  "../../behaviour/alive/CheckAliveBehaviour.h"
+#include "../../behaviour/alive/CheckAliveBehaviour.h"
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
