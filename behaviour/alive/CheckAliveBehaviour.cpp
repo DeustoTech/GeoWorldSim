@@ -7,15 +7,17 @@ CheckAliveBehaviour::CheckAliveBehaviour( GWSAgent* behaving_agent ) : GWSBehavi
 
 bool CheckAliveBehaviour::finished(){
 
-    if (this->getAgent()->getProperty("energy") >= 1)
+    if (this->getAgent()->getProperty("energy") >= 1.)
         {
-        qDebug() << "You are alive, keep going!";
+        qDebug() << this->getAgent()->getProperty("@id").toString() << " you are alive, keep going!";
+        qDebug() << this->getAgent()->getProperty("energy").toString() << " energy!";
         return true;
         }
     else
         {
         this->getAgent()->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
         qInfo() << "RIP" << this->getAgent()->getProperty("@id").toString();
+        return false;
         }
 
 }
