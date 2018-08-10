@@ -84,6 +84,25 @@ bool EatBehaviour::behave(){
                //Add offspring to the World
                QJsonObject this_json = this->getAgent()->serialize();
                this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
+               QList<GWSSkill*> skills = this->getAgent()->getSkills( GWSSkill::staticMetaObject.className() );
+               if( !skills.isEmpty() ){
+                   QJsonArray arr;
+                   foreach( GWSSkill* o , skills ){
+                       arr.append( o->serialize() );
+                   }
+                   this_json.insert( "@skills" , arr );
+               }
+               QList<GWSBehaviour*> behaviours = this->getAgent()->getBehaviours( GWSBehaviour::staticMetaObject.className() );
+               if( !behaviours.isEmpty() ){
+                   QJsonArray arr;
+                   foreach( GWSBehaviour* o , behaviours ){
+                       arr.append( o->serialize() );
+                   }
+                   this_json.insert( "@behaviours" , arr );
+               }
+
+               qDebug() << this_json;
+
                GWSAgent* OffspringAgent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
                GWSExecutionEnvironment::globalInstance()->registerAgent( OffspringAgent );
                qInfo() << "OffspringAgent's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getY() << ")";

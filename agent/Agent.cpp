@@ -121,7 +121,7 @@ QJsonObject GWSAgent::serialize() const{
     QJsonArray skills;
     if( this->skills ){
         foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
-            skills.append( s->serialize() );
+            skills.append( s->serializeMini() );
         }
     }
     json.insert( "@skills" , skills );
@@ -130,7 +130,7 @@ QJsonObject GWSAgent::serialize() const{
     QJsonArray behaviours;
     if( this->behaviours ){
         foreach (GWSObject* s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
-            behaviours.append( s->serialize() );
+            behaviours.append( s->serializeMini() );
         }
     }
     json.insert( "@behaviours" , behaviours );
@@ -202,12 +202,20 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
     return s;
 }
 
+GWSBehaviour* GWSAgent::getStartBehaviour() const{
+    return this->start_behaviour;
+}
+
 GWSBehaviour* GWSAgent::getBehaviour(QString id) const{
     return dynamic_cast<GWSBehaviour*>( this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ) );
 }
 
 QList<GWSBehaviour*> GWSAgent::getBehaviours(QString class_name) const{
-    //return this->behaviours->getByClass<GWSBehaviour>( class_name );
+    QList<GWSBehaviour*> behaviours;
+    foreach(GWSObject* o , this->behaviours->getByClass( class_name ) ){
+        behaviours.append( dynamic_cast<GWSBehaviour*>( o ) );
+    }
+    return behaviours;
 }
 
 /**********************************************************************
@@ -299,7 +307,6 @@ void GWSAgent::behave(){
 
         foreach (GWSBehaviour* b, next_execute_behaviours) {
 
-            qDebug() << QString("Executing behaviour %1 %2").arg( b->metaObject()->className() ).arg( b->getId() );
             this->timer->singleShot( 10 + (qrand() % 100) , [this , b , all_start_same_time ](){
                 b->tick( all_start_same_time );
             });

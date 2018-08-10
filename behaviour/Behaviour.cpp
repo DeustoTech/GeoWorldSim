@@ -6,8 +6,8 @@
 QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "@forward_time";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString GWSBehaviour::SUB_BEHAVIOURS_CONDITION_PROP = "@sub_behaviours_condition";
-QString GWSBehaviour::NEXT_BEHAVIOUR_PROP = "@next";
-QString GWSBehaviour::START_BEHAVIOUR_PROP = "@start";
+QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";
+QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
 GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agent ){
 }
@@ -30,17 +30,20 @@ void GWSBehaviour::deserialize(QJsonObject json){
         }
     }
 
-    // NEXT BEHAVIOUR
-    if( json.keys().contains( NEXT_BEHAVIOUR_PROP ) ){
-        // Find next behaviour in agent
-        GWSBehaviour* next_behaviour = this->getAgent()->getBehaviour( json.value( NEXT_BEHAVIOUR_PROP ).toString() );
-        if( next_behaviour ){
-            this->addNextBehaviour( next_behaviour );
-        } else {
-            qDebug() << QString("Behaviour %1 %2 tried to find next %3 but does not exist")
-                        .arg( this->metaObject()->className() )
-                        .arg( this->getId() )
-                        .arg( json.value( NEXT_BEHAVIOUR_PROP ).toString() );
+    // NEXT BEHAVIOURS
+    if( json.keys().contains( NEXT_BEHAVIOURS_PROP ) ){
+        QJsonArray next_ids = json.value( NEXT_BEHAVIOURS_PROP ).toArray();
+        foreach( QJsonValue id , next_ids ){
+            // Find next behaviour in agent
+            GWSBehaviour* next_behaviour = this->getAgent()->getBehaviour( id.toString() );
+            if( next_behaviour ){
+                this->addNextBehaviour( next_behaviour );
+            } else {
+                qDebug() << QString("Behaviour %1 %2 tried to find next %3 but does not exist. Please define in the JSON first the referenced Behaviour.")
+                            .arg( this->metaObject()->className() )
+                            .arg( this->getId() )
+                            .arg( id.toString() );
+            }
         }
     }
 
@@ -56,7 +59,21 @@ void GWSBehaviour::deserialize(QJsonObject json){
 **********************************************************************/
 
 QJsonObject GWSBehaviour::serialize() const{
-    return GWSObject::serialize();
+    QJsonObject json = GWSObject::serialize();
+    if( !this->sub_behaviours.isEmpty() ){
+        QJsonArray arr;
+        foreach( GWSBehaviour* b , this->sub_behaviours ){
+            arr.append( b->serialize() );
+        }
+        json.insert( SUB_BEHAVIOURS_PROP , arr );
+    }
+    if( !this->next_behaviours.isEmpty() ){
+        QJsonArray arr;
+        foreach( GWSBehaviour* b , this->next_behaviours ){
+            arr.append( b->getId() );
+        }
+        json.insert( NEXT_BEHAVIOURS_PROP , arr );
+    }
 }
 
 /**********************************************************************
@@ -72,7 +89,7 @@ quint64 GWSBehaviour::getBehavingTime() const {
 }
 
 QList<GWSBehaviour*> GWSBehaviour::getNext(){
-    return this->next_behaviour;
+    return this->next_behaviours;
 }
 
 bool GWSBehaviour::finished(){
@@ -106,7 +123,7 @@ void GWSBehaviour::addSubbehaviour(GWSBehaviour *sub_behaviour){
 }
 
 void GWSBehaviour::addNextBehaviour(GWSBehaviour *next_behaviour){
-    this->next_behaviour.append( next_behaviour );
+    this->next_behaviours.append( next_behaviour );
 }
 
 /**********************************************************************
@@ -117,6 +134,8 @@ void GWSBehaviour::addNextBehaviour(GWSBehaviour *next_behaviour){
  * This method is a wrapper slot to be invoked by the GWSAgent for behave() to be executed in the agents thread.
  **/
 bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
+
+    qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     bool behaved_correctly = false;
     this->behaving_time = behaviour_ticked_time;

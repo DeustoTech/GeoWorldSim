@@ -26,7 +26,7 @@ public:
     static QString GWS_PARENT_PROP;
 
     // EXPORTERS
-    virtual QJsonObject serializeMini() const;
+    QJsonObject serializeMini() const;
     virtual QJsonObject serialize() const;
 
     // IMPORTERS

@@ -69,6 +69,7 @@ public:
     template <class T> QList<T*> getSkills( QString class_name ) const;
 
     // BEHAVIOURS
+    GWSBehaviour* getStartBehaviour() const;
     GWSBehaviour* getBehaviour( QString behaviour_id ) const;
     QList<GWSBehaviour*> getBehaviours( QString class_name ) const;
 
