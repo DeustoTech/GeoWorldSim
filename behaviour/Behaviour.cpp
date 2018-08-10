@@ -44,7 +44,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
     }
 
     // START BEHAVIOUR
-    if( json.keys().contains( START_BEHAVIOUR_PROP ) ){
+    if( json.keys().contains( START_BEHAVIOUR_PROP ) && json.value( START_BEHAVIOUR_PROP ).toBool() ){
         this->getAgent()->setStartBehaviour( this );
     }
 
