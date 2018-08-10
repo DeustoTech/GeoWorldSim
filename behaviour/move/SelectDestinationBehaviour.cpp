@@ -46,6 +46,8 @@ bool SelectDestinationBehaviour::behave(){
     mv->setProperty( MoveSkill::DESTINATION_X_PROP , DestinationX );
     mv->setProperty( MoveSkill::DESTINATION_Y_PROP , DestinationY );
 
-    qDebug() << mv->getDestination().toString();
+    qDebug() << "Agent = ", this->getAgent()->getProperty("@id").toString();
+    qDebug() << "Destination = ", mv->getDestination().toString();
+    qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
     return true;
 }

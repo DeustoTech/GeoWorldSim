@@ -32,7 +32,8 @@ bool MoveBehaviour::finished(){
 
 bool MoveBehaviour::behave(){
 
-    qDebug() << "Moving!";
+    qDebug() << "Initial position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
+    qDebug() << "Moving" << this->getAgent()->getProperty("@id");
 
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
@@ -46,7 +47,7 @@ bool MoveBehaviour::behave(){
 
     // Calculate speed
     GWSCoordinate destination_coor = move_skill->getDestination();
-    qDebug() << destination_coor.toString();
+    qDebug() << "destination_coor.toString()" << destination_coor.toString();
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );
