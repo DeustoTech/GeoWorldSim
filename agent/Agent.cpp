@@ -214,13 +214,6 @@ QList<GWSBehaviour*> GWSAgent::getBehaviours(QString class_name) const{
  SETTERS
 **********************************************************************/
 
-void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
-    if( !this->behaviours ){
-        this->behaviours = new GWSObjectStorage( this );
-    }
-    this->behaviours->add( behaviour );
-}
-
 void GWSAgent::incrementBusy(){
     this->busy_counter++;
 }
@@ -238,6 +231,17 @@ void GWSAgent::addSkill(GWSSkill *skill){
 
 void GWSAgent::removeSkill(GWSSkill *skill){
     this->skills->remove( skill );
+}
+
+void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
+    if( !this->behaviours ){
+        this->behaviours = new GWSObjectStorage( this );
+    }
+    this->behaviours->add( behaviour );
+}
+
+void GWSAgent::setStartBehaviour(GWSBehaviour *behaviour){
+    this->start_behaviour = behaviour;
 }
 
 /**********************************************************************
@@ -260,19 +264,18 @@ void GWSAgent::tick(){
 
 void GWSAgent::behave(){
 
-    // No behaviours
-    if( !this->behaviours || this->behaviours->isEmpty() ){
-        qWarning() << QString("Agent %1 %2 has no behaviour, probablly will block execution time").arg( this->metaObject()->className() ).arg( this->getId() );
+    // No start behaviour
+    if( !this->start_behaviour ){
+        qWarning() << QString("Agent %1 %2 has no start behaviour. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
         return;
     }
 
-    GWSBehaviour* next_execute_behaviour = Q_NULLPTR;
-    foreach (GWSObject* o , this->behaviours->getAll() ){
-        GWSBehaviour* b = dynamic_cast<GWSBehaviour*>(o);
-        if( b && !b->finished() ){
-            next_execute_behaviour = b;
-            break;
-        }
+    // First behaviour
+    QList<GWSBehaviour*> checked_behaviours; // TODO check infinite loops
+    GWSBehaviour* next_execute_behaviour = this->start_behaviour;
+
+    while( next_execute_behaviour && next_execute_behaviour->finished() ){
+            next_execute_behaviour = next_execute_behaviour->getNext();
     }
 
     if( next_execute_behaviour ){

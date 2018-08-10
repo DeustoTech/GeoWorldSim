@@ -73,11 +73,12 @@ public:
     QList<GWSBehaviour*> getBehaviours( QString class_name ) const;
 
     // SETTERS
-    void addBehaviour( GWSBehaviour* behaviour );
     void incrementBusy();
     void decrementBusy();
     void addSkill( GWSSkill* skill );
     void removeSkill( GWSSkill* skill );
+    void addBehaviour( GWSBehaviour* behaviour );
+    void setStartBehaviour( GWSBehaviour* behaviour );
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     virtual void tick() final; // Acts as a behave() wrapper
@@ -101,6 +102,7 @@ protected:
      * @brief Agent behaviour
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
+    GWSBehaviour* start_behaviour = Q_NULLPTR;
 
     /**
       * Mutex for paralelism

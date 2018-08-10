@@ -15,6 +15,8 @@ public:
     // PROPERTIES
     static QString INCREMENT_AGENT_TIME_PROP; // In mseconds
     static QString SUB_BEHAVIOURS_PROP;
+    static QString NEXT_BEHAVIOUR_PROP;
+    static QString START_BEHAVIOUR_PROP;
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);

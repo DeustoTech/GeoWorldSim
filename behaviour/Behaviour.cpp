@@ -5,6 +5,8 @@
 
 QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "@forward_time";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
+QString GWSBehaviour::NEXT_BEHAVIOUR_PROP = "@next";
+QString GWSBehaviour::START_BEHAVIOUR_PROP = "@start";
 
 GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agent ){
 }
@@ -16,15 +18,36 @@ GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agen
 void GWSBehaviour::deserialize(QJsonObject json){
     GWSObject::deserialize( json );
 
+    // SUBBEHAVIOURS
     if( json.keys().contains( SUB_BEHAVIOURS_PROP ) ){
         QJsonArray arr = json.value( SUB_BEHAVIOURS_PROP ).toArray();
         foreach(QJsonValue jb , arr ){
             GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( jb.toObject() , this->getAgent() ) );
             if( behaviour ){
-                this->sub_behaviours.append( behaviour );
+                this->addSubbehaviour( behaviour );
             }
         }
     }
+
+    // NEXT BEHAVIOUR
+    if( json.keys().contains( NEXT_BEHAVIOUR_PROP ) ){
+        // Find next behaviour in agent
+        GWSBehaviour* next_behaviour = this->getAgent()->getBehaviour( json.value( NEXT_BEHAVIOUR_PROP ).toString() );
+        if( next_behaviour ){
+            this->setNextBehaviour( next_behaviour );
+        } else {
+            qDebug() << QString("Behaviour %1 %2 tried to find next %3 but does not exist")
+                        .arg( this->metaObject()->className() )
+                        .arg( this->getId() )
+                        .arg( json.value( NEXT_BEHAVIOUR_PROP ).toString() );
+        }
+    }
+
+    // START BEHAVIOUR
+    if( json.keys().contains( START_BEHAVIOUR_PROP ) ){
+        this->getAgent()->setStartBehaviour( this );
+    }
+
 }
 
 /**********************************************************************
@@ -64,12 +87,10 @@ bool GWSBehaviour::finished(){
 **********************************************************************/
 
 void GWSBehaviour::addSubbehaviour(GWSBehaviour *sub_behaviour){
-    Q_ASSERT( this->parent() == sub_behaviour->parent() );
     this->sub_behaviours.append( sub_behaviour );
 }
 
 void GWSBehaviour::setNextBehaviour(GWSBehaviour *next_behaviour){
-    Q_ASSERT( this->parent() == next_behaviour->parent() );
     this->next_behaviour = next_behaviour;
 }
 
