@@ -145,29 +145,31 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 0 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
-        QJsonDocument jsonPredator =  QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
-                                                                       "\"energy\" : 50.0 , "
-                                                                       "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [0, 0] } } , "
-                                                                                       "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
-                                                                        "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                                        "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
-                                                                       "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"forward_time\" : 0 } , "
-                                                                                           "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
-                                                                                                                                                  "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
-                                                                                                                                                  "{ \"@type\" : \"SelectDestinationBehaviour\" , \"forward_time\" : 0 } ,"
-                                                                                                                                                  "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"forward_time\" : 1000 } , "
-                                                                                                                                                  "{ \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 }  "
-                                                                                                                                                  "]  } ] } ")
-                                                                       .arg( qrand() % 5 )
-                                                                       .arg( qrand() % 5 )
-                                                                       .toLatin1()
-                                                                       );
+        QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
+                                                                     "\"energy\" : 50.0 , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-0.1, -0.1],[-0.1, 0.1],[0.1, 0.1],[0.1, -0.1],[-0.1, -0.1] ]] } } , "
+                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
+                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
+                                                                     "\"@behaviours\" : [  "
+                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"forward_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"SheepAgent\" , \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
+                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"forward_time\" : 1000 } "
+                                                                                                                                            "] } ,"
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"forward_time\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
+                                                                   " ] } ")
+                                                       .arg( qrand() % 5 )
+                                                       .arg( qrand() % 5 )
+                                                       .toLatin1()
+                                                        );
 
 
-                                                                         // "\"@behaviours\" : [ { \"@type\" : \"EatBehaviour\" , \"prey\" : \"SheepAgent\", \"increment_time\" : 1000 } ] "
+
 
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPredator.object() ) );
 

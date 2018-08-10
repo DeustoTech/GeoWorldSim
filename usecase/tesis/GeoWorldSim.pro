@@ -84,7 +84,8 @@ HEADERS += \
     PastureAgent.h \
     ../../behaviour/eat/EatBehaviour.h \
     ../../behaviour/move/SelectDestinationBehaviour.h \
-    ../../behaviour/alive/CheckAliveBehaviour.h
+    ../../behaviour/alive/CheckAliveBehaviour.h \
+    ../../behaviour/breed/BreedBehaviour.h
         # AGENTS
     #agent/person/Person.h
 
@@ -142,7 +143,8 @@ SOURCES += main.cpp \
     PastureAgent.cpp \
     ../../behaviour/eat/EatBehaviour.cpp \
     ../../behaviour/move/SelectDestinationBehaviour.cpp \
-    ../../behaviour/alive/CheckAliveBehaviour.cpp
+    ../../behaviour/alive/CheckAliveBehaviour.cpp \
+    ../../behaviour/breed/BreedBehaviour.cpp
         # AGENTS
     #agent/person/Person.cpp
 
