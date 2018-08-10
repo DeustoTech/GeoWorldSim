@@ -3,6 +3,7 @@
 
 
 #include "../../skill/view/ViewSkill.h"
+#include "../../skill/move/MoveSkill.h"
 
 
 EatBehaviour::EatBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
@@ -14,9 +15,14 @@ bool EatBehaviour::finished(){
 
 bool EatBehaviour::behave(){
 
+
+
      // Look what is around you:
      QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getAgent()->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
      qInfo() << "Cell Occupation = " << CellOccupation;
+
+     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
+
 
      int Occupation = 0;
 
@@ -80,7 +86,12 @@ bool EatBehaviour::behave(){
                GWSAgent* OffspringAgent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
                GWSExecutionEnvironment::globalInstance()->registerAgent( OffspringAgent );
                qInfo() << "OffspringAgent's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getY() << ")";
-               }
+
+               MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
+               qDebug() << mv->getProperty( MoveSkill::DESTINATION_X_PROP );
+               qDebug() << mv->getProperty( MoveSkill::DESTINATION_Y_PROP );
+
+              }
 
             }
 

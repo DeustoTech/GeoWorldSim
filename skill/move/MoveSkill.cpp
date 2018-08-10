@@ -110,7 +110,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     // Set the agents position
     GWSCoordinate position = GWSCoordinate( x_move , y_move );
     GWSPhysicalEnvironment::globalInstance()->transformMove( this->getAgent() , position );
-    qDebug() << position.toString();
+    qDebug() << "Step = " <<position.toString();
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 
