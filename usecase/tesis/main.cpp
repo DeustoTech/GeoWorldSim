@@ -118,13 +118,15 @@ int main(int argc, char* argv[])
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
-                                                                                                                                                "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
-                                                                                                                                                "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
-                                                                                                                                                "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } , "
-                                                                                                                                                "{ \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 }  "
-                                                                                                                                                "]  } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 , \"@start\" : true , \"@next\" : \"BH2\" } "
+                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH2\" \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH1\" , \"@sub_behaviours\" : ["
+                                                                                                                                                   "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } , "
+                                                                                                                                                   "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
+                                                                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 , \"@next\" : \"BH2\" } , "
+                                                                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } "
+                                                                                                                                                   "] } "
+                                                                                                                                                "] } ,"
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 , \"@start\" : true , \"@next\" : \"BH1\" } "
                                                                    " ] } ")
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )
