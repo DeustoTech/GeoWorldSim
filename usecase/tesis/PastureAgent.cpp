@@ -6,9 +6,14 @@
 
 
 PastureAgent::PastureAgent(QObject* parent) : GWSAgent( parent ){
-
-
 }
 
 
+void PastureAgent::behave(){
+
+    double energy = this->getProperty("energy").toDouble();
+    this->opacity = energy / 50;
+
+    GWSAgent::behave();
+}
 

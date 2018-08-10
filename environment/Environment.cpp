@@ -28,9 +28,6 @@ void GWSEnvironment::registerAgent(GWSAgent *agent){
         return;
     }
 
-    foreach( GWSEnvironment* e , this->sub_environments ){
-        e->registerAgent( agent );
-    }
     agent->environments_registerd_in.append( this );
 }
 

@@ -15,7 +15,7 @@ public:
     Q_INVOKABLE explicit PastureAgent( QObject* parent = Q_NULLPTR );
 
     // METHODS
-    //virtual void behave();
+    virtual void behave();
 };
 
 #endif // PASTUREAGENT_H

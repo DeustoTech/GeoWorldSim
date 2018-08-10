@@ -1,6 +1,7 @@
 #include "EatBehaviour.h"
 #include "../../usecase/tesis/SheepAgent.h"
 
+#include <QJsonDocument>
 
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
@@ -37,18 +38,18 @@ bool EatBehaviour::behave(){
         {
         for (int i = 0; i < CellOccupation.size(); i++)
             {
-            if (CellOccupation.at(i)->getProperty("@type") == this->getProperty("prey"))
+            if (CellOccupation.at(i)->getProperty("@type").toString() == this->getProperty("prey").toString() )
                {
                if (this->getProperty("prey").toString() == "PastureAgent")
                   {
                   // Eat
                   qDebug() << "Found pasture!";
-                  double foodGains = 25.;
+                  double foodGains = CellOccupation.at(i)->getProperty("energy").toDouble();
                   double finalEnergy = this->getAgent()->getProperty("energy").toDouble() + foodGains;
                   this->getAgent()-> setProperty("energy", finalEnergy);
 
                   // Less grass = less energy of PastureAgent
-                  CellOccupation.at(i)->setProperty( "energy", CellOccupation.at(i)->getProperty("energy").toDouble() * 0.5 );
+                  CellOccupation.at(i)->setProperty( "energy" , 0.1 );
                   //return true;
                   }
                if (this->getProperty("prey").toString() == "SheepAgent")
@@ -82,34 +83,33 @@ bool EatBehaviour::behave(){
                this->getAgent()->setProperty("energy" , this->getAgent()->getProperty("energy").toDouble() * 0.5);
 
                //Add offspring to the World
-               QJsonObject this_json = this->getAgent()->serialize();
+               /*QJsonObject this_json = this->getAgent()->serialize();
                this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
+               this_json.insert( "@behaviours" , QJsonValue::Undefined );
+               this_json.insert( "@skills" , QJsonValue::Undefined );
+
+               // Create non skilled and non behavioured agent
+               GWSAgent* OffspringAgent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
+
                QList<GWSSkill*> skills = this->getAgent()->getSkills( GWSSkill::staticMetaObject.className() );
                if( !skills.isEmpty() ){
-                   QJsonArray arr;
                    foreach( GWSSkill* o , skills ){
-                       arr.append( o->serialize() );
+                       GWSSkill* copy = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( o->serialize() , OffspringAgent ) );
+                       OffspringAgent->addSkill( copy );
                    }
-                   this_json.insert( "@skills" , arr );
                }
                QList<GWSBehaviour*> behaviours = this->getAgent()->getBehaviours( GWSBehaviour::staticMetaObject.className() );
                if( !behaviours.isEmpty() ){
                    QJsonArray arr;
                    foreach( GWSBehaviour* o , behaviours ){
+                       qDebug() << this->thread() << o->thread();
                        arr.append( o->serialize() );
                    }
                    this_json.insert( "@behaviours" , arr );
-               }
+               }*/
 
-               qDebug() << this_json;
-
-               GWSAgent* OffspringAgent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
-               GWSExecutionEnvironment::globalInstance()->registerAgent( OffspringAgent );
-               qInfo() << "OffspringAgent's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getY() << ")";
-
-               MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
-               qDebug() << mv->getProperty( MoveSkill::DESTINATION_X_PROP );
-               qDebug() << mv->getProperty( MoveSkill::DESTINATION_Y_PROP );
+               //GWSExecutionEnvironment::globalInstance()->registerAgent( OffspringAgent );
+               //qInfo() << "OffspringAgent's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( OffspringAgent )->getCentroid().getY() << ")";
 
               }
 

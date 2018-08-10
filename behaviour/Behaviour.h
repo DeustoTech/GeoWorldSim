@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE explicit GWSBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
 
     // PROPERTIES
-    static QString INCREMENT_AGENT_TIME_PROP; // In mseconds
+    static QString INCREMENT_AGENT_TIME_PROP; // In milliseconds
     static QString SUB_BEHAVIOURS_PROP;
     static QString SUB_BEHAVIOURS_CONDITION_PROP;
     static QString NEXT_BEHAVIOURS_PROP;
@@ -27,7 +27,6 @@ public:
 
     // GETTERS
     GWSAgent* getAgent();
-    quint64 getBehavingTime() const;
     QList<GWSBehaviour*> getNext();
     virtual bool finished(); // Behaviour finished check
 

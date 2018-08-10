@@ -48,9 +48,6 @@ void GWSAgent::deserialize(QJsonObject json){
 
     GWSObject::deserialize( json );
 
-    // Add to environments
-    GWSEnvironment::globalInstance()->registerAgent( this );
-
     // SKILLS
     if( this->skills ){
         this->skills->deleteAll();
@@ -101,6 +98,9 @@ void GWSAgent::deserialize(QJsonObject json){
     } else {
         GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
     }
+
+    // MUST BE MADE AT THIS LAST PART. Add to environments
+    GWSEnvironment::globalInstance()->registerAgent( this );
 }
 
 /**********************************************************************
@@ -261,13 +261,14 @@ void GWSAgent::setStartBehaviour(GWSBehaviour *behaviour){
  **/
 void GWSAgent::tick(){
 
-    emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
-
     this->incrementBusy();
     this->behave();
     this->decrementBusy();
 
     emit this->agentBehavedSignal();
+    this->timer->singleShot( 10 + (qrand() % 100 ) , [this](){
+        emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
+    });
 }
 
 void GWSAgent::behave(){
@@ -311,5 +312,7 @@ void GWSAgent::behave(){
                 b->tick( all_start_same_time );
             });
         }
+    } else {
+        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , 1 );
     }
 }

@@ -39,7 +39,7 @@ public:
     //GWSAgent* agent = Q_NULLPTR;
 
     QColor color;                           // Agent geometry inner color
-    double opacity;                         // Agent opacity [0,1]
+    double opacity = 1;                     // Agent opacity [0,1]
     QColor border_color;                    // Agent geometry border color
     int border_weight = -1;                 // Agent geometry border weight
     QString dash_array;                     // Agent geometry line format

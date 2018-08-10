@@ -14,6 +14,7 @@ public:
     static QString PROPERTY_NAME_PROP;
     static QString INCREMENT_VALUE_PROP;
     static QString MAX_VALUE_PROP;
+    static QString MIN_VALUE_PROP;
 
     virtual bool finished(); // Behaviour finished check
 

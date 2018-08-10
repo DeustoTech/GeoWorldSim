@@ -1,6 +1,7 @@
 #include "ObjectFactory.h"
 
 #include <QDebug>
+#include <QJsonDocument>
 
 #include "../../agent/Agent.h"
 #include "../../skill/Skill.h"
@@ -51,6 +52,11 @@ GWSObject* GWSObjectFactory::fromType( QString type , GWSObject* parent ){
     return this->fromJSON( json , parent );
 }
 
+GWSObject* GWSObjectFactory::fromBytes(QByteArray json_bytes, GWSObject *parent){
+    QJsonObject object = QJsonDocument::fromJson( json_bytes ).object();
+    return this->fromJSON( object , parent );
+}
+
 GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
 
     if( json.isEmpty() ){
@@ -72,7 +78,10 @@ GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
     }
 
     // Set parent if any
-    obj->setParent( parent );
+    if( parent ){
+        obj->setParent( parent );
+        obj->moveToThread( parent->thread() );
+    }
 
     // Call deserialize for further population
     obj->deserialize( json );

@@ -3,7 +3,7 @@
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "@forward_time";
+QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "forward_time";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString GWSBehaviour::SUB_BEHAVIOURS_CONDITION_PROP = "@sub_behaviours_condition";
 QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";
@@ -84,10 +84,6 @@ GWSAgent* GWSBehaviour::getAgent(){
     return dynamic_cast<GWSAgent*>( this->parent() );
 }
 
-quint64 GWSBehaviour::getBehavingTime() const {
-    return this->behaving_time;
-}
-
 QList<GWSBehaviour*> GWSBehaviour::getNext(){
     return this->next_behaviours;
 }
@@ -149,7 +145,7 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
 
     // Compare how much has been spent or if some other behaviour incremented the time
-    qint64 max_time = qMax( (qint64)(this->behaving_time + increment_time) , agent_current_time );
+    qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
     GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent() , max_time );
 
     return behaved_correctly;
@@ -163,7 +159,7 @@ bool GWSBehaviour::behave(){
     foreach(GWSBehaviour* sub, this->sub_behaviours) {
 
         if( !sub->finished() ){
-            success = sub->tick( this->getBehavingTime() );
+            success = sub->tick( this->behaving_time );
             if( !success ){
                 break;
             }

@@ -196,6 +196,11 @@ void GWSExecutionEnvironment::behave(){
 
             qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
 
+            // If agent_tick is 0, set to now
+            if( agent_next_tick <= 0 ){
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , min_tick );
+            }
+
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
 
                 // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)

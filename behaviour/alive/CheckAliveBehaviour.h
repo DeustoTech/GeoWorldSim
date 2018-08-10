@@ -14,6 +14,8 @@ public:
     // GETTERS
     virtual bool finished();
 
+    virtual bool behave();
+
 };
 
 #endif // CHECKALIVEBEHAVIOUR_H
