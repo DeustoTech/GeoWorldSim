@@ -7,6 +7,7 @@
 #include "../../agent/Agent.h"
 
 QString GWSStyle::COLOR_PROP = "color";
+QString GWSStyle::OPACITY_PROP = "opacity";
 QString GWSStyle::BORDER_COLOR_PROP = "border_color";
 QString GWSStyle::BORDER_WEIGHT_PROP = "border_weight";
 QString GWSStyle::DASH_ARRAY_PROP = "dash_array";
@@ -23,6 +24,7 @@ GWSStyle::GWSStyle(GWSAgent *styled_agent){
 
 void GWSStyle::deserialize(QJsonObject json){
     if( json.keys().contains( COLOR_PROP ) ){           this->color = json.value( COLOR_PROP ).toString(); }
+    if( json.keys().contains( OPACITY_PROP ) ){         this->opacity = json.value( OPACITY_PROP ).toDouble(); }
     if( json.keys().contains( BORDER_COLOR_PROP ) ){    this->color = json.value( BORDER_COLOR_PROP ).toString(); }
     if( json.keys().contains( BORDER_WEIGHT_PROP ) ){   this->border_weight = json.value( BORDER_WEIGHT_PROP ).toInt(); }
     if( json.keys().contains( DASH_ARRAY_PROP ) ){      this->dash_array = json.value( DASH_ARRAY_PROP ).toString(); }
@@ -37,6 +39,7 @@ void GWSStyle::deserialize(QJsonObject json){
 QJsonObject GWSStyle::serialize() const {
     QJsonObject json;
     if( this->color.isValid() ){        json.insert( COLOR_PROP ,                   GWSStyle::toHTML( this->color ) ); }
+    if( this->opacity > 0 ){            json.insert( OPACITY_PROP ,                 this->opacity ); }
     if( this->border_color.isValid() ){ json.insert( BORDER_COLOR_PROP ,            GWSStyle::toHTML( this->border_color ) ); }
     if( this->border_weight >= 0 ){     json.insert( BORDER_WEIGHT_PROP ,           this->border_weight ); }
     if( !this->dash_array.isEmpty() ){  json.insert( DASH_ARRAY_PROP ,              this->dash_array ); }

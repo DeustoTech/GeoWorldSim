@@ -272,18 +272,37 @@ void GWSAgent::behave(){
 
     // First behaviour
     QList<GWSBehaviour*> checked_behaviours; // TODO check infinite loops
-    GWSBehaviour* next_execute_behaviour = this->start_behaviour;
+    QList<GWSBehaviour*> next_execute_behaviours;
 
-    while( next_execute_behaviour && next_execute_behaviour->finished() ){
-            next_execute_behaviour = next_execute_behaviour->getNext();
+    QList<GWSBehaviour*> iterators;
+    iterators.append( this->start_behaviour );
+
+    while( !iterators.isEmpty() ){
+
+        QList<GWSBehaviour*> next_loop_iterators;
+
+        foreach (GWSBehaviour* b, iterators) {
+
+            if( b->finished() ){
+                next_loop_iterators.append( b->getNext() );
+            } else {
+                next_execute_behaviours.append( b );
+            }
+        }
+
+        iterators = next_loop_iterators;
     }
 
-    if( next_execute_behaviour ){
+    if( !next_execute_behaviours.isEmpty() ){
 
-        qDebug() << QString("Executing behaviour %1 %2").arg( next_execute_behaviour->metaObject()->className() ).arg( next_execute_behaviour->getId() );
-        this->timer->singleShot( 10 + (qrand() % 100) , [this , next_execute_behaviour](){
-            qint64 start_internal_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
-            next_execute_behaviour->tick( start_internal_time );
-        });
+        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
+
+        foreach (GWSBehaviour* b, next_execute_behaviours) {
+
+            qDebug() << QString("Executing behaviour %1 %2").arg( b->metaObject()->className() ).arg( b->getId() );
+            this->timer->singleShot( 10 + (qrand() % 100) , [this , b , all_start_same_time ](){
+                b->tick( all_start_same_time );
+            });
+        }
     }
 }

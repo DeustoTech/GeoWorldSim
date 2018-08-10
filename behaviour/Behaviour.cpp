@@ -5,6 +5,7 @@
 
 QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "@forward_time";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
+QString GWSBehaviour::SUB_BEHAVIOURS_CONDITION_PROP = "@sub_behaviours_condition";
 QString GWSBehaviour::NEXT_BEHAVIOUR_PROP = "@next";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "@start";
 
@@ -34,7 +35,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
         // Find next behaviour in agent
         GWSBehaviour* next_behaviour = this->getAgent()->getBehaviour( json.value( NEXT_BEHAVIOUR_PROP ).toString() );
         if( next_behaviour ){
-            this->setNextBehaviour( next_behaviour );
+            this->addNextBehaviour( next_behaviour );
         } else {
             qDebug() << QString("Behaviour %1 %2 tried to find next %3 but does not exist")
                         .arg( this->metaObject()->className() )
@@ -44,7 +45,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
     }
 
     // START BEHAVIOUR
-    if( json.keys().contains( START_BEHAVIOUR_PROP ) ){
+    if( json.keys().contains( START_BEHAVIOUR_PROP ) && json.value( START_BEHAVIOUR_PROP ).toBool() ){
         this->getAgent()->setStartBehaviour( this );
     }
 
@@ -70,14 +71,28 @@ quint64 GWSBehaviour::getBehavingTime() const {
     return this->behaving_time;
 }
 
-GWSBehaviour* GWSBehaviour::getNext(){
+QList<GWSBehaviour*> GWSBehaviour::getNext(){
     return this->next_behaviour;
 }
 
 bool GWSBehaviour::finished(){
-    bool finished = true;
+
+    // SUBBEHAVIOURS can act as:
+    // AND, all must be finished to finish the behaviour
+    // OR, if any has finished, the behaviour has finished
+    // by DEFAULT they will be OR
+    QString condition = this->getProperty( SUB_BEHAVIOURS_CONDITION_PROP ).toString();
+    if( condition.isEmpty() ){ condition = "or"; }
+    bool finished = condition == "or" ? false : true ;
+
     foreach (GWSBehaviour* sub, this->sub_behaviours){
-        finished &= sub->finished();
+
+        if( condition == "or" ){
+            finished = finished || sub->finished();
+        }
+        if( condition == "and" ){
+            finished = finished && sub->finished();
+        }
     }
     return finished;
 }
@@ -90,8 +105,8 @@ void GWSBehaviour::addSubbehaviour(GWSBehaviour *sub_behaviour){
     this->sub_behaviours.append( sub_behaviour );
 }
 
-void GWSBehaviour::setNextBehaviour(GWSBehaviour *next_behaviour){
-    this->next_behaviour = next_behaviour;
+void GWSBehaviour::addNextBehaviour(GWSBehaviour *next_behaviour){
+    this->next_behaviour.append( next_behaviour );
 }
 
 /**********************************************************************

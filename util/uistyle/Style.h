@@ -22,6 +22,7 @@ public:
 
     // PROPERTIES
     static QString COLOR_PROP;
+    static QString OPACITY_PROP;
     static QString BORDER_COLOR_PROP;
     static QString BORDER_WEIGHT_PROP;
     static QString DASH_ARRAY_PROP;
@@ -38,6 +39,7 @@ public:
     //GWSAgent* agent = Q_NULLPTR;
 
     QColor color;                           // Agent geometry inner color
+    double opacity;                         // Agent opacity [0,1]
     QColor border_color;                    // Agent geometry border color
     int border_weight = -1;                 // Agent geometry border weight
     QString dash_array;                     // Agent geometry line format

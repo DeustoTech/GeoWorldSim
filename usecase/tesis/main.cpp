@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
                                                        \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
-                                                       \"@behaviours\" : [ { \"@start\" : true, \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"@forward_time\" : 1000 } ] \
+                                                       \"@behaviours\" : [ { \"@type\" : \"IncrementPropertyBehaviour\" , \"@start\" : true ,  \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"@forward_time\" : 1000 } ] \
                                                        } ")
                                                        .arg( i )
                                                        .arg( j )
