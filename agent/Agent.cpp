@@ -203,7 +203,7 @@ template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
 }
 
 GWSBehaviour* GWSAgent::getBehaviour(QString id) const{
-    //return this->behaviours->getByClassAndId<GWSBehaviour>( GWSBehaviour::staticMetaObject.className() , id );
+    return dynamic_cast<GWSBehaviour*>( this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ) );
 }
 
 QList<GWSBehaviour*> GWSAgent::getBehaviours(QString class_name) const{
