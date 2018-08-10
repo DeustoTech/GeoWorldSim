@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = 0 ; i < 10 ; i ++ ){
+    for( int i = 0 ; i < 0 ; i ++ ){
        for( int j = 0 ; j < 10 ; j++ ){
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
@@ -117,13 +117,15 @@ int main(int argc, char* argv[])
                                                                                      "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
-                                                                     "\"@behaviours\" : [ { \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 , \"@start\" : true } , "
-                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@sub_behaviours\" : ["
+                                                                     "\"@behaviours\" : [  "
+                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
                                                                                                                                                 "{ \"@type\" : \"MoveBehaviour\", \"@forward_time\" : 1000 } , "
                                                                                                                                                 "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@forward_time\" : 0 } ,"
                                                                                                                                                 "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5. , \"@forward_time\" : 1000 } , "
                                                                                                                                                 "{ \"@type\" : \"EatBehaviour\" , \"prey\" : \"PastureAgent\", \"increment_time\" : 1000 }  "
-                                                                                                                                                "]  } ] } ")
+                                                                                                                                                "]  } ,"
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"@forward_time\" : 0 , \"@start\" : true , \"@next\" : \"BH2\" } "
+                                                                   " ] } ")
                                                        .arg( qrand() % 5 )
                                                        .arg( qrand() % 5 )
                                                        .toLatin1()

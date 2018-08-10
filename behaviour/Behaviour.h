@@ -15,6 +15,7 @@ public:
     // PROPERTIES
     static QString INCREMENT_AGENT_TIME_PROP; // In mseconds
     static QString SUB_BEHAVIOURS_PROP;
+    static QString SUB_BEHAVIOURS_CONDITION_PROP;
     static QString NEXT_BEHAVIOUR_PROP;
     static QString START_BEHAVIOUR_PROP;
 
@@ -27,17 +28,17 @@ public:
     // GETTERS
     GWSAgent* getAgent();
     quint64 getBehavingTime() const;
-    GWSBehaviour* getNext();
+    QList<GWSBehaviour*> getNext();
     virtual bool finished(); // Behaviour finished check
 
     // SETTERS
     void addSubbehaviour( GWSBehaviour* sub_behaviour );
-    void setNextBehaviour( GWSBehaviour* next_behaviour );
+    void addNextBehaviour( GWSBehaviour* next_behaviour );
 
 protected:
 
-    QList<GWSBehaviour*> sub_behaviours;
-    GWSBehaviour* next_behaviour = Q_NULLPTR;
+    QList<GWSBehaviour*> sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
+    QList<GWSBehaviour*> next_behaviour;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     bool tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper

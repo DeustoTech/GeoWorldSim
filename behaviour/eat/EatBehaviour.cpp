@@ -15,6 +15,7 @@ bool EatBehaviour::finished(){
 
 bool EatBehaviour::behave(){
 
+     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
 
 
      // Look what is around you:
