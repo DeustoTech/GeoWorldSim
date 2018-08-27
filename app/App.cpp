@@ -67,7 +67,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
 }
 
 GWSApp::~GWSApp(){
-    qInfo() << QString("Destroyed App %1, took %2 miliseconds for %3 agents").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ).arg( GWSAgentEnvironment::globalInstance()->getAmount() );
+    qInfo() << QString("Destroyed App %1, took %2 miliseconds").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp );
     this->app_id = QString();
 }
 

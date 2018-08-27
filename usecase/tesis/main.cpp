@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 
     for( int i = -5 ; i < 5 ; i += 1 ){
        for( int j = -5 ; j < 5 ; j += 1 ){
+            break; // Uncomment and set Sheep and Wolf Agents to zero to obtain an Empty Simulation
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
@@ -114,7 +115,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 20 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
@@ -149,7 +150,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 20 ; i++ ){
+    for( int i = 0 ; i < 0 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -183,7 +184,21 @@ int main(int argc, char* argv[])
 
     }
 
-   // GWSExternalListener* ext = new GWSExternalListener("PastureAgent");
+   // Empty Simulation listens to:
+   // GWSExternalListener* ext = new GWSExternalListener("PastureSim");
+    //GWSExternalListener* ext1 = new GWSExternalListener("SheepSim");
+  //  GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
+
+   // Pasture Simulation listens to:
+   //GWSExternalListener* ext = new GWSExternalListener("SheepSim");
+
+   // Sheep Simulation listens to:
+   GWSExternalListener* ext = new GWSExternalListener("PastureSim");
+ //  GWSExternalListener* ext1 = new GWSExternalListener("WolfSim");
+
+   // Wolf Simulation listens to:
+   //GWSExternalListener* ext = new GWSExternalListener("SheepSim");
+
 
     GWSExecutionEnvironment::globalInstance()->run();
 

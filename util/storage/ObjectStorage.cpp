@@ -16,7 +16,7 @@ bool GWSObjectStorage::isEmpty() const{
 }
 
 quint64 GWSObjectStorage::getAmount() const{
-    if( this->objects.keys().contains( GWSObject::staticMetaObject.className() ) ){
+    if( this && this->classes_stored.contains( GWSObject::staticMetaObject.className() ) ){
         return this->objects.value( GWSObject::staticMetaObject.className() )->size();
     }
     return 0;
@@ -62,8 +62,10 @@ template <class T> T* GWSObjectStorage::getByClassAndName( QString class_name , 
 
 QList< GWSObject* > GWSObjectStorage::getByClass( QString class_name ) const{
     QList< GWSObject* > list;
-    foreach (GWSObject* o, *this->objects.value( class_name ) ) {
-        list.append( o );
+    if( this->classes_stored.contains( class_name ) ){
+        foreach (GWSObject* o, *this->objects.value( class_name ) ) {
+            list.append( o );
+        }
     }
     return list;
 }
