@@ -2,6 +2,7 @@
 
 /*  This behaviour aims at checking whether a GWSAgent has energy > 1 */
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 CheckAliveBehaviour::CheckAliveBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behaving_agent ){
 }
@@ -26,5 +27,6 @@ bool CheckAliveBehaviour::behave(){
     //qInfo() << "IS DYING" << this->getAgent()->getProperty("@id").toString();
     this->getAgent()->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
     GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
+    GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
     return true;
 }
