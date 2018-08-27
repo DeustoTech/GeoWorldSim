@@ -33,7 +33,7 @@ bool BreedBehaviour::behave(){
 
      qInfo() << "Congeners in your cell = " << Congeners;
 
-     if (Congeners >= 2)
+     if (Congeners == 2)
          {
          //Breed
          qInfo() << "Found mate! ";
@@ -84,16 +84,13 @@ bool BreedBehaviour::behave(){
              OffspringAgent->icon_url = "https://image.flaticon.com/icons/svg/235/235018.svg";
             }
 
-         GWSExecutionEnvironment::globalInstance()->registerAgent( OffspringAgent );
-
          qInfo() << "OffspringAgent's initial position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(OffspringAgent )->getCentroid().toString();
          qInfo() << "Agents in cell = " << dynamic_cast<ViewSkill*>( OffspringAgent->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents().size();
-
          return true;
          }
      else
         {
-         qInfo() << "No mate on your position";
+         qInfo() << "No mating";
          return true;
         }
 

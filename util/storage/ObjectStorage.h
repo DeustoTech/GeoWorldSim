@@ -38,7 +38,6 @@ public:
 
     bool contains( QString class_name ) const;
     bool contains( GWSObject* object ) const;
-    unsigned int getCount();
 
     // SETTERS
     virtual void add( GWSObject* object );
@@ -51,9 +50,9 @@ protected:
      * STORAGE
     **/
     QStringList classes_stored;
-    QHash<QString, QList< GWSObject* > > objects;  // QMAP<ClassName, QList<OBJECT>>
-    QHash<QString, QHash< QString , GWSObject* > > object_ids;  // QMAP< QMAP< ID , OBJECT>>
-    QHash<QString, QHash< QString , GWSObject* > > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
+    QHash<QString, QList< GWSObject* >* > objects;  // QMAP<ClassName, QList<OBJECT>>
+    QHash<QString, QHash< QString , GWSObject* >* > object_ids;  // QMAP< QMAP< ID , OBJECT>>
+    QHash<QString, QHash< QString , GWSObject* >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
 
     QMutex mutex;
 };

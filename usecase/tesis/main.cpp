@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 20 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
                                                                                                                        "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
                                                                                         "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
@@ -140,7 +140,6 @@ int main(int argc, char* argv[])
                                                         );
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
-
         GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
 
     }
@@ -150,7 +149,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 20 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -167,7 +166,7 @@ int main(int argc, char* argv[])
                                                                                                      "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
                                                                                         "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
@@ -180,8 +179,6 @@ int main(int argc, char* argv[])
 
 
         GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPredator.object() ) );
-
-
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
