@@ -74,6 +74,7 @@ QJsonObject GWSBehaviour::serialize() const{
         }
         json.insert( NEXT_BEHAVIOURS_PROP , arr );
     }
+    return json;
 }
 
 /**********************************************************************

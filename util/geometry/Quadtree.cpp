@@ -113,13 +113,16 @@ void GWSQuadtree::upsert(GWSAgent* agent){
         this->inner_index->remove( &e , agent );
     }
 
-    geos::geom::Envelope e = geos::geom::Envelope(
-                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX() ,
-                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxX() ,
-                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY() ,
-                GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY() );
-    this->registered_envelopes.insert( agent , e );
-    this->inner_index->insert( &e , agent );
+    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    if( geom ){
+        geos::geom::Envelope e = geos::geom::Envelope(
+                    geom->getGeometryMinX() ,
+                    geom->getGeometryMaxX() ,
+                    geom->getGeometryMinY() ,
+                    geom->getGeometryMaxY() );
+        this->registered_envelopes.insert( agent , e );
+        this->inner_index->insert( &e , agent );
+    }
     this->mutex.unlock();
 }
 

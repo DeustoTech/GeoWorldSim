@@ -22,6 +22,7 @@
 
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/eat/EatBehaviour.h"
+#include "../../behaviour/breed/BreedBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
 #include "../../behaviour/alive/CheckAliveBehaviour.h"
@@ -33,6 +34,7 @@
 
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
+#include "../../util/distributed/ExternalListener.h"
 //#include "../../util/grid/Grid.h"
 
 #include <time.h>
@@ -69,6 +71,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckAliveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EatBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( BreedBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SelectDestinationBehaviour::staticMetaObject );
 
@@ -83,8 +86,8 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = -50 ; i < 50 ; i += 5 ){
-       for( int j = -50 ; j < 50 ; j += 5 ){
+    for( int i = -5 ; i < 5 ; i += 1 ){
+       for( int j = -5 ; j < 5 ; j += 1 ){
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
@@ -111,7 +114,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 500 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
@@ -121,18 +124,20 @@ int main(int argc, char* argv[])
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" , \"color\" : \"blue\" } , "
                                                                      "\"@behaviours\" : [  "
                                                                                         "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"duration\" : 1000 } , "
-                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"PastureAgent\" , \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH3\" , \"@sub_behaviours\" : ["
+                                                                                                                                      "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"PastureAgent\" , \"duration\" : 1000 }, "
+                                                                                                                                      "{ \"@type\" : \"BreedBehaviour\", \"duration\" : 1000 } "
+                                                                                                                       "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
                                                                                         "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
-                                                       .arg( qrand() % 100 - 50 )
-                                                       .arg( qrand() % 100 - 50 )
+                                                       .arg( qrand() % 10 - 5 )
+                                                       .arg( qrand() % 10 - 5 )
                                                        .toLatin1()
                                                         );
-
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
 
@@ -145,7 +150,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 500 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -156,15 +161,18 @@ int main(int argc, char* argv[])
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
                                                                                         "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"duration\" : 1000 } , "
-                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"SheepAgent\" , \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH3\" , \"@sub_behaviours\" : ["
+                                                                                                                    "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"SheepAgent\" , \"duration\" : 1000 }, "
+                                                                                                                    "{ \"@type\" : \"BreedBehaviour\", \"duration\" : 1000 } "
+                                                                                                     "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
                                                                                         "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
-                                                       .arg( qrand() % 100 - 50 )
-                                                       .arg( qrand() % 100 - 50 )
+                                                       .arg( qrand() % 10 - 5 )
+                                                       .arg( qrand() % 10 - 5 )
                                                        .toLatin1()
                                                         );
 
@@ -177,6 +185,8 @@ int main(int argc, char* argv[])
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
+
+   // GWSExternalListener* ext = new GWSExternalListener("PastureAgent");
 
     GWSExecutionEnvironment::globalInstance()->run();
 
