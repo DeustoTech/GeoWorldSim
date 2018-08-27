@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 
 #include "../../skill/view/ViewSkill.h"
-#include "../../skill/move/MoveSkill.h"
+
 
 
 EatBehaviour::EatBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
@@ -60,7 +60,7 @@ bool EatBehaviour::behave(){
 
                   qInfo() << "RIP" << CellOccupation.at(i)->getProperty("@id").toString();
                   CellOccupation.at(i)->setProperty("energy" , 0.);
-                  CellOccupation.at(i)->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
+                  //CellOccupation.at(i)->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
                   }
                }
 
@@ -69,5 +69,6 @@ bool EatBehaviour::behave(){
 
 
         }
+        return true;
 
 }

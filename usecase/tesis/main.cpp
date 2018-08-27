@@ -22,6 +22,7 @@
 
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/eat/EatBehaviour.h"
+#include "../../behaviour/breed/BreedBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
 #include "../../behaviour/alive/CheckAliveBehaviour.h"
@@ -33,6 +34,7 @@
 
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
+#include "../../util/distributed/ExternalListener.h"
 //#include "../../util/grid/Grid.h"
 
 #include <time.h>
@@ -69,6 +71,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckAliveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EatBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( BreedBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SelectDestinationBehaviour::staticMetaObject );
 
@@ -111,7 +114,7 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
@@ -121,7 +124,10 @@ int main(int argc, char* argv[])
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
                                                                      "\"@behaviours\" : [  "
                                                                                         "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"forward_time\" : 1000 } , "
-                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"PastureAgent\" , \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH3\" , \"@sub_behaviours\" : ["
+                                                                                                                                      "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"PastureAgent\" , \"forward_time\" : 1000 }, "
+                                                                                                                                      "{ \"@type\" : \"BreedBehaviour\", \"forward_time\" : 1000 } "
+                                                                                                                       "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"forward_time\" : 1000 } "
@@ -132,7 +138,6 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 5 )
                                                        .toLatin1()
                                                         );
-
 
         GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
 
@@ -156,7 +161,10 @@ int main(int argc, char* argv[])
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
                                                                      "\"@behaviours\" : [  "
                                                                                         "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"forward_time\" : 1000 } , "
-                                                                                        "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"SheepAgent\" , \"increment_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH3\" , \"@sub_behaviours\" : ["
+                                                                                                                    "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"SheepAgent\" , \"forward_time\" : 1000 }, "
+                                                                                                                    "{ \"@type\" : \"BreedBehaviour\", \"forward_time\" : 1000 } "
+                                                                                                     "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"forward_time\" : 1000 } "
@@ -177,6 +185,8 @@ int main(int argc, char* argv[])
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
+
+   // GWSExternalListener* ext = new GWSExternalListener("PastureAgent");
 
     GWSExecutionEnvironment::globalInstance()->run();
 
