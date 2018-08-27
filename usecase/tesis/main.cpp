@@ -83,16 +83,16 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = 0 ; i < 10 ; i ++ ){
-       for( int j = 0 ; j < 10 ; j++ ){
+    for( int i = -50 ; i < 50 ; i += 5 ){
+       for( int j = -50 ; j < 50 ; j += 5 ){
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
-                                                       \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" } , \
+                                                       \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" , \"color\" : \"green\" } , \
                                                        \"@behaviours\" : [ \
-                                                                            { \"@type\" : \"GWSBehaviour\" , \"@id\" :  \"BH\" , \"forward_time\" : 5000 } , \
-                                                                            { \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true ,  \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"min\" : 0 , \"forward_time\" : 1000 , \"@next\" : [\"BH\"] } ] \
+                                                                            { \"@type\" : \"GWSBehaviour\" , \"@id\" :  \"BH\" , \"duration\" : 60000 } , \
+                                                                            { \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true ,  \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"min\" : 0 , \"duration\" : 1000 , \"@next\" : [\"BH\"] } ] \
                                                        } ")
                                                        .arg( i )
                                                        .arg( j )
@@ -111,25 +111,25 @@ int main(int argc, char* argv[])
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 50 ; i++ ){
+    for( int i = 0 ; i < 500 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-0.1, -0.1],[-0.1, 0.1],[0.1, 0.1],[0.1, -0.1],[-0.1, -0.1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
+                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 80000 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" } , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" , \"color\" : \"blue\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"forward_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"duration\" : 1000 } , "
                                                                                         "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"PastureAgent\" , \"increment_time\" : 1000 } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
-                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"forward_time\" : 1000 } "
+                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"forward_time\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
-                                                       .arg( qrand() % 5 )
-                                                       .arg( qrand() % 5 )
+                                                       .arg( qrand() % 100 - 50 )
+                                                       .arg( qrand() % 100 - 50 )
                                                        .toLatin1()
                                                         );
 
@@ -145,26 +145,26 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 500 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
                                                                      "\"energy\" : 50.0 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-0.1, -0.1],[-0.1, 0.1],[0.1, 0.1],[0.1, -0.1],[-0.1, -0.1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 10000 } ],"
+                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 80000 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" } , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/235/235427.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"forward_time\" : 1000 } , "
+                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"duration\" : 1000 } , "
                                                                                         "{ \"@type\" : \"EatBehaviour\" , \"@id\" : \"BH3\" , \"prey\" : \"SheepAgent\" , \"increment_time\" : 1000 } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
-                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"forward_time\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"forward_time\" : 1000 } "
+                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -0.1, \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"forward_time\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
                                                                    " ] } ")
-                                                       .arg( qrand() % 5 )
-                                                       .arg( qrand() % 5 )
+                                                       .arg( qrand() % 100 - 50 )
+                                                       .arg( qrand() % 100 - 50 )
                                                        .toLatin1()
                                                         );
 

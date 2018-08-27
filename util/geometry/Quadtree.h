@@ -36,7 +36,7 @@ private:
     geos::index::quadtree::Quadtree* inner_index;
     QMap<GWSAgent* , geos::geom::Envelope> registered_envelopes;
 
-    //QMutex mutex;
+    QMutex mutex;
 };
 
 Q_DECLARE_METATYPE(GWSQuadtree*)

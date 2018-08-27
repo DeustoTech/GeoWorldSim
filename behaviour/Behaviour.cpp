@@ -3,7 +3,7 @@
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "forward_time";
+QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "duration";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString GWSBehaviour::SUB_BEHAVIOURS_CONDITION_PROP = "@sub_behaviours_condition";
 QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";

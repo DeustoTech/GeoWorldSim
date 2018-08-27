@@ -106,7 +106,7 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
 }
 
 void GWSQuadtree::upsert(GWSAgent* agent){
-    //this->mutex.lock();
+    this->mutex.lock();
     // Check if exists
     if( !this->registered_envelopes.value( agent ).isNull() ){
         geos::geom::Envelope e = this->registered_envelopes.value( agent );
@@ -120,7 +120,7 @@ void GWSQuadtree::upsert(GWSAgent* agent){
                 GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY() );
     this->registered_envelopes.insert( agent , e );
     this->inner_index->insert( &e , agent );
-    //this->mutex.unlock();
+    this->mutex.unlock();
 }
 
 void GWSQuadtree::remove(GWSAgent* agent){
