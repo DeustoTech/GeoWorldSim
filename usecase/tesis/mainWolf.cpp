@@ -80,77 +80,14 @@ int main(int argc, char* argv[])
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
 
-    /* -------------
-     * Grass Agents
-     * -------------*/
 
-    // Populate a zone of size A x B with GrassAgents
-
-    for( int i = -2 ; i < 2 ; i += 1 ){
-       for( int j = -2 ; j < 2 ; j += 1 ){
-           break; // Uncomment and set Sheep and Wolf Agents to zero to obtain an Empty Simulation
-
-           QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
-                                                       \"energy\" : 7, \
-                                                       \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
-                                                       \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" , \"color\" : \"green\" } , \
-                                                       \"@behaviours\" : [ \
-                                                                            { \"@type\" : \"GWSBehaviour\" , \"@id\" :  \"BH\" , \"duration\" : 60000 } , \
-                                                                            { \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true ,  \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"min\" : 0 , \"duration\" : 1000 , \"@next\" : [\"BH\"] } ] \
-                                                       } ")
-                                                       .arg( i )
-                                                       .arg( j )
-                                                       .toLatin1()
-                                                       );
-
-           PastureAgent* pasture = dynamic_cast<PastureAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ) );
-           GWSExecutionEnvironment::globalInstance()->registerAgent( pasture );
-    }
-    }
-
-
-
-    /* ----------
-     * SheepAgents
-       ----------*/
-
-    /* Dolly1 */
-    for( int i = 0 ; i < 10 ; i++ ){
-
-        QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
-                                                                     "\"energy\" : 50.0 , "
-                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"GWSAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-0.1, -0.1],[-0.1, 0.1],[0.1, 0.1],[0.1, -0.1],[-0.1, -0.1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 80000 } ],"
-                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , "
-                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/801/801373.svg\" , \"color\" : \"blue\" } , "
-                                                                     "\"@behaviours\" : [  "
-                                                                                        "{ \"@type\" : \"SelectDestinationBehaviour\" , \"@id\" : \"BH1\" , \"duration\" : 1000 } , "
-                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH3\" , \"@sub_behaviours\" : ["
-                                                                                                                                      "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"PastureAgent\" , \"duration\" : 1000 }, "
-                                                                                                                                      "{ \"@type\" : \"BreedBehaviour\", \"duration\" : 1000 } "
-                                                                                                                       "] } , "
-                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
-                                                                                                                                                           "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
-                                                                                                                                            "] } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
-                                                                   " ] } ")
-                                                       .arg( qrand() % 10 - 5 )
-                                                       .arg( qrand() % 10 - 5 )
-                                                       .toLatin1()
-                                                        );
-
-        GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
-        GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
-
-    }
 
 
     /* ----------
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 0 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -184,21 +121,7 @@ int main(int argc, char* argv[])
 
     }
 
-    // Empty Simulation listens to:
-     //GWSExternalListener* ext = new GWSExternalListener("PastureSim");
-     //GWSExternalListener* ext1 = new GWSExternalListener("SheepSim");
-    //  GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
-
-   // Pasture Simulation listens to:
-   //GWSExternalListener* ext = new GWSExternalListener("SheepSim");
-
-   // Sheep Simulation listens to:
-   GWSExternalListener* ext = new GWSExternalListener("PastureSim");
- //  GWSExternalListener* ext1 = new GWSExternalListener("WolfSim");
-
-   // Wolf Simulation listens to:
-   //GWSExternalListener* ext = new GWSExternalListener("SheepSim");
-
+    GWSExternalListener* ext = new GWSExternalListener("SheepSim");
 
     GWSExecutionEnvironment::globalInstance()->run();
 

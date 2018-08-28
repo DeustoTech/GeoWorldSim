@@ -33,7 +33,7 @@ public:
 
     // SETTERS
 
-protected:
+    // METHODS
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);
 

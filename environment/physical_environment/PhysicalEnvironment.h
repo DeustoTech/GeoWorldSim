@@ -40,7 +40,7 @@ public:
     void transformUnion(  GWSAgent* agent, const GWSGeometry* other );
     void transformIntersection(  GWSAgent* agent, const GWSGeometry* other );
 
-    // REGISTRATION
+    // METHODS
     virtual void registerAgent(GWSAgent *agent , GWSGeometry* init_geom = Q_NULLPTR );
     virtual void unregisterAgent(GWSAgent *agent);
 
