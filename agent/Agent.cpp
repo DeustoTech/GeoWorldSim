@@ -296,17 +296,28 @@ void GWSAgent::behave(){
 
         QList<GWSBehaviour*> next_loop_iterators;
 
+        // Behaviours
         foreach (GWSBehaviour* b, iterators) {
 
             if( b->finished() ){
+
                 next_loop_iterators.append( b->getNext() );
+
             } else {
 
+                // SubBehaviours
                 foreach (GWSBehaviour* sb, b->getSubs()) {
-                    if( sb->finished() ){ next_loop_iterators.append( sb->getNext() ); }
+                    if( sb->finished() ){
+                        next_loop_iterators.append( sb->getNext() );
+                    } else if( !next_execute_behaviours.contains( sb ) ){
+                        next_execute_behaviours.append( sb );
+                    }
                 }
 
-                next_execute_behaviours.append( b );
+                if( !next_execute_behaviours.contains( b ) ){
+                    next_execute_behaviours.append( b );
+                }
+
             }
         }
 

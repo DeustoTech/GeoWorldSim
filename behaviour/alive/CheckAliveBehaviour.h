@@ -5,7 +5,6 @@
 
 class CheckAliveBehaviour : public GWSBehaviour
 {
-
     Q_OBJECT
 
 public:

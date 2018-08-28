@@ -51,7 +51,7 @@ void GWSExternalListener::reconnectSocket(){
 
 void GWSExternalListener::messageReceived(const QString message){
 
-    qInfo() << "Received message" << message;
+    //qInfo() << "Received message" << message;
     QJsonObject json = QJsonDocument::fromJson( message.toLatin1() ).object();
 
     // RECEIVED AN AGENT

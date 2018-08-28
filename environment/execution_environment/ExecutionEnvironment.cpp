@@ -86,7 +86,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
     // Create agent's own timer to schedule its slots
     if( agent->timer ){ agent->timer->deleteLater(); }
-    agent->timer = new QTimer( agent ); // Set its parent to this agent, Really improves speed
+    agent->timer = new QTimer( agent ); // Set its parent to the agent, Really improves speed
     agent->timer->setSingleShot( true ); // Set single shot, really improves speed
 
     if( !agent || agent->deleted ){ return; }
@@ -203,7 +203,7 @@ void GWSExecutionEnvironment::behave(){
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
 
-                // Call behave through behaveWrapper for it to be executed in the agents thread (important to avoid msec < 1000)
+                // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
 
                 ticked_agents++;

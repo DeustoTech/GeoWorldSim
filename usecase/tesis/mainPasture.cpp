@@ -115,7 +115,6 @@ int main(int argc, char* argv[])
 
     GWSExecutionEnvironment::globalInstance()->run();
 
-
     app->exec();
 
 }

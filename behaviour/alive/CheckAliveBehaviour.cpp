@@ -9,7 +9,7 @@ CheckAliveBehaviour::CheckAliveBehaviour( GWSAgent* behaving_agent ) : GWSBehavi
 
 bool CheckAliveBehaviour::finished(){
 
-    if (this->getAgent()->getProperty("energy") > 0.)
+    if ( this->getAgent()->getProperty("energy").toDouble() > 0. )
         {
         //qDebug() << this->getAgent()->getProperty("@id").toString() << " you are alive, keep going!";
         //qDebug() << this->getAgent()->getProperty("energy").toString() << " energy!";

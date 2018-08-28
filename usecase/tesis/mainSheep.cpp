@@ -116,16 +116,13 @@ int main(int argc, char* argv[])
 
     }
 
-
-
     // The SheepAgent Simulation needs to listen to the PastureAgent Simulation to gain energy and
     // to the PredatorAgent Simulation to die.
    GWSExternalListener* ext1 = new GWSExternalListener("PastureSim");
    GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
 
-    GWSExecutionEnvironment::globalInstance()->run();
+   GWSExecutionEnvironment::globalInstance()->run();
 
-
-    app->exec();
+   app->exec();
 
 }
