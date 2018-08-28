@@ -85,30 +85,24 @@ GWSAgent* GWSBehaviour::getAgent(){
     return dynamic_cast<GWSAgent*>( this->parent() );
 }
 
+QList<GWSBehaviour*> GWSBehaviour::getSubs(){
+    return this->sub_behaviours;
+}
+
 QList<GWSBehaviour*> GWSBehaviour::getNext(){
     return this->next_behaviours;
 }
 
 bool GWSBehaviour::finished(){
 
-    // SUBBEHAVIOURS can act as:
-    // AND, all must be finished to finish the behaviour
-    // OR, if any has finished, the behaviour has finished
-    // by DEFAULT they will be OR
-    QString condition = this->getProperty( SUB_BEHAVIOURS_CONDITION_PROP ).toString();
-    if( condition.isEmpty() ){ condition = "or"; }
-    bool finished = condition == "or" ? false : true ;
+    int condition = this->getProperty( SUB_BEHAVIOURS_CONDITION_PROP ).toInt();
+    if( condition <= 0 ){ condition = this->sub_behaviours.size(); }
+    int finished_amount = 0;
 
     foreach (GWSBehaviour* sub, this->sub_behaviours){
-
-        if( condition == "or" ){
-            finished = finished || sub->finished();
-        }
-        if( condition == "and" ){
-            finished = finished && sub->finished();
-        }
+        finished_amount += sub->finished() ? 1 : 0;
     }
-    return finished;
+    return finished_amount >= condition;
 }
 
 /**********************************************************************

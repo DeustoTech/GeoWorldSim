@@ -295,6 +295,11 @@ void GWSAgent::behave(){
             if( b->finished() ){
                 next_loop_iterators.append( b->getNext() );
             } else {
+
+                foreach (GWSBehaviour* sb, b->getSubs()) {
+                    if( sb->finished() ){ next_loop_iterators.append( sb->getNext() ); }
+                }
+
                 next_execute_behaviours.append( b );
             }
         }

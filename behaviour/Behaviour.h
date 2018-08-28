@@ -27,6 +27,7 @@ public:
 
     // GETTERS
     GWSAgent* getAgent();
+    QList<GWSBehaviour*> getSubs();
     QList<GWSBehaviour*> getNext();
     virtual bool finished(); // Behaviour finished check
 
