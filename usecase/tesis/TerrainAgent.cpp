@@ -32,7 +32,7 @@ void TerrainAgent::behave(){
         }
     }*/
 
-    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , 5 );
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getId() , 5 );
     //this->incrementInternalTime( 5 );
 }
 

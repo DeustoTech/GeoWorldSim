@@ -1,7 +1,11 @@
 #include "CheckAliveBehaviour.h"
 
 /*  This behaviour aims at checking whether a GWSAgent has energy > 1 */
+
+#include "../../app/App.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 CheckAliveBehaviour::CheckAliveBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behaving_agent ){
@@ -25,8 +29,10 @@ bool CheckAliveBehaviour::finished(){
 
 bool CheckAliveBehaviour::behave(){
     //qInfo() << "IS DYING" << this->getAgent()->getProperty("@id").toString();
+
     this->getAgent()->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
+    this->getAgent()->setProperty( GWSAgent::ALIVE_PROP , false );
+    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
     GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
-    GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
     return true;
 }

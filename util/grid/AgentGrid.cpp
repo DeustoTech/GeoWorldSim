@@ -31,7 +31,7 @@ QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned in
         return agents;
     }
 
-    const GWSGeometry* grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() );
+    const GWSGeometry* grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() );
     double minX = grid_geom->getGeometryMinX();
     double maxX = grid_geom->getGeometryMaxX();
     double minY = grid_geom->getGeometryMinY();
@@ -43,7 +43,7 @@ QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned in
     double cell_maxY = GWSGridCoordinatesConversor::x2lon( grid_y+1 , minY , maxY , this->getGridYSize() );
 
     foreach (GWSAgent* agent , this->agents_inside) {
-        const GWSGeometry* agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+        const GWSGeometry* agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent->getId() );
         if( agent_geom && agent_geom->intersects( cell_minX , cell_maxX , cell_minY , cell_maxY ) ){
             agents.append( agent );
         }

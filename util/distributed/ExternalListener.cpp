@@ -60,7 +60,7 @@ void GWSExternalListener::messageReceived(const QString message){
 
         QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
-        QJsonObject geo = json.value( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        bool alive = json.value( GWSAgent::ALIVE_PROP ).toBool();
 
         GWSAgent* agent = Q_NULLPTR;
 
@@ -68,17 +68,17 @@ void GWSExternalListener::messageReceived(const QString message){
             agent = dynamic_cast<GWSAgent*>( GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id ) );
         }
 
-        if( agent && geo.isEmpty() ){
+        if( agent && !alive ){
             agent->deleteLater();
             return;
         }
 
-        if( agent && !geo.isEmpty() ){
+        if( agent && alive ){
             agent->deserialize( json );
             return;
         }
 
-        if( !agent ){
+        if( !agent && alive ){
             agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json ) );
         }
     }

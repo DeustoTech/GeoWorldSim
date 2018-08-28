@@ -34,7 +34,7 @@ void PredatorAgent::behaveOld()
         qInfo() << "                 Wolf                           ";
         qInfo() << "                 ----                           ";
 
-        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , qrand() % 3 );
+        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getId() , qrand() % 3 );
 
         /* Send information to website */
         emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
@@ -121,8 +121,6 @@ void PredatorAgent::behaveOld()
                        this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
                        PredatorAgent* cubAgent = dynamic_cast<PredatorAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
                        GWSExecutionEnvironment::globalInstance()->registerAgent( cubAgent );
-                       qInfo() << "Cub's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( cubAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( cubAgent )->getCentroid().getY() << ")";
-
                        }
 
           }

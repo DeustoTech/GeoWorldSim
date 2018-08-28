@@ -5,7 +5,7 @@
 
 QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "duration";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
-QString GWSBehaviour::SUB_BEHAVIOURS_CONDITION_PROP = "@sub_behaviours_condition";
+QString GWSBehaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
@@ -95,7 +95,7 @@ QList<GWSBehaviour*> GWSBehaviour::getNext(){
 
 bool GWSBehaviour::finished(){
 
-    int condition = this->getProperty( SUB_BEHAVIOURS_CONDITION_PROP ).toInt();
+    int condition = this->getProperty( FINISH_CONDITION_PROP ).toInt();
     if( condition <= 0 ){ condition = this->sub_behaviours.size(); }
     int finished_amount = 0;
 
@@ -137,11 +137,11 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
     // Calculate how much to increment agent internal time
     qint64 increment_time = qMax( 100 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() ); // At least 0.1 seconds
-    qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
+    qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent()->getId() );
 
     // Compare how much has been spent or if some other behaviour incremented the time
     qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
-    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent() , max_time );
+    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent()->getId() , max_time );
 
     return behaved_correctly;
 }

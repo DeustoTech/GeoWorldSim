@@ -92,7 +92,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
             * movement_duration.number();
 
     // Current position
-    GWSCoordinate current_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid();
+    GWSCoordinate current_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid();
     GWSCoordinate destination_coor = this->getDestination();
 
     // Distance
@@ -116,5 +116,4 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
 
     // Lose some speed
     //this->setProperty( CURRENT_SPEED_PROP , this->getCurrentSpeed() * 0.9 );
-
 }

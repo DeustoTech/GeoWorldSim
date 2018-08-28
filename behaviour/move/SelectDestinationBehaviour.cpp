@@ -24,7 +24,7 @@ bool SelectDestinationBehaviour::finished(){
         return false;
     }
 
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid();
     return agent_coor != destination_coor;
 }
 
@@ -39,8 +39,8 @@ bool SelectDestinationBehaviour::behave(){
     int TargetX = direction[RandIndexX];
     int TargetY = direction[RandIndexY];
 
-    int DestinationX = TargetX + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getX();
-    int DestinationY = TargetY + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getY();
+    int DestinationX = TargetX + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().getX();
+    int DestinationY = TargetY + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().getY();
 
     MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
     mv->setProperty( MoveSkill::DESTINATION_X_PROP , DestinationX );
@@ -48,6 +48,6 @@ bool SelectDestinationBehaviour::behave(){
 
     qDebug() << "Agent = ", this->getAgent()->getProperty("@id").toString();
     qDebug() << "Destination = ", mv->getDestination().toString();
-    qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
+    qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().toString();
     return true;
 }

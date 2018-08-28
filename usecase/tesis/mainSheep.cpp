@@ -54,7 +54,6 @@ int main(int argc, char* argv[])
     GWSPhysicalEnvironment::globalInstance();
     //GWSGridEnvironment::globalInstance();
 
-
     // Init Object Factory
     //GWSObjectFactory::globalInstance()->registerType( TerrainAgent::staticMetaObject );
 
@@ -79,14 +78,12 @@ int main(int argc, char* argv[])
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-
-
     /* ----------
      * SheepAgents
        ----------*/
 
     /* Dolly1 */
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         QJsonDocument jsonSheep = QJsonDocument::fromJson( QString("{ \"@type\" : \"SheepAgent\" , "
                                                                      "\"energy\" : 50.0 , "
@@ -100,11 +97,11 @@ int main(int argc, char* argv[])
                                                                                                                                       "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"PastureAgent\" , \"duration\" : 1000 }, "
                                                                                                                                       "{ \"@type\" : \"BreedBehaviour\", \"duration\" : 1000 } "
                                                                                                                        "] } , "
-                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"sub_behaviours_condition\" : 1 , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\",\"BH3\"] } "
                                                                    " ] } ")
                                                        .arg( qrand() % 10 - 5 )
                                                        .arg( qrand() % 10 - 5 )

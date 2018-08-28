@@ -3,6 +3,7 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
+#include "../../app/App.h"
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
@@ -23,7 +24,7 @@ bool MoveBehaviour::finished(){
     if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
         return true;
     }
-    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
+    return GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
 }
 
 /**********************************************************************
@@ -32,7 +33,7 @@ bool MoveBehaviour::finished(){
 
 bool MoveBehaviour::behave(){
 
-    qDebug() << "Initial position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
+    qDebug() << "Initial position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().toString();
     qDebug() << "Moving" << this->getAgent()->getProperty("@id");
 
     // Tick in 1 second duration to move in small parts
@@ -48,13 +49,14 @@ bool MoveBehaviour::behave(){
     // Calculate speed
     GWSCoordinate destination_coor = move_skill->getDestination();
     qDebug() << "destination_coor.toString()" << destination_coor.toString();
-    GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getCentroid().getDistance( destination_coor );
+    GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );
     }
 
     // Move towards
     move_skill->move( duration_of_movement );
+    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
 
     return true;
 }

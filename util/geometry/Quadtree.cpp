@@ -22,7 +22,7 @@ QList<GWSAgent *> GWSQuadtree::getElements(GWSCoordinate coor) const{
 QList<GWSAgent *> GWSQuadtree::getElements(const GWSGeometry* geometry) const{
     QList<GWSAgent *> intersecting_agents;
     foreach( GWSAgent* a , this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() ) ){
-        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a ) ) ){
+        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a->getId() ) ) ){
             intersecting_agents.append( a );
         }
     }
@@ -59,14 +59,14 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getCentroid().getDistance( coor );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found->getId() )->getCentroid().getDistance( coor );
 
     for(int i = 0 ; i < agents.size() ; i++){
         GWSAgent* g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getCentroid() );
+                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g->getId() )->getCentroid() );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -87,14 +87,14 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getDistance( geometry );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found->getId() )->getDistance( geometry );
 
     for(int i = 0 ; i < agents.size() ; i++){
         GWSAgent* g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getDistance( geometry );
+                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g->getId() )->getDistance( geometry );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -113,7 +113,7 @@ void GWSQuadtree::upsert(GWSAgent* agent){
         this->inner_index->remove( &e , agent );
     }
 
-    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent->getId() );
     if( geom ){
         geos::geom::Envelope e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,

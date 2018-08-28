@@ -29,7 +29,7 @@ QList<GWSAgent*> ViewSkill::getViewingAgents(){
     }
 
     // Move viewport to agent location
-    const GWSGeometry* agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() );
+    const GWSGeometry* agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() );
     GWSCoordinate agent_centroid = agent_geom->getCentroid();
     GWSCoordinate view_skill_centroid = geom->getCentroid();
     GWSCoordinate apply_movement = agent_centroid - view_skill_centroid;

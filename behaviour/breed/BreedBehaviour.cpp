@@ -15,8 +15,6 @@ bool BreedBehaviour::finished(){
 
 bool BreedBehaviour::behave(){
 
-     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(this->getAgent() )->getCentroid().toString();
-
      // Look what is around you:
      QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getAgent()->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
      qInfo() << "Cell Occupation = " << CellOccupation.size();
@@ -82,8 +80,6 @@ bool BreedBehaviour::behave(){
              OffspringAgent->icon_url = "https://image.flaticon.com/icons/svg/235/235018.svg";
             }
 
-         qInfo() << "OffspringAgent's initial position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry(OffspringAgent )->getCentroid().toString();
-         qInfo() << "Agents in cell = " << dynamic_cast<ViewSkill*>( OffspringAgent->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents().size();
          return true;
          }
      else

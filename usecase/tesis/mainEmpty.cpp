@@ -67,7 +67,6 @@ int main(int argc, char* argv[])
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-
     GWSExternalListener* ext1 = new GWSExternalListener("PastureSim");
     GWSExternalListener* ext2 = new GWSExternalListener("SheepSim");
     GWSExternalListener* ext3 = new GWSExternalListener("WolfSim");

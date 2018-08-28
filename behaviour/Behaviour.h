@@ -15,7 +15,7 @@ public:
     // PROPERTIES
     static QString INCREMENT_AGENT_TIME_PROP; // In milliseconds
     static QString SUB_BEHAVIOURS_PROP;
-    static QString SUB_BEHAVIOURS_CONDITION_PROP;
+    static QString FINISH_CONDITION_PROP;
     static QString NEXT_BEHAVIOURS_PROP;
     static QString START_BEHAVIOUR_PROP;
 

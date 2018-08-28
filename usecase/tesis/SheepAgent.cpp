@@ -26,7 +26,7 @@ void SheepAgent::behaveOld()
     qInfo() << "                 Sheep                           ";
     qInfo() << "                 -----                           ";
 
-    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , qrand() % 3 );
+    GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getId() , qrand() % 3 );
 
     /* Send information to website */
     emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
@@ -119,7 +119,6 @@ void SheepAgent::behaveOld()
                 this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
                 SheepAgent* lambAgent = dynamic_cast<SheepAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
                 GWSExecutionEnvironment::globalInstance()->registerAgent( lambAgent );
-                qInfo() << "Lamb's initial position = (" << GWSPhysicalEnvironment::globalInstance()->getGeometry( lambAgent )->getCentroid().getX() << "," << GWSPhysicalEnvironment::globalInstance()->getGeometry( lambAgent )->getCentroid().getY() << ")";
 
                 }
 

@@ -8,6 +8,7 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
     this->environment_agents = new GWSObjectStorage( this );
     qInfo() << "Agent environment created";
+    GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
 GWSAgentEnvironment::~GWSAgentEnvironment(){
@@ -36,7 +37,10 @@ GWSAgent* GWSAgentEnvironment::getByClassAndId( QString class_name , QString id)
 }
 
 template <class T> T* GWSAgentEnvironment::getByClassAndId( QString class_name , QString id ) const{
-    return dynamic_cast<T*>( this->environment_agents->getByClassAndId( class_name , id ) );
+    if( this->environment_agents ){
+       return dynamic_cast<T*>( this->environment_agents->getByClassAndId( class_name , id ) );
+    }
+    return 0;
 }
 
 GWSAgent* GWSAgentEnvironment::getByClassAndName( QString class_name , QString agent_name) const{

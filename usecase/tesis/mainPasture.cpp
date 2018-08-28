@@ -86,15 +86,15 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = -5 ; i < 5 ; i += 1 ){
-       for( int j = -5 ; j < 5 ; j += 1 ){
+    for( int i = -10 ; i < 10 ; i += 1 ){
+       for( int j = -10 ; j < 10 ; j += 1 ){
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
                                                        \"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/628/628296.svg\" , \"color\" : \"green\" } , \
                                                        \"@behaviours\" : [ \
-                                                                            { \"@type\" : \"GWSBehaviour\" , \"@id\" :  \"BH\" , \"duration\" : 60000 } , \
+                                                                            { \"@type\" : \"GWSBehaviour\" , \"finish_condition\" : 1 , \"@id\" :  \"BH\" , \"duration\" : 60000 } , \
                                                                             { \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true ,  \"property\" : \"energy\" , \"increment\" : 1. , \"max\" : 50. , \"min\" : 0 , \"duration\" : 1000 , \"@next\" : [\"BH\"] } ] \
                                                        } ")
                                                        .arg( i )
@@ -104,17 +104,12 @@ int main(int argc, char* argv[])
 
            PastureAgent* pasture = dynamic_cast<PastureAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ) );
            GWSExecutionEnvironment::globalInstance()->registerAgent( pasture );
+        }
     }
-    }
-
-
-
 
     // The PastureAgent Simulation needs information from the SheepAgent Simulation
     GWSExternalListener* ext = new GWSExternalListener("SheepSim");
-
     GWSExecutionEnvironment::globalInstance()->run();
 
     app->exec();
-
 }

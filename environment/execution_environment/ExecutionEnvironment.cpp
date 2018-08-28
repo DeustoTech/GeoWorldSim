@@ -96,7 +96,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     this->running_agents->add( agent );
 
     // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent->getId() ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     if( msecs < 0 ){
         msecs = 0;
     }
@@ -182,7 +182,7 @@ void GWSExecutionEnvironment::behave(){
     foreach( GWSAgent* agent , currently_running_agents ){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
-            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent->getId() );
             if( agent_time > 0 && agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
                 min_tick = qMin( min_tick , agent_time );
             }
@@ -194,11 +194,12 @@ void GWSExecutionEnvironment::behave(){
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( GWSAgent* agent , currently_running_agents ){
 
-            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+            QString agent_id = agent->getId();
+            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent_id );
 
             // If agent_tick is 0, set to now
             if( agent_next_tick <= 0 ){
-                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , min_tick );
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent_id , min_tick );
             }
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){

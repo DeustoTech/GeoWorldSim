@@ -22,10 +22,6 @@ GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
 // GETTERS
 /***********************************************************************/
 
-const GWSGeometry* GWSPhysicalEnvironment::getGeometry(const GWSAgent *agent) const{
-    return this->getGeometry( agent->getId() );
-}
-
 const GWSGeometry* GWSPhysicalEnvironment::getGeometry(QString agent_id) const{
     return this->agent_geometries.value( agent_id , 0 );
 }
@@ -175,14 +171,16 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 
 void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_geom ){
 
+    QString agent_id = agent->getId();
+
     // Remove if existing
-    if( this->agent_geometries.keys().contains( agent->getId() ) ){
-        delete this->agent_geometries.value( agent->getId() );
-        this->agent_geometries.remove( agent->getId() );
+    if( this->agent_ids.contains( agent_id ) ){
+        delete this->agent_geometries.value( agent_id );
     }
 
     // Add the new agents geometry
-    this->agent_geometries.insert( agent->getId() , init_geom ? init_geom : new GWSGeometry() );
+    this->agent_ids.append( agent_id );
+    this->agent_geometries.insert( agent_id , init_geom ? init_geom : new GWSGeometry() );
 
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){
@@ -202,6 +200,7 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_g
 void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
 
     this->mutex.lock();
+    QString agent_id = agent->getId();
     GWSEnvironment::unregisterAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
         this->spatial_index.value( s )->remove( agent );
@@ -209,7 +208,8 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
     this->mutex.unlock();
 
     //delete this->agent_geometries.value( agent->getId() );
-    //this->agent_geometries.remove( agent->getId() );
+    this->agent_geometries.remove( agent_id );
+    this->agent_ids.removeAll( agent_id );
 
 }
 

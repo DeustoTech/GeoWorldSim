@@ -49,10 +49,11 @@ QJsonObject GWSGrid::serialize() const{
     QJsonArray geometries;
 
     // BOUNDS
-    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMinX();
-    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMaxX();
-    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMaxY();
-    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() )->getGeometryMinY();
+    QString agent_id = this->getAgent()->getId();
+    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMinX();
+    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMaxX();
+    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMaxY();
+    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMinY();
 
     for(int i = 0 ; i < this->getGridXSize() ; i++){
         for(int j = 0 ; j < this->getGridYSize() ; j++ ){

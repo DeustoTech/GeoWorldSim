@@ -1,5 +1,7 @@
 #include "IncrementPropertyBehaviour.h"
 
+#include "../../app/App.h"
+
 QString IncrementPropertyBehaviour::PROPERTY_NAME_PROP = "property";
 QString IncrementPropertyBehaviour::INCREMENT_VALUE_PROP = "increment";
 QString IncrementPropertyBehaviour::MAX_VALUE_PROP = "max";
@@ -30,7 +32,9 @@ bool IncrementPropertyBehaviour::behave(){
     QVariant min_value = this->getProperty( MIN_VALUE_PROP );
     QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
+
     this->getAgent()->setProperty( property_name , incremented );
+    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
 
     return true;
 }

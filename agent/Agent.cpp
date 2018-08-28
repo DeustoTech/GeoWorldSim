@@ -18,10 +18,11 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
+QString GWSAgent::ALIVE_PROP = "alive";
 QString GWSAgent::STYLE_PROP = "style";
 
 GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSStyle( this ) , busy_counter(0) {
-
+    this->setProperty( ALIVE_PROP , true );
 }
 
 GWSAgent::~GWSAgent() {
@@ -31,7 +32,8 @@ GWSAgent::~GWSAgent() {
         env->unregisterAgent( this );
     }
 
-    // Emit withoug 'geo' property to be removed
+    // Emit withoug 'ALIVE' property to be removed
+    this->setProperty( ALIVE_PROP , false );
     emit GWSApp::globalInstance()->pushAgentSignal( this->serializeMini() );
 
     qDebug() << QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
@@ -142,10 +144,10 @@ QJsonObject GWSAgent::serialize() const{
     //json.insert( "@behaviours" , behaviours );
 
     // INTERNAL TIME
-    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );
+    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getId() ) );
 
     // GEOMETRY
-    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this );
+    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getId() );
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
@@ -272,9 +274,6 @@ void GWSAgent::tick(){
     this->decrementBusy();
 
     emit this->agentBehavedSignal();
-    this->timer->singleShot( 10 + (qrand() % 100 ) , [this](){
-        emit GWSApp::globalInstance()->pushAgentSignal( this->serialize() );
-    });
 }
 
 void GWSAgent::behave(){
@@ -305,19 +304,14 @@ void GWSAgent::behave(){
 
             } else {
 
-                // SubBehaviours
+                // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
                 foreach (GWSBehaviour* sb, b->getSubs()) {
                     if( sb->finished() ){
                         next_loop_iterators.append( sb->getNext() );
-                    } else if( !next_execute_behaviours.contains( sb ) ){
-                        next_execute_behaviours.append( sb );
                     }
                 }
 
-                if( !next_execute_behaviours.contains( b ) ){
-                    next_execute_behaviours.append( b );
-                }
-
+                next_execute_behaviours.append( b );
             }
         }
 
@@ -326,7 +320,7 @@ void GWSAgent::behave(){
 
     if( !next_execute_behaviours.isEmpty() ){
 
-        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this );
+        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getId() );
 
         foreach (GWSBehaviour* b, next_execute_behaviours) {
 
@@ -335,6 +329,6 @@ void GWSAgent::behave(){
             });
         }
     } else {
-        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this , 1 );
+        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getId() , 1 );
     }
 }

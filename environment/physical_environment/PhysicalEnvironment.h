@@ -19,7 +19,6 @@ public:
     static QString GEOMETRY_PROP;
 
     // SPATIAL GETTERS
-    const GWSGeometry* getGeometry( const GWSAgent* agent ) const;
     const GWSGeometry* getGeometry( QString agent_id ) const;
     QList<GWSAgent*> orderByDistance( GWSAgent* source , QList<GWSAgent*> agents ) const;
     QList<GWSAgent*> getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
@@ -53,6 +52,7 @@ private:
     QMap<QString , GWSQuadtree*> spatial_index; // Spatial indexes
 
     // Agent geometries
+    QStringList agent_ids;
     QMap<QString , GWSGeometry*> agent_geometries;
 
     // Mutex, for avoiding concurrency

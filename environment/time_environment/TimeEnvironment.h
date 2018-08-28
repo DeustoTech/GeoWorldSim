@@ -36,14 +36,13 @@ public:
     // GETTERS
     qint64 getCurrentDateTime() const;
     double getTimeSpeed() const;
-    qint64 getAgentInternalTime( const GWSAgent* agent ) const;
     qint64 getAgentInternalTime( QString agent_id ) const;
 
     // SETTERS
     void setDatetime( quint64 current_datetime_msecs );
     void setTimeSpeed(double time_speed = 1);
-    void setAgentInternalTime( const GWSAgent* agent , const qint64 datetime );
-    void incrementAgentInternalTime( const GWSAgent* agent , GWSTimeUnit seconds );
+    void setAgentInternalTime( QString agent_id , const qint64 datetime );
+    void incrementAgentInternalTime( QString agent_id , GWSTimeUnit seconds );
 
     // METHODS
     virtual void registerAgent( GWSAgent* agent , quint64 init_internal_time = 0 );

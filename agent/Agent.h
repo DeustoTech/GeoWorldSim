@@ -48,6 +48,7 @@ public:
     ~GWSAgent();
 
     // PROPERTIES
+    static QString ALIVE_PROP;
     static QString STYLE_PROP;
 
     // IMPORTERS
