@@ -29,8 +29,7 @@ public:
     GWSAgent* getByName(QString name) const; // Get one agent by its name
     template <class T> T* getByName(QString name) const; // Get one agent by its name
 
-
-protected:
+    // METHODS
     virtual void registerAgent(GWSAgent *agent);
     virtual void unregisterAgent(GWSAgent *agent);
 

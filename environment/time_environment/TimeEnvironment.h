@@ -25,6 +25,7 @@ public:
     * IMPORTANT Given in MSecsSinceEpoch
     */
     static QString INTERNAL_TIME_PROP;
+    static QString WAIT_FOR_ME_PROP;
 
     // IMPORTERS
     void deserialize(QJsonObject json);
@@ -44,7 +45,7 @@ public:
     void setAgentInternalTime( const GWSAgent* agent , const qint64 datetime );
     void incrementAgentInternalTime( const GWSAgent* agent , GWSTimeUnit seconds );
 
-    // REGISTRATION
+    // METHODS
     virtual void registerAgent( GWSAgent* agent , quint64 init_internal_time = 0 );
     virtual void unregisterAgent( GWSAgent* agent );
 
@@ -57,7 +58,7 @@ private:
 
     // Time speed
     // (How many seconds will there be in a real world second)
-    double time_speed = 0.5;
+    double time_speed = 2;
 
     // Agent internal times
     QMap<QString , quint64> agent_internal_times;

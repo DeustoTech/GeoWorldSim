@@ -90,7 +90,7 @@ HEADERS += \
     #agent/person/Person.h
 
 
-SOURCES += main.cpp \
+SOURCES += mainEmpty.cpp \
         # BASICS
     ../../app/App.cpp \
     ../../object/Object.cpp \

@@ -13,6 +13,7 @@
 #include "../../skill/Skill.h"
 
 #include "../../environment/Environment.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
@@ -49,27 +50,31 @@ void GWSAgent::deserialize(QJsonObject json){
     GWSObject::deserialize( json );
 
     // SKILLS
-    if( this->skills ){
-        this->skills->deleteAll();
-        this->skills->deleteLater();
-    }
-    QJsonArray jskills = json.value("@skills").toArray();
-    foreach( QJsonValue js , jskills ){
-        GWSSkill* skill = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
-        if( !skill ){ continue; }
-        this->addSkill( skill );
+    if( json.keys().contains( "@skills" ) ){
+        if( this->skills ){
+            this->skills->deleteAll();
+            this->skills->deleteLater();
+        }
+        QJsonArray jskills = json.value("@skills").toArray();
+        foreach( QJsonValue js , jskills ){
+            GWSSkill* skill = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+            if( !skill ){ continue; }
+            this->addSkill( skill );
+        }
     }
 
     // BEHAVIOURS
-    if( this->behaviours ){
-        this->behaviours->deleteAll();
-        this->behaviours->deleteLater();
-    }
-    QJsonArray jsbehaviours = json.value("@behaviours").toArray();
-    foreach( QJsonValue js , jsbehaviours ){
-        GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
-        if( !behaviour ){ continue; }
-        this->addBehaviour( behaviour );
+    if( json.keys().contains( "@behaviours" ) ){
+        if( this->behaviours ){
+            this->behaviours->deleteAll();
+            this->behaviours->deleteLater();
+        }
+        QJsonArray jsbehaviours = json.value("@behaviours").toArray();
+        foreach( QJsonValue js , jsbehaviours ){
+            GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+            if( !behaviour ){ continue; }
+            this->addBehaviour( behaviour );
+        }
     }
 
     // INTERNAL TIME
@@ -100,6 +105,7 @@ void GWSAgent::deserialize(QJsonObject json){
     }
 
     // MUST BE MADE AT THIS LAST PART. Add to environments
+    GWSAgentEnvironment::globalInstance()->registerAgent( this );
     GWSEnvironment::globalInstance()->registerAgent( this );
 }
 
@@ -124,7 +130,7 @@ QJsonObject GWSAgent::serialize() const{
             skills.append( s->serializeMini() );
         }
     }
-    json.insert( "@skills" , skills );
+    //json.insert( "@skills" , skills );
 
     // BEHAVIOUR
     QJsonArray behaviours;
@@ -133,7 +139,7 @@ QJsonObject GWSAgent::serialize() const{
             behaviours.append( s->serializeMini() );
         }
     }
-    json.insert( "@behaviours" , behaviours );
+    //json.insert( "@behaviours" , behaviours );
 
     // INTERNAL TIME
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this ) );

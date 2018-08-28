@@ -172,7 +172,7 @@ void GWSExecutionEnvironment::behave(){
         GWSApp::exit( 0 );
     }
 
-    // Wait for agents that are delayed.
+    // Wait for agents that are delayed (if WAIT_FOR_ME).
     // Get min tick time and add some threshold to execute the agents that are more delayed.
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     qint64 min_tick = current_datetime;
@@ -183,7 +183,7 @@ void GWSExecutionEnvironment::behave(){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
             qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
-            if( agent_time > 0 ){
+            if( agent_time > 0 && agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
                 min_tick = qMin( min_tick , agent_time );
             }
         }

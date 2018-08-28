@@ -79,6 +79,7 @@ GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
 
     // Set parent if any
     if( parent ){
+        qDebug() << "WARNING?";
         obj->setParent( parent );
         obj->moveToThread( parent->thread() );
     }

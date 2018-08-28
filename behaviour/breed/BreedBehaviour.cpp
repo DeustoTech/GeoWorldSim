@@ -50,8 +50,7 @@ bool BreedBehaviour::behave(){
 
          // Add skills
          QList<GWSSkill*> skills = this->getAgent()->getSkills( GWSSkill::staticMetaObject.className() );
-         if ( !skills.isEmpty() )
-            {
+         if ( !skills.isEmpty() ) {
             QJsonArray arr;
             foreach ( GWSSkill* o , skills ){
                     arr.append( o->serialize() );
@@ -61,8 +60,7 @@ bool BreedBehaviour::behave(){
 
          // Add behaviours
          QList<GWSBehaviour*> behaviours = this->getAgent()->getBehaviours( GWSBehaviour::staticMetaObject.className() );
-         if ( !behaviours.isEmpty() )
-            {
+         if ( !behaviours.isEmpty() ) {
             QJsonArray arr;
             foreach ( GWSBehaviour* o , behaviours ){
                     arr.append( o->serialize() );

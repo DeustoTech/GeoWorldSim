@@ -86,9 +86,9 @@ int main(int argc, char* argv[])
 
     // Populate a zone of size A x B with GrassAgents
 
-    for( int i = -5 ; i < 5 ; i += 1 ){
-       for( int j = -5 ; j < 5 ; j += 1 ){
-            break; // Uncomment and set Sheep and Wolf Agents to zero to obtain an Empty Simulation
+    for( int i = -2 ; i < 2 ; i += 1 ){
+       for( int j = -2 ; j < 2 ; j += 1 ){
+           break; // Uncomment and set Sheep and Wolf Agents to zero to obtain an Empty Simulation
 
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
@@ -184,10 +184,10 @@ int main(int argc, char* argv[])
 
     }
 
-   // Empty Simulation listens to:
-   // GWSExternalListener* ext = new GWSExternalListener("PastureSim");
-    //GWSExternalListener* ext1 = new GWSExternalListener("SheepSim");
-  //  GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
+    // Empty Simulation listens to:
+     //GWSExternalListener* ext = new GWSExternalListener("PastureSim");
+     //GWSExternalListener* ext1 = new GWSExternalListener("SheepSim");
+    //  GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
 
    // Pasture Simulation listens to:
    //GWSExternalListener* ext = new GWSExternalListener("SheepSim");
