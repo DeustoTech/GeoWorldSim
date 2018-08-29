@@ -16,8 +16,9 @@ GWSBehaviour::GWSBehaviour() : GWSObject(){
  IMPORTERS
 **********************************************************************/
 
-void GWSBehaviour::deserialize(QJsonObject json){
-    GWSObject::deserialize( json );
+void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behaving_agent){
+    this->behaving_agent = behaving_agent.dynamicCast<GWSAgent>();
+    GWSObject::deserialize( json , behaving_agent );
 
     // SUBBEHAVIOURS
     if( json.keys().contains( SUB_BEHAVIOURS_PROP ) ){
@@ -82,7 +83,7 @@ QJsonObject GWSBehaviour::serialize() const{
 **********************************************************************/
 
 QSharedPointer<GWSAgent> GWSBehaviour::getAgent(){
-    return this->getParent().dynamicCast<GWSAgent>();
+    return this->behaving_agent;
 }
 
 QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs(){

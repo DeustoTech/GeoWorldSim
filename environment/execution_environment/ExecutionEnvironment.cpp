@@ -20,7 +20,6 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
-    this->running_agents->setParent( this->getSharedPointer() );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
@@ -109,11 +108,9 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
         // Balance between threads. Only QObjects without parent can be moved. Children must stay in parents thread
         // CAUTION! Very slow operation
-        if( !agent->getParent() ){
-            qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
-            agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
-            if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
-        }
+        qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
+        agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
+        if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
 
         // Run agent
         agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );

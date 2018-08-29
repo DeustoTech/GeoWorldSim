@@ -23,7 +23,7 @@ public:
     ~GWSGeometry();
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json);
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

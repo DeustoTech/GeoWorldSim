@@ -20,7 +20,7 @@ public:
     static QString START_BEHAVIOUR_PROP;
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json);
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> behaving_agent );
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
@@ -46,6 +46,8 @@ private slots: // SLOTS, always invoke them by SLOT, it will make to be executed
 
 private:
     quint64 behaving_time = 0;
+
+    QSharedPointer<GWSAgent> behaving_agent;
 };
 
 #endif // GWSBEHAVIOUR_H

@@ -35,7 +35,8 @@ GWSGeometry::~GWSGeometry(){
  IMPORTERS
 **********************************************************************/
 
-void GWSGeometry::deserialize(QJsonObject json){
+void GWSGeometry::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+    Q_UNUSED(parent)
 
     if( this->inner_geometry ){ delete this->inner_geometry; }
 

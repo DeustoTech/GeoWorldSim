@@ -7,7 +7,6 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
     this->environment_agents = new GWSObjectStorage();
-    this->environment_agents->setParent( this->getSharedPointer() );
     qInfo() << "Agent environment created";
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
@@ -22,6 +21,10 @@ GWSAgentEnvironment::~GWSAgentEnvironment(){
 
 quint64 GWSAgentEnvironment::getAmount() const{
     return this->environment_agents->getAmount();
+}
+
+bool GWSAgentEnvironment::contains(QString class_name) const{
+    return this->environment_agents && this->environment_agents->contains( class_name );
 }
 
 QSharedPointer<GWSAgent> GWSAgentEnvironment::getRandomByClass(QString class_name){
@@ -41,7 +44,10 @@ template <class T> QSharedPointer<T> GWSAgentEnvironment::getByClassAndId( QStri
     if( this->environment_agents ){
         QSharedPointer<GWSObject> obj = this->environment_agents->getByClassAndId( class_name , id );
         if( !obj.isNull() ){
-            return obj.dynamicCast<T>();
+            try {
+                return obj.dynamicCast<T>();
+            } catch(...){}
+
         }
     }
     return 0;

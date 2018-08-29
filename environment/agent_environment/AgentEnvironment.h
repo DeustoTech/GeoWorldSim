@@ -16,6 +16,8 @@ public:
 
     // GETTERS
     quint64 getAmount() const;
+    bool contains( QString class_name ) const;
+
     QSharedPointer<GWSAgent> getRandomByClass( QString class_name );
     template <class T> QSharedPointer<T> getRandomByClass( QString class_name );
 

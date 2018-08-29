@@ -8,7 +8,6 @@ GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
 GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
     qInfo() << "Grid environment created";
     this->environment_grids = new GWSObjectStorage();
-    this->environment_grids->setParent( this->getSharedPointer() );
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 

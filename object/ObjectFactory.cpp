@@ -86,12 +86,11 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     // Set parent if any
     if( parent ){
         obj->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( parent->getId() ).arg( type ).arg( ++GWSObject::counter ) );
-        obj->setParent( parent );
         obj->moveToThread( parent->thread() );
     }
 
     // Call deserialize for further population
-    obj->deserialize( json );
+    obj->deserialize( json , parent );
 
     // Return object
     return obj;

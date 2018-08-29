@@ -21,7 +21,6 @@ GWSObject::GWSObject() : QObject() , deleted(false) {
 }
 
 GWSObject::GWSObject(const GWSObject &other) : QObject(){
-    this->setParent( other.getParent() );
 }
 
 GWSObject::~GWSObject(){
@@ -96,7 +95,8 @@ QJsonObject GWSObject::serialize() const{
  IMPORTERS
 **********************************************************************/
 
-void GWSObject::deserialize(QJsonObject json){
+void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+    Q_UNUSED( parent );
 
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_TYPE_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
@@ -156,10 +156,6 @@ QString GWSObject::getId() const{
     return this->getProperty( GWSObject::GWS_ID_PROP ).toString();
 }
 
-QSharedPointer<GWSObject> GWSObject::getParent() const{
-    return this->parent;
-}
-
 QSharedPointer<GWSObject> GWSObject::getSharedPointer() const{
     return this->self_shared_pointer;
 }
@@ -200,12 +196,6 @@ bool GWSObject::setProperty(const QString name, const GWSUnit &value){
 
 bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
-}
-
-void GWSObject::setParent( QSharedPointer<GWSObject> parent ){
-    //- DO NOT USE DEFAULT PARENT! DANGEROUS BECAUSE IT WILL AUTOMATICALLY CALL CHILDREN DELETE
-    //- QObject::setParent( parent.data() );
-    this->parent = parent;
 }
 
 bool GWSObject::setProperty(const QString name, QSharedPointer<GWSObject> value){

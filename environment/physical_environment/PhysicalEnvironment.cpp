@@ -179,7 +179,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent , QSha
 
     // Add the new agents geometry
     this->agent_ids.append( agent_id );
-    this->agent_geometries.insert( agent_id , init_geom ? init_geom : QSharedPointer<GWSGeometry>( new GWSGeometry() ) );
+    this->agent_geometries.insert( agent_id , init_geom.isNull() ? QSharedPointer<GWSGeometry>( new GWSGeometry() ) : init_geom );
 
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){

@@ -31,18 +31,18 @@ public:
     virtual QJsonObject serialize() const;
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json);
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // GETTERS
     QString getId() const;
-    QSharedPointer<GWSObject> getParent() const;
+    //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QStringList getInheritanceFamily() const;
     const QVariant getProperty( QString name ) const;
     const QVariant operator[]( QString name ) const;
 
     // SETTERS
-    void setParent( QSharedPointer<GWSObject> parent );
+    //void setParent( QSharedPointer<GWSObject> parent );
     bool setProperty(const QString name, const GWSUnit &value);
     bool setProperty(const QString name, const QVariant &value);
     bool setProperty(const QString name, QSharedPointer<GWSObject> value);
@@ -53,7 +53,7 @@ public:
 private:
 
     // PARENT
-    QSharedPointer<GWSObject> parent;
+    //QSharedPointer<GWSObject> parent;
     QSharedPointer<GWSObject> self_shared_pointer;
 
     // AUTOINCREMENTAL FOR IDS

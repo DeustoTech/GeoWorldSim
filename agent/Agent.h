@@ -52,7 +52,7 @@ public:
     static QString STYLE_PROP;
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json);
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // EXPORTERS
     virtual QJsonObject serialize() const; // Called when asked for more info about this agent. Can be overwritten if want to add extra variables to the exporters

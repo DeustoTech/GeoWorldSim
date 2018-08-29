@@ -40,7 +40,7 @@ public:
     void transformIntersection(  QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> init_geom = Q_NULLPTR );
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> init_geom = QSharedPointer<GWSGeometry>() );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:
