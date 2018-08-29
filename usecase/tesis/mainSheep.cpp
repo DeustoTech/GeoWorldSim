@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
                                                        .toLatin1()
                                                         );
 
-        GWSAgent* sheep = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ) );
+        QSharedPointer<GWSAgent> sheep = GWSObjectFactory::globalInstance()->fromJSON( jsonSheep.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( sheep );
 
     }
@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
    GWSExternalListener* ext2 = new GWSExternalListener("WolfSim");
 
    GWSExecutionEnvironment::globalInstance()->run();
+
 
    app->exec();
 

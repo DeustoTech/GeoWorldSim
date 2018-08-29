@@ -77,7 +77,6 @@ HEADERS += \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-    TerrainAgent.h \
     SheepAgent.h \
     TesisBehaviour.h \
     PredatorAgent.h \
@@ -136,7 +135,6 @@ SOURCES += mainSheep.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
-    TerrainAgent.cpp \
     SheepAgent.cpp \
     TesisBehaviour.cpp \
     PredatorAgent.cpp \

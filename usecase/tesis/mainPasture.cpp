@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
                                                        .toLatin1()
                                                        );
 
-           PastureAgent* pasture = dynamic_cast<PastureAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ) );
+           QSharedPointer<GWSAgent> pasture = GWSObjectFactory::globalInstance()->fromJSON( jsonPasture.object() ).dynamicCast<GWSAgent>();
            GWSExecutionEnvironment::globalInstance()->registerAgent( pasture );
         }
     }
@@ -112,4 +112,5 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance()->run();
 
     app->exec();
-}
+
+    }
