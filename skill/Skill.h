@@ -1,6 +1,8 @@
 #ifndef GWSSKILL_H
 #define GWSSKILL_H
 
+#include <QSharedPointer>
+
 #include "../../object/Object.h"
 #include "../../agent/Agent.h"
 
@@ -10,7 +12,7 @@ class GWSSkill : public GWSObject
     friend class GWSAgent; // Agent can check skill insides
 
 public:
-    Q_INVOKABLE explicit GWSSkill( GWSAgent *skilled_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit GWSSkill();
 
     // IMPORTERS
     virtual void deserialize(QJsonObject json);
@@ -19,7 +21,7 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    GWSAgent* getAgent();
+    QSharedPointer<GWSAgent> getAgent();
 };
 
 #endif // GWSSKILL_H

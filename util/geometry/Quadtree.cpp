@@ -15,22 +15,22 @@ GWSQuadtree::~GWSQuadtree(){
     this->inner_index = 0;
 }
 
-QList<GWSAgent *> GWSQuadtree::getElements(GWSCoordinate coor) const{
+QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(GWSCoordinate coor) const{
     return this->getElements( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
 }
 
-QList<GWSAgent *> GWSQuadtree::getElements(const GWSGeometry* geometry) const{
-    QList<GWSAgent *> intersecting_agents;
-    foreach( GWSAgent* a , this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() ) ){
-        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a->getId() ) ) ){
+QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(QSharedPointer<GWSGeometry> geometry) const{
+    QList< QSharedPointer<GWSAgent> > intersecting_agents;
+    foreach( QSharedPointer<GWSAgent> a , this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() ) ){
+        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a ) ) ){
             intersecting_agents.append( a );
         }
     }
     return intersecting_agents;
 }
 
-QList<GWSAgent *> GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{
-    QList<GWSAgent *> agents;
+QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{
+    QList< QSharedPointer<GWSAgent> > agents;
     std::vector<void*> vector;
 
     if( !this->inner_index ){
@@ -44,29 +44,30 @@ QList<GWSAgent *> GWSQuadtree::getElements(double minX, double maxX, double minY
 
     if( vector.size() ){
         for(unsigned int i = 0 ; i < vector.size() ; i++){
-            agents.append( (GWSAgent*)vector.at(i) );
+            GWSAgent* a = (GWSAgent*)vector.at(i);
+            agents.append( a->getSharedPointer() );
         }
     }
     return agents;
 }
 
-GWSAgent* GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
-    GWSAgent* found = Q_NULLPTR;
-    QList<GWSAgent*> agents = this->getElements( coor );
+QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
+    QSharedPointer<GWSAgent> found = Q_NULLPTR;
+    QList< QSharedPointer<GWSAgent> > agents = this->getElements( coor );
 
     if( agents.isEmpty() ){
         return found;
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found->getId() )->getCentroid().getDistance( coor );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getCentroid().getDistance( coor );
 
     for(int i = 0 ; i < agents.size() ; i++){
-        GWSAgent* g = agents.at(i);
+        QSharedPointer<GWSAgent> g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g->getId() )->getCentroid() );
+                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getCentroid() );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -77,24 +78,24 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
     return found;
 }
 
-GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
+QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeometry> geometry) const{
 
-    GWSAgent* found = Q_NULLPTR;
-    QList<GWSAgent*> agents = this->getElements( geometry );
+    QSharedPointer<GWSAgent> found = Q_NULLPTR;
+    QList< QSharedPointer<GWSAgent> > agents = this->getElements( geometry );
 
     if( agents.isEmpty() ){
         return found;
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found->getId() )->getDistance( geometry );
+    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getDistance( geometry );
 
     for(int i = 0 ; i < agents.size() ; i++){
-        GWSAgent* g = agents.at(i);
+        QSharedPointer<GWSAgent> g = agents.at(i);
         if( g ){
 
             try {
-                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g->getId() )->getDistance( geometry );
+                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getDistance( geometry );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -105,15 +106,15 @@ GWSAgent* GWSQuadtree::getNearestElement(GWSGeometry *geometry) const{
     return found;
 }
 
-void GWSQuadtree::upsert(GWSAgent* agent){
+void GWSQuadtree::upsert(QSharedPointer<GWSAgent> agent){
     this->mutex.lock();
     // Check if exists
     if( !this->registered_envelopes.value( agent ).isNull() ){
         geos::geom::Envelope e = this->registered_envelopes.value( agent );
-        this->inner_index->remove( &e , agent );
+        this->inner_index->remove( &e , agent.data() );
     }
 
-    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent->getId() );
+    const QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     if( geom ){
         geos::geom::Envelope e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,
@@ -121,15 +122,15 @@ void GWSQuadtree::upsert(GWSAgent* agent){
                     geom->getGeometryMinY() ,
                     geom->getGeometryMaxY() );
         this->registered_envelopes.insert( agent , e );
-        this->inner_index->insert( &e , agent );
+        this->inner_index->insert( &e , agent.data() );
     }
     this->mutex.unlock();
 }
 
-void GWSQuadtree::remove(GWSAgent* agent){
+void GWSQuadtree::remove(QSharedPointer<GWSAgent> agent){
     //this->mutex.lock();
     geos::geom::Envelope e = this->registered_envelopes.value( agent );
-    this->inner_index->remove( &e , agent );
+    this->inner_index->remove( &e , agent.data() );
     this->registered_envelopes.remove( agent );
     //this->mutex.unlock();
 }

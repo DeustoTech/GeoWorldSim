@@ -6,7 +6,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
 
-GWSAgentGrid::GWSAgentGrid(GWSAgent *agent) : GWSGrid( agent ){
+GWSAgentGrid::GWSAgentGrid( QSharedPointer<GWSAgent> agent) : GWSGrid( agent ){
 
 }
 
@@ -25,13 +25,13 @@ GWSAgentGrid::GWSAgentGrid(GWSAgent *agent) : GWSGrid( agent ){
  GETTERS
 **********************************************************************/
 
-QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y){
-    QList<GWSAgent*> agents;
+QList< QSharedPointer<GWSAgent> > GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y){
+    QList< QSharedPointer<GWSAgent> > agents;
     if( grid_x < 0 || grid_x > this->getGridXSize() || grid_y < 0 || grid_y > this->getGridYSize() ){
         return agents;
     }
 
-    const GWSGeometry* grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() );
+    QSharedPointer<GWSGeometry> grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() );
     double minX = grid_geom->getGeometryMinX();
     double maxX = grid_geom->getGeometryMaxX();
     double minY = grid_geom->getGeometryMinY();
@@ -42,8 +42,8 @@ QList<GWSAgent*> GWSAgentGrid::getGridCellValue(unsigned int grid_x, unsigned in
     double cell_minY = GWSGridCoordinatesConversor::x2lon( grid_y , minY , maxY , this->getGridYSize() );
     double cell_maxY = GWSGridCoordinatesConversor::x2lon( grid_y+1 , minY , maxY , this->getGridYSize() );
 
-    foreach (GWSAgent* agent , this->agents_inside) {
-        const GWSGeometry* agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent->getId() );
+    foreach (QSharedPointer<GWSAgent> agent , this->agents_inside) {
+        QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
         if( agent_geom && agent_geom->intersects( cell_minX , cell_maxX , cell_minY , cell_maxY ) ){
             agents.append( agent );
         }
@@ -73,10 +73,10 @@ void GWSAgentGrid::removeGridCellValue(unsigned int grid_x, unsigned int grid_y,
     this->mutex.unlock();
 }*/
 
-void GWSAgentGrid::enter(GWSAgent *agent){
+void GWSAgentGrid::enter(QSharedPointer<GWSAgent> agent){
     this->agents_inside.append( agent );
 }
 
-void GWSAgentGrid::exit(GWSAgent *agent){
+void GWSAgentGrid::exit(QSharedPointer<GWSAgent> agent){
     this->agents_inside.removeAll( agent );
 }

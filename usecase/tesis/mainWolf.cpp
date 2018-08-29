@@ -5,6 +5,7 @@
 #include <QString>
 #include <QJsonDocument>
 #include <QProcess>
+#include <QSharedPointer>
 
 
 #include "TesisBehaviour.h"
@@ -116,15 +117,13 @@ int main(int argc, char* argv[])
 
 
 
-        GWSAgent* predator = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( jsonPredator.object() ) );
+        QSharedPointer<GWSAgent> predator = GWSObjectFactory::globalInstance()->fromJSON( jsonPredator.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( predator );
 
     }
 
     GWSExternalListener* ext = new GWSExternalListener("SheepSim");
-
     GWSExecutionEnvironment::globalInstance()->run();
-
 
     app->exec();
 

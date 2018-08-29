@@ -1,6 +1,8 @@
 #ifndef GWSAGENTENVIRONMENT_H
 #define GWSAGENTENVIRONMENT_H
 
+#include <QSharedPointer>
+
 #include "../../environment/Environment.h"
 #include "../../agent/Agent.h"
 #include "../../util/storage/ObjectStorage.h"
@@ -14,24 +16,24 @@ public:
 
     // GETTERS
     quint64 getAmount() const;
-    GWSAgent* getRandomByClass( QString class_name );
-    template <class T> T* getRandomByClass( QString class_name );
+    QSharedPointer<GWSAgent> getRandomByClass( QString class_name );
+    template <class T> QSharedPointer<T> getRandomByClass( QString class_name );
 
-    GWSAgent* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
-    template <class T> T* getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
+    QSharedPointer<GWSAgent> getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
+    template <class T> QSharedPointer<T> getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
 
-    GWSAgent* getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
-    template <class T> T* getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
+    QSharedPointer<GWSAgent> getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
+    template <class T> QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
 
-    QList< GWSAgent* > getByClass( QString class_name ) const; // Get all agents for a given type
-    template <class T> QList<T*> getByClass( QString class_name ) const;  // Get all agents for a given type
+    QList< QSharedPointer<GWSAgent> > getByClass( QString class_name ) const; // Get all agents for a given type
+    template <class T> QList<QSharedPointer<T>> getByClass( QString class_name ) const;  // Get all agents for a given type
 
-    GWSAgent* getByName(QString name) const; // Get one agent by its name
-    template <class T> T* getByName(QString name) const; // Get one agent by its name
+    QSharedPointer<GWSAgent> getByName(QString name) const; // Get one agent by its name
+    template <class T> QSharedPointer<T> getByName(QString name) const; // Get one agent by its name
 
     // METHODS
-    virtual void registerAgent(GWSAgent *agent);
-    virtual void unregisterAgent(GWSAgent *agent);
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent);
+    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent);
 
 private:
 

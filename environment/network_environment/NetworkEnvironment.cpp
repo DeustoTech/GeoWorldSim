@@ -30,25 +30,25 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
  GETTERS
 **********************************************************************/
 
-const GWSGraphNode* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point, QString class_name) const{
+QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point, QString class_name) const{
     return this->getNodeFromGraph<GWSGraphNode>( point , class_name );
 }
 
-template <class T> const T* GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point , QString class_name ) const{
+template <class T> QSharedPointer<T> GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point , QString class_name ) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
-    return dynamic_cast<const T*>( this->network_graphs.value( class_name )->findNode( point ) );
+    return this->network_graphs.value( class_name )->findNode( point ).dynamicCast<T>();
 }
 
-const GWSGraphNode* GWSNetworkEnvironment::getNearestNodeFromGraph( GWSCoordinate point, QString class_name) const{
+QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNearestNodeFromGraph( GWSCoordinate point, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
     return this->network_graphs.value( class_name )->findNearestNode( point );
 }
 
-const GWSGraphEdge* GWSNetworkEnvironment::getEdgeFromGraph( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
+QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdgeFromGraph( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
     if( !this->network_graphs.keys().contains( class_name ) ){
         return 0;
     }
@@ -72,10 +72,10 @@ const GWSGraph* GWSNetworkEnvironment::getGraph( QString class_name ) const{
  PRIVATE
 **********************************************************************/
 
-void GWSNetworkEnvironment::registerAgent( GWSAgent *agent ){
+void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
-    GWSGraphEdge* edge = dynamic_cast<GWSGraphEdge*>( agent );
-    GWSGraphNode* node = dynamic_cast<GWSGraphNode*>( agent );
+    QSharedPointer<GWSGraphEdge> edge = agent.dynamicCast<GWSGraphEdge>();
+    QSharedPointer<GWSGraphNode> node = agent.dynamicCast<GWSGraphNode>();
 
     if( edge || node ){
 
@@ -108,9 +108,9 @@ void GWSNetworkEnvironment::registerAgent( GWSAgent *agent ){
     }
 }
 
-void GWSNetworkEnvironment::unregisterAgent( GWSAgent *agent ){
-    GWSGraphEdge* edge = dynamic_cast<GWSGraphEdge*>( agent );
-    GWSGraphNode* node = dynamic_cast<GWSGraphNode*>( agent );
+void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
+    QSharedPointer<GWSGraphEdge> edge = agent.dynamicCast<GWSGraphEdge>();
+    QSharedPointer<GWSGraphNode> node = agent.dynamicCast<GWSGraphNode>();
 
     if( edge || node ){
 

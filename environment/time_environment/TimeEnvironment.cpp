@@ -54,8 +54,8 @@ double GWSTimeEnvironment::getTimeSpeed() const{
     return this->time_speed;
 }
 
-qint64 GWSTimeEnvironment::getAgentInternalTime(QString agent_id) const{
-    return this->agent_internal_times.value( agent_id , 0 );
+qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ) const{
+    return this->agent_internal_times.value( agent->getId() , 0 );
 }
 
 /**********************************************************************
@@ -74,11 +74,12 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
-void GWSTimeEnvironment::setAgentInternalTime(QString agent_id, const qint64 datetime){
-    this->agent_internal_times.insert( agent_id , datetime );
+void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , const qint64 datetime){
+    this->agent_internal_times.insert( agent->getId() , datetime );
 }
 
-void GWSTimeEnvironment::incrementAgentInternalTime(QString agent_id , GWSTimeUnit seconds){
+void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
+    QString agent_id = agent->getId();
     if( this->agent_internal_times.value( agent_id ) > 0 ){
         this->agent_internal_times.insert( agent_id , this->agent_internal_times.value( agent_id , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
     }
@@ -88,12 +89,12 @@ void GWSTimeEnvironment::incrementAgentInternalTime(QString agent_id , GWSTimeUn
  METHODS
 **********************************************************************/
 
-void GWSTimeEnvironment::registerAgent(GWSAgent *agent, quint64 init_internal_time) {
+void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent, quint64 init_internal_time) {
     GWSEnvironment::registerAgent( agent );
     this->agent_internal_times.insert( agent->getId() , init_internal_time );
 }
 
-void GWSTimeEnvironment::unregisterAgent(GWSAgent *agent){
+void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::unregisterAgent( agent );
     this->agent_internal_times.remove( agent->getId() );
 }

@@ -7,7 +7,8 @@ GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
 
 GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
     qInfo() << "Grid environment created";
-    this->environment_grids = new GWSObjectStorage( this );
+    this->environment_grids = new GWSObjectStorage();
+    this->environment_grids->setParent( this->getSharedPointer() );
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
 
@@ -19,19 +20,20 @@ GWSGridEnvironment::~GWSGridEnvironment(){
  PRIVATE
 **********************************************************************/
 
-void GWSGridEnvironment::registerAgent( GWSAgent *agent ){
-    GWSEnvironment::registerAgent( agent );
-    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
+void GWSGridEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
+    QSharedPointer<GWSGrid> grid = agent.dynamicCast<GWSGrid>();
 
     if( grid ){
+        GWSEnvironment::registerAgent( agent );
         this->environment_grids->add( agent );
     }
 }
 
-void GWSGridEnvironment::unregisterAgent( GWSAgent *agent ){
-    GWSEnvironment::unregisterAgent( agent );
-    GWSGrid* grid = dynamic_cast<GWSGrid*>( agent );
+void GWSGridEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
+    QSharedPointer<GWSGrid> grid = agent.dynamicCast<GWSGrid>();
+
     if( grid ){
+        GWSEnvironment::unregisterAgent( agent );
         this->environment_grids->remove( agent );
     }
 }

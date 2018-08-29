@@ -20,12 +20,11 @@ class SheepAgent : public GWSAgent
 public:
 
     // CONSTRUCTOR
-    Q_INVOKABLE explicit SheepAgent( QObject* parent = Q_NULLPTR );
+    Q_INVOKABLE explicit SheepAgent();
     ~SheepAgent();
 
-    virtual void behaveOld();
 };
 
-Q_DECLARE_METATYPE(SheepAgent*) // REQUIRED IN EVERY CHILD
+Q_DECLARE_METATYPE( QSharedPointer<SheepAgent> ) // REQUIRED IN EVERY CHILD
 
 #endif // SHEEPAGENT_H

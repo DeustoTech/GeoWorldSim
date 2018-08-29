@@ -10,7 +10,7 @@ class GWSBehaviour : public GWSObject
     friend class GWSAgent; // Agent can check behaviour insides
 
 public:
-    Q_INVOKABLE explicit GWSBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit GWSBehaviour();
 
     // PROPERTIES
     static QString INCREMENT_AGENT_TIME_PROP; // In milliseconds
@@ -26,19 +26,19 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    GWSAgent* getAgent();
-    QList<GWSBehaviour*> getSubs();
-    QList<GWSBehaviour*> getNext();
+    QSharedPointer<GWSAgent> getAgent();
+    QList< QSharedPointer<GWSBehaviour> > getSubs();
+    QList< QSharedPointer<GWSBehaviour> > getNext();
     virtual bool finished(); // Behaviour finished check
 
     // SETTERS
-    void addSubbehaviour( GWSBehaviour* sub_behaviour );
-    void addNextBehaviour( GWSBehaviour* next_behaviours );
+    void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
+    void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviours );
 
 protected:
 
-    QList<GWSBehaviour*> sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
-    QList<GWSBehaviour*> next_behaviours;
+    QList< QSharedPointer<GWSBehaviour> > sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
+    QList< QSharedPointer<GWSBehaviour> > next_behaviours;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     bool tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper

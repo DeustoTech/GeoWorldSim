@@ -16,10 +16,10 @@ public:
     GWSGraphNode( GWSAgent* agent );
 
     // GETTERS
-    virtual const QList<GWSGraphEdge*> getDepartingEdges() const;
-    virtual const QList<GWSGraphEdge*> getArrivingEdges() const;
-    virtual const GWSGraphEdge* getDepartingEdgeTo( GWSGraphNode* to ) const;
-    virtual const GWSGraphEdge* getArrivingEdgeFrom( GWSGraphNode* from ) const;
+    virtual const QList< QSharedPointer<GWSGraphEdge> > getDepartingEdges() const;
+    virtual const QList< QSharedPointer<GWSGraphEdge> > getArrivingEdges() const;
+    virtual const QSharedPointer<GWSGraphEdge> getDepartingEdgeTo( QSharedPointer<GWSGraphNode> to ) const;
+    virtual const QSharedPointer<GWSGraphEdge> getArrivingEdgeFrom( QSharedPointer<GWSGraphNode> from ) const;
     virtual int getDegree() const;
     GWSCoordinate getCoordinate();
 
@@ -27,18 +27,18 @@ public:
 
     // METHODS
     virtual double getCost() const; // To be implemented by each child
-    bool equals(GWSGraphNode* other);
+    bool equals(QSharedPointer<GWSGraphNode> other);
 
 private:
-    void connectEdge(GWSGraphEdge* edge);
-    void disconnectEdge(GWSGraphEdge* edge);
+    void connectEdge(QSharedPointer<GWSGraphEdge> edge);
+    void disconnectEdge(QSharedPointer<GWSGraphEdge> edge);
 
     // REF AGENT
     GWSAgent* agent;
 
     GWSCoordinate inner_coordinate;
-    QList<GWSGraphEdge*> out_edges; // Departing edges
-    QList<GWSGraphEdge*> in_edges; // Arriving edges
+    QList< QSharedPointer<GWSGraphEdge> > out_edges; // Departing edges
+    QList< QSharedPointer<GWSGraphEdge> > in_edges; // Arriving edges
 };
 
 #endif // GWSGRAPHNODE_H

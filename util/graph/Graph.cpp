@@ -23,7 +23,7 @@ GWSGraph::~GWSGraph() {
     painter.setRenderHint( QPainter::Antialiasing );
     painter.setPen( QColor(0,0,0) );
 
-    foreach( GWSGraphEdge* edge , this->getEdges() ){
+    foreach( QSharedPointer<GWSGraphEdge> edge , this->getEdges() ){
 
         GWSCoordinate coor1 = edge->getFromNode()->getCoordinate();
         QPoint p1 = ImageCoordinatesConversor::reprojectPoint( coor1.getY() , coor1.getX() , image_bounds.getMaxY() , image_bounds.getMinY() , image_bounds.getMaxX() , image_bounds.getMinX() , image_width , image_height );
@@ -39,24 +39,24 @@ GWSGraph::~GWSGraph() {
  GETTERS
 **********************************************************************/
 
-bool GWSGraph::containsNode( GWSGraphNode* node ) const{
+bool GWSGraph::containsNode( QSharedPointer<GWSGraphNode> node ) const{
     return this->nodes.contains( node );
 }
 
-bool GWSGraph::containsEdge( GWSGraphEdge* edge) const{
+bool GWSGraph::containsEdge( QSharedPointer<GWSGraphEdge> edge) const{
     return this->edges.contains( edge );
 }
 
-const GWSGraphEdge* GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
+const QSharedPointer<GWSGraphEdge> GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
     if( from == to ){
         return 0;
     }
-    const GWSGraphNode* from_node = this->findNode( from );
-    const GWSGraphNode* to_node = this->findNode( to );
+    const QSharedPointer<GWSGraphNode> from_node = this->findNode( from );
+    const QSharedPointer<GWSGraphNode> to_node = this->findNode( to );
     if( !from_node || !to_node ){
         return 0;
     }
-    foreach(GWSGraphEdge* edge , this->edges){
+    foreach(QSharedPointer<GWSGraphEdge> edge , this->edges){
         if( edge->getFromNode() == from_node && edge->getToNode() == to_node ){
             return edge;
         }
@@ -64,8 +64,8 @@ const GWSGraphEdge* GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) con
     return 0;
 }
 
-const GWSGraphNode* GWSGraph::findNode(GWSCoordinate point) const{
-    foreach (GWSGraphNode* node, this->nodes) {
+const QSharedPointer<GWSGraphNode> GWSGraph::findNode(GWSCoordinate point) const{
+    foreach (QSharedPointer<GWSGraphNode> node, this->nodes) {
         if( node->getCoordinate() == point ){
             return node;
         }
@@ -78,48 +78,47 @@ const GWSGraphNode* GWSGraph::findNode(GWSCoordinate point) const{
  * @param coor
  * @return
  */
-const GWSGraphNode* GWSGraph::findNearestNode(GWSCoordinate point) const{
-    const GWSGraphNode* found = this->findNode( point );
+const QSharedPointer<GWSGraphNode> GWSGraph::findNearestNode(GWSCoordinate point) const{
     if( this->nodes_index ){
-        return dynamic_cast<GWSGraphNode*>( this->nodes_index->getNearestElement( point ) );
+        return this->nodes_index->getNearestElement( point ).dynamicCast<GWSGraphNode>();
     }
-    return found;
+    return this->findNode( point );
 }
 
-/*QList<const GWSGraphEdge*> GWSGraph::getEdges() const{
+/*QList<const QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges() const{
     return this->edges;
 }*/
 
-/*QList<GWSGraphEdge*> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
-    QList<GWSGraphEdge*> edges;
+/*QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
+    QList<QSharedPointer<GWSGraphEdge>> edges;
     for(unsigned int i = 0; i < this->dirEdges.size(); i++){
         geos::planargraph::DirectedEdge* e  = dynamic_cast<geos::planargraph::DirectedEdge*>( this->dirEdges.at(i) );
         geos::geom::Coordinate c2 = e->getToNode()->getCoordinate();
         geos::geom::Coordinate c1 = e->getFromNode()->getCoordinate();
         if( env.contains( GeoCoordinates( c1.x , c1.y , c1.z ) ) && env.contains( GeoCoordinates( c2.x , c2.y , c2.z ) ) ){
-            edges.append( dynamic_cast<GWSGraphEdge*>( this->dirEdges.at(i) )  );
+            edges.append( dynamic_cast<QSharedPointer<GWSGraphEdge>>( this->dirEdges.at(i) )  );
         }
     }
     return edges;
 }*/
 
-/*QList<const GWSGraphNode*> GWSGraph::getNodes() const{
-    QList<const GWSGraphNode*> nodes;
+/*QList<const QSharedPointer<GWSGraphNode>> GWSGraph::getNodes() const{
+    QList<const QSharedPointer<GWSGraphNode>> nodes;
     nodes.append( this->nodes );
     return nodes;
 }*/
 
-QMap<const GWSGraphEdge*,double> GWSGraph::getCostMap() const{
-    QMap<const GWSGraphEdge* , double> cost_map;
-    foreach( const GWSGraphEdge* edge , this->edges ){
+QMap<QSharedPointer<GWSGraphEdge>,double> GWSGraph::getCostMap() const{
+    QMap<QSharedPointer<GWSGraphEdge> , double> cost_map;
+    foreach( QSharedPointer<GWSGraphEdge> edge , this->edges ){
         cost_map.insert( edge , edge->getCost() );
     }
     return cost_map;
 }
 
-QList<const GWSGraphNode*> GWSGraph::findNodesOfDegree( int degree ) const{
-    QList<const GWSGraphNode*> nodes;
-    foreach (GWSGraphNode* node , this->nodes) {
+QList<QSharedPointer<GWSGraphNode>> GWSGraph::findNodesOfDegree( int degree ) const{
+    QList<QSharedPointer<GWSGraphNode>> nodes;
+    foreach( QSharedPointer<GWSGraphNode> node , this->nodes) {
         if( node->getDegree() == degree ){
             nodes.append( node );
         }
@@ -137,7 +136,7 @@ int GWSGraph::countEdges() const{
 
 /*MultiLineString* GWSGraph::toMultiLineString() const{
     std::vector<Geometry*> *lines = new std::vector<Geometry*>();
-    foreach( GWSGraphEdge* e , this->getEdges() ){
+    foreach( QSharedPointer<GWSGraphEdge> e , this->getEdges() ){
         std::size_t s = 0;
         CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create( s , s );
         seq->add( geos::geom::Coordinate ( e->getFromNode()->getCoordinate().getX() , e->getFromNode()->getCoordinate().getY() , e->getFromNode()->getCoordinate().getZ() ) );
@@ -153,34 +152,34 @@ int GWSGraph::countEdges() const{
 **********************************************************************/
 
 void GWSGraph::addGraph(const GWSGraph *other){
-    foreach( GWSGraphEdge* edge , other->edges ){
+    foreach( QSharedPointer<GWSGraphEdge> edge , other->edges ){
             this->addEdge( edge );
     }
 }
 
-void GWSGraph::addEdge(GWSGraphEdge *edge){
-    const GWSGraphNode* from = this->findNode( edge->getFromNode()->getCoordinate() );
+void GWSGraph::addEdge( QSharedPointer<GWSGraphEdge> edge){
+    const QSharedPointer<GWSGraphNode> from = this->findNode( edge->getFromNode()->getCoordinate() );
     if( !from ){
         this->addNode( edge->getFromNode() );
     }
-    const GWSGraphNode* to = this->findNode( edge->getToNode()->getCoordinate() );
+    const QSharedPointer<GWSGraphNode> to = this->findNode( edge->getToNode()->getCoordinate() );
     if( !to ){
         this->addNode( edge->getToNode() );
     }
     this->edges.append( edge );
 }
 
-void GWSGraph::removeEdge(GWSGraphEdge *edge){
+void GWSGraph::removeEdge(QSharedPointer<GWSGraphEdge> edge){
     this->edges.removeAll( edge );
 }
 
-void GWSGraph::addNode(GWSGraphNode *node){
-    this->nodes_index->upsert( dynamic_cast<GWSAgent*>( node ) );
+void GWSGraph::addNode(QSharedPointer<GWSGraphNode> node){
+    this->nodes_index->upsert( node.dynamicCast<GWSAgent>() );
     this->nodes.append( node );
 }
 
-void GWSGraph::removeNode(GWSGraphNode *node){
-    this->nodes_index->remove( dynamic_cast<GWSAgent*>( node ) );
+void GWSGraph::removeNode(QSharedPointer<GWSGraphNode> node){
+    this->nodes_index->remove( node.dynamicCast<GWSAgent>() );
     this->nodes.removeAll( node );
 }
 

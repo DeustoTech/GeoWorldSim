@@ -21,20 +21,20 @@ public:
     ~GWSQuadtree();
 
     // GETTERS
-    QList<GWSAgent*> getElements( GWSCoordinate coor ) const;
-    QList<GWSAgent*> getElements( const GWSGeometry* geometry ) const;
-    QList<GWSAgent*> getElements( double minX, double maxX, double minY, double maxY ) const;
-    GWSAgent* getNearestElement( GWSCoordinate coor ) const;
-    GWSAgent* getNearestElement( GWSGeometry* geometry ) const;
+    QList< QSharedPointer<GWSAgent> > getElements( GWSCoordinate coor ) const;
+    QList< QSharedPointer<GWSAgent> > getElements( QSharedPointer<GWSGeometry> geometry ) const;
+    QList< QSharedPointer<GWSAgent> > getElements( double minX, double maxX, double minY, double maxY ) const;
+    QSharedPointer<GWSAgent> getNearestElement( GWSCoordinate coor ) const;
+    QSharedPointer<GWSAgent> getNearestElement( QSharedPointer<GWSGeometry> geometry ) const;
 
     // SETTERS
-    void upsert( GWSAgent* agent );
-    void remove( GWSAgent* agent );
+    void upsert( QSharedPointer<GWSAgent> agent );
+    void remove( QSharedPointer<GWSAgent> agent );
 
 private:
 
     geos::index::quadtree::Quadtree* inner_index;
-    QMap<GWSAgent* , geos::geom::Envelope> registered_envelopes;
+    QMap< QSharedPointer<GWSAgent> , geos::geom::Envelope> registered_envelopes;
 
     QMutex mutex;
 };

@@ -5,7 +5,7 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 
 
-PastureAgent::PastureAgent(QObject* parent) : GWSAgent( parent ){
+PastureAgent::PastureAgent() : GWSAgent(){
 }
 
 

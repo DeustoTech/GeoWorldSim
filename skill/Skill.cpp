@@ -1,6 +1,6 @@
 #include "Skill.h"
 
-GWSSkill::GWSSkill( GWSAgent* skilled_agent ) : GWSObject( skilled_agent ){
+GWSSkill::GWSSkill() : GWSObject(){
 }
 
 /**********************************************************************
@@ -23,6 +23,6 @@ QJsonObject GWSSkill::serialize() const{
  GETTERS
 **********************************************************************/
 
-GWSAgent* GWSSkill::getAgent(){
-    return dynamic_cast<GWSAgent*>( this->parent() );
+QSharedPointer<GWSAgent> GWSSkill::getAgent(){
+    return this->getParent().dynamicCast<GWSAgent>();
 }

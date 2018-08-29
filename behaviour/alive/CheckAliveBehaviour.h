@@ -8,7 +8,7 @@ class CheckAliveBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit CheckAliveBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit CheckAliveBehaviour();
 
     // GETTERS
     virtual bool finished();

@@ -46,18 +46,18 @@ const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
     return this->constructors.value( type_name );
 }
 
-GWSObject* GWSObjectFactory::fromType( QString type , GWSObject* parent ){
+QSharedPointer<GWSObject> GWSObjectFactory::fromType( QString type , QSharedPointer<GWSObject> parent ){
     QJsonObject json;
     json.insert( GWSObject::GWS_TYPE_PROP , type );
     return this->fromJSON( json , parent );
 }
 
-GWSObject* GWSObjectFactory::fromBytes(QByteArray json_bytes, GWSObject *parent){
+QSharedPointer<GWSObject> GWSObjectFactory::fromBytes(QByteArray json_bytes, QSharedPointer<GWSObject> parent){
     QJsonObject object = QJsonDocument::fromJson( json_bytes ).object();
     return this->fromJSON( object , parent );
 }
 
-GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
+QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent ){
 
     if( json.isEmpty() ){
         qDebug() << QString("Object Factory received empty JSON");
@@ -72,10 +72,14 @@ GWSObject* GWSObjectFactory::fromJSON( QJsonObject json , GWSObject* parent ){
     }
 
     // Create object
-    GWSObject* obj = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
-    if( !obj ){
+    GWSObject* obj_raw = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
+    if( !obj_raw ){
         return 0;
     }
+
+    // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD
+    QSharedPointer<GWSObject> obj = QSharedPointer<GWSObject>( obj_raw );
+    obj_raw->self_shared_pointer = obj;
 
     // Set parent if any
     if( parent ){

@@ -7,21 +7,21 @@ class GWSAgentGrid : public GWSGrid
 {
 
 public:
-    GWSAgentGrid( GWSAgent* agent );
+    GWSAgentGrid( QSharedPointer<GWSAgent> agent );
 
     // GETTERS
-    QList<GWSAgent*> getGridCellValue( unsigned int grid_x , unsigned int grid_y );
+    QList< QSharedPointer<GWSAgent> > getGridCellValue( unsigned int grid_x , unsigned int grid_y );
 
     // SETTERS
     //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , GWSAgent* v);
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , GWSAgent* v);
 
     // METHODS
-    void enter( GWSAgent* agent );
-    void exit( GWSAgent* agent );
+    void enter( QSharedPointer<GWSAgent> agent );
+    void exit( QSharedPointer<GWSAgent> agent );
 
 private:
-    QList<GWSAgent*> agents_inside;
+    QList< QSharedPointer<GWSAgent> > agents_inside;
 };
 
 #endif // GWSAGENTGRID_H

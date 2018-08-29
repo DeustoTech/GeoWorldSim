@@ -8,7 +8,7 @@ class TesisBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    TesisBehaviour( GWSAgent* behaving_agent );
+    TesisBehaviour();
 
     // PROPERTIES
     static QString COUTDOWN_PROP;

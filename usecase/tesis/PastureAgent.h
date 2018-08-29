@@ -12,7 +12,7 @@ class PastureAgent : public GWSAgent
 
 public:
     // CONSTRUCTOR
-    Q_INVOKABLE explicit PastureAgent( QObject* parent = Q_NULLPTR );
+    Q_INVOKABLE explicit PastureAgent();
 
     // METHODS
     virtual void behave();

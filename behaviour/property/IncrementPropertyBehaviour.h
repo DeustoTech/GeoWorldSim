@@ -8,7 +8,7 @@ class IncrementPropertyBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit IncrementPropertyBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit IncrementPropertyBehaviour();
 
     // PROPERTIES
     static QString PROPERTY_NAME_PROP;

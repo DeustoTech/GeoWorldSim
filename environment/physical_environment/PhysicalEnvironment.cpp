@@ -15,29 +15,28 @@ GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
     qDeleteAll( this->spatial_index.values() );
-    qDeleteAll( this->agent_geometries.values() );
 }
 
 /***********************************************************************/
 // GETTERS
 /***********************************************************************/
 
-const GWSGeometry* GWSPhysicalEnvironment::getGeometry(QString agent_id) const{
-    return this->agent_geometries.value( agent_id , 0 );
+QSharedPointer<GWSGeometry> GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
+    return this->agent_geometries.value( agent->getId() , 0 );
 }
 
-QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList<GWSAgent*> agents) const{
-    QList<GWSAgent*> ordered;
+QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::orderByDistance(QSharedPointer<GWSAgent> source, QList<QSharedPointer<GWSAgent>> agents) const{
+    QList<QSharedPointer<GWSAgent>> ordered;
     /*if( !agents.size() ){
         return ordered;
     }
 
      while( agents.size() ){
-        GWSAgent* nearest = agents.at( 0 );
-        const GWSGeometry* nearest_geom = nearest->getGeometry();
+        QSharedPointer<GWSAgent> nearest = agents.at( 0 );
+        const QSharedPointer<GWSGeometry> nearest_geom = nearest->getGeometry();
 
-        foreach( GWSAgent* agent , agents ){
-            const GWSGeometry* agent_geom = agent->getGeometry();
+        foreach( QSharedPointer<GWSAgent> agent , agents ){
+            const QSharedPointer<GWSGeometry> agent_geom = agent->getGeometry();
 
             if( source->getGeometry()->getDistance( agent_geom ) < source->getGeometry()->getDistance( nearest_geom ) ){
                 nearest = agent;
@@ -53,19 +52,19 @@ QList<GWSAgent*> GWSPhysicalEnvironment::orderByDistance(GWSAgent* source, QList
 }
 
 
-QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
+QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
     if( this->spatial_index.keys().contains(class_name) ){
         return this->spatial_index[class_name]->getElements( minX , maxX , minY , maxY );
     }
-    return QList<GWSAgent*>();
+    return QList< QSharedPointer<GWSAgent> >();
 }
 
 
-QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry* geometry, QString class_name) const{
+QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getAgentsIntersecting(const QSharedPointer<GWSGeometry> geometry, QString class_name) const{
     if( this->spatial_index.keys().contains( class_name ) ){
         return this->spatial_index[class_name]->getElements( geometry );
     }
-    return QList<GWSAgent*>();
+    return QList< QSharedPointer<GWSAgent> >();
 }
 
 /**
@@ -76,18 +75,18 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getAgentsIntersecting(const GWSGeometry
  * @param class_name ClassName of the agents in the environment from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QString class_name) const{
-    QList<GWSAgent*> founds = QList<GWSAgent*>();
+QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QString class_name) const{
+    QList<QSharedPointer<GWSAgent>> founds = QList<QSharedPointer<GWSAgent>>();
     foreach(GWSCoordinate coor , coors){
         founds.append( this->getNearestAgent( coor , class_name ) );
     }
     return founds;
 }
 
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<GWSAgent*> agents) const{
+QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<QSharedPointer<GWSAgent>> agents) const{
     QList<GWSCoordinate> coors;
     coors.append( coor );
-    QList<GWSAgent*> nearests = this->getNearestAgents( coors , agents );
+    QList<QSharedPointer<GWSAgent>> nearests = this->getNearestAgents( coors , agents );
     if( !nearests.isEmpty() ){
         return nearests.at(0);
     }
@@ -101,7 +100,7 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<GWSA
  * @param class_name ClassName of the agents in the environment from which to get the nearest for geometry
  * @return
  */
-GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
+QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
     if( this->spatial_index.keys().contains(class_name) ){
         return this->spatial_index.value(class_name)->getNearestElement( coor );
     }
@@ -116,23 +115,23 @@ GWSAgent* GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString cl
  * @param agents List of agents from which to get the nearest for each geometry
  * @return
  */
-QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<GWSAgent*> agents) const{
-    QList<GWSAgent*> founds;
+QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<QSharedPointer<GWSAgent>> agents) const{
+    QList< QSharedPointer<GWSAgent> > founds;
 
     /*GWSQuadtree* index = new GWSQuadtree();
-    foreach(GWSAgent* agent , agents){
+    foreach(QSharedPointer<GWSAgent> agent , agents){
         index->insert( agent->getGeometry()->getEnvelope() , agent );
     }
 
     foreach(GWSCoordinate coor , coors){
-        GWSAgent* found = 0;
+        QSharedPointer<GWSAgent> found = 0;
         GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
         QList<void *> objs = index->getElements( env );
 
         if( !objs.isEmpty() ){
-            found = ( (GWSAgent*) objs.at( qrand() % objs.size() ) );
+            found = ( (QSharedPointer<GWSAgent>) objs.at( qrand() % objs.size() ) );
             foreach(void * o , objs){
-                GWSAgent* agent = ((GWSAgent*) o);
+                QSharedPointer<GWSAgent> agent = ((QSharedPointer<GWSAgent>) o);
                 if( agent && coor.distance( agent->getRepresentativeCoordinate() ) < coor.distance( found->getRepresentativeCoordinate() ) ){
                     found = agent;
                 }
@@ -146,14 +145,14 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
 }
 
 
-/*GWSAgent* GWSPhysicalEnvironment::getAgentByGeometry(GWSGeometry* geometry, QString class_name) const{
+/*QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getAgentByGeometry(QSharedPointer<GWSGeometry> geometry, QString class_name) const{
     if( this->spatial_index.contains(class_name) ){
 
         QList<void *> objs = this->spatial_index[class_name]->getElements( geometry->getEnvelope() );
 
         if( !objs.isEmpty() ){
             foreach(void * o , objs){
-                GWSAgent* agent = ( (GWSAgent*) o);
+                QSharedPointer<GWSAgent> agent = ( (QSharedPointer<GWSAgent>) o);
                 if( agent->getGeometry()->equals( geometry ) ){
                     return agent;
                 }
@@ -169,18 +168,18 @@ QList<GWSAgent*> GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> c
  METHODS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_geom ){
+void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> init_geom ){
 
     QString agent_id = agent->getId();
 
     // Remove if existing
     if( this->agent_ids.contains( agent_id ) ){
-        delete this->agent_geometries.value( agent_id );
+        this->agent_geometries.remove( agent_id );
     }
 
     // Add the new agents geometry
     this->agent_ids.append( agent_id );
-    this->agent_geometries.insert( agent_id , init_geom ? init_geom : new GWSGeometry() );
+    this->agent_geometries.insert( agent_id , init_geom ? init_geom : QSharedPointer<GWSGeometry>( new GWSGeometry() ) );
 
     foreach (QString s , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains(s) ){
@@ -197,13 +196,15 @@ void GWSPhysicalEnvironment::registerAgent(GWSAgent *agent , GWSGeometry* init_g
 
 }
 
-void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
+void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 
     this->mutex.lock();
     QString agent_id = agent->getId();
     GWSEnvironment::unregisterAgent( agent );
-    foreach (QString s , agent->getInheritanceFamily()) {
-        this->spatial_index.value( s )->remove( agent );
+    foreach( QString s , agent->getInheritanceFamily() ) {
+        if( this->spatial_index.keys().contains( s) ){
+            this->spatial_index.value( s )->remove( agent );
+        }
     }
     this->mutex.unlock();
 
@@ -218,8 +219,8 @@ void GWSPhysicalEnvironment::unregisterAgent(GWSAgent *agent){
  SPATIAL OPERATIONS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::transformMove(GWSAgent *agent, const GWSCoordinate &apply_movement){
-    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+void GWSPhysicalEnvironment::transformMove(QSharedPointer<GWSAgent> agent, const GWSCoordinate &apply_movement){
+    QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
         foreach (QString s , agent->getInheritanceFamily()) {
             this->spatial_index.value( s )->upsert( agent );
@@ -228,22 +229,22 @@ void GWSPhysicalEnvironment::transformMove(GWSAgent *agent, const GWSCoordinate 
     }
 }
 
-void GWSPhysicalEnvironment::transformBuffer(GWSAgent *agent, double threshold){
-    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+void GWSPhysicalEnvironment::transformBuffer(QSharedPointer<GWSAgent> agent, double threshold){
+    QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
         geom->transformBuffer( threshold );
     }
 }
 
-void GWSPhysicalEnvironment::transformUnion(GWSAgent *agent, const GWSGeometry *other){
-    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+void GWSPhysicalEnvironment::transformUnion(QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other){
+    QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
         geom->transformUnion( other );
     }
 }
 
-void GWSPhysicalEnvironment::transformIntersection(GWSAgent *agent, const GWSGeometry *other){
-    GWSGeometry* geom = this->agent_geometries.value( agent->getId() );
+void GWSPhysicalEnvironment::transformIntersection(QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other){
+    QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
         geom->transformIntersection( other );
     }

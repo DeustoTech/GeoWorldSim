@@ -6,7 +6,7 @@
 #include "../../skill/view/ViewSkill.h"
 
 
-BreedBehaviour::BreedBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
+BreedBehaviour::BreedBehaviour() : GWSBehaviour(){
 }
 
 bool BreedBehaviour::finished(){
@@ -15,15 +15,17 @@ bool BreedBehaviour::finished(){
 
 bool BreedBehaviour::behave(){
 
-     // Look what is around you:
-     QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getAgent()->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    // Look what is around you:
+
+     QList< QSharedPointer<GWSAgent> > CellOccupation = agent->getSkill( ViewSkill::staticMetaObject.className() ).dynamicCast<ViewSkill>()->getViewingAgents();
      qInfo() << "Cell Occupation = " << CellOccupation.size();
 
      int Congeners = 0;
 
     for (int i = 0; i < CellOccupation.size(); i++)
         {
-        if (CellOccupation.at(i)->getProperty("@type") == this->getAgent()->getProperty("@type"))
+        if (CellOccupation.at(i)->getProperty("@type") == agent->getProperty("@type"))
            {
            Congeners +=1;
            }
@@ -37,37 +39,37 @@ bool BreedBehaviour::behave(){
          qInfo() << "Found mate! ";
 
          // Breeding consumes energy
-         this->getAgent()->setProperty("energy" , this->getAgent()->getProperty("energy").toDouble() * 0.5);
+         agent->setProperty("energy" , agent->getProperty("energy").toDouble() * 0.5);
 
          //Add offspring to the World
-         QJsonObject this_json = this->getAgent()->serialize();
+         QJsonObject this_json = agent->serialize();
          this_json.insert( GWS_ID_PROP , QJsonValue::Undefined );
          this_json.insert( "@behaviours" , QJsonValue::Undefined );
          this_json.insert( "@skills" , QJsonValue::Undefined );
          this_json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , this_json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() + 10000 );
 
          // Add skills
-         QList<GWSSkill*> skills = this->getAgent()->getSkills( GWSSkill::staticMetaObject.className() );
+         QList< QSharedPointer<GWSSkill> > skills = agent->getSkills( GWSSkill::staticMetaObject.className() );
          if ( !skills.isEmpty() ) {
             QJsonArray arr;
-            foreach ( GWSSkill* o , skills ){
+            foreach ( QSharedPointer<GWSSkill> o , skills ){
                     arr.append( o->serialize() );
                     }
             this_json.insert( "@skills" , arr );
             }
 
          // Add behaviours
-         QList<GWSBehaviour*> behaviours = this->getAgent()->getBehaviours( GWSBehaviour::staticMetaObject.className() );
+         QList< QSharedPointer<GWSBehaviour> > behaviours = agent->getBehaviours( GWSBehaviour::staticMetaObject.className() );
          if ( !behaviours.isEmpty() ) {
             QJsonArray arr;
-            foreach ( GWSBehaviour* o , behaviours ){
+            foreach ( QSharedPointer<GWSBehaviour> o , behaviours ){
                     arr.append( o->serialize() );
                     }
             this_json.insert( "@behaviours" , arr );
             }
 
          // Create agent
-         GWSAgent* OffspringAgent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( this_json ) );
+         QSharedPointer<GWSAgent> OffspringAgent = GWSObjectFactory::globalInstance()->fromJSON( this_json ).dynamicCast<GWSAgent>();
 
          // Change icons to see better
          if (OffspringAgent->getProperty("@type") == "SheepAgent")

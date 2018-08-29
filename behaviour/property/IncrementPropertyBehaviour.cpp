@@ -7,7 +7,7 @@ QString IncrementPropertyBehaviour::INCREMENT_VALUE_PROP = "increment";
 QString IncrementPropertyBehaviour::MAX_VALUE_PROP = "max";
 QString IncrementPropertyBehaviour::MIN_VALUE_PROP = "min";
 
-IncrementPropertyBehaviour::IncrementPropertyBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
+IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 
 }
 
@@ -16,7 +16,7 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour(GWSAgent *behaving_agent)
 **********************************************************************/
 
 bool IncrementPropertyBehaviour::finished(){
-    GWSAgent* agent = this->getAgent();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );
     QVariant min_value = this->getProperty( MIN_VALUE_PROP );
@@ -25,7 +25,7 @@ bool IncrementPropertyBehaviour::finished(){
 
 bool IncrementPropertyBehaviour::behave(){
 
-    GWSAgent* agent = this->getAgent();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
     QVariant value = agent->getProperty( property_name );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );

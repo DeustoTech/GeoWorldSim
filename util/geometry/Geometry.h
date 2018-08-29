@@ -19,7 +19,7 @@ class GWSGeometry : public GWSObject
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GWSGeometry( QObject* parent = Q_NULLPTR );
+    Q_INVOKABLE explicit GWSGeometry();
     ~GWSGeometry();
 
     // IMPORTERS
@@ -41,16 +41,16 @@ public:
 
     // SPATIAL COMPARATORS
     bool isInBounds( double minX , double maxX , double minY , double maxY ) const;
-    bool intersects( const GWSGeometry* other) const;
+    bool intersects( const QSharedPointer<GWSGeometry> other) const;
     bool intersects( double minX , double maxX , double minY , double maxY ) const;
-    bool equals( const GWSGeometry* other ) const;
-    GWSLengthUnit getDistance( const GWSGeometry* other ) const;
+    bool equals( QSharedPointer<GWSGeometry> other ) const;
+    GWSLengthUnit getDistance( QSharedPointer<GWSGeometry> other ) const;
 
     // SPATIAL TRANSFORMATIONS
     void transformMove( const GWSCoordinate &apply_movement );
     void transformBuffer( double threshold );
-    void transformUnion( const GWSGeometry* other );
-    void transformIntersection( const GWSGeometry* other );
+    void transformUnion( QSharedPointer<GWSGeometry> other );
+    void transformIntersection( QSharedPointer<GWSGeometry> other );
 
 protected:
     GWSGeometry(geos::geom::Geometry* inner_geometry);
@@ -72,6 +72,6 @@ public:
     bool finished = false;
 };
 
-Q_DECLARE_METATYPE(GWSGeometry*)
+Q_DECLARE_METATYPE( QSharedPointer<GWSGeometry> )
 
 #endif // GWSGEOMETRY_H

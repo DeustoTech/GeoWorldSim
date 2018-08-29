@@ -4,25 +4,25 @@
 #include "../../agent/Agent.h"
 #include "../../util/graph/GraphNode.h"
 
-GWSGraphEdge::GWSGraphEdge(GWSAgent* agent) {
+GWSGraphEdge::GWSGraphEdge( QSharedPointer<GWSAgent> agent) {
     this->agent = agent;
 }
 
 GWSGraphEdge::~GWSGraphEdge(){
     // Disconnect
-    if( this->from ){ this->from->disconnectEdge( this ); }
-    if( this->to ){ this->to->disconnectEdge( this ); }
+    if( this->from ){ this->from->disconnectEdge( this->agent.dynamicCast<GWSGraphEdge>() ); }
+    if( this->to ){ this->to->disconnectEdge( this->agent.dynamicCast<GWSGraphEdge>() ); }
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-GWSGraphNode* GWSGraphEdge::getFromNode() const{
+QSharedPointer<GWSGraphNode> GWSGraphEdge::getFromNode() const{
     return this->from;
 }
 
-GWSGraphNode* GWSGraphEdge::getToNode() const{
+QSharedPointer<GWSGraphNode> GWSGraphEdge::getToNode() const{
     return this->to;
 }
 
@@ -59,11 +59,11 @@ double GWSGraphEdge::getCost(double accumulated_cost) const{
     return this->length.value;
 }
 
-bool GWSGraphEdge::equals( const GWSGraphEdge *other) const{
+bool GWSGraphEdge::equals( const QSharedPointer<GWSGraphEdge> other) const{
     return this->getFromNode()->equals( other->getFromNode() ) && this->getToNode()->equals( other->getToNode() );
 }
 
-bool GWSGraphEdge::equalsReversed(const GWSGraphEdge *other) const{
+bool GWSGraphEdge::equalsReversed(const QSharedPointer<GWSGraphEdge> other) const{
     return this->getFromNode()->equals( other->getToNode() ) && this->getToNode()->equals( other->getFromNode() );
 }
 

@@ -5,9 +5,7 @@
 
 #include "../../skill/view/ViewSkill.h"
 
-
-
-EatBehaviour::EatBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
+EatBehaviour::EatBehaviour() : GWSBehaviour(){
 }
 
 bool EatBehaviour::finished(){
@@ -16,12 +14,13 @@ bool EatBehaviour::finished(){
 
 bool EatBehaviour::behave(){
 
-     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().toString();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
 
      // Look what is around you:
-     QList<GWSAgent*> CellOccupation = dynamic_cast<ViewSkill*>( this->getAgent()->getSkill( ViewSkill::staticMetaObject.className() ) )->getViewingAgents();
+     QList< QSharedPointer<GWSAgent> > CellOccupation = agent->getSkill( ViewSkill::staticMetaObject.className() ).dynamicCast<ViewSkill>()->getViewingAgents();
      qInfo() << "Cell Occupation = " << CellOccupation;
-     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().toString();
+     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
 
 
      // We need to differentiate between preys: wolf kills sheep but sheep just reduces grass' energy:
@@ -37,9 +36,9 @@ bool EatBehaviour::behave(){
                 // Eat
                 qDebug() << "Found food!";
                 double foodGains = CellOccupation.at(i)->getProperty("energy").toDouble();
-                double finalEnergy = this->getAgent()->getProperty("energy").toDouble() + foodGains;
-                this->getAgent()-> setProperty("energy", finalEnergy);
-                emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
+                double finalEnergy = agent->getProperty("energy").toDouble() + foodGains;
+                agent->setProperty("energy", finalEnergy);
+                emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 
                 // Less grass = less energy of PastureAgent
                 CellOccupation.at(i)->setProperty( "energy" , 0.1 );

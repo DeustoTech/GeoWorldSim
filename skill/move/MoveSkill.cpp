@@ -13,7 +13,7 @@ QString MoveSkill::DESTINATION_X_PROP = "destination_x";
 QString MoveSkill::DESTINATION_Y_PROP = "destination_y";
 
 
-MoveSkill::MoveSkill(GWSAgent* skilled_agent) : GWSSkill( skilled_agent ){
+MoveSkill::MoveSkill() : GWSSkill(){
     this->setProperty( MoveSkill::MAX_SPEED_PROP , GWSSpeedUnit( 4 / 3.6 ) );
     this->setProperty( MoveSkill::CURRENT_SPEED_PROP , GWSSpeedUnit( 0 ) );
     this->setProperty( MoveSkill::ACCUMULATED_DISTANCE_PROP , GWSLengthUnit(0) );
@@ -92,7 +92,12 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
             * movement_duration.number();
 
     // Current position
-    GWSCoordinate current_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    if( !agent_geom ){
+        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
+    }
+    GWSCoordinate current_coor = agent_geom->getCentroid();
     GWSCoordinate destination_coor = this->getDestination();
 
     // Distance
@@ -109,7 +114,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
 
     // Set the agents position
     GWSCoordinate position = GWSCoordinate( x_move , y_move );
-    GWSPhysicalEnvironment::globalInstance()->transformMove( this->getAgent() , position );
+    agent_geom->transformMove( position );
     qDebug() << "Step = " <<position.toString();
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );

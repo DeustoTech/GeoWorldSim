@@ -17,10 +17,10 @@
 
 //#include "../../util/conversors/image_coordinates/ImageCoordinatesConversor.h"
 
-GWSGeometry::GWSGeometry( QObject* parent ) : GWSObject( parent ){
+GWSGeometry::GWSGeometry() : GWSObject(){
 }
 
-GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ) : GWSObject( Q_NULLPTR ){
+GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ) : GWSObject(){
     this->inner_geometry = inner_geometry;
 }
 
@@ -277,8 +277,11 @@ bool GWSGeometry::isInBounds(double minX, double maxX, double minY, double maxY)
               : false;
 }
 
-bool GWSGeometry::intersects( const GWSGeometry* other ) const{
-    return this->inner_geometry ? this->inner_geometry->intersects( other->inner_geometry ) : false;
+bool GWSGeometry::intersects( QSharedPointer<GWSGeometry> other ) const{
+    if( other ){
+        return this->inner_geometry ? this->inner_geometry->intersects( other->inner_geometry ) : false;
+    }
+    return false;
 }
 
 bool GWSGeometry::intersects( double minX, double maxX, double minY, double maxY) const{
@@ -287,11 +290,11 @@ bool GWSGeometry::intersects( double minX, double maxX, double minY, double maxY
                 : false;
 }
 
-bool GWSGeometry::equals( const GWSGeometry* other) const{
+bool GWSGeometry::equals( const QSharedPointer<GWSGeometry> other) const{
     return this->inner_geometry ? this->inner_geometry->equals( other->inner_geometry ) : false;
 }
 
-GWSLengthUnit GWSGeometry::getDistance( const GWSGeometry* other) const{
+GWSLengthUnit GWSGeometry::getDistance( const QSharedPointer<GWSGeometry> other) const{
     return GWSLengthUnit( this->inner_geometry ? this->inner_geometry->distance( other->inner_geometry )  * 110574 : -1 );
 }
 
@@ -319,13 +322,13 @@ void GWSGeometry::transformBuffer( double threshold ){
     this->inner_geometry = buffered;
 }
 
-void GWSGeometry::transformUnion( const GWSGeometry* other){
+void GWSGeometry::transformUnion( const QSharedPointer<GWSGeometry> other){
     geos::geom::Geometry* unioned = this->inner_geometry->Union( other->inner_geometry );
     delete this->inner_geometry;
     this->inner_geometry = unioned;
 }
 
-void GWSGeometry::transformIntersection(const GWSGeometry* other){
+void GWSGeometry::transformIntersection(const QSharedPointer<GWSGeometry> other){
     geos::geom::Geometry* intersected = this->inner_geometry->intersection( other->inner_geometry );
     delete this->inner_geometry;
     this->inner_geometry = intersected;

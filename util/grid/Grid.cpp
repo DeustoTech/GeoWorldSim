@@ -16,7 +16,7 @@ QString GWSGrid::GRID_VALUES_PROP = "grid_values";
 QString GWSGrid::GRID_X_SIZE_PROP = "grid_x_size";
 QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
 
-GWSGrid::GWSGrid(GWSAgent *agent){
+GWSGrid::GWSGrid( QSharedPointer<GWSAgent> agent){
     this->agent = agent;
 }
 
@@ -49,11 +49,10 @@ QJsonObject GWSGrid::serialize() const{
     QJsonArray geometries;
 
     // BOUNDS
-    QString agent_id = this->getAgent()->getId();
-    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMinX();
-    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMaxX();
-    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMaxY();
-    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent_id )->getGeometryMinY();
+    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
+    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxX();
+    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxY();
+    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinY();
 
     for(int i = 0 ; i < this->getGridXSize() ; i++){
         for(int j = 0 ; j < this->getGridYSize() ; j++ ){
@@ -93,7 +92,7 @@ QJsonObject GWSGrid::serialize() const{
  GETTERS
 **********************************************************************/
 
-GWSAgent* GWSGrid::getAgent() const{
+QSharedPointer<GWSAgent> GWSGrid::getAgent() const{
     return this->agent;
 }
 

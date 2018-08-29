@@ -1,5 +1,5 @@
-#ifndef GSSGRAPHEDGE_H
-#define GSSGRAPHEDGE_H
+#ifndef GWSGRAPHEDGE_H
+#define GWSGRAPHEDGE_H
 
 #include "geos/planargraph/DirectedEdge.h"
 #include "geos/planargraph/PlanarGraph.h"
@@ -15,16 +15,16 @@ class GWSGraphEdge
 {
 
 public:
-    GWSGraphEdge( GWSAgent* agent );
+    GWSGraphEdge( QSharedPointer<GWSAgent> agent );
     ~GWSGraphEdge();
 
     // GETTERS
-    virtual GWSGraphNode* getFromNode() const;
-    virtual GWSGraphNode* getToNode() const;
+    virtual QSharedPointer<GWSGraphNode> getFromNode() const;
+    virtual QSharedPointer<GWSGraphNode> getToNode() const;
     virtual GWSLengthUnit getLength() const;
     virtual double getGradient() const; // Positive for climbing up and negative for going down
-    virtual bool equals( const GWSGraphEdge* other) const;
-    virtual bool equalsReversed( const GWSGraphEdge* other ) const;
+    virtual bool equals( const QSharedPointer<GWSGraphEdge> other) const;
+    virtual bool equalsReversed( const QSharedPointer<GWSGraphEdge> other ) const;
 
     // SETTERS
     void setLength(GWSLengthUnit length);
@@ -35,11 +35,11 @@ public:
 private:
 
     // REF AGENT
-    GWSAgent* agent;
+    QSharedPointer<GWSAgent> agent;
 
-    GWSGraphNode* from = Q_NULLPTR;
-    GWSGraphNode* to = Q_NULLPTR;
+    QSharedPointer<GWSGraphNode> from;
+    QSharedPointer<GWSGraphNode> to;
     GWSLengthUnit length = 0;
 };
 
-#endif // GSSGRAPHEDGE_H
+#endif // GWSGRAPHEDGE_H

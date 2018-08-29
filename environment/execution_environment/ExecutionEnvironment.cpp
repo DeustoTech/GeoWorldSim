@@ -19,7 +19,8 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
-    this->running_agents = new GWSObjectStorage( this );
+    this->running_agents = new GWSObjectStorage();
+    this->running_agents->setParent( this->getSharedPointer() );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
@@ -42,7 +43,7 @@ QJsonObject GWSExecutionEnvironment::serialize() const{
  GETTERS
 **********************************************************************/
 
-bool GWSExecutionEnvironment::containsAgent(GWSAgent *agent) const{
+bool GWSExecutionEnvironment::containsAgent( QSharedPointer<GWSAgent> agent) const{
     return this->running_agents->contains( agent );
 }
 
@@ -50,22 +51,21 @@ int GWSExecutionEnvironment::getRunningAgentsAmount() const{
     return this->running_agents->getAmount();
 }
 
-QList<GWSAgent*> GWSExecutionEnvironment::getRunningAgents() const {
-    QList <GWSAgent*> list;
-    foreach (GWSObject* obj, this->running_agents->getByClass( GWSAgent::staticMetaObject.className() ) ) {
-        list.append( dynamic_cast<GWSAgent*>( obj ) );
+QList< QSharedPointer<GWSAgent> > GWSExecutionEnvironment::getRunningAgents() const {
+    QList< QSharedPointer<GWSAgent> > l;
+    foreach( QSharedPointer<GWSObject> o , this->running_agents->getByClass( GWSAgent::staticMetaObject.className() ) ){
+        l.append( o.dynamicCast<GWSAgent>() );
     }
-    return list;
+    return l;
 }
 
-template <class T> QList<T*> GWSExecutionEnvironment::getRunningAgentsByClass( QString class_name ) const{
-    return this->running_agents->getByClass<T>( class_name );
+template <class T> QList< QSharedPointer<T> > GWSExecutionEnvironment::getRunningAgentsByClass( QString class_name ) const{
+    return this->running_agents->getByClassCasted<T>( class_name );
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
     return this->timer ? true : false;
 }
-
 
 int GWSExecutionEnvironment::getTicksAmount() const{
     return this->executed_ticks_amount;
@@ -75,7 +75,7 @@ int GWSExecutionEnvironment::getTicksAmount() const{
  AGENT METHODS
 **********************************************************************/
 
-void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
+void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
     // If already registered
     if( agent->getEnvironments().contains( this ) ){
@@ -86,7 +86,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
     // Create agent's own timer to schedule its slots
     if( agent->timer ){ agent->timer->deleteLater(); }
-    agent->timer = new QTimer( agent ); // Set its parent to the agent, Really improves speed
+    agent->timer = new QTimer( agent.data() ); // Set its parent to the agent, Really improves speed
     agent->timer->setSingleShot( true ); // Set single shot, really improves speed
 
     if( !agent || agent->deleted ){ return; }
@@ -96,7 +96,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     this->running_agents->add( agent );
 
     // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent->getId() ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     if( msecs < 0 ){
         msecs = 0;
     }
@@ -109,7 +109,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
 
         // Balance between threads. Only QObjects without parent can be moved. Children must stay in parents thread
         // CAUTION! Very slow operation
-        if( !agent->parent() ){
+        if( !agent->getParent() ){
             qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
             agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
             if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
@@ -124,7 +124,7 @@ void GWSExecutionEnvironment::registerAgent(GWSAgent *agent){
     });
 }
 
-void GWSExecutionEnvironment::unregisterAgent(GWSAgent *agent){
+void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
 
     agent->incrementBusy();
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
@@ -164,7 +164,7 @@ void GWSExecutionEnvironment::run(){
 
 void GWSExecutionEnvironment::behave(){
 
-    QList<GWSAgent*> currently_running_agents = this->getRunningAgents();
+    QList< QSharedPointer<GWSAgent> > currently_running_agents = this->getRunningAgents();
 
     if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
         qInfo() << QString("%1 has no agents to run. Finising Simulation.").arg( this->metaObject()->className() );
@@ -179,10 +179,10 @@ void GWSExecutionEnvironment::behave(){
     bool agents_to_tick = false;
     int ticked_agents = 0;
 
-    foreach( GWSAgent* agent , currently_running_agents ){
+    foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
         if( agent && !agent->isBusy() ){
             agents_to_tick = true;
-            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent->getId() );
+            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
             if( agent_time > 0 && agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
                 min_tick = qMin( min_tick , agent_time );
             }
@@ -192,20 +192,19 @@ void GWSExecutionEnvironment::behave(){
     if( agents_to_tick ){
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
-        foreach( GWSAgent* agent , currently_running_agents ){
+        foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
 
-            QString agent_id = agent->getId();
-            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent_id );
+            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
 
             // If agent_tick is 0, set to now
             if( agent_next_tick <= 0 ){
-                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent_id , min_tick );
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , min_tick );
             }
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
 
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
-                agent->timer->singleShot( 10 + (qrand() % 100) , agent , &GWSAgent::tick );
+                agent->timer->singleShot( 10 + (qrand() % 100) , agent.data() , &GWSAgent::tick );
 
                 ticked_agents++;
             }

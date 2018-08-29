@@ -2,7 +2,7 @@
 
 QString TesisBehaviour::COUTDOWN_PROP = "ticks_left";
 
-TesisBehaviour::TesisBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
+TesisBehaviour::TesisBehaviour() : GWSBehaviour(){
     this->setProperty( TesisBehaviour::COUTDOWN_PROP , 3 );
 }
 

@@ -62,10 +62,10 @@ void GWSExternalListener::messageReceived(const QString message){
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
         bool alive = json.value( GWSAgent::ALIVE_PROP ).toBool();
 
-        GWSAgent* agent = Q_NULLPTR;
+        QSharedPointer<GWSAgent> agent;
 
         if( !type.isEmpty() && !id.isEmpty() ){
-            agent = dynamic_cast<GWSAgent*>( GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id ) );
+            agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id );
         }
 
         if( agent && !alive ){
@@ -79,7 +79,7 @@ void GWSExternalListener::messageReceived(const QString message){
         }
 
         if( !agent && alive ){
-            agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( json ) );
+            agent = GWSObjectFactory::globalInstance()->fromJSON( json ).dynamicCast<GWSAgent>();
         }
     }
 

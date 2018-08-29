@@ -10,7 +10,7 @@ class MoveSkill : public GWSSkill
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit MoveSkill( GWSAgent *skilled_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit MoveSkill();
     ~MoveSkill();
 
     // PROPERTIES

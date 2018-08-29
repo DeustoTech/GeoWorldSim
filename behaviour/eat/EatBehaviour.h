@@ -8,7 +8,7 @@ class EatBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit EatBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit EatBehaviour();
 
     virtual bool finished();
 

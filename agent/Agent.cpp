@@ -21,15 +21,15 @@
 QString GWSAgent::ALIVE_PROP = "alive";
 QString GWSAgent::STYLE_PROP = "style";
 
-GWSAgent::GWSAgent( QObject* parent ) : GWSObject( parent ) , GWSStyle( this ) , busy_counter(0) {
+GWSAgent::GWSAgent() : GWSObject() , GWSStyle( this ) , busy_counter(0) {
     this->setProperty( ALIVE_PROP , true );
 }
 
 GWSAgent::~GWSAgent() {
     // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , agent , &Agent::deleteLater );
 
-    foreach (GWSEnvironment* env , this->environments_registerd_in ) {
-        env->unregisterAgent( this );
+    foreach(GWSEnvironment* env , this->environments_registerd_in ) {
+        env->unregisterAgent( this->getSharedPointer() );
     }
 
     // Emit withoug 'ALIVE' property to be removed
@@ -59,8 +59,9 @@ void GWSAgent::deserialize(QJsonObject json){
         }
         QJsonArray jskills = json.value("@skills").toArray();
         foreach( QJsonValue js , jskills ){
-            GWSSkill* skill = dynamic_cast<GWSSkill*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+            QSharedPointer<GWSSkill> skill = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSSkill>();
             if( !skill ){ continue; }
+            skill->setParent( this->getSharedPointer() );
             this->addSkill( skill );
         }
     }
@@ -73,25 +74,27 @@ void GWSAgent::deserialize(QJsonObject json){
         }
         QJsonArray jsbehaviours = json.value("@behaviours").toArray();
         foreach( QJsonValue js , jsbehaviours ){
-            GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this ) );
+            QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
             if( !behaviour ){ continue; }
+            behaviour->setParent( this->getSharedPointer() );
             this->addBehaviour( behaviour );
         }
     }
 
     // INTERNAL TIME
     if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
-        GWSTimeEnvironment::globalInstance()->registerAgent( this , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
+        GWSTimeEnvironment::globalInstance()->registerAgent( this->getSharedPointer() , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
     } else {
-        GWSTimeEnvironment::globalInstance()->unregisterAgent( this );
+        GWSTimeEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
     // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
-    if( GWSGeometry* geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value<GWSGeometry*>() ){
-        GWSPhysicalEnvironment::globalInstance()->registerAgent( this , geom );
+    QSharedPointer<GWSGeometry> geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    if( geom ){
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( this->getSharedPointer() , geom );
         this->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
     } else {
-        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this );
+        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
     // STYLE
@@ -101,14 +104,14 @@ void GWSAgent::deserialize(QJsonObject json){
 
     // RUNNING
     if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
-        GWSExecutionEnvironment::globalInstance()->registerAgent( this );
+        GWSExecutionEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
     } else {
-        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this );
+        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
     // MUST BE MADE AT THIS LAST PART. Add to environments
-    GWSAgentEnvironment::globalInstance()->registerAgent( this );
-    GWSEnvironment::globalInstance()->registerAgent( this );
+    GWSAgentEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
+    GWSEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
 }
 
 /**********************************************************************
@@ -128,7 +131,7 @@ QJsonObject GWSAgent::serialize() const{
     //Skills
     QJsonArray skills;
     if( this->skills ){
-        foreach (GWSObject* s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
+        foreach (QSharedPointer<GWSObject> s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
             skills.append( s->serializeMini() );
         }
     }
@@ -137,17 +140,17 @@ QJsonObject GWSAgent::serialize() const{
     // BEHAVIOUR
     QJsonArray behaviours;
     if( this->behaviours ){
-        foreach (GWSObject* s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
+        foreach (QSharedPointer<GWSObject> s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
             behaviours.append( s->serializeMini() );
         }
     }
     //json.insert( "@behaviours" , behaviours );
 
     // INTERNAL TIME
-    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getId() ) );
+    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );
 
     // GEOMETRY
-    const GWSGeometry* geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getId() );
+    const QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
@@ -179,49 +182,65 @@ bool GWSAgent::isBusy() const{
     return busy_counter > 0;
 }
 
+QSharedPointer<GWSAgent> GWSAgent::getSharedPointer() const{
+    QSharedPointer<GWSObject> obj = GWSObject::getSharedPointer();
+    return obj.dynamicCast<GWSAgent>();
+}
+
 bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
 }
 
-GWSSkill* GWSAgent::getSkill( QString class_name ) const{
-    return this->getSkill<GWSSkill>( class_name );
-}
-
-template <class T> T* GWSAgent::getSkill( QString class_name ) const{
+QSharedPointer<GWSSkill> GWSAgent::getSkill( QString class_name ) const{
     if( !this->skills ){ return 0; }
-    const QList<GWSObject*> objs = this->skills->getByClass( class_name );
+    const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
         qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( class_name );
         return 0;
     }
-    return dynamic_cast<T*>( objs.at(0) );
+    return objs.at(0).dynamicCast<GWSSkill>();
 }
 
-QList<GWSSkill*> GWSAgent::getSkills( QString class_name ) const{
-    return this->getSkills<GWSSkill>( class_name );
-}
+/*template <class T> QSharedPointer<T> GWSAgent::getSkill( QString class_name ) const{
+    if( !this->skills ){ return 0; }
+    const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
+    if( objs.isEmpty() ){
+        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( class_name );
+        return 0;
+    }
+    return objs.at(0).dynamicCast<T>();
+}*/
 
-template <class T> QList<T*> GWSAgent::getSkills( QString class_name ) const{
-    QList<GWSSkill*> s;
+QList< QSharedPointer<GWSSkill> > GWSAgent::getSkills( QString class_name ) const{
+    QList< QSharedPointer<GWSSkill> > s;
     if( !this->skills ){ return s; }
-    foreach(QObject* obj , this->skills->getByClass( class_name )){
-        s.append( dynamic_cast<T*>( obj ) );
+    foreach( QSharedPointer<GWSObject> obj , this->skills->getByClass( class_name )){
+        s.append( obj.dynamicCast<GWSSkill>() );
     }
     return s;
 }
 
-GWSBehaviour* GWSAgent::getStartBehaviour() const{
+/*template <class T> QList< QSharedPointer<T> > GWSAgent::getSkills( QString class_name ) const{
+    QList< QSharedPointer<GWSSkill> > s;
+    if( !this->skills ){ return s; }
+    foreach( QSharedPointer<GWSObject> obj , this->skills->getByClass( class_name )){
+        s.append( obj.dynamicCast<T>() );
+    }
+    return s;
+}*/
+
+QSharedPointer<GWSBehaviour> GWSAgent::getStartBehaviour() const{
     return this->start_behaviour;
 }
 
-GWSBehaviour* GWSAgent::getBehaviour(QString id) const{
-    return dynamic_cast<GWSBehaviour*>( this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ) );
+QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const{
+    return this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ).dynamicCast<GWSBehaviour>();
 }
 
-QList<GWSBehaviour*> GWSAgent::getBehaviours(QString class_name) const{
-    QList<GWSBehaviour*> behaviours;
-    foreach(GWSObject* o , this->behaviours->getByClass( class_name ) ){
-        behaviours.append( dynamic_cast<GWSBehaviour*>( o ) );
+QList< QSharedPointer<GWSBehaviour> > GWSAgent::getBehaviours(QString class_name) const{
+    QList< QSharedPointer<GWSBehaviour> > behaviours;
+    foreach( QSharedPointer<GWSObject> o , this->behaviours->getByClass( class_name ) ){
+        behaviours.append( o.dynamicCast<GWSBehaviour>() );
     }
     return behaviours;
 }
@@ -238,25 +257,28 @@ void GWSAgent::decrementBusy(){
     this->busy_counter = qMax( this->busy_counter-1 , 0 );
 }
 
-void GWSAgent::addSkill(GWSSkill *skill){
+void GWSAgent::addSkill( QSharedPointer<GWSSkill> skill ){
     if( !this->skills ){
-        this->skills = new GWSObjectStorage( this );
+        this->skills = new GWSObjectStorage();
+        QSharedPointer<GWSObject> agent = this->getSharedPointer();
+        this->skills->setParent( agent );
     }
     this->skills->add( skill );
 }
 
-void GWSAgent::removeSkill(GWSSkill *skill){
+void GWSAgent::removeSkill(QSharedPointer<GWSSkill> skill){
     this->skills->remove( skill );
 }
 
-void GWSAgent::addBehaviour(GWSBehaviour* behaviour){
+void GWSAgent::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     if( !this->behaviours ){
-        this->behaviours = new GWSObjectStorage( this );
+        this->behaviours = new GWSObjectStorage();
+        this->behaviours->setParent( this->getSharedPointer() );
     }
     this->behaviours->add( behaviour );
 }
 
-void GWSAgent::setStartBehaviour(GWSBehaviour *behaviour){
+void GWSAgent::setStartBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     this->start_behaviour = behaviour;
 }
 
@@ -285,18 +307,18 @@ void GWSAgent::behave(){
     }
 
     // First behaviour
-    QList<GWSBehaviour*> checked_behaviours; // TODO check infinite loops
-    QList<GWSBehaviour*> next_execute_behaviours;
+    QList< QSharedPointer<GWSBehaviour> > checked_behaviours; // TODO check infinite loops
+    QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
 
-    QList<GWSBehaviour*> iterators;
+    QList< QSharedPointer<GWSBehaviour> > iterators;
     iterators.append( this->start_behaviour );
 
     while( !iterators.isEmpty() ){
 
-        QList<GWSBehaviour*> next_loop_iterators;
+        QList< QSharedPointer<GWSBehaviour> > next_loop_iterators;
 
         // Behaviours
-        foreach (GWSBehaviour* b, iterators) {
+        foreach (QSharedPointer<GWSBehaviour> b, iterators) {
 
             if( b->finished() ){
 
@@ -305,30 +327,28 @@ void GWSAgent::behave(){
             } else {
 
                 // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
-                foreach (GWSBehaviour* sb, b->getSubs()) {
+                foreach( QSharedPointer<GWSBehaviour> sb, b->getSubs()) {
                     if( sb->finished() ){
                         next_loop_iterators.append( sb->getNext() );
                     }
                 }
-
                 next_execute_behaviours.append( b );
             }
         }
-
         iterators = next_loop_iterators;
     }
 
     if( !next_execute_behaviours.isEmpty() ){
 
-        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getId() );
+        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
-        foreach (GWSBehaviour* b, next_execute_behaviours) {
+        foreach( QSharedPointer<GWSBehaviour> b, next_execute_behaviours) {
 
             this->timer->singleShot( 10 + (qrand() % 100) , [this , b , all_start_same_time ](){
                 b->tick( all_start_same_time );
             });
         }
     } else {
-        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getId() , 1 );
+        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getSharedPointer() , 1 );
     }
 }

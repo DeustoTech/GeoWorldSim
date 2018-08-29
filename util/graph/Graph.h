@@ -1,6 +1,7 @@
 #ifndef GWSGRAPH_H
 #define GWSGRAPH_H
 
+#include <QSharedPointer>
 
 #include "../../util/geometry/Quadtree.h"
 #include "../../util/graph/GraphNode.h"
@@ -17,29 +18,29 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
 
     // GETTERS
-    bool containsNode( GWSGraphNode* node ) const;
-    bool containsEdge( GWSGraphEdge* edge ) const;
-    const GWSGraphNode* findNode( GWSCoordinate point ) const;
-    const GWSGraphNode* findNearestNode( GWSCoordinate point ) const;
-    const GWSGraphEdge* findEdge( GWSCoordinate from , GWSCoordinate to ) const;
-    QList<const GWSGraphNode*> findNodesOfDegree( int degree ) const;
-    //QList<const GWSGraphNode*> getNodes() const;
-    //QList<const GWSGraphEdge*> getEdges() const;
-    QMap<const GWSGraphEdge*, double> getCostMap() const;
+    bool containsNode( QSharedPointer<GWSGraphNode> node ) const;
+    bool containsEdge( QSharedPointer<GWSGraphEdge> edge ) const;
+    const QSharedPointer<GWSGraphNode> findNode( GWSCoordinate point ) const;
+    const QSharedPointer<GWSGraphNode> findNearestNode( GWSCoordinate point ) const;
+    const QSharedPointer<GWSGraphEdge> findEdge( GWSCoordinate from , GWSCoordinate to ) const;
+    QList<QSharedPointer<GWSGraphNode> > findNodesOfDegree( int degree ) const;
+    //QList<const QSharedPointer<GWSGraphNode>> getNodes() const;
+    //QList<const QSharedPointer<GWSGraphEdge>> getEdges() const;
+    QMap<QSharedPointer<GWSGraphEdge>, double> getCostMap() const;
     int countNodes() const;
     int countEdges() const;
 
     // SETTERS
-    void addNode( GWSGraphNode* node );
-    void addEdge( GWSGraphEdge* edge );
+    void addNode( QSharedPointer<GWSGraphNode> node );
+    void addEdge( QSharedPointer<GWSGraphEdge> edge );
     void addGraph( const GWSGraph* other );
-    void removeNode( GWSGraphNode* node );
-    void removeEdge( GWSGraphEdge* edge );
+    void removeNode( QSharedPointer<GWSGraphNode> node );
+    void removeEdge( QSharedPointer<GWSGraphEdge> edge );
 
 private:
     GWSQuadtree* nodes_index;
-    QList<GWSGraphNode*> nodes;
-    QList<GWSGraphEdge*> edges;
+    QList< QSharedPointer<GWSGraphNode> > nodes;
+    QList< QSharedPointer<GWSGraphEdge> > edges;
 };
 
 #endif // GWSGRAPH_H

@@ -44,7 +44,7 @@ class GWSAgent : public GWSObject , public GWSStyle
 
 public:
 
-    Q_INVOKABLE explicit GWSAgent( QObject* parent = Q_NULLPTR ); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
+    Q_INVOKABLE explicit GWSAgent(); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
     ~GWSAgent();
 
     // PROPERTIES
@@ -61,26 +61,27 @@ public:
     // GETTERS
     QList<GWSEnvironment*> getEnvironments() const;
     bool isBusy() const;
+    QSharedPointer<GWSAgent> getSharedPointer() const;
 
     // SKILLS
     bool hasSkill( QString class_name ) const;
-    GWSSkill* getSkill( QString class_name ) const;
-    template <class T> T* getSkill( QString class_name ) const;
-    QList<GWSSkill*> getSkills( QString class_name ) const;
-    template <class T> QList<T*> getSkills( QString class_name ) const;
+    QSharedPointer<GWSSkill> getSkill( QString class_name ) const;
+    //template <class T> QSharedPointer<T> getSkill( QString class_name ) const;
+    QList< QSharedPointer<GWSSkill> > getSkills( QString class_name ) const;
+    //template <class T> QList< QSharedPointer<T> > getSkills( QString class_name ) const;
 
     // BEHAVIOURS
-    GWSBehaviour* getStartBehaviour() const;
-    GWSBehaviour* getBehaviour( QString behaviour_id ) const;
-    QList<GWSBehaviour*> getBehaviours( QString class_name ) const;
+    QSharedPointer<GWSBehaviour> getStartBehaviour() const;
+    QSharedPointer<GWSBehaviour> getBehaviour( QString behaviour_id ) const;
+    QList< QSharedPointer<GWSBehaviour> > getBehaviours( QString class_name ) const;
 
     // SETTERS
     void incrementBusy();
     void decrementBusy();
-    void addSkill( GWSSkill* skill );
-    void removeSkill( GWSSkill* skill );
-    void addBehaviour( GWSBehaviour* behaviour );
-    void setStartBehaviour( GWSBehaviour* behaviour );
+    void addSkill( QSharedPointer<GWSSkill> skill );
+    void removeSkill( QSharedPointer<GWSSkill> skill );
+    void addBehaviour( QSharedPointer<GWSBehaviour> behaviour );
+    void setStartBehaviour( QSharedPointer<GWSBehaviour> behaviour );
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     virtual void tick() final; // Acts as a behave() wrapper
@@ -105,7 +106,7 @@ protected:
      * @brief Agent behaviour
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
-    GWSBehaviour* start_behaviour = Q_NULLPTR;
+    QSharedPointer<GWSBehaviour> start_behaviour = Q_NULLPTR;
 
     /**
       * Mutex for paralelism

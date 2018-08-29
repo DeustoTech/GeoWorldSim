@@ -20,10 +20,9 @@ class PredatorAgent : public GWSAgent
 public:
 
     // CONSTRUCTOR
-    Q_INVOKABLE explicit PredatorAgent( QObject* parent = Q_NULLPTR );
+    Q_INVOKABLE explicit PredatorAgent();
     ~PredatorAgent();
 
-    virtual void behaveOld();
 };
 
 Q_DECLARE_METATYPE(PredatorAgent*) // REQUIRED IN EVERY CHILD

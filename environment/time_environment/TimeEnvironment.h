@@ -36,17 +36,17 @@ public:
     // GETTERS
     qint64 getCurrentDateTime() const;
     double getTimeSpeed() const;
-    qint64 getAgentInternalTime( QString agent_id ) const;
+    qint64 getAgentInternalTime( QSharedPointer<GWSAgent> agent ) const;
 
     // SETTERS
     void setDatetime( quint64 current_datetime_msecs );
     void setTimeSpeed(double time_speed = 1);
-    void setAgentInternalTime( QString agent_id , const qint64 datetime );
-    void incrementAgentInternalTime( QString agent_id , GWSTimeUnit seconds );
+    void setAgentInternalTime( QSharedPointer<GWSAgent> agent , const qint64 datetime );
+    void incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds );
 
     // METHODS
-    virtual void registerAgent( GWSAgent* agent , quint64 init_internal_time = 0 );
-    virtual void unregisterAgent( GWSAgent* agent );
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent , quint64 init_internal_time = 0 );
+    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:
     GWSTimeEnvironment();
@@ -57,7 +57,7 @@ private:
 
     // Time speed
     // (How many seconds will there be in a real world second)
-    double time_speed = 2;
+    double time_speed = 1;
 
     // Agent internal times
     QMap<QString , quint64> agent_internal_times;

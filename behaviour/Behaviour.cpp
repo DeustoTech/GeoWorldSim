@@ -9,7 +9,7 @@ QString GWSBehaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
-GWSBehaviour::GWSBehaviour(GWSAgent* behaving_agent ) : GWSObject( behaving_agent ){
+GWSBehaviour::GWSBehaviour() : GWSObject(){
 }
 
 /**********************************************************************
@@ -23,7 +23,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
     if( json.keys().contains( SUB_BEHAVIOURS_PROP ) ){
         QJsonArray arr = json.value( SUB_BEHAVIOURS_PROP ).toArray();
         foreach(QJsonValue jb , arr ){
-            GWSBehaviour* behaviour = dynamic_cast<GWSBehaviour*>( GWSObjectFactory::globalInstance()->fromJSON( jb.toObject() , this->getAgent() ) );
+            QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( jb.toObject() , this->getAgent() ).dynamicCast<GWSBehaviour>();
             if( behaviour ){
                 this->addSubbehaviour( behaviour );
             }
@@ -35,7 +35,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
         QJsonArray next_ids = json.value( NEXT_BEHAVIOURS_PROP ).toArray();
         foreach( QJsonValue id , next_ids ){
             // Find next behaviour in agent
-            GWSBehaviour* next_behaviour = this->getAgent()->getBehaviour( id.toString() );
+            QSharedPointer<GWSBehaviour> next_behaviour = this->getAgent()->getBehaviour( id.toString() );
             if( next_behaviour ){
                 this->addNextBehaviour( next_behaviour );
             } else {
@@ -49,7 +49,7 @@ void GWSBehaviour::deserialize(QJsonObject json){
 
     // START BEHAVIOUR
     if( json.keys().contains( START_BEHAVIOUR_PROP ) && json.value( START_BEHAVIOUR_PROP ).toBool() ){
-        this->getAgent()->setStartBehaviour( this );
+        this->getAgent()->setStartBehaviour( this->getSharedPointer().dynamicCast<GWSBehaviour>() );
     }
 
 }
@@ -62,14 +62,14 @@ QJsonObject GWSBehaviour::serialize() const{
     QJsonObject json = GWSObject::serialize();
     if( !this->sub_behaviours.isEmpty() ){
         QJsonArray arr;
-        foreach( GWSBehaviour* b , this->sub_behaviours ){
+        foreach( QSharedPointer<GWSBehaviour> b , this->sub_behaviours ){
             arr.append( b->serialize() );
         }
         json.insert( SUB_BEHAVIOURS_PROP , arr );
     }
     if( !this->next_behaviours.isEmpty() ){
         QJsonArray arr;
-        foreach( GWSBehaviour* b , this->next_behaviours ){
+        foreach( QSharedPointer<GWSBehaviour>b , this->next_behaviours ){
             arr.append( b->getId() );
         }
         json.insert( NEXT_BEHAVIOURS_PROP , arr );
@@ -81,15 +81,15 @@ QJsonObject GWSBehaviour::serialize() const{
  GETTERS
 **********************************************************************/
 
-GWSAgent* GWSBehaviour::getAgent(){
-    return dynamic_cast<GWSAgent*>( this->parent() );
+QSharedPointer<GWSAgent> GWSBehaviour::getAgent(){
+    return this->getParent().dynamicCast<GWSAgent>();
 }
 
-QList<GWSBehaviour*> GWSBehaviour::getSubs(){
+QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs(){
     return this->sub_behaviours;
 }
 
-QList<GWSBehaviour*> GWSBehaviour::getNext(){
+QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNext(){
     return this->next_behaviours;
 }
 
@@ -99,7 +99,7 @@ bool GWSBehaviour::finished(){
     if( condition <= 0 ){ condition = this->sub_behaviours.size(); }
     int finished_amount = 0;
 
-    foreach (GWSBehaviour* sub, this->sub_behaviours){
+    foreach (QSharedPointer<GWSBehaviour> sub, this->sub_behaviours){
         finished_amount += sub->finished() ? 1 : 0;
     }
     return finished_amount >= condition;
@@ -109,11 +109,11 @@ bool GWSBehaviour::finished(){
  SETTERS
 **********************************************************************/
 
-void GWSBehaviour::addSubbehaviour(GWSBehaviour *sub_behaviour){
+void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
     this->sub_behaviours.append( sub_behaviour );
 }
 
-void GWSBehaviour::addNextBehaviour(GWSBehaviour *next_behaviour){
+void GWSBehaviour::addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour){
     this->next_behaviours.append( next_behaviour );
 }
 
@@ -137,11 +137,11 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
     // Calculate how much to increment agent internal time
     qint64 increment_time = qMax( 100 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() ); // At least 0.1 seconds
-    qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent()->getId() );
+    qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
 
     // Compare how much has been spent or if some other behaviour incremented the time
     qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
-    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent()->getId() , max_time );
+    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent() , max_time );
 
     return behaved_correctly;
 }
@@ -151,7 +151,7 @@ bool GWSBehaviour::behave(){
     bool success = true;
 
     // A parent behaviour will iterate all its child behaviours at each behave call
-    foreach(GWSBehaviour* sub, this->sub_behaviours) {
+    foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {
 
         if( !sub->finished() ){
             success = sub->tick( this->behaving_time );

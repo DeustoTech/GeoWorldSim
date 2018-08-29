@@ -22,20 +22,18 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    const GWSGraphNode* getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-    template <class T> const T* getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-
-    const GWSGraphNode* getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-
-    const GWSGraphEdge* getEdgeFromGraph( GWSCoordinate from_point , GWSCoordinate to_point , QString class_name ) const;
+    QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    QSharedPointer<GWSGraphNode> getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    QSharedPointer<GWSGraphEdge> getEdgeFromGraph( GWSCoordinate from_point , GWSCoordinate to_point , QString class_name ) const;
 
     const GWSGraph* getGraph( QString class_name ) const;
 
     // SETTERS
 
     // METHODS
-    virtual void registerAgent(GWSAgent *agent);
-    virtual void unregisterAgent(GWSAgent *agent);
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
+    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:
     GWSNetworkEnvironment();

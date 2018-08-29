@@ -9,7 +9,7 @@ class SelectDestinationBehaviour : public GWSBehaviour
     Q_OBJECT
 public:
 
-    Q_INVOKABLE explicit SelectDestinationBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit SelectDestinationBehaviour();
 
     // GETTERS
     virtual bool finished();

@@ -15,13 +15,14 @@ QString GWSObject::GWS_PARENT_PROP = "parent";
 
 unsigned int GWSObject::counter = 0;
 
-GWSObject::GWSObject( QObject *parent ) : QObject( parent ) , deleted(false) {
+GWSObject::GWSObject() : QObject() , deleted(false) {
     QString generated_id = QString("%1-%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
     this->setObjectName( generated_id );
 }
 
-GWSObject::GWSObject(const GWSObject &other) : QObject( other.parent() ){
+GWSObject::GWSObject(const GWSObject &other) : QObject(){
+    this->setParent( other.getParent() );
 }
 
 GWSObject::~GWSObject(){
@@ -121,7 +122,7 @@ void GWSObject::deserialize(QJsonObject json){
         case QJsonValue::Object: {
 
                 QJsonObject json_object = property_value.toObject();
-                GWSObject* obj = Q_NULLPTR;
+                QSharedPointer<GWSObject> obj;
 
                 // If it makes reference to an existing agent
                 if( json_object.keys().contains( GWS_TYPE_PROP ) && json_object.keys().contains( GWS_ID_PROP ) ){
@@ -129,12 +130,12 @@ void GWSObject::deserialize(QJsonObject json){
                 }
 
                 if( !obj && json_object.keys().contains( GWS_TYPE_PROP ) ){
-                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this );
+                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this->self_shared_pointer );
                 }
 
                 if( !obj ){ break; }
 
-                QVariant obj_variant = QVariant::fromValue<GWSObject*>( obj );
+                QVariant obj_variant = QVariant::fromValue< QSharedPointer<GWSObject> >( obj );
                 this->setProperty( property_name , obj_variant ); break;
 
         }
@@ -153,6 +154,14 @@ void GWSObject::deserialize(QJsonObject json){
 
 QString GWSObject::getId() const{
     return this->getProperty( GWSObject::GWS_ID_PROP ).toString();
+}
+
+QSharedPointer<GWSObject> GWSObject::getParent() const{
+    return this->parent;
+}
+
+QSharedPointer<GWSObject> GWSObject::getSharedPointer() const{
+    return this->self_shared_pointer;
 }
 
 QStringList GWSObject::getInheritanceFamily() const{
@@ -193,8 +202,13 @@ bool GWSObject::setProperty(const QString name, const QVariant &value){
     return QObject::setProperty( name.toLatin1() , value );
 }
 
-bool GWSObject::setProperty(const QString name, GWSObject *value){
-    QVariant variant = QVariant::fromValue<GWSObject*>( value );
+void GWSObject::setParent( QSharedPointer<GWSObject> parent ){
+    QObject::setParent( parent.data() );
+    this->parent = parent;
+}
+
+bool GWSObject::setProperty(const QString name, QSharedPointer<GWSObject> value){
+    QVariant variant = QVariant::fromValue< QSharedPointer<GWSObject> >( value );
     return this->setProperty( name , variant );
 }
 

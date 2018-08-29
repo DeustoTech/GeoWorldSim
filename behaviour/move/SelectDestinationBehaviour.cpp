@@ -7,15 +7,15 @@
 
 /*  This behaviour aims at randomly selecting the target destination of the GWSAgent */
 
-SelectDestinationBehaviour::SelectDestinationBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behaving_agent ){
+SelectDestinationBehaviour::SelectDestinationBehaviour() : GWSBehaviour(){
 }
-
 
 bool SelectDestinationBehaviour::finished(){
 
-    MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     if( !mv ){
-        qInfo() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() );
+        qInfo() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->metaObject()->className() ).arg( agent->getId() );
         return true;
     }
 
@@ -24,11 +24,13 @@ bool SelectDestinationBehaviour::finished(){
         return false;
     }
 
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
     return agent_coor != destination_coor;
 }
 
 bool SelectDestinationBehaviour::behave(){
+
+    QSharedPointer<GWSAgent> agent = this->getAgent();
 
     /* Move randomly through random index generator */
     int direction[3] = {0, 1, -1}; // the possible displacements of going NORTH, SOUTH, EAST or WEST
@@ -39,15 +41,18 @@ bool SelectDestinationBehaviour::behave(){
     int TargetX = direction[RandIndexX];
     int TargetY = direction[RandIndexY];
 
-    int DestinationX = TargetX + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().getX();
-    int DestinationY = TargetY + GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().getY();
+    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    if( !agent_geom ){
+        qWarning() << QString("Agent %1 %2 tried to select destination without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
+    }
+    int DestinationX = TargetX + agent_geom->getCentroid().getX();
+    int DestinationY = TargetY + agent_geom->getCentroid().getY();
 
-    MoveSkill* mv = dynamic_cast<MoveSkill*>(this->getAgent()->getSkill( MoveSkill::staticMetaObject.className() ) );
+    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     mv->setProperty( MoveSkill::DESTINATION_X_PROP , DestinationX );
     mv->setProperty( MoveSkill::DESTINATION_Y_PROP , DestinationY );
 
-    qDebug() << "Agent = ", this->getAgent()->getProperty("@id").toString();
+    qDebug() << "Agent = ", agent->getId();
     qDebug() << "Destination = ", mv->getDestination().toString();
-    qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent()->getId() )->getCentroid().toString();
     return true;
 }

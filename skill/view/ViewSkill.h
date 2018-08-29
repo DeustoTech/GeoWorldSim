@@ -9,14 +9,14 @@ class ViewSkill : public GWSSkill
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit ViewSkill( GWSAgent *skilled_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit ViewSkill();
 
     // PROPERTIES
     static QString VIEWPORT_PROP; // Relative to agents' geometry
     static QString AGENT_TYPE_FIND_PROP;
 
     // GETTERS
-    QList<GWSAgent*> getViewingAgents();
+    QList< QSharedPointer<GWSAgent> > getViewingAgents();
 
 };
 

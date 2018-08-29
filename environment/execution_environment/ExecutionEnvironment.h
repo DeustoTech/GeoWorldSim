@@ -23,16 +23,16 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    bool containsAgent( GWSAgent* agent ) const;
+    bool containsAgent( QSharedPointer<GWSAgent> agent ) const;
     int getRunningAgentsAmount() const;
-    QList<GWSAgent*> getRunningAgents() const;
-    template <class T> QList<T*> getRunningAgentsByClass( QString class_name ) const;
+    QList< QSharedPointer<GWSAgent> > getRunningAgents() const;
+    template <class T> QList< QSharedPointer<T> > getRunningAgentsByClass( QString class_name ) const;
     bool isRunning() const;
     int getTicksAmount() const;
 
     // METHODS
-    virtual void registerAgent(GWSAgent* agent);
-    virtual void unregisterAgent(GWSAgent* agent);
+    virtual void registerAgent(QSharedPointer<GWSAgent> agent);
+    virtual void unregisterAgent(QSharedPointer<GWSAgent> agent);
 
 signals:
     void tickEndedSignal(int executed_tick);

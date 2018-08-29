@@ -11,8 +11,8 @@ public:
     static GWSEnvironment* globalInstance();
 
     void registerSubenvironment( GWSEnvironment* subenvironment );
-    virtual void registerAgent( GWSAgent* agent );
-    virtual void unregisterAgent( GWSAgent* agent );
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
+    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 signals:
     void environmentCreatedSignal();

@@ -11,7 +11,7 @@ GWSEnvironment* GWSEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSEnvironment::GWSEnvironment() : GWSAgent( Q_NULLPTR ){
+GWSEnvironment::GWSEnvironment() : GWSAgent(){
     emit this->environmentCreatedSignal();
 }
 
@@ -23,7 +23,7 @@ GWSEnvironment::~GWSEnvironment(){
  AGENTS METHODS
 **********************************************************************/
 
-void GWSEnvironment::registerAgent(GWSAgent *agent){
+void GWSEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     if( agent->environments_registerd_in.contains( this ) ){
         return;
     }
@@ -31,7 +31,7 @@ void GWSEnvironment::registerAgent(GWSAgent *agent){
     agent->environments_registerd_in.append( this );
 }
 
-void GWSEnvironment::unregisterAgent(GWSAgent *agent){
+void GWSEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     agent->environments_registerd_in.removeAll( this );
     foreach( GWSEnvironment* e , this->sub_environments ){
         e->unregisterAgent( agent );

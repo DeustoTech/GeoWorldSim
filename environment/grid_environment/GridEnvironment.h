@@ -18,8 +18,8 @@ public:
 
 
     // METHODS
-    virtual void registerAgent(GWSAgent *agent);
-    virtual void unregisterAgent(GWSAgent *agent);
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent);
+    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent);
 
 private:
     GWSGridEnvironment();

@@ -8,12 +8,13 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
-CheckAliveBehaviour::CheckAliveBehaviour( GWSAgent* behaving_agent ) : GWSBehaviour( behaving_agent ){
+CheckAliveBehaviour::CheckAliveBehaviour() : GWSBehaviour(){
 }
 
 bool CheckAliveBehaviour::finished(){
 
-    if ( this->getAgent()->getProperty("energy").toDouble() > 0. )
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    if ( agent->getProperty("energy").toDouble() > 0. )
         {
         //qDebug() << this->getAgent()->getProperty("@id").toString() << " you are alive, keep going!";
         //qDebug() << this->getAgent()->getProperty("energy").toString() << " energy!";
@@ -21,18 +22,19 @@ bool CheckAliveBehaviour::finished(){
         }
     else
         {
-        qInfo() << "MUST DIE" << this->getAgent()->getProperty("@id").toString();
+        qInfo() << "MUST DIE" << agent->getId();
         return false;
         }
 
 }
 
 bool CheckAliveBehaviour::behave(){
-    //qInfo() << "IS DYING" << this->getAgent()->getProperty("@id").toString();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    this->getAgent()->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
-    this->getAgent()->setProperty( GWSAgent::ALIVE_PROP , false );
-    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
-    GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
+    agent->icon_url = "https://image.flaticon.com/icons/svg/236/236322.svg";
+    agent->setProperty( GWSAgent::ALIVE_PROP , false );
+    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
+
+    GWSExecutionEnvironment::globalInstance()->unregisterAgent( agent );
     return true;
 }

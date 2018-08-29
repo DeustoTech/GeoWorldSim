@@ -4,6 +4,7 @@
 #include <QMetaObject>
 #include <QMap>
 #include <QJsonObject>
+#include <QSharedPointer>
 
 #include "./../object/Object.h"
 
@@ -17,9 +18,9 @@ public:
     // METHODS
     void registerType( const QMetaObject metaobject );
     const QMetaObject getRegisteredType( QString type_name );
-    GWSObject* fromType( QString type , GWSObject* parent = Q_NULLPTR );
-    GWSObject* fromBytes( QByteArray bytes , GWSObject* parent = Q_NULLPTR );
-    GWSObject* fromJSON( QJsonObject json , GWSObject* parent = Q_NULLPTR );
+    QSharedPointer<GWSObject> fromType( QString type , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    QSharedPointer<GWSObject> fromBytes( QByteArray bytes , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    QSharedPointer<GWSObject> fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
 protected:
     GWSObjectFactory();

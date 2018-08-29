@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QImage>
 #include <QMutex>
+#include <QSharedPointer>
 
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 
@@ -18,7 +19,7 @@ class GWSGrid
 
 public:
     // CONSTRUCTORS
-    GWSGrid( GWSAgent* agent );
+    GWSGrid( QSharedPointer<GWSAgent> agent );
     ~GWSGrid();
 
     // PROPERTIES
@@ -35,7 +36,7 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    GWSAgent* getAgent() const;
+    QSharedPointer<GWSAgent> getAgent() const;
     virtual bool isGridEmpty() const;
     int getGridXSize() const;
     int getGridYSize() const;
@@ -68,7 +69,7 @@ protected:
 private:
 
     // REG AGENT
-    GWSAgent* agent;
+    QSharedPointer<GWSAgent> agent;
 
     double max_value = -1;
     double min_value = -1;

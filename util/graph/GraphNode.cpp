@@ -11,16 +11,16 @@ GWSGraphNode::GWSGraphNode(GWSAgent* agent) {
  GETTERS
 **********************************************************************/
 
-const QList<GWSGraphEdge*> GWSGraphNode::getDepartingEdges() const{
+const QList< QSharedPointer<GWSGraphEdge> > GWSGraphNode::getDepartingEdges() const{
     return this->out_edges;
 }
 
-const QList<GWSGraphEdge*> GWSGraphNode::getArrivingEdges() const{
+const QList< QSharedPointer<GWSGraphEdge> > GWSGraphNode::getArrivingEdges() const{
     return this->in_edges;
 }
 
-const GWSGraphEdge* GWSGraphNode::getDepartingEdgeTo(GWSGraphNode *to) const{
-    foreach(GWSGraphEdge* e , this->getDepartingEdges() ){
+const QSharedPointer<GWSGraphEdge> GWSGraphNode::getDepartingEdgeTo(QSharedPointer<GWSGraphNode> to) const{
+    foreach(QSharedPointer<GWSGraphEdge> e , this->getDepartingEdges() ){
         if( e->getToNode()->equals( to ) ){
             return e;
         }
@@ -28,8 +28,8 @@ const GWSGraphEdge* GWSGraphNode::getDepartingEdgeTo(GWSGraphNode *to) const{
     return 0;
 }
 
-const GWSGraphEdge* GWSGraphNode::getArrivingEdgeFrom(GWSGraphNode *from) const{
-    foreach(GWSGraphEdge* e , this->getArrivingEdges() ){
+const QSharedPointer<GWSGraphEdge> GWSGraphNode::getArrivingEdgeFrom(QSharedPointer<GWSGraphNode> from) const{
+    foreach(QSharedPointer<GWSGraphEdge> e , this->getArrivingEdges() ){
         if( e->getFromNode()->equals( from ) ){
             return e;
         }
@@ -41,9 +41,9 @@ int GWSGraphNode::getDegree() const{
     int degree = this->out_edges.size();
 
     // Compare the directed opposite edges as one
-    foreach( GWSGraphEdge* edge , this->getArrivingEdges() ){
+    foreach( QSharedPointer<GWSGraphEdge> edge , this->getArrivingEdges() ){
         bool add = true;
-        foreach( GWSGraphEdge* edge2 , this->getDepartingEdges() ){
+        foreach( QSharedPointer<GWSGraphEdge> edge2 , this->getDepartingEdges() ){
             if( edge2->equalsReversed( edge ) ){
                 add = false;
                 break;
@@ -62,7 +62,7 @@ GWSCoordinate GWSGraphNode::getCoordinate(){
  PRIVATE
 **********************************************************************/
 
-void GWSGraphNode::connectEdge(GWSGraphEdge *edge){
+void GWSGraphNode::connectEdge(QSharedPointer<GWSGraphEdge> edge){
     if( edge->getFromNode() == this && !this->getDepartingEdges().contains( edge ) ){
         //geos::planargraph::Node::addOutEdge( edge );
         this->out_edges.append( edge );
@@ -72,7 +72,7 @@ void GWSGraphNode::connectEdge(GWSGraphEdge *edge){
     }
 }
 
-void GWSGraphNode::disconnectEdge(GWSGraphEdge *edge){
+void GWSGraphNode::disconnectEdge(QSharedPointer<GWSGraphEdge> edge){
     if( edge->getFromNode() == this ){
         //geos::planargraph::Node::getOutEdges()->remove( edge );
         this->out_edges.removeAll( edge );
@@ -90,7 +90,7 @@ double GWSGraphNode::getCost() const{
     return 0;
 }
 
-bool GWSGraphNode::equals(GWSGraphNode* other){
+bool GWSGraphNode::equals(QSharedPointer<GWSGraphNode> other){
     if( !other ){ return false; }
     return this->inner_coordinate == other->inner_coordinate;
 }

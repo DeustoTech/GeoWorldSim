@@ -9,7 +9,7 @@ class MoveBehaviour : public GWSBehaviour
 
 public:
 
-    Q_INVOKABLE explicit MoveBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit MoveBehaviour();
 
     // GETTERS
     virtual bool finished();
