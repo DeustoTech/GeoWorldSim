@@ -2,6 +2,7 @@
 
 #include <QVector>
 #include <QDebug>
+#include <QDateTime>
 
 #include "../../app/App.h"
 #include "../../util/geometry/Geometry.h"
@@ -13,7 +14,7 @@ QString GWSObject::GWS_TYPE_PROP = "@type";
 QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@family";
 QString GWSObject::GWS_PARENT_PROP = "parent";
 
-unsigned int GWSObject::counter = 0;
+quint64 GWSObject::counter = QDateTime::currentDateTime().currentMSecsSinceEpoch();
 
 GWSObject::GWSObject() : QObject() , deleted(false) {
     QString generated_id = QString("%1::GWSObject::%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );

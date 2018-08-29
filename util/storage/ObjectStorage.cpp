@@ -46,7 +46,7 @@ QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndId( QString class_name 
 template <class T>
 QSharedPointer<T> GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
     if ( this->classes_stored.contains( class_name ) ){
-        QSharedPointer<GWSObject> obj = this->object_ids[ class_name ]->value( id , Q_NULLPTR );
+        QSharedPointer<GWSObject> obj = this->object_ids.value( class_name )->value( id , Q_NULLPTR );
         if( !obj.isNull() ){
             return obj.dynamicCast<T>();
         }
@@ -149,13 +149,16 @@ void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
     // Remove from storage
     QStringList classes = object->getInheritanceFamily();
     foreach( QString c , classes ){
-        if( this->classes_stored.contains(c) ){
+        if( this->classes_stored.contains( c ) ){
             this->mutex.lock();
 
-            this->objects[ c ]->removeAll( object );
-            this->object_names[ c ]->remove( object->objectName() );
-            this->object_ids[ c ]->remove( object->getId() );
+            this->objects.value( c )->removeAll( object );
+            this->object_names.value( c )->remove( object->objectName() );
+            this->object_ids.value( c )->remove( object->getId() );
 
+            if( this->objects.value( c )->isEmpty() ){
+                this->classes_stored.removeAll( c );
+            }
             this->mutex.unlock();
         }
     }

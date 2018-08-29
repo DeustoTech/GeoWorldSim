@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
 
     for( int i = -10 ; i < 10 ; i += 1 ){
        for( int j = -10 ; j < 10 ; j += 1 ){
+
            QJsonDocument jsonPasture = QJsonDocument::fromJson( QString("{ \"@type\" : \"PastureAgent\" , \
                                                        \"energy\" : 7, \
                                                        \"geo\" : {  \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [%1 , %2 , 0]} , \
