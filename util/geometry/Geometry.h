@@ -72,6 +72,6 @@ public:
     bool finished = false;
 };
 
-Q_DECLARE_METATYPE( QSharedPointer<GWSGeometry> )
+//Q_DECLARE_METATYPE( QSharedPointer<GWSGeometry> )
 
 #endif // GWSGEOMETRY_H
