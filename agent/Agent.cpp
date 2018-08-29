@@ -47,9 +47,8 @@ GWSAgent::~GWSAgent() {
  IMPORTERS
 **********************************************************************/
 
-void GWSAgent::deserialize(QJsonObject json){
-
-    GWSObject::deserialize( json );
+void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent ){
+    GWSObject::deserialize( json , parent );
 
     // SKILLS
     if( json.keys().contains( "@skills" ) ){
@@ -60,8 +59,7 @@ void GWSAgent::deserialize(QJsonObject json){
         QJsonArray jskills = json.value("@skills").toArray();
         foreach( QJsonValue js , jskills ){
             QSharedPointer<GWSSkill> skill = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSSkill>();
-            if( !skill ){ continue; }
-            skill->setParent( this->getSharedPointer() );
+            if( skill.isNull() ){ continue; }
             this->addSkill( skill );
         }
     }
@@ -75,8 +73,7 @@ void GWSAgent::deserialize(QJsonObject json){
         QJsonArray jsbehaviours = json.value("@behaviours").toArray();
         foreach( QJsonValue js , jsbehaviours ){
             QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
-            if( !behaviour ){ continue; }
-            behaviour->setParent( this->getSharedPointer() );
+            if( behaviour.isNull() ){ continue; }
             this->addBehaviour( behaviour );
         }
     }
@@ -260,8 +257,6 @@ void GWSAgent::decrementBusy(){
 void GWSAgent::addSkill( QSharedPointer<GWSSkill> skill ){
     if( !this->skills ){
         this->skills = new GWSObjectStorage();
-        QSharedPointer<GWSObject> agent = this->getSharedPointer();
-        this->skills->setParent( agent );
     }
     this->skills->add( skill );
 }
@@ -273,7 +268,6 @@ void GWSAgent::removeSkill(QSharedPointer<GWSSkill> skill){
 void GWSAgent::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     if( !this->behaviours ){
         this->behaviours = new GWSObjectStorage();
-        this->behaviours->setParent( this->getSharedPointer() );
     }
     this->behaviours->add( behaviour );
 }

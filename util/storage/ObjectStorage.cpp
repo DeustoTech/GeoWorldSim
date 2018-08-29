@@ -39,14 +39,17 @@ QList< QSharedPointer<T> > GWSObjectStorage::getAll() const{
     return list;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndId( QString class_name , QString id) const{
+QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
     return this->getByClassAndId<GWSObject>( class_name , id );
 }
 
 template <class T>
 QSharedPointer<T> GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
     if ( this->classes_stored.contains( class_name ) ){
-         return this->object_ids[ class_name ]->value( id , 0 ).dynamicCast<T>();
+        QSharedPointer<GWSObject> obj = this->object_ids[ class_name ]->value( id , 0 );
+        if( !obj.isNull() ){
+            return obj.dynamicCast<T>();
+        }
     }
     return 0;
 }

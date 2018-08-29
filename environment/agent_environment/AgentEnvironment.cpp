@@ -7,7 +7,6 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
     this->environment_agents = new GWSObjectStorage();
-    this->environment_agents->setParent( this->getSharedPointer() );
     qInfo() << "Agent environment created";
     GWSEnvironment::globalInstance()->registerSubenvironment( this );
 }
