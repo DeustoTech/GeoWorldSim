@@ -36,5 +36,6 @@ bool CheckAliveBehaviour::behave(){
     emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 
     GWSExecutionEnvironment::globalInstance()->unregisterAgent( agent );
+    GWSPhysicalEnvironment::globalInstance()->unregisterAgent( agent );
     return true;
 }

@@ -202,13 +202,13 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
     QString agent_id = agent->getId();
     GWSEnvironment::unregisterAgent( agent );
     foreach( QString s , agent->getInheritanceFamily() ) {
-        if( this->spatial_index.keys().contains( s) ){
+        if( this->spatial_index.keys().contains( s ) ){
             this->spatial_index.value( s )->remove( agent );
         }
     }
     this->mutex.unlock();
 
-    //delete this->agent_geometries.value( agent->getId() );
+    this->agent_geometries[ agent_id ].clear();
     this->agent_geometries.remove( agent_id );
     this->agent_ids.removeAll( agent_id );
 

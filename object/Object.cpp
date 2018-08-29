@@ -16,9 +16,8 @@ QString GWSObject::GWS_PARENT_PROP = "parent";
 unsigned int GWSObject::counter = 0;
 
 GWSObject::GWSObject() : QObject() , deleted(false) {
-    QString generated_id = QString("%1-%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
+    QString generated_id = QString("%1::GWSObject::%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
-    this->setObjectName( generated_id );
 }
 
 GWSObject::GWSObject(const GWSObject &other) : QObject(){
@@ -26,6 +25,7 @@ GWSObject::GWSObject(const GWSObject &other) : QObject(){
 }
 
 GWSObject::~GWSObject(){
+    qDebug() << QString("Deleting %1 %2").arg( this->metaObject()->className() ).arg( this->getId() );
     this->deleted = true;
 }
 
@@ -130,7 +130,7 @@ void GWSObject::deserialize(QJsonObject json){
                 }
 
                 if( !obj && json_object.keys().contains( GWS_TYPE_PROP ) ){
-                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() , this->self_shared_pointer );
+                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() );
                 }
 
                 if( !obj ){ break; }
@@ -203,7 +203,8 @@ bool GWSObject::setProperty(const QString name, const QVariant &value){
 }
 
 void GWSObject::setParent( QSharedPointer<GWSObject> parent ){
-    QObject::setParent( parent.data() );
+    //- DO NOT USE! DANGEROUS BECAUSE IT WILL CALL DELETE AUTOMATICALLY
+    // QObject::setParent( parent.data() );
     this->parent = parent;
 }
 

@@ -42,7 +42,7 @@ private:
     ~GWSAgentEnvironment();
 
     // ENVIRONMENT MEMORY
-    GWSObjectStorage* environment_agents;
+    GWSObjectStorage* environment_agents = Q_NULLPTR;
 
 };
 

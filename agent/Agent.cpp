@@ -36,7 +36,7 @@ GWSAgent::~GWSAgent() {
     this->setProperty( ALIVE_PROP , false );
     emit GWSApp::globalInstance()->pushAgentSignal( this->serializeMini() );
 
-    qDebug() << QString("%1:%2 deleted").arg( this->metaObject()->className() ).arg( this->getId() );
+    qDebug() << QString("%1 deleted").arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }
     if( this->skills ){ this->skills->deleteAll(); this->skills->deleteLater(); }
     if( this->behaviours ){ this->behaviours->deleteAll(); this->behaviours->deleteLater(); }
@@ -301,8 +301,10 @@ void GWSAgent::tick(){
 void GWSAgent::behave(){
 
     // No start behaviour
-    if( !this->start_behaviour ){
+    if( !this->start_behaviour && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
         qWarning() << QString("Agent %1 %2 has no start behaviour. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
+    }
+    if( !this->start_behaviour ){
         return;
     }
 

@@ -39,7 +39,11 @@ QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndId( QString class_nam
 
 template <class T> QSharedPointer<T> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id ) const{
     if( this->environment_agents ){
-       return this->environment_agents->getByClassAndId( class_name , id ).dynamicCast<T>();
+        QSharedPointer<GWSObject> obj = this->environment_agents->getByClassAndId( class_name , id );
+        if( !obj ){
+            return 0;
+        }
+        return obj.dynamicCast<T>();
     }
     return 0;
 }
