@@ -21,7 +21,7 @@ QList< QSharedPointer<GWSAgent> > ViewSkill::getViewingAgents(){
     if( agent_type.isEmpty() ){ agent_type = GWSAgent::staticMetaObject.className(); }
 
     // Geom viewport
-    QSharedPointer<GWSGeometry> geom = this->getProperty( VIEWPORT_PROP ).value<QSharedPointer<GWSGeometry>>();
+    QSharedPointer<GWSGeometry> geom = this->getProperty( VIEWPORT_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
 
     if( !geom ){
         return viewing_agents;

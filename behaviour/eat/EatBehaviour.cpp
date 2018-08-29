@@ -15,14 +15,10 @@ bool EatBehaviour::finished(){
 bool EatBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
 
      // Look what is around you:
      QList< QSharedPointer<GWSAgent> > CellOccupation = agent->getSkill( ViewSkill::staticMetaObject.className() ).dynamicCast<ViewSkill>()->getViewingAgents();
-     qInfo() << "Cell Occupation = " << CellOccupation;
-     qDebug() << "Position = " << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
-
-
+     qDebug() << CellOccupation;
      // We need to differentiate between preys: wolf kills sheep but sheep just reduces grass' energy:
      if (CellOccupation.size() == 0){
             qDebug() << "Nothing on this cell!";
@@ -35,9 +31,11 @@ bool EatBehaviour::behave(){
 
                 // Eat
                 qDebug() << "Found food!";
+                qDebug() << "Initial energy = " << agent->getProperty("energy");
                 double foodGains = CellOccupation.at(i)->getProperty("energy").toDouble();
                 double finalEnergy = agent->getProperty("energy").toDouble() + foodGains;
                 agent->setProperty("energy", finalEnergy);
+                qDebug() << "Final energy = " << agent->getProperty("energy");
                 emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 
                 // Less grass = less energy of PastureAgent

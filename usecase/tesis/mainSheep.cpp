@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
     /* ----------
      * SheepAgents
-       ----------*/
+       ----------*/  
 
     /* Dolly1 */
     for( int i = 0 ; i < 50 ; i++ ){
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
                                                                                                                        "] } , "
                                                                                         "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"sub_behaviours_condition\" : 1 , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
+                                                                                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -1., \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
                                                                                         "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\",\"BH3\"] } "
                                                                    " ] } ")

@@ -79,7 +79,6 @@ int main(int argc, char* argv[])
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-
     /* -------------
      * Grass Agents
      * -------------*/
@@ -112,5 +111,7 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance()->run();
 
     app->exec();
+
+
 
     }

@@ -80,10 +80,6 @@ int main(int argc, char* argv[])
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-
-
-
-
     /* ----------
      * WolfAgents
        ----------*/
