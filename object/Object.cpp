@@ -203,8 +203,8 @@ bool GWSObject::setProperty(const QString name, const QVariant &value){
 }
 
 void GWSObject::setParent( QSharedPointer<GWSObject> parent ){
-    //- DO NOT USE! DANGEROUS BECAUSE IT WILL CALL DELETE AUTOMATICALLY
-    // QObject::setParent( parent.data() );
+    //- DO NOT USE DEFAULT PARENT! DANGEROUS BECAUSE IT WILL AUTOMATICALLY CALL CHILDREN DELETE
+    //- QObject::setParent( parent.data() );
     this->parent = parent;
 }
 
