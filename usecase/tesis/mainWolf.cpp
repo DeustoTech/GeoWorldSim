@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
      * WolfAgents
        ----------*/
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 50 ; i++ ){
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "
@@ -99,11 +99,11 @@ int main(int argc, char* argv[])
                                                                                                                     "{ \"@type\" : \"EatBehaviour\", \"prey\" : \"SheepAgent\" , \"duration\" : 1000 }, "
                                                                                                                     "{ \"@type\" : \"BreedBehaviour\", \"duration\" : 1000 } "
                                                                                                      "] } , "
-                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : [\"BH3\"] , \"@sub_behaviours\" : ["
+                                                                                        "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
                                                                                                                                                            "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"property\" : \"energy\" , \"increment\" : -5., \"duration\" : 1000 } "
                                                                                                                                             "] } ,"
-                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\"] } "
+                                                                                        "{ \"@type\" : \"CheckAliveBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : [\"BH1\", \"BH2\", \"BH3\"] } "
                                                                    " ] } ")
                                                        .arg( qrand() % 10 - 5 )
                                                        .arg( qrand() % 10 - 5 )
