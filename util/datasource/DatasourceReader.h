@@ -2,6 +2,7 @@
 #define GWSDATASOURCEREADER_H
 
 #include <QObject>
+#include <QJsonObject>
 
 #include "../../util/api/APIDriver.h"
 
@@ -11,6 +12,9 @@ class GWSDatasourceReader : public QObject
 
 public:
     explicit GWSDatasourceReader( QString datasource_url );
+
+signals:
+    void dataValueReadSignal( QJsonObject json_data );
 
 private slots:
     void requestPaginated( int page );

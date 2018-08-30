@@ -43,6 +43,8 @@
 #include <vector>
 
 
+
+
 int main(int argc, char* argv[])
 {
     // CREATE QAPPLICATION
@@ -85,10 +87,6 @@ int main(int argc, char* argv[])
        ----------*/
 
     for( int i = 0 ; i < 50 ; i++ ){
-<<<<<<< HEAD
-
-=======
->>>>>>> 3f607840e68a2eab12b2515b3c3e8832c2fd56a0
 
         /* Nymeria1 */
         QJsonDocument jsonPredator = QJsonDocument::fromJson( QString("{ \"@type\" : \"PredatorAgent\" , "

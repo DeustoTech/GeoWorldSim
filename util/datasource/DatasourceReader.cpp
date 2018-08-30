@@ -27,11 +27,8 @@ void GWSDatasourceReader::dataReceived(){
     reply->deleteLater();
 
     foreach(QJsonValue j , json.value("data").toArray() ) {
-        GWSAgent* agent = dynamic_cast<GWSAgent*>( GWSObjectFactory::globalInstance()->fromJSON( j.toObject() ) );
-        if( agent ){
-            // TODO
-            GWSEnvironment::globalInstance()->registerAgent( agent );
-        }
+        QJsonObject data_received = j.toObject();
+        emit this->dataValueReadSignal( data_received );
     }
 
     unsigned int count = json.value( "count" ).toInt();

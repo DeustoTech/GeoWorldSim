@@ -1,0 +1,20 @@
+#ifndef FINDCLOSESTBEHAVIOUR_H
+#define FINDCLOSESTBEHAVIOUR_H
+
+
+#include "../Behaviour.h"
+
+class FindClosestBehaviour : public GWSBehaviour
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE explicit FindClosestBehaviour();
+
+    // GETTERS
+    virtual bool finished();
+
+private slots:
+    virtual bool behave();
+};
+
+#endif // FINDCLOSESTBEHAVIOUR_H
