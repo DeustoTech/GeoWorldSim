@@ -57,7 +57,7 @@ private:
     QSharedPointer<GWSObject> self_shared_pointer;
 
     // AUTOINCREMENTAL FOR IDS
-    static unsigned int counter;
+    static quint64 counter;
 
 };
 
