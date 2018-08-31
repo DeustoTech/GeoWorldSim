@@ -15,9 +15,7 @@ bool EmptyWasteBehaviour::behave(){
 
     qDebug() << "Empty waste" ;
     agent->setProperty("waste_amount", 0.);
-
-
-
+    agent->icon_url = "https://image.flaticon.com/icons/svg/145/145852.svg";
 
    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
    return true;

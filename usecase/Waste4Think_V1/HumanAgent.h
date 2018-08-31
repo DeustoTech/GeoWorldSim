@@ -12,7 +12,6 @@ public:
     // Constructor
     Q_INVOKABLE HumanAgent();
     // METHODS
-    virtual void behave();
     ~HumanAgent();
 
 };

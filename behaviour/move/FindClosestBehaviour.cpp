@@ -33,21 +33,17 @@ bool FindClosestBehaviour::finished(){
 bool FindClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    QSharedPointer<GWSAgent> ClosestContainerAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coord , "ContainerAgent");
 
-    /*QList< QSharedPointer<GWSAgent> > neighbouringAgents = agent->getSkill( ViewSkill::staticMetaObject.className() ).dynamicCast<ViewSkill>()->getViewingAgents();
-
-    for (int i = 0; i < neighbouringAgents.size(); i++)
-        {
-        if (neighbouringAgents.at(i)->getProperty("@type").toString() == "ContainerAgent"){
-            // extract closest
-            int DestinationX = 0;
-            int DestinationY = 0;
-        }
-    }
+    double neighbour_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getX();
+    double neighbour_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getY();
 
 
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    mv->setProperty( MoveSkill::DESTINATION_X_PROP , DestinationX );
-    mv->setProperty( MoveSkill::DESTINATION_Y_PROP , DestinationY );*/
+    mv->setProperty( MoveSkill::DESTINATION_X_PROP , neighbour_coordX );
+    mv->setProperty( MoveSkill::DESTINATION_Y_PROP , neighbour_coordY );
+
+    return true;
 
 }

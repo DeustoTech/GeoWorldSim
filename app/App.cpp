@@ -94,7 +94,7 @@ int GWSApp::exec(){
         this->exec();
     }
 
-    /*QUrl url = QString( "http://history.deusto.io/api/scenario/%1/message" ).arg( this->app_id );
+    /*QUrl url = QString( "http://history.geoworldsim.com/api/scenario/%1/message" ).arg( this->app_id );
     QNetworkRequest request = QNetworkRequest( url );
     request.setHeader( QNetworkRequest::ContentTypeHeader , "application/json" );
     QNetworkReply* reply = this->http_manager.post( request , QJsonDocument::fromJson( "{ \"message\" : \"finished\" }" ).toJson() );
@@ -145,7 +145,7 @@ void GWSApp::startSocket(){
 }
 
 void GWSApp::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://sockets.deusto.io" )); //ws://localhost:8070" ) );
+    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com" )); //ws://localhost:8070" ) );
 }
 
 /*void GWSApp::socketPushData(QJsonValue json){

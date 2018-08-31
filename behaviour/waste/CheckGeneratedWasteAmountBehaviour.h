@@ -3,11 +3,11 @@
 
 #include "../Behaviour.h"
 
-class CheckGeneratedWasteAmountBehaviour : public GWSBehaviour
+class DecideAccordingToWasteBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit CheckGeneratedWasteAmountBehaviour();
+    Q_INVOKABLE explicit DecideAccordingToWasteBehaviour();
 
     // GETTERS
     virtual bool finished();
