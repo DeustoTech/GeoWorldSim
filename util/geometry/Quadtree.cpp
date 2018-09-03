@@ -42,17 +42,22 @@ QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(double minX, double m
     this->inner_index->query( e , vector );
     delete e;
 
+    if( vector.empty() ){
+        vector = *this->inner_index->queryAll();
+    }
+
     if( vector.size() ){
         for(unsigned int i = 0 ; i < vector.size() ; i++){
             GWSAgent* a = (GWSAgent*)vector.at(i);
             agents.append( a->getSharedPointer() );
         }
     }
+
     return agents;
 }
 
 QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
-    QSharedPointer<GWSAgent> found = Q_NULLPTR;
+    QSharedPointer<GWSAgent> found;
     QList< QSharedPointer<GWSAgent> > agents = this->getElements( coor );
 
     if( agents.isEmpty() ){

@@ -34,7 +34,8 @@ bool FindClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-    QSharedPointer<GWSAgent> ClosestContainerAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coord , "ContainerAgent");
+    GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
+    QSharedPointer<GWSAgent> ClosestContainerAgent = env->getNearestAgent( agent_coord , "ContainerAgent");
 
     double neighbour_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getX();
     double neighbour_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getY();

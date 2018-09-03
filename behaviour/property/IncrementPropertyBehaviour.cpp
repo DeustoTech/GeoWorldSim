@@ -26,6 +26,7 @@ bool IncrementPropertyBehaviour::finished(){
 bool IncrementPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    qDebug() << agent->getProperty("geo").toString();
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
     QVariant value = agent->getProperty( property_name );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );

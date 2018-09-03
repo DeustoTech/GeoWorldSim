@@ -83,7 +83,7 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList
     return founds;
 }
 
-QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<QSharedPointer<GWSAgent>> agents) const{
+QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<QSharedPointer<GWSAgent> > agents) const{
     QList<GWSCoordinate> coors;
     coors.append( coor );
     QList<QSharedPointer<GWSAgent>> nearests = this->getNearestAgents( coors , agents );
@@ -118,29 +118,27 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
 QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<QSharedPointer<GWSAgent>> agents) const{
     QList< QSharedPointer<GWSAgent> > founds;
 
-    /*GWSQuadtree* index = new GWSQuadtree();
-    foreach(QSharedPointer<GWSAgent> agent , agents){
-        index->insert( agent->getGeometry()->getEnvelope() , agent );
+    GWSQuadtree* index = new GWSQuadtree();
+    foreach(QSharedPointer<GWSAgent> a , agents){
+        index->upsert( a );
     }
 
     foreach(GWSCoordinate coor , coors){
         QSharedPointer<GWSAgent> found = 0;
-        GWSEnvelope env = GWSEnvelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
-        QList<void *> objs = index->getElements( env );
+        QList< QSharedPointer<GWSAgent> > agents = index->getElements( coor );
 
-        if( !objs.isEmpty() ){
-            found = ( (QSharedPointer<GWSAgent>) objs.at( qrand() % objs.size() ) );
-            foreach(void * o , objs){
-                QSharedPointer<GWSAgent> agent = ((QSharedPointer<GWSAgent>) o);
-                if( agent && coor.distance( agent->getRepresentativeCoordinate() ) < coor.distance( found->getRepresentativeCoordinate() ) ){
-                    found = agent;
+        if( !agents.isEmpty() ){
+            found = ( (QSharedPointer<GWSAgent>) agents.at( qrand() % agents.size() ) );
+            foreach( QSharedPointer<GWSAgent> a , agents ){
+                if( a && coor.getDistance( this->getGeometry( a )->getCentroid() ) < coor.getDistance( this->getGeometry( found )->getCentroid() ) ){
+                    found = a;
                 }
             }
         }
         founds.append( found );
     }
 
-    delete index;*/
+    index->deleteLater();
     return founds;
 }
 
