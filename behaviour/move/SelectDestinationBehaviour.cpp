@@ -41,18 +41,30 @@ bool SelectDestinationBehaviour::behave(){
     int TargetX = direction[RandIndexX];
     int TargetY = direction[RandIndexY];
 
+    qDebug() << "Target" << TargetX;
+    qDebug() << TargetY;
+
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     if( !agent_geom ){
         qWarning() << QString("Agent %1 %2 tried to select destination without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
     }
+
+    qDebug() << "Agent centroid" << agent_geom->getCentroid().getX();
+    qDebug() << agent_geom->getCentroid().getY();
+
     int DestinationX = TargetX + agent_geom->getCentroid().getX();
     int DestinationY = TargetY + agent_geom->getCentroid().getY();
+
+    qDebug() << "Destination" << DestinationX;
+    qDebug() << DestinationY;
 
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     mv->setProperty( MoveSkill::DESTINATION_X_PROP , DestinationX );
     mv->setProperty( MoveSkill::DESTINATION_Y_PROP , DestinationY );
 
-    qDebug() << "Agent = ", agent->getId();
-    qDebug() << "Destination = ", mv->getDestination().toString();
+    //qDebug() << "Agent = ", agent->getId();
+    qDebug() << "Destination = ", mv->getDestination();
+
+
     return true;
 }

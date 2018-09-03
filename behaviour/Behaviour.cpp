@@ -50,7 +50,7 @@ void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behav
 
     // START BEHAVIOUR
     if( json.keys().contains( START_BEHAVIOUR_PROP ) && json.value( START_BEHAVIOUR_PROP ).toBool() ){
-        this->getAgent()->setStartBehaviour( this->getSharedPointer().dynamicCast<GWSBehaviour>() );
+        this->getAgent()->addStartBehaviour( this->getSharedPointer().dynamicCast<GWSBehaviour>() );
     }
 
 }

@@ -3,6 +3,7 @@
 
 
 #include "../Behaviour.h"
+#include "../../skill/move/MoveSkill.h"
 
 class FindClosestBehaviour : public GWSBehaviour
 {

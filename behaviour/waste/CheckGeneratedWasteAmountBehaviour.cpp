@@ -7,29 +7,34 @@
 
 /*  This behaviour aims at checking whether a human has reached its maximum waste generation level */
 
-CheckGeneratedWasteAmountBehaviour::CheckGeneratedWasteAmountBehaviour() : GWSBehaviour(){
+DecideAccordingToWasteBehaviour::DecideAccordingToWasteBehaviour() : GWSBehaviour(){
 }
 
 
-bool CheckGeneratedWasteAmountBehaviour::finished(){
+bool DecideAccordingToWasteBehaviour::finished(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    this->next_behaviours.clear();
+
+
     if ( agent->property("waste_amount").toDouble() < 100 )
         {
         qDebug() << agent->property("waste_amount").toDouble();
         qInfo() << "Keep generating waste!";
+        this->next_behaviours.append( agent->getBehaviour( "BH1" ) );
         return true;
         }
     else
         {
         qDebug() << agent->property("waste_amount").toDouble();
         qInfo() << "Maximum waste generated! Find container!";
-        return false;
+        this->next_behaviours.append( agent->getBehaviour( "BH2" ) );
+        return true;
         }
 
 }
 
-bool CheckGeneratedWasteAmountBehaviour::behave(){
+bool DecideAccordingToWasteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     agent->icon_url = "https://image.flaticon.com/icons/svg/1059/1059235.svg";

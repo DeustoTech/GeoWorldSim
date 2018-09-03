@@ -42,8 +42,8 @@ private:
     ~GWSApp();
 
     QString app_id; // Given by args
-    QWebSocket websocket; // WS to sockets.deusto.io
-    QNetworkAccessManager http_manager; // HTTP Posts to history.deusto.io
+    QWebSocket websocket; // WS to sockets.geoworldsim.com
+    QNetworkAccessManager http_manager; // HTTP Posts to history.geoworldsim.com
     quint64 created_timestamp;
 
 };

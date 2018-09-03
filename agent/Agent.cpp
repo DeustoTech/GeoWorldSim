@@ -226,8 +226,8 @@ QList< QSharedPointer<GWSSkill> > GWSAgent::getSkills( QString class_name ) cons
     return s;
 }*/
 
-QSharedPointer<GWSBehaviour> GWSAgent::getStartBehaviour() const{
-    return this->start_behaviour;
+QList< QSharedPointer<GWSBehaviour> > GWSAgent::getStartBehaviour() const{
+    return this->start_behaviours;
 }
 
 QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const{
@@ -272,8 +272,8 @@ void GWSAgent::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     this->behaviours->add( behaviour );
 }
 
-void GWSAgent::setStartBehaviour( QSharedPointer<GWSBehaviour> behaviour){
-    this->start_behaviour = behaviour;
+void GWSAgent::addStartBehaviour( QSharedPointer<GWSBehaviour> behaviour){
+    this->start_behaviours.append( behaviour );
 }
 
 /**********************************************************************
@@ -295,10 +295,10 @@ void GWSAgent::tick(){
 void GWSAgent::behave(){
 
     // No start behaviour
-    if( !this->start_behaviour && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+    if( this->start_behaviours.isEmpty() && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
         qWarning() << QString("Agent %1 %2 has no start behaviour. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
     }
-    if( !this->start_behaviour ){
+    if( this->start_behaviours.isEmpty() ){
         return;
     }
 
@@ -306,8 +306,7 @@ void GWSAgent::behave(){
     QList< QSharedPointer<GWSBehaviour> > checked_behaviours; // TODO check infinite loops
     QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
 
-    QList< QSharedPointer<GWSBehaviour> > iterators;
-    iterators.append( this->start_behaviour );
+    QList< QSharedPointer<GWSBehaviour> > iterators = this->start_behaviours;
 
     while( !iterators.isEmpty() ){
 

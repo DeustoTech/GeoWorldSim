@@ -71,7 +71,7 @@ public:
     //template <class T> QList< QSharedPointer<T> > getSkills( QString class_name ) const;
 
     // BEHAVIOURS
-    QSharedPointer<GWSBehaviour> getStartBehaviour() const;
+    QList< QSharedPointer<GWSBehaviour> > getStartBehaviour() const;
     QSharedPointer<GWSBehaviour> getBehaviour( QString behaviour_id ) const;
     QList< QSharedPointer<GWSBehaviour> > getBehaviours( QString class_name ) const;
 
@@ -81,7 +81,7 @@ public:
     void addSkill( QSharedPointer<GWSSkill> skill );
     void removeSkill( QSharedPointer<GWSSkill> skill );
     void addBehaviour( QSharedPointer<GWSBehaviour> behaviour );
-    void setStartBehaviour( QSharedPointer<GWSBehaviour> behaviour );
+    void addStartBehaviour( QSharedPointer<GWSBehaviour> behaviour );
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     virtual void tick() final; // Acts as a behave() wrapper
@@ -106,7 +106,7 @@ protected:
      * @brief Agent behaviour
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
-    QSharedPointer<GWSBehaviour> start_behaviour = Q_NULLPTR;
+    QList< QSharedPointer<GWSBehaviour> > start_behaviours;
 
     /**
       * Mutex for paralelism
