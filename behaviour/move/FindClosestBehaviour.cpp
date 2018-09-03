@@ -35,18 +35,17 @@ bool FindClosestBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
-    QSharedPointer<GWSAgent> ClosestContainerAgent = env->getNearestAgent( agent_coord , "ContainerAgent");
+    QSharedPointer<GWSAgent> ClosestContainer = env->getNearestAgent( agent_coord , "ContainerAgent");
 
-    double ClosestContainerAgent_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getX();
-    double ClosestContainerAgent_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainerAgent )->getCentroid().getY();
+    double ClosestContainer_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getX();
+    double ClosestContainer_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getY();
 
 
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    mv->setProperty( MoveSkill::DESTINATION_X_PROP , ClosestContainerAgent_coordX );
-    mv->setProperty( MoveSkill::DESTINATION_Y_PROP , ClosestContainerAgent_coordY );
+    mv->setProperty( MoveSkill::DESTINATION_X_PROP , ClosestContainer_coordX );
+    mv->setProperty( MoveSkill::DESTINATION_Y_PROP , ClosestContainer_coordY );
 
-    qDebug() << "Found closest container at " << ClosestContainerAgent_coordX << "," << ClosestContainerAgent_coordY;
-    ClosestContainerAgent->icon_url = "https://image.flaticon.com/icons/svg/820/820741.svg";
+    qDebug() << "Found closest container at " << ClosestContainer_coordX << "," << ClosestContainer_coordY;
 
     emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 

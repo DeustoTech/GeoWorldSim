@@ -11,8 +11,10 @@ GoHomeBehaviour::GoHomeBehaviour() : GWSBehaviour(){
 }
 
 bool GoHomeBehaviour::finished(){
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
+
     if( !mv ){
         qInfo() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->metaObject()->className() ).arg( agent->getId() );
         return true;
@@ -30,10 +32,8 @@ bool GoHomeBehaviour::finished(){
 bool GoHomeBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-  //  GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
     double home_coordX = agent->getProperty("home_coordX").toDouble();
     double home_coordY = agent->getProperty("home_coordY").toDouble();
-
 
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     mv->setProperty( MoveSkill::DESTINATION_X_PROP , home_coordX );

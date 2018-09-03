@@ -37,7 +37,6 @@ bool SetHomeBehaviour::behave(){
     double home_coordX = agent_coord.getX();
     double home_coordY = agent_coord.getY();
 
-    qDebug() << "Setting home coordinates";
     agent->setProperty( "home_coordX" , home_coordX );
     agent->setProperty( "home_coordY" , home_coordY );
 
