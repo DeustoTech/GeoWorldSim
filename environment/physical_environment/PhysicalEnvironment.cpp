@@ -21,6 +21,17 @@ GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
 // GETTERS
 /***********************************************************************/
 
+QSharedPointer<GWSGeometry> GWSPhysicalEnvironment::getBounds() const{
+    return this->environment_bounds;
+}
+
+GWSCoordinate GWSPhysicalEnvironment::getRandomCoordinate() const{
+    if( this->environment_bounds.isNull() ){
+        return GWSCoordinate( 0 , 0 , 0 );
+    }
+    return this->environment_bounds->getCentroid();
+}
+
 QSharedPointer<GWSGeometry> GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
     return this->agent_geometries.value( agent->getId() , 0 );
 }
@@ -161,6 +172,13 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList
 }*/
 
 
+/**********************************************************************
+ SETTERS
+**********************************************************************/
+
+void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
+    this->environment_bounds = geom;
+}
 
 /**********************************************************************
  METHODS

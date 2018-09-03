@@ -8,7 +8,7 @@ class DeleteBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit DeleteBehaviour( GWSAgent* behaving_agent = Q_NULLPTR );
+    Q_INVOKABLE explicit DeleteBehaviour();
 
     virtual bool finished(); // Behaviour finished check
 

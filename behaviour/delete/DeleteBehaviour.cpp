@@ -5,7 +5,7 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 
-DeleteBehaviour::DeleteBehaviour(GWSAgent *behaving_agent) : GWSBehaviour( behaving_agent ){
+DeleteBehaviour::DeleteBehaviour() : GWSBehaviour( ){
 }
 
 bool DeleteBehaviour::finished(){
@@ -15,8 +15,8 @@ bool DeleteBehaviour::finished(){
 bool DeleteBehaviour::behave(){
 
     this->getAgent()->icon_url = "https://image.flaticon.com/icons/svg/250/250162.svg";
-    QTimer::singleShot( this->getProperty( GWSBehaviour::INCREMENT_AGENT_TIME_PROP ).toDouble() , this->getAgent() , &GWSAgent::deleteLater ); // Die in the specified seconds
-
+    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
     GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getAgent() );
+
     return this->deleted = true;
 }
