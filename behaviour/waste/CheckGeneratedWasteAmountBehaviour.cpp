@@ -17,7 +17,7 @@ bool DecideAccordingToWasteBehaviour::finished(){
     this->next_behaviours.clear();
 
 
-    if ( agent->property("waste_amount").toDouble() < 100 )
+    if ( agent->property("waste_amount").toDouble() < 100. )
         {
         qDebug() << agent->property("waste_amount").toDouble();
         qInfo() << "Keep generating waste!";

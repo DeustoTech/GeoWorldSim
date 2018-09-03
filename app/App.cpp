@@ -87,7 +87,7 @@ int GWSApp::exec(){
 
     qInfo() << QString("Starting App %1 execution, took %2 miliseconds for %3 agents").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ).arg( GWSAgentEnvironment::globalInstance()->getAmount() );
     try {
-        QCoreApplication::exec(); // Real exec()
+         QCoreApplication::exec(); // Real exec()
     } catch(...){
         qCritical() << "App had an error, trying to recover";
         this->pushData( "message" , "Simulation had an error, trying to recover" );
