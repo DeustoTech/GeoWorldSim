@@ -45,7 +45,7 @@ public:
     void incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds );
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent , quint64 init_internal_time = 0 );
+    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:

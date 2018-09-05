@@ -1,5 +1,7 @@
 #include "AgentEnvironment.h"
 
+#include "../../environment/EnvironmentsGroup.h"
+
 GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
     static GWSAgentEnvironment instance;
     return &instance;
@@ -8,7 +10,7 @@ GWSAgentEnvironment* GWSAgentEnvironment::globalInstance(){
 GWSAgentEnvironment::GWSAgentEnvironment() : GWSEnvironment(){
     this->environment_agents = new GWSObjectStorage();
     qInfo() << "Agent environment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSAgentEnvironment::~GWSAgentEnvironment(){

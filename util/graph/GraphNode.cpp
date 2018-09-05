@@ -1,10 +1,33 @@
 #include "GraphNode.h"
 
-#include "../../agent/Agent.h"
 #include "../../util/graph/GraphEdge.h"
 
-GWSGraphNode::GWSGraphNode(GWSAgent* agent) {
-    this->agent = agent;
+GWSGraphNode::GWSGraphNode() : GWSObject(){
+}
+
+GWSGraphNode::~GWSGraphNode(){
+}
+
+/**********************************************************************
+ IMPORTERS
+**********************************************************************/
+
+void GWSGraphNode::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+    GWSObject::deserialize( json , parent );
+    double x = json.value( "x" ).toDouble();
+    double y = json.value( "y" ).toDouble();
+    this->inner_coordinate = GWSCoordinate( x , y );
+}
+
+/**********************************************************************
+ EXPORTERS
+**********************************************************************/
+
+QJsonObject GWSGraphNode::serialize() const{
+    QJsonObject json = GWSObject::serialize();
+    json.insert( "x" , this->inner_coordinate.getX() );
+    json.insert( "y" , this->inner_coordinate.getY() );
+    return json;
 }
 
 /**********************************************************************

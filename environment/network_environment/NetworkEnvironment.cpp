@@ -1,4 +1,8 @@
 #include "NetworkEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
+
+QString GWSNetworkEnvironment::NODE_PROP = "node";
+QString GWSNetworkEnvironment::EDGE_PROP = "edge";
 
 GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
     static GWSNetworkEnvironment instance;
@@ -7,7 +11,7 @@ GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
 
 GWSNetworkEnvironment::GWSNetworkEnvironment() : GWSEnvironment(){
     qInfo() << "NetworkEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSNetworkEnvironment::~GWSNetworkEnvironment(){
@@ -74,10 +78,23 @@ const GWSGraph* GWSNetworkEnvironment::getGraph( QString class_name ) const{
 
 void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
-    QSharedPointer<GWSGraphEdge> edge = agent.dynamicCast<GWSGraphEdge>();
-    QSharedPointer<GWSGraphNode> node = agent.dynamicCast<GWSGraphNode>();
+    if( agent.isNull() ){
+        return;
+    }
 
-    if( edge || node ){
+    // GRAPH NODE OR EDGE (comes parsed by GWSObject, extract and set it to null)
+    QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
+    QSharedPointer<GWSGraphNode> node = agent->getProperty( NODE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphNode>();
+    if( edge.isNull() && node.isNull() ){
+        this->unregisterAgent( agent );
+        return;
+    }
+
+    // Set to null
+    agent->setProperty( EDGE_PROP , QVariant() );
+    agent->setProperty( NODE_PROP , QVariant() );
+
+    if( !edge.isNull() || !node.isNull() ){
 
         GWSEnvironment::registerAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
@@ -98,10 +115,10 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
         foreach(QString c , classes){
 
             // Add to spatial graph
-            if( edge ){
+            if( !edge.isNull() ){
                 this->network_graphs.value( c )->addEdge( edge );
             }
-            if( node ){
+            if( !node.isNull() ){
                 this->network_graphs.value( c )->addNode( node );
             }
         }
@@ -109,20 +126,21 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 }
 
 void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
-    QSharedPointer<GWSGraphEdge> edge = agent.dynamicCast<GWSGraphEdge>();
-    QSharedPointer<GWSGraphNode> node = agent.dynamicCast<GWSGraphNode>();
 
-    if( edge || node ){
+    QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
+    QSharedPointer<GWSGraphNode> node = agent->getProperty( NODE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphNode>();
+
+    if( !edge.isNull() || !node.isNull() ){
 
         GWSEnvironment::unregisterAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
         foreach(QString c , classes){
 
             // Remove from spatial graph
-            if( edge ){
+            if( !edge.isNull() ){
                 this->network_graphs.value( c )->removeEdge( edge );
             }
-            if( node ){
+            if( !node.isNull() ){
                 this->network_graphs.value( c )->removeNode( node );
             }
         }

@@ -1,4 +1,5 @@
 #include "GridEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
 
 GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
     static GWSGridEnvironment instance;
@@ -8,7 +9,7 @@ GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
 GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
     qInfo() << "Grid environment created";
     this->environment_grids = new GWSObjectStorage();
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSGridEnvironment::~GWSGridEnvironment(){

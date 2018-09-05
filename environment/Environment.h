@@ -10,7 +10,6 @@ class GWSEnvironment : public GWSAgent
 public:
     static GWSEnvironment* globalInstance();
 
-    void registerSubenvironment( GWSEnvironment* subenvironment );
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
@@ -22,10 +21,6 @@ protected:
     GWSEnvironment();
     GWSEnvironment(GWSEnvironment const&);
     ~GWSEnvironment();
-
-private:
-    // To be notified when registering agents
-    QList<GWSEnvironment*> sub_environments;
 
 };
 

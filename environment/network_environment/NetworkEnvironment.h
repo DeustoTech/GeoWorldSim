@@ -17,6 +17,10 @@ class GWSNetworkEnvironment : public GWSEnvironment
 public:
     static GWSNetworkEnvironment* globalInstance();
 
+    // PROPERTIES
+    static QString NODE_PROP;
+    static QString EDGE_PROP;
+
     // EXPORTERS
     virtual QJsonObject serialize() const;
     void deserialize(QJsonObject json);

@@ -2,6 +2,7 @@
 #include <QJsonObject>
 
 #include "TimeEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
 
 QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "internal_time";
 QString GWSTimeEnvironment::WAIT_FOR_ME_PROP = "wait_for_me";
@@ -13,7 +14,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , started_datetime_msecs( QDateTime::currentDateTime().toMSecsSinceEpoch() ) {
     qInfo() << "TimeEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSTimeEnvironment::~GWSTimeEnvironment(){
@@ -89,8 +90,11 @@ void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> ag
  METHODS
 **********************************************************************/
 
-void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent, quint64 init_internal_time) {
+void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     GWSEnvironment::registerAgent( agent );
+
+    // INTERNAL TIME
+    quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toInt();
     this->agent_internal_times.insert( agent->getId() , init_internal_time );
 }
 

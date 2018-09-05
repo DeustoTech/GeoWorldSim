@@ -1,5 +1,5 @@
-
 #include "PhysicalEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
 
 QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geo";
 
@@ -10,7 +10,7 @@ GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
 
 GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
     qInfo() << "PhysicalEnvironment created";
-    GWSEnvironment::globalInstance()->registerSubenvironment( this );
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
@@ -184,8 +184,21 @@ void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
  METHODS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> init_geom ){
+void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
+    if( agent.isNull() ){
+        return;
+    }
+
+    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
+    QSharedPointer<GWSGeometry> geom = agent->getProperty( GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    if( !geom ){
+        this->unregisterAgent( agent );
+        return;
+    }
+
+    // Set geometry in agent to null, because it will be stored here in the environment
+    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
     QString agent_id = agent->getId();
 
     // Remove if existing
@@ -195,9 +208,9 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent , QSha
 
     // Add the new agents geometry
     this->agent_ids.append( agent_id );
-    this->agent_geometries.insert( agent_id , init_geom.isNull() ? QSharedPointer<GWSGeometry>( new GWSGeometry() ) : init_geom );
+    this->agent_geometries.insert( agent_id , geom.isNull() ? QSharedPointer<GWSGeometry>( new GWSGeometry() ) : geom );
 
-    foreach (QString s , agent->getInheritanceFamily()) {
+    foreach( QString s , agent->getInheritanceFamily() ) {
         if( !this->spatial_index.keys().contains(s) ){
             this->spatial_index.insert( s , new GWSQuadtree() );
         }

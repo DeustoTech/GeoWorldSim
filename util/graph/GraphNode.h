@@ -3,17 +3,25 @@
 
 #include <QList>
 
+#include "../../object/Object.h"
 #include "../../util/geometry/Coordinate.h"
 
-QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
 
-class GWSGraphNode
+class GWSGraphNode: public GWSObject
 {
+    Q_OBJECT
     friend class GWSGraphEdge;
 
 public:
-    GWSGraphNode( GWSAgent* agent );
+    Q_INVOKABLE explicit GWSGraphNode();
+    ~GWSGraphNode();
+
+    // IMPORTERS
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
 
     // GETTERS
     virtual const QList< QSharedPointer<GWSGraphEdge> > getDepartingEdges() const;
@@ -32,9 +40,6 @@ public:
 private:
     void connectEdge(QSharedPointer<GWSGraphEdge> edge);
     void disconnectEdge(QSharedPointer<GWSGraphEdge> edge);
-
-    // REF AGENT
-    GWSAgent* agent;
 
     GWSCoordinate inner_coordinate;
     QList< QSharedPointer<GWSGraphEdge> > out_edges; // Departing edges

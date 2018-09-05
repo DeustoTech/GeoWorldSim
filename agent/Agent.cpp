@@ -13,7 +13,7 @@
 #include "../../skill/Skill.h"
 
 #include "../../environment/Environment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
@@ -78,22 +78,6 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         }
     }
 
-    // INTERNAL TIME
-    if( json.keys().contains( GWSTimeEnvironment::INTERNAL_TIME_PROP ) ){
-        GWSTimeEnvironment::globalInstance()->registerAgent( this->getSharedPointer() , json.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
-    } else {
-        GWSTimeEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
-    }
-
-    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
-    /*QSharedPointer<GWSGeometry> geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
-    if( geom ){
-        GWSPhysicalEnvironment::globalInstance()->registerAgent( this->getSharedPointer() , geom );
-        this->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
-    } else {
-        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
-    }*/
-
     // STYLE
     if( !json.value( STYLE_PROP ).isNull() ){
         GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );
@@ -107,8 +91,7 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
     }
 
     // MUST BE MADE AT THIS LAST PART. Add to environments
-    GWSAgentEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
-    GWSEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
+    GWSEnvironmentsGroup::globalInstance()->registerAgent( this->getSharedPointer() );
 }
 
 /**********************************************************************
