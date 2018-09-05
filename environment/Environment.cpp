@@ -4,11 +4,6 @@
 #include <QPainter>
 #include <QTimer>
 
-GWSEnvironment* GWSEnvironment::globalInstance(){
-    static GWSEnvironment instance;
-    return &instance;
-}
-
 GWSEnvironment::GWSEnvironment() : GWSAgent(){
     emit this->environmentCreatedSignal();
 }

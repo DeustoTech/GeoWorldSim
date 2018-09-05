@@ -8,8 +8,6 @@ class GWSEnvironment : public GWSAgent
     Q_OBJECT
 
 public:
-    static GWSEnvironment* globalInstance();
-
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
