@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QMetaProperty>
+#include <QJsonObject>
 #include <QJsonValue>
 #include "../../util/units/Units.h"
 

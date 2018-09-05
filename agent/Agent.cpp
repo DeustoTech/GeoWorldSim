@@ -85,15 +85,6 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         GWSTimeEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
-    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
-    QSharedPointer<GWSGeometry> geom = this->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
-    if( geom ){
-        GWSPhysicalEnvironment::globalInstance()->registerAgent( this->getSharedPointer() , geom );
-        this->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
-    } else {
-        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
-    }
-
     // STYLE
     if( !json.value( STYLE_PROP ).isNull() ){
         GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );

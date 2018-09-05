@@ -184,8 +184,21 @@ void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
  METHODS
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> init_geom ){
+void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
+    if( agent.isNull() ){
+        return;
+    }
+
+    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
+    QSharedPointer<GWSGeometry> geom = agent->getProperty( GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    if( !geom ){
+        this->unregisterAgent( agent );
+        return;
+    }
+
+    // Set geometry in agent to null, because it will be stored here in the environment
+    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
     QString agent_id = agent->getId();
 
     // Remove if existing

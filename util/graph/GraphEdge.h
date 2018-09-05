@@ -9,8 +9,6 @@
 QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
-using namespace geos::planargraph;
-
 class GWSGraphEdge
 {
 
