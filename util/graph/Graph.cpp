@@ -174,7 +174,7 @@ void GWSGraph::removeEdge(QSharedPointer<GWSGraphEdge> edge){
 }
 
 void GWSGraph::addNode(QSharedPointer<GWSGraphNode> node){
-    this->nodes_index->upsert( node.dynamicCast<GWSAgent>() );
+    this->nodes_index->upsert( node.dynamicCast<GWSAgent>() , node->inner_coordinate );
     this->nodes.append( node );
 }
 

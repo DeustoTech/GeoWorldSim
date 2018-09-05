@@ -26,6 +26,8 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
+    QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
+    QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
     QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
     template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
     QSharedPointer<GWSGraphNode> getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;

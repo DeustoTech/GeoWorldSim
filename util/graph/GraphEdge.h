@@ -1,20 +1,24 @@
 #ifndef GWSGRAPHEDGE_H
 #define GWSGRAPHEDGE_H
 
-#include "geos/planargraph/DirectedEdge.h"
-#include "geos/planargraph/PlanarGraph.h"
-
 #include "../../util/units/Units.h"
+#include "../../object/Object.h"
 
-QT_FORWARD_DECLARE_CLASS(GWSAgent)
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
-class GWSGraphEdge
+class GWSGraphEdge : public GWSObject
 {
+    Q_OBJECT
 
 public:
-    GWSGraphEdge( QSharedPointer<GWSAgent> agent );
+    Q_INVOKABLE explicit GWSGraphEdge();
     ~GWSGraphEdge();
+
+    // IMPORTERS
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
 
     // GETTERS
     virtual QSharedPointer<GWSGraphNode> getFromNode() const;
@@ -31,9 +35,6 @@ public:
     virtual double getCost( double accumulated_cost = 0 ) const; // To be implemented by each child
 
 private:
-
-    // REF AGENT
-    QSharedPointer<GWSAgent> agent;
 
     QSharedPointer<GWSGraphNode> from;
     QSharedPointer<GWSGraphNode> to;

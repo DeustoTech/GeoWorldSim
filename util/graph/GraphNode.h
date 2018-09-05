@@ -6,12 +6,14 @@
 #include "../../object/Object.h"
 #include "../../util/geometry/Coordinate.h"
 
+QT_FORWARD_DECLARE_CLASS(GWSGraph)
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdge)
 
 class GWSGraphNode: public GWSObject
 {
     Q_OBJECT
     friend class GWSGraphEdge;
+    friend class GWSGraph;
 
 public:
     Q_INVOKABLE explicit GWSGraphNode();

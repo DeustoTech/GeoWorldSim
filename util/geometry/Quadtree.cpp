@@ -111,7 +111,14 @@ QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeomet
     return found;
 }
 
-void GWSQuadtree::upsert(QSharedPointer<GWSAgent> agent){
+void GWSQuadtree::upsert( QSharedPointer<GWSAgent> agent , GWSCoordinate coor ){
+    QSharedPointer<GWSGeometry> geom = QSharedPointer<GWSGeometry>( new GWSGeometry() );
+    geom->transformMove( coor );
+    this->upsert( agent , geom );
+    geom.clear();
+}
+
+void GWSQuadtree::upsert( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> geom ){
     this->mutex.lock();
     // Check if exists
     if( !this->registered_envelopes.value( agent ).isNull() ){
@@ -119,7 +126,6 @@ void GWSQuadtree::upsert(QSharedPointer<GWSAgent> agent){
         this->inner_index->remove( &e , agent.data() );
     }
 
-    const QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     if( geom ){
         geos::geom::Envelope e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,

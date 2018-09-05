@@ -28,7 +28,8 @@ public:
     QSharedPointer<GWSAgent> getNearestElement( QSharedPointer<GWSGeometry> geometry ) const;
 
     // SETTERS
-    void upsert( QSharedPointer<GWSAgent> agent );
+    void upsert( QSharedPointer<GWSAgent> agent , GWSCoordinate coor );
+    void upsert( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> geom );
     void remove( QSharedPointer<GWSAgent> agent );
 
 private:

@@ -7,7 +7,6 @@
 #include "../../util/graph/GraphEdge.h"
 
 using namespace geos::geom;
-using namespace geos::planargraph;
 
 class GWSSocialEnvironment : public GWSEnvironment
 {

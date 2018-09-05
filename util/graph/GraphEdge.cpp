@@ -1,17 +1,32 @@
 #include "GraphEdge.h"
 
 #include <QDebug>
-#include "../../agent/Agent.h"
 #include "../../util/graph/GraphNode.h"
 
-GWSGraphEdge::GWSGraphEdge( QSharedPointer<GWSAgent> agent) {
-    this->agent = agent;
+GWSGraphEdge::GWSGraphEdge() : GWSObject() {
 }
 
 GWSGraphEdge::~GWSGraphEdge(){
     // Disconnect
-    if( this->from ){ this->from->disconnectEdge( this->agent.dynamicCast<GWSGraphEdge>() ); }
-    if( this->to ){ this->to->disconnectEdge( this->agent.dynamicCast<GWSGraphEdge>() ); }
+    if( this->from ){ this->from->disconnectEdge( this->getSharedPointer().dynamicCast<GWSGraphEdge>() ); }
+    if( this->to ){ this->to->disconnectEdge( this->getSharedPointer().dynamicCast<GWSGraphEdge>() ); }
+}
+
+/**********************************************************************
+ IMPORTERS
+**********************************************************************/
+
+void GWSGraphEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+    GWSObject::deserialize( json , parent );
+}
+
+/**********************************************************************
+ EXPORTERS
+**********************************************************************/
+
+QJsonObject GWSGraphEdge::serialize() const{
+    QJsonObject json = GWSObject::serialize();
+    return json;
 }
 
 /**********************************************************************

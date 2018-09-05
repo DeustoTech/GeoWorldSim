@@ -131,7 +131,7 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList
 
     GWSQuadtree* index = new GWSQuadtree();
     foreach(QSharedPointer<GWSAgent> a , agents){
-        index->upsert( a );
+        index->upsert( a , this->getGeometry( a ) );
     }
 
     foreach(GWSCoordinate coor , coors){
@@ -219,7 +219,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     this->mutex.lock();
     GWSEnvironment::registerAgent( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
-        this->spatial_index.value( s )->upsert( agent );
+        this->spatial_index.value( s )->upsert( agent , this->getGeometry( agent ) );
     }
     this->mutex.unlock();
 
@@ -251,10 +251,10 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 void GWSPhysicalEnvironment::transformMove(QSharedPointer<GWSAgent> agent, const GWSCoordinate &apply_movement){
     QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
-        foreach (QString s , agent->getInheritanceFamily()) {
-            this->spatial_index.value( s )->upsert( agent );
-        }
         geom->transformMove( apply_movement );
+        foreach (QString s , agent->getInheritanceFamily()) {
+            this->spatial_index.value( s )->upsert( agent , this->getGeometry( agent ) );
+        }
     }
 }
 
