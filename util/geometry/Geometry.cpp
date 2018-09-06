@@ -44,52 +44,59 @@ void GWSGeometry::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();
 
-    if( geom_type.toLower() == "point" ){
-        this->inner_geometry = factory->createPoint(
-                    geos::geom::Coordinate(
-                        coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
-                        coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
-                        coors.size() > 2 ? coors.at(2).toDouble() : 0 )
-                    );
-    } else if ( geom_type.toLower() == "linestring" ){
+    try {
 
-        geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
+        if( geom_type.toLower() == "point" ){
+            this->inner_geometry = factory->createPoint(
+                        geos::geom::Coordinate(
+                            coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
+                            coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
+                            coors.size() > 2 ? coors.at(2).toDouble() : 0 )
+                        );
+        } else if ( geom_type.toLower() == "linestring" ){
 
-        for( int i = 0 ; i < coors.size() ; i++ ){
-            QJsonArray coor = coors.at( i ).toArray();
-            seq->add( geos::geom::Coordinate(
-                          coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
-                          coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
-                          coor.size() > 2 ? coor.at(2).toDouble() : 0 )
-                      );
-        }
-        this->inner_geometry = factory->createLineString( seq );
-    } else if ( geom_type.toLower() == "polygon" ){
-
-        geos::geom::LinearRing* outer_ring = Q_NULLPTR;
-        std::vector<geos::geom::Geometry *>* holes = new std::vector<Geometry*>();
-
-        for( int i = 0 ; i < coors.size() ; i++ ){
-
-            QJsonArray ring = coors.at(i).toArray();
             geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
 
-            for( int j = 0 ; j < ring.size() ; j++ ){
-                QJsonArray coor = ring.at( j ).toArray();
+            for( int i = 0 ; i < coors.size() ; i++ ){
+                QJsonArray coor = coors.at( i ).toArray();
                 seq->add( geos::geom::Coordinate(
                               coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
                               coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
                               coor.size() > 2 ? coor.at(2).toDouble() : 0 )
                           );
             }
+            this->inner_geometry = factory->createLineString( seq );
+        } else if ( geom_type.toLower() == "polygon" ){
 
-            if( i == 0 ){
-                outer_ring = factory->createLinearRing( seq );
-            } else {
-                holes->push_back( factory->createLinearRing( seq ) );
+            geos::geom::LinearRing* outer_ring = Q_NULLPTR;
+            std::vector<geos::geom::Geometry *>* holes = new std::vector<Geometry*>();
+
+            for( int i = 0 ; i < coors.size() ; i++ ){
+
+                QJsonArray ring = coors.at(i).toArray();
+                geos::geom::CoordinateSequence* seq = factory->getCoordinateSequenceFactory()->create();
+
+                for( int j = 0 ; j < ring.size() ; j++ ){
+                    QJsonArray coor = ring.at( j ).toArray();
+                    seq->add( geos::geom::Coordinate(
+                                  coor.size() > 0 ? coor.at(0).toDouble() : 0 ,
+                                  coor.size() > 1 ? coor.at(1).toDouble() : 0 ,
+                                  coor.size() > 2 ? coor.at(2).toDouble() : 0 )
+                              );
+                }
+
+                if( i == 0 ){
+                    outer_ring = factory->createLinearRing( seq );
+                } else {
+                    holes->push_back( factory->createLinearRing( seq ) );
+                }
             }
+
+            this->inner_geometry = factory->createPolygon( outer_ring , holes );
         }
-        this->inner_geometry = factory->createPolygon( outer_ring , holes );
+
+    } catch ( std::exception &e ){
+        qWarning() << "Error creating geometry" << e.what();
     }
 
 }
