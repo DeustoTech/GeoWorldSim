@@ -19,6 +19,10 @@ public:
     Q_INVOKABLE explicit GWSGraphNode();
     ~GWSGraphNode();
 
+    // PROPERTIES
+    static QString NODE_X_PROP;
+    static QString NODE_Y_PROP;
+
     // IMPORTERS
     virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 

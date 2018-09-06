@@ -3,6 +3,13 @@
 #include <QDebug>
 #include "../../util/graph/GraphNode.h"
 
+#include "../../environment/network_environment/NetworkEnvironment.h"
+
+QString GWSGraphEdge::EDGE_FROM_X_PROP = "edge_from_x";
+QString GWSGraphEdge::EDGE_FROM_Y_PROP = "edge_from_y";
+QString GWSGraphEdge::EDGE_TO_X_PROP = "edge_to_x";
+QString GWSGraphEdge::EDGE_TO_Y_PROP = "edge_to_y";
+
 GWSGraphEdge::GWSGraphEdge() : GWSObject() {
 }
 
@@ -18,6 +25,28 @@ GWSGraphEdge::~GWSGraphEdge(){
 
 void GWSGraphEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     GWSObject::deserialize( json , parent );
+
+    if( json.keys().contains( EDGE_FROM_X_PROP ) && json.keys().contains( EDGE_FROM_Y_PROP ) ){
+
+        GWSCoordinate coor = GWSCoordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() );
+        QSharedPointer<GWSGraphNode> from_node = GWSNetworkEnvironment::globalInstance()->getNodeFromGraph( coor , GWSAgent::staticMetaObject.className() );
+        if( !from_node ){
+            from_node = QSharedPointer<GWSGraphNode>( new GWSGraphNode() );
+            from_node->inner_coordinate = coor;
+        }
+        this->from = from_node;
+    }
+
+    if( json.keys().contains( EDGE_TO_X_PROP ) && json.keys().contains( EDGE_TO_Y_PROP ) ){
+
+        GWSCoordinate coor = GWSCoordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() );
+        QSharedPointer<GWSGraphNode> to_node = GWSNetworkEnvironment::globalInstance()->getNodeFromGraph( coor , GWSAgent::staticMetaObject.className() );
+        if( !to_node ){
+            to_node = QSharedPointer<GWSGraphNode>( new GWSGraphNode() );
+            to_node->inner_coordinate = coor;
+        }
+        this->to = to_node;
+    }
 }
 
 /**********************************************************************

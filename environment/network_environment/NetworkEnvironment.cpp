@@ -34,12 +34,18 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNode(QSharedPointer<GWSAgent> agent) const{
-
+const QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNode(QSharedPointer<GWSAgent> agent) const{
+    if( agent.isNull() ){
+        return Q_NULLPTR;
+    }
+    return this->agent_to_node.value( agent );
 }
 
-QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdge(QSharedPointer<GWSAgent> agent) const{
-
+const QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdge(QSharedPointer<GWSAgent> agent) const{
+    if( agent.isNull() ){
+        return Q_NULLPTR;
+    }
+    return this->agent_to_edge.value( agent );
 }
 
 QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point, QString class_name) const{
@@ -116,18 +122,21 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
                 this->mutex.lock();
                 this->network_graphs.insert( c , new GWSGraph() );
                 this->mutex.unlock();
-
             }
         }
 
         foreach(QString c , classes){
 
             // Add to spatial graph
-            if( !edge.isNull() ){
-                this->network_graphs.value( c )->addEdge( edge );
-            }
+            // Node
             if( !node.isNull() ){
                 this->network_graphs.value( c )->addNode( node );
+                this->agent_to_node.insert( agent , node );
+            }
+            // Edge
+            if( !edge.isNull() ){
+                this->network_graphs.value( c )->addEdge( edge );
+                this->agent_to_edge.insert( agent , edge );
             }
         }
     }
@@ -147,9 +156,11 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
             // Remove from spatial graph
             if( !edge.isNull() ){
                 this->network_graphs.value( c )->removeEdge( edge );
+                this->agent_to_edge.remove( agent );
             }
             if( !node.isNull() ){
                 this->network_graphs.value( c )->removeNode( node );
+                this->agent_to_node.remove( agent );
             }
         }
     }

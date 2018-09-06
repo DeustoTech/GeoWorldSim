@@ -26,8 +26,8 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
-    QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
+    const QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
+    const QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
     QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
     template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
     QSharedPointer<GWSGraphNode> getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;
@@ -46,6 +46,8 @@ private:
     GWSNetworkEnvironment(GWSNetworkEnvironment const&);
     ~GWSNetworkEnvironment();
 
+    QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSGraphNode> > agent_to_node;
+    QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSGraphEdge> > agent_to_edge;
     QMap<QString, GWSGraph*> network_graphs; // Graphs
 
     // Mutex, for avoiding concurrency

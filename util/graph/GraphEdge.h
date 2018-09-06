@@ -14,6 +14,12 @@ public:
     Q_INVOKABLE explicit GWSGraphEdge();
     ~GWSGraphEdge();
 
+    // PROPERTIES
+    static QString EDGE_FROM_X_PROP;
+    static QString EDGE_FROM_Y_PROP;
+    static QString EDGE_TO_X_PROP;
+    static QString EDGE_TO_Y_PROP;
+
     // IMPORTERS
     virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 

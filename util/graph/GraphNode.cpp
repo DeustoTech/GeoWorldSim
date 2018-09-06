@@ -2,6 +2,9 @@
 
 #include "../../util/graph/GraphEdge.h"
 
+QString GWSGraphNode::NODE_X_PROP = "node_x";
+QString GWSGraphNode::NODE_Y_PROP = "node_y";
+
 GWSGraphNode::GWSGraphNode() : GWSObject(){
 }
 
@@ -14,8 +17,8 @@ GWSGraphNode::~GWSGraphNode(){
 
 void GWSGraphNode::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     GWSObject::deserialize( json , parent );
-    double x = json.value( "x" ).toDouble();
-    double y = json.value( "y" ).toDouble();
+    double x = json.value( NODE_X_PROP ).toDouble();
+    double y = json.value( NODE_Y_PROP ).toDouble();
     this->inner_coordinate = GWSCoordinate( x , y );
 }
 
