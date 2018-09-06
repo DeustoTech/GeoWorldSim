@@ -25,7 +25,7 @@ public:
     const QSharedPointer<GWSGraphEdge> findEdge( GWSCoordinate from , GWSCoordinate to ) const;
     QList<QSharedPointer<GWSGraphNode> > findNodesOfDegree( int degree ) const;
     //QList<const QSharedPointer<GWSGraphNode>> getNodes() const;
-    //QList<const QSharedPointer<GWSGraphEdge>> getEdges() const;
+    QList<QSharedPointer<GWSGraphEdge> > getEdges() const;
     QMap<QSharedPointer<GWSGraphEdge>, double> getCostMap() const;
     int countNodes() const;
     int countEdges() const;

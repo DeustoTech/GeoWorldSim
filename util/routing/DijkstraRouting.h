@@ -3,7 +3,7 @@
 
 #include <QMutex>
 
-#include "util/routing/Routing.h"
+#include "../../util/routing/Routing.h"
 
 #include <lemon/dijkstra.h>
 
@@ -15,14 +15,14 @@ class GWSDijkstraRouting : public GWSRouting
     Q_OBJECT
 
 public:
-    GWSDijkstraRouting( QList<GWSGraphEdge*> edges );
+    GWSDijkstraRouting( QList<QSharedPointer<GWSGraphEdge> > edges );
     ~GWSDijkstraRouting();
 
     // METHODS
-    QList<GWSGraphEdge*> dijkstraShortestPath(GWSGraphNode* from, GWSGraphNode* to );
-    QList<QList<GWSGraphEdge*> > dijkstraShortestPath(QList<GWSGraphNode*> ordered_nodes );
-    QList<QList<GWSGraphEdge*> > dijkstraShortestPaths(GWSGraphNode* from_node, QList<GWSGraphNode*> to_nodes );
-    GWSGraphNode* dijkstraNearestNode(GWSGraphNode* from_node, QList<GWSGraphNode*> to_nodes );
+    QList<QSharedPointer<GWSGraphEdge> > dijkstraShortestPath(QSharedPointer<GWSGraphNode> from, QSharedPointer<GWSGraphNode> to );
+    QList<QList<QSharedPointer<GWSGraphEdge> > > dijkstraShortestPath(QList<QSharedPointer<GWSGraphNode> > ordered_nodes );
+    QList<QList<QSharedPointer< GWSGraphEdge> > > dijkstraShortestPaths(QSharedPointer<GWSGraphNode> from_node, QList<QSharedPointer<GWSGraphNode> > to_nodes );
+    QSharedPointer<GWSGraphNode> dijkstraNearestNode(QSharedPointer<GWSGraphNode> from_node, QList<QSharedPointer<GWSGraphNode> > to_nodes );
 
 private:
     QMutex mutex;

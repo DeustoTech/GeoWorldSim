@@ -85,9 +85,9 @@ const QSharedPointer<GWSGraphNode> GWSGraph::findNearestNode(GWSCoordinate point
     return this->findNode( point );
 }
 
-/*QList<const QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges() const{
+QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges() const{
     return this->edges;
-}*/
+}
 
 /*QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdgesInEnvelope(GWSEnvelope env) const{
     QList<QSharedPointer<GWSGraphEdge>> edges;

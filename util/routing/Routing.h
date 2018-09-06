@@ -2,19 +2,16 @@
 #define GWSROUTING_H
 
 #include <QImage>
-#include "object/Object.h"
+#include "../../object/Object.h"
+#include "../../util/geometry/Quadtree.h"
 
 #include <lemon/core.h>
 #include <lemon/list_graph.h>
 
-#include <geos/geom/Geometry.h>
-#include <geos/geom/Coordinate.h>
+#include "../../util/routing/GraphEdgeArcMap.h"
+#include "../../util/graph/GraphEdge.h"
+#include "../../util/graph/GraphNode.h"
 
-#include "util/routing/GraphEdgeArcMap.h"
-#include "util/graph/GraphEdge.h"
-#include "util/graph/GraphNode.h"
-
-using namespace geos::geom;
 using namespace lemon;
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphEdgeArcMap)
@@ -25,16 +22,16 @@ class GWSRouting : public GWSObject
     friend class GWSGraphEdgeArcMap;
 
 public:
-    GWSRouting( QList<GWSGraphEdge*> edges );
+    explicit GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
     ~GWSRouting();
 
     // EXPORTERS
-    virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
+    //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
 
     // GETTERS
-    GWSGraphNode* findNearestNode( const GWSCoordinate coor );
-    GWSGraphNode* getNodeFromNode( const ListDigraph::Node node );
-    GWSGraphEdge* getEdgeFromArc( const ListDigraph::Arc arc );
+    QSharedPointer<GWSGraphNode> findNearestNode( const GWSCoordinate coor );
+    QSharedPointer<GWSGraphNode> getNodeFromNode( const ListDigraph::Node node );
+    QSharedPointer<GWSGraphEdge> getEdgeFromArc( const ListDigraph::Arc arc );
 
 protected:
 
@@ -42,10 +39,10 @@ protected:
     ListDigraph* routing_graph;
 
     // To link arcs with its original GSSGraphEdge
-    QMap< ListDigraph::Arc , GWSGraphEdge*> arc_to_edges;
+    QMap< ListDigraph::Arc , QSharedPointer<GWSGraphEdge> > arc_to_edges;
 
     // To link nodes with its original GSSGraphNode
-    QMap< ListDigraph::Node , GWSGraphNode*> node_to_nodes;
+    QMap< ListDigraph::Node , QSharedPointer<GWSGraphNode> > node_to_nodes;
 
 private:
 

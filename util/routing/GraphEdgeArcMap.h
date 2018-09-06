@@ -1,5 +1,5 @@
-#ifndef GSSGRAPHEDGEARCMAP_H
-#define GSSGRAPHEDGEARCMAP_H
+#ifndef GWSGRAPHEDGEARCMAP_H
+#define GWSGRAPHEDGEARCMAP_H
 
 #include <QObject>
 #include <QDebug>
@@ -9,7 +9,8 @@
 #include <lemon/dijkstra.h>
 #include <lemon/maps.h>
 
-#include "util/graph/GraphEdge.h"
+#include "../../util/graph/GraphEdge.h"
+#include "../../util/routing/Routing.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSRouting)
 
@@ -31,8 +32,8 @@ public:
 
 private:
     GWSRouting* parent;
-    mutable QMap< GWSGraphNode* , double > acc_costs; // Accumulated minimum costs at reached nodes
+    mutable QMap< QSharedPointer<GWSGraphNode> , double > accumulated_minimum_cost_at_nodes; // Accumulated minimum costs at reached nodes
 
 };
 
-#endif // GSSGRAPHEDGEARCMAP_H
+#endif // GWSGRAPHEDGEARCMAP_H

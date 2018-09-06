@@ -15,6 +15,7 @@ public:
 
 signals:
     void dataValueReadSignal( QJsonObject json_data );
+    void dataReadingFinishedSignal();
 
 private slots:
     void requestPaginated( int page );

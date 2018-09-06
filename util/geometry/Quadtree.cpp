@@ -135,6 +135,9 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> agent , GWSCoordinate coor )
 }
 
 void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSGeometry> geom ){
+    if( object.isNull() ){
+        return;
+    }
     QString object_id = object->getId();
 
     this->mutex.lock();
@@ -160,6 +163,9 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 }
 
 void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
+    if( object.isNull() ){
+        return;
+    }
     QString object_id = object->getId();
 
     //this->mutex.lock();

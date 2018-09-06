@@ -1,51 +1,51 @@
 #include "Routing.h"
 
 #include <QPainter>
-#include "utils/geometry/Envelope.h"
-#include "utils/conversors/image_coordinates/ImageCoordinatesConversor.h"
-
-#include "utils/graph/GraphUtils.h"
+#include <QStringList>
+#include "../../util/geometry/Quadtree.h"
 
 /**
  * @brief RoutingGraph::RoutingGraph
  * @param graph
  */
-GWSRouting::GWSRouting( QList<GWSGraphEdge*> edges ) : GWSObject(0){
+GWSRouting::GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSObject(){
 
     // Create graph and edge weights map
     this->nodes_index = new GWSQuadtree();
     this->routing_graph = new ListDigraph();
 
     // Temporary list to fasten comparisons
-    QList<GWSGraphNode*> fast_compare_nodes;
+    QStringList fast_compare_node_ids;
 
     // Create nodes and edges
-    foreach( GWSGraphEdge* edge, edges ){
+    foreach( QSharedPointer<GWSGraphEdge> edge, edges ){
 
         try {
 
             // Create or retrieve edge start node
-            GWSGraphNode* from_node = edge->getFromNode();
-            ListDigraph::Node s;
+            QSharedPointer<GWSGraphNode> from_node = edge->getFromNode();
+            ListDigraph::Node s; // Start node
 
-            if( !fast_compare_nodes.contains( from_node ) ){
+            if( !fast_compare_node_ids.contains( from_node->getId() ) ){
                 s = this->routing_graph->addNode();
-                this->nodes_index->insert( from_node->getCoordinate() , from_node );
+                //this->nodes_index->insert( from_node->getCoordinate() , from_node );
+                this->nodes_index->upsert( from_node.dynamicCast<GWSAgent>() , from_node->getCoordinate() );
                 this->node_to_nodes.insert( s , from_node );
-                fast_compare_nodes.append( from_node );
+                fast_compare_node_ids.append( from_node->getId() );
             } else {
                 s = this->node_to_nodes.key( from_node );
             }
 
             // Create or retrieve edge end node
-            GWSGraphNode* to_node = edge->getToNode();
+            QSharedPointer<GWSGraphNode> to_node = edge->getToNode();
             ListDigraph::Node e;
 
-            if( !fast_compare_nodes.contains( to_node ) ){
+            if( !fast_compare_node_ids.contains( to_node->getId() ) ){
                 e = this->routing_graph->addNode();
-                this->nodes_index->insert( to_node->getCoordinate() , to_node );
+                //this->nodes_index->upsert( to_node->getCoordinate() , to_node );
+                this->nodes_index->upsert( to_node.dynamicCast<GWSAgent>() , to_node->getCoordinate() );
                 this->node_to_nodes.insert( e , to_node );
-                fast_compare_nodes.append( to_node );
+                fast_compare_node_ids.append( to_node->getId() );
             } else {
                 e = this->node_to_nodes.key( to_node );
             }
@@ -68,7 +68,7 @@ GWSRouting::~GWSRouting(){
  EXPORTERS
 **********************************************************************/
 
-QImage GWSRouting::toImage(const GWSEnvelope image_bounds, unsigned int image_width, unsigned int image_height) const{
+/*QImage GWSRouting::toImage(const GWSEnvelope image_bounds, unsigned int image_width, unsigned int image_height) const{
 
     // Image to be retured
     QImage image = QImage( image_width , image_height , QImage::Format_ARGB32 );
@@ -89,20 +89,20 @@ QImage GWSRouting::toImage(const GWSEnvelope image_bounds, unsigned int image_wi
 
     }
     return image;
-}
+}*/
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-GWSGraphNode* GWSRouting::findNearestNode( const GWSCoordinate coor ){
-    return GWSGraphUtils::globalInstance()->findNearestFromQuadtree( coor , this->nodes_index );
+QSharedPointer<GWSGraphNode> GWSRouting::findNearestNode( const GWSCoordinate coor ){
+    return this->nodes_index->getNearestElement( coor ).dynamicCast<GWSGraphNode>();
 }
 
-GWSGraphNode* GWSRouting::getNodeFromNode(const ListDigraph::Node node){
+QSharedPointer<GWSGraphNode> GWSRouting::getNodeFromNode(const ListDigraph::Node node){
     return this->node_to_nodes.value( node );
 }
 
-GWSGraphEdge* GWSRouting::getEdgeFromArc(const ListDigraph::Arc arc){
+QSharedPointer<GWSGraphEdge> GWSRouting::getEdgeFromArc(const ListDigraph::Arc arc){
     return this->arc_to_edges.value( arc );
 }

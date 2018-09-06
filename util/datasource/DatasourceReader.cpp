@@ -34,5 +34,7 @@ void GWSDatasourceReader::dataReceived(){
     unsigned int count = json.value( "count" ).toInt();
     if( count > this->last_paginated * this->limit ){
         this->requestPaginated( ++this->last_paginated );
+    } else {
+        emit this->dataReadingFinishedSignal();
     }
 }

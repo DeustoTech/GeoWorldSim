@@ -5,7 +5,7 @@
 #include <lemon/bellman_ford.h>
 #include <lemon/path.h>
 
-GWSDijkstraRouting::GWSDijkstraRouting( QList<GWSGraphEdge*> edges ) : GWSRouting( edges ){
+GWSDijkstraRouting::GWSDijkstraRouting( QList<QSharedPointer<GWSGraphEdge> > edges ) : GWSRouting( edges ){
 }
 
 GWSDijkstraRouting::~GWSDijkstraRouting(){
@@ -21,17 +21,17 @@ GWSDijkstraRouting::~GWSDijkstraRouting(){
  * @param go_through_nodes
  * @return
  */
-QList<QList<GWSGraphEdge*> > GWSDijkstraRouting::dijkstraShortestPath(QList<GWSGraphNode*> ordered_nodes ){
-    QList<QList<GWSGraphEdge*> > result_routes;
+QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPath(QList<QSharedPointer<GWSGraphNode> > ordered_nodes ){
+    QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
     Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = 0;
     GWSGraphEdgeArcMap* routing_graph_costs = 0;
 
     for(int i = 0; i < ordered_nodes.size()-1; i++){
 
-        QList<GWSGraphEdge*> result_route;
-        GWSGraphNode* from_node = ordered_nodes.at( i );
-        GWSGraphNode* to_node = ordered_nodes.at( i+1 );
+        QList<QSharedPointer<GWSGraphEdge> > result_route;
+        QSharedPointer<GWSGraphNode> from_node = ordered_nodes.at( i );
+        QSharedPointer<GWSGraphNode> to_node = ordered_nodes.at( i+1 );
 
         if( !from_node || !to_node ){
             qDebug() << QString("Start (%1) or end node (%2) is emtpy").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
@@ -89,8 +89,8 @@ QList<QList<GWSGraphEdge*> > GWSDijkstraRouting::dijkstraShortestPath(QList<GWSG
  * @param end_nodes
  * @return
  */
-QList<QList<GWSGraphEdge*> > GWSDijkstraRouting::dijkstraShortestPaths(GWSGraphNode *from_node, QList<GWSGraphNode *> to_nodes ){
-    QList<QList<GWSGraphEdge*> > result_routes;
+QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
+    QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
     GWSGraphEdgeArcMap* routing_graph_costs = new GWSGraphEdgeArcMap( this );
     Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
@@ -100,8 +100,8 @@ QList<QList<GWSGraphEdge*> > GWSDijkstraRouting::dijkstraShortestPaths(GWSGraphN
     dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
-    foreach( GWSGraphNode* to_node , to_nodes ){
-        QList<GWSGraphEdge*> route;
+    foreach( QSharedPointer<GWSGraphNode> to_node , to_nodes ){
+        QList< QSharedPointer<GWSGraphEdge>> route;
 
         ListDigraph::Node end = this->node_to_nodes.key( to_node );
 
@@ -134,9 +134,9 @@ QList<QList<GWSGraphEdge*> > GWSDijkstraRouting::dijkstraShortestPaths(GWSGraphN
  * @param end_node
  * @return
  */
-QList<GWSGraphEdge*> GWSDijkstraRouting::dijkstraShortestPath(GWSGraphNode* from_node, GWSGraphNode* to_node ){
+QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(QSharedPointer<GWSGraphNode> from_node, QSharedPointer<GWSGraphNode> to_node ){
 
-    QList<GWSGraphNode*> nodes;
+    QList< QSharedPointer<GWSGraphNode> > nodes;
     nodes.append( from_node );
     nodes.append( to_node );
 
@@ -149,12 +149,12 @@ QList<GWSGraphEdge*> GWSDijkstraRouting::dijkstraShortestPath(GWSGraphNode* from
  * @param nodes
  * @return
  */
-GWSGraphNode* GWSDijkstraRouting::dijkstraNearestNode(GWSGraphNode* from_node, QList<GWSGraphNode*> to_nodes ){
+QSharedPointer<GWSGraphNode> GWSDijkstraRouting::dijkstraNearestNode(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
 
-    GWSGraphNode* result_node = 0;
+    QSharedPointer<GWSGraphNode> result_node = 0;
     GWSLengthUnit min_length( std::numeric_limits<double>::max() );
 
-    QList<QList<GWSGraphEdge*> > routes = this->dijkstraShortestPaths(from_node , to_nodes);
+    QList<QList<QSharedPointer<GWSGraphEdge> > > routes = this->dijkstraShortestPaths(from_node , to_nodes);
 
     if( routes.size() != to_nodes.size() ){
         qWarning() << "Node list and routes size do not match";
@@ -163,7 +163,7 @@ GWSGraphNode* GWSDijkstraRouting::dijkstraNearestNode(GWSGraphNode* from_node, Q
     for(int node_pos = 0; node_pos < routes.size() && node_pos < to_nodes.size() ; node_pos++){
         GWSLengthUnit c;
 
-        foreach( GWSGraphEdge* edge , routes.at(node_pos) ){
+        foreach( QSharedPointer<GWSGraphEdge> edge , routes.at(node_pos) ){
             c = c + edge->getLength();
         }
 
