@@ -22,6 +22,7 @@ bool MoveBehaviour::finished(){
         qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
         return true;
     }
+    // No destination for MoveSkill
     if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
         return true;
     }
@@ -57,6 +58,8 @@ bool MoveBehaviour::behave(){
     // Move towards
     move_skill->move( duration_of_movement );
     emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
+
+    qDebug() << "Final position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
 
     return true;
 }
