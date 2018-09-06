@@ -3,7 +3,6 @@
 #include <QDebug>
 
 #include "geos/geom/Envelope.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 
 GWSQuadtree::GWSQuadtree() : GWSObject(){
@@ -12,30 +11,40 @@ GWSQuadtree::GWSQuadtree() : GWSObject(){
 
 GWSQuadtree::~GWSQuadtree(){
     delete this->inner_index;
-    this->inner_index = 0;
+    this->inner_index = Q_NULLPTR;
 }
 
-QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(GWSCoordinate coor) const{
-    return this->getElements( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
+/*QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements( GWSCoordinate coor ) const{
+    return this->getElements<GWSObject>( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
 }
 
-QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(QSharedPointer<GWSGeometry> geometry) const{
-    QList< QSharedPointer<GWSAgent> > intersecting_agents;
-    foreach( QSharedPointer<GWSAgent> a , this->getElements( geometry->getGeometryMinX() , geometry->getGeometryMaxX() , geometry->getGeometryMinY() , geometry->getGeometryMaxY() ) ){
-        if( geometry->intersects( GWSPhysicalEnvironment::globalInstance()->getGeometry( a ) ) ){
-            intersecting_agents.append( a );
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( GWSCoordinate coor ) const{
+
+}
+
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( QSharedPointer<GWSGeometry> geom ) const{
+    QList< QSharedPointer<T> > intersecting_agents;
+    foreach( QSharedPointer<GWSObject> o , this->getElements<GWSObject>( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() ) ){
+        QSharedPointer<GWSGeometry> o_geom = this->id_to_geometries.value( o->getId() );
+        if( geom->intersects( o_geom ) ){
+            intersecting_agents.append( o.dynamicCast<T>() );
         }
     }
     return intersecting_agents;
 }
 
-QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{
-    QList< QSharedPointer<GWSAgent> > agents;
+
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{
+
+}*/
+
+QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double maxX, double minY, double maxY) const{
+    QList< QSharedPointer<GWSObject> > objects;
     std::vector<void*> vector;
 
     if( !this->inner_index ){
         qWarning() << "Quadtree has no inner index";
-        return agents;
+        return objects;
     }
 
     geos::geom::Envelope* e = new geos::geom::Envelope( minX , maxX , minY , maxY );
@@ -48,31 +57,36 @@ QList< QSharedPointer<GWSAgent> > GWSQuadtree::getElements(double minX, double m
 
     if( vector.size() ){
         for(unsigned int i = 0 ; i < vector.size() ; i++){
-            GWSAgent* a = (GWSAgent*)vector.at(i);
-            agents.append( a->getSharedPointer() );
+            GWSQuadtreeElement* elm = (GWSQuadtreeElement*)vector.at(i);
+            if( elm ){
+                QSharedPointer<GWSObject> obj = this->id_to_objects.value( elm->referenced_object_id );
+                objects.append( obj );
+            }
         }
     }
 
-    return agents;
+    return objects;
 }
 
-QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
-    QSharedPointer<GWSAgent> found;
-    QList< QSharedPointer<GWSAgent> > agents = this->getElements( coor );
+QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
+    QSharedPointer<GWSObject> found;
+    QList< QSharedPointer<GWSObject> > objects = this->getElements<GWSObject>( coor );
 
-    if( agents.isEmpty() ){
+    if( objects.isEmpty() ){
         return found;
     }
 
-    found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getCentroid().getDistance( coor );
+    found = objects.at( 0 );
+    QSharedPointer<GWSGeometry> found_geom = this->id_to_geometries.value( found->getId() );
+    GWSLengthUnit found_distance = found_geom->getCentroid().getDistance( coor );
 
-    for(int i = 0 ; i < agents.size() ; i++){
-        QSharedPointer<GWSAgent> g = agents.at(i);
-        if( g ){
+    for(int i = 0 ; i < objects.size() ; i++){
+        QSharedPointer<GWSObject> g = objects.at(i);
+        QSharedPointer<GWSGeometry> g_geom = this->id_to_geometries.value( g->getId() );
+        if( g && g_geom ){
 
             try {
-                GWSLengthUnit d = coor.getDistance( GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getCentroid() );
+                GWSLengthUnit d = g_geom->getCentroid().getDistance( coor );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -83,24 +97,26 @@ QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(GWSCoordinate coor) cons
     return found;
 }
 
-QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeometry> geometry) const{
+QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeometry> geometry) const{
 
-    QSharedPointer<GWSAgent> found = Q_NULLPTR;
-    QList< QSharedPointer<GWSAgent> > agents = this->getElements( geometry );
+    QSharedPointer<GWSObject> found = Q_NULLPTR;
+    QList< QSharedPointer<GWSObject> > agents = this->getElements<GWSObject>( geometry );
 
     if( agents.isEmpty() ){
         return found;
     }
 
     found = agents.at( 0 );
-    GWSLengthUnit found_distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( found )->getDistance( geometry );
+    QSharedPointer<GWSGeometry> found_geom = this->id_to_geometries.value( found->getId() );
+    GWSLengthUnit found_distance = found_geom->getDistance( geometry );
 
     for(int i = 0 ; i < agents.size() ; i++){
-        QSharedPointer<GWSAgent> g = agents.at(i);
-        if( g ){
+        QSharedPointer<GWSObject> g = agents.at(i);
+        QSharedPointer<GWSGeometry> g_geom = this->id_to_geometries.value( g->getId() );
+        if( g && g_geom ){
 
             try {
-                GWSLengthUnit d = GWSPhysicalEnvironment::globalInstance()->getGeometry( g )->getDistance( geometry );
+                GWSLengthUnit d = g_geom->getDistance( geometry );
                 if( d <= found_distance ){
                     found = g;
                     found_distance = d;
@@ -111,19 +127,20 @@ QSharedPointer<GWSAgent> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeomet
     return found;
 }
 
-void GWSQuadtree::upsert( QSharedPointer<GWSAgent> agent , GWSCoordinate coor ){
+void GWSQuadtree::upsert( QSharedPointer<GWSObject> agent , GWSCoordinate coor ){
     QSharedPointer<GWSGeometry> geom = QSharedPointer<GWSGeometry>( new GWSGeometry() );
     geom->transformMove( coor );
     this->upsert( agent , geom );
     geom.clear();
 }
 
-void GWSQuadtree::upsert( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> geom ){
+void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSGeometry> geom ){
+    QString object_id = object->getId();
+
     this->mutex.lock();
     // Check if exists
-    if( !this->registered_envelopes.value( agent ).isNull() ){
-        geos::geom::Envelope e = this->registered_envelopes.value( agent );
-        this->inner_index->remove( &e , agent.data() );
+    if( this->registered_envelopes.keys().contains( object_id ) ){
+        this->remove( object );
     }
 
     if( geom ){
@@ -132,16 +149,28 @@ void GWSQuadtree::upsert( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeo
                     geom->getGeometryMaxX() ,
                     geom->getGeometryMinY() ,
                     geom->getGeometryMaxY() );
-        this->registered_envelopes.insert( agent , e );
-        this->inner_index->insert( &e , agent.data() );
+        GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id );
+        this->id_to_index_elements.insert( object_id , elm );
+        this->id_to_objects.insert( object_id , object );
+        this->registered_envelopes.insert( object_id , e );
+        this->id_to_geometries.insert( object_id , geom );
+        this->inner_index->insert( &e , elm );
     }
     this->mutex.unlock();
 }
 
-void GWSQuadtree::remove(QSharedPointer<GWSAgent> agent){
+void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
+    QString object_id = object->getId();
+
     //this->mutex.lock();
-    geos::geom::Envelope e = this->registered_envelopes.value( agent );
-    this->inner_index->remove( &e , agent.data() );
-    this->registered_envelopes.remove( agent );
+    geos::geom::Envelope e = this->registered_envelopes.value( object_id );
+    GWSQuadtreeElement* elm = this->id_to_index_elements.value( object_id );
+    this->inner_index->remove( &e , elm );
+    this->registered_envelopes.remove( object_id );
+    this->id_to_objects.remove( object_id );
+    this->id_to_index_elements.remove( object_id );
+    this->id_to_geometries.remove( object_id );
+    elm->deleteLater();
     //this->mutex.unlock();
+
 }

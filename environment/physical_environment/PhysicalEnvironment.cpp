@@ -64,18 +64,24 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::orderByDistance(QShare
 
 
 QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
+    QList< QSharedPointer<GWSAgent> > agents;
     if( this->spatial_index.keys().contains(class_name) ){
-        return this->spatial_index[class_name]->getElements( minX , maxX , minY , maxY );
+        foreach( QSharedPointer<GWSAgent> a , this->spatial_index.value( class_name )->getElements<GWSAgent>( minX , maxX , minY , maxY ) ){
+            agents.append( a );
+        }
     }
-    return QList< QSharedPointer<GWSAgent> >();
+    return agents;
 }
 
 
 QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getAgentsIntersecting(const QSharedPointer<GWSGeometry> geometry, QString class_name) const{
+    QList< QSharedPointer<GWSAgent> > agents;
     if( this->spatial_index.keys().contains( class_name ) ){
-        return this->spatial_index[class_name]->getElements( geometry );
+        foreach( QSharedPointer<GWSObject> obj , this->spatial_index.value( class_name )->getElements<GWSAgent>( geometry ) ){
+            agents.append( obj.dynamicCast<GWSAgent>() );
+        }
     }
-    return QList< QSharedPointer<GWSAgent> >();
+    return agents;
 }
 
 /**
@@ -113,7 +119,7 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
  */
 QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
     if( this->spatial_index.keys().contains(class_name) ){
-        return this->spatial_index.value(class_name)->getNearestElement( coor );
+        return this->spatial_index.value(class_name)->getNearestElement( coor ).dynamicCast<GWSAgent>();
     }
     return Q_NULLPTR;
 }
@@ -136,10 +142,10 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList
 
     foreach(GWSCoordinate coor , coors){
         QSharedPointer<GWSAgent> found = 0;
-        QList< QSharedPointer<GWSAgent> > agents = index->getElements( coor );
+        QList< QSharedPointer<GWSAgent> > agents = index->getElements<GWSAgent>( coor );
 
         if( !agents.isEmpty() ){
-            found = ( (QSharedPointer<GWSAgent>) agents.at( qrand() % agents.size() ) );
+            found = agents.at( qrand() % agents.size() );
             foreach( QSharedPointer<GWSAgent> a , agents ){
                 if( a && coor.getDistance( this->getGeometry( a )->getCentroid() ) < coor.getDistance( this->getGeometry( found )->getCentroid() ) ){
                     found = a;
