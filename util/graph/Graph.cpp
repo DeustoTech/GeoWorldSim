@@ -48,7 +48,7 @@ bool GWSGraph::containsEdge( QSharedPointer<GWSGraphEdge> edge) const{
 }
 
 const QSharedPointer<GWSGraphEdge> GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
-    if( from == to ){
+    /*if( from == to ){
         return 0;
     }
     const QSharedPointer<GWSGraphNode> from_node = this->findNode( from );
@@ -57,10 +57,10 @@ const QSharedPointer<GWSGraphEdge> GWSGraph::findEdge(GWSCoordinate from, GWSCoo
         return 0;
     }
     foreach(QSharedPointer<GWSGraphEdge> edge , this->edges){
-        if( edge->getFromNode() == from_node && edge->getToNode() == to_node ){
+        if( edge->getFrom() == from_node && edge->getTo() == to_node ){
             return edge;
         }
-    }
+    }*/
     return 0;
 }
 
@@ -158,14 +158,14 @@ void GWSGraph::addGraph(const GWSGraph *other){
 }
 
 void GWSGraph::addEdge( QSharedPointer<GWSGraphEdge> edge){
-    const QSharedPointer<GWSGraphNode> from = this->findNode( edge->getFromNode()->getCoordinate() );
+    /*const QSharedPointer<GWSGraphNode> from = this->findNode( edge->getFrom()->getCoordinate() );
     if( !from ){
-        this->addNode( edge->getFromNode() );
+        this->addNode( edge->getFrom() );
     }
-    const QSharedPointer<GWSGraphNode> to = this->findNode( edge->getToNode()->getCoordinate() );
+    const QSharedPointer<GWSGraphNode> to = this->findNode( edge->getTo()->getCoordinate() );
     if( !to ){
-        this->addNode( edge->getToNode() );
-    }
+        this->addNode( edge->getTo() );
+    }*/
     this->edges.append( edge );
 }
 

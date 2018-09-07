@@ -15,7 +15,7 @@ GWSRouting::GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSObjec
     this->routing_graph = new ListDigraph();
 
     // Temporary list to fasten comparisons
-    QStringList fast_compare_node_ids;
+    QList< GWSCoordinate > fast_compare_node_coors;
 
     // Create nodes and edges
     foreach( QSharedPointer<GWSGraphEdge> edge, edges ){
@@ -23,31 +23,29 @@ GWSRouting::GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSObjec
         try {
 
             // Create or retrieve edge start node
-            QSharedPointer<GWSGraphNode> from_node = edge->getFromNode();
+            GWSCoordinate from_coor = edge->getFrom();
             ListDigraph::Node s; // Start node
 
-            if( !fast_compare_node_ids.contains( from_node->getId() ) ){
+            if( !fast_compare_node_coors.contains( from_coor ) ){
                 s = this->routing_graph->addNode();
-                //this->nodes_index->insert( from_node->getCoordinate() , from_node );
-                this->nodes_index->upsert( from_node.dynamicCast<GWSAgent>() , from_node->getCoordinate() );
-                this->node_to_nodes.insert( s , from_node );
-                fast_compare_node_ids.append( from_node->getId() );
+                //this->nodes_index->upsert( from_node.dynamicCast<GWSAgent>() , from_node->getCoordinate() );
+                this->coors_to_node.insert( from_coor , s );
+                fast_compare_node_coors.append( from_coor );
             } else {
-                s = this->node_to_nodes.key( from_node );
+                s = this->coors_to_node.value( from_coor );
             }
 
             // Create or retrieve edge end node
-            QSharedPointer<GWSGraphNode> to_node = edge->getToNode();
+            GWSCoordinate to_coor = edge->getTo();
             ListDigraph::Node e;
 
-            if( !fast_compare_node_ids.contains( to_node->getId() ) ){
+            if( !fast_compare_node_coors.contains( to_coor ) ){
                 e = this->routing_graph->addNode();
                 //this->nodes_index->upsert( to_node->getCoordinate() , to_node );
-                this->nodes_index->upsert( to_node.dynamicCast<GWSAgent>() , to_node->getCoordinate() );
-                this->node_to_nodes.insert( e , to_node );
-                fast_compare_node_ids.append( to_node->getId() );
+                this->coors_to_node.insert( to_coor , e );
+                fast_compare_node_coors.append( to_coor );
             } else {
-                e = this->node_to_nodes.key( to_node );
+                e = this->coors_to_node.value( to_coor );
             }
 
             // Create arc and link it to edge
@@ -95,14 +93,14 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSGraphNode> GWSRouting::findNearestNode( const GWSCoordinate coor ){
+/*QSharedPointer<GWSGraphNode> GWSRouting::findNearestNode( const GWSCoordinate coor ){
     return this->nodes_index->getNearestElement( coor ).dynamicCast<GWSGraphNode>();
 }
 
 QSharedPointer<GWSGraphNode> GWSRouting::getNodeFromNode(const ListDigraph::Node node){
-    return this->node_to_nodes.value( node );
+    return this->coors_to_node.value( node );
 }
 
 QSharedPointer<GWSGraphEdge> GWSRouting::getEdgeFromArc(const ListDigraph::Arc arc){
     return this->arc_to_edges.value( arc );
-}
+}*/

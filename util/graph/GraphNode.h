@@ -32,8 +32,8 @@ public:
     // GETTERS
     virtual const QList< QSharedPointer<GWSGraphEdge> > getDepartingEdges() const;
     virtual const QList< QSharedPointer<GWSGraphEdge> > getArrivingEdges() const;
-    virtual const QSharedPointer<GWSGraphEdge> getDepartingEdgeTo( QSharedPointer<GWSGraphNode> to ) const;
-    virtual const QSharedPointer<GWSGraphEdge> getArrivingEdgeFrom( QSharedPointer<GWSGraphNode> from ) const;
+    //virtual const QSharedPointer<GWSGraphEdge> getDepartingEdgeTo( QSharedPointer<GWSGraphNode> to ) const;
+    //virtual const QSharedPointer<GWSGraphEdge> getArrivingEdgeFrom( QSharedPointer<GWSGraphNode> from ) const;
     virtual int getDegree() const;
     GWSCoordinate getCoordinate();
 

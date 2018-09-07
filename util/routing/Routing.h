@@ -29,9 +29,9 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
 
     // GETTERS
-    QSharedPointer<GWSGraphNode> findNearestNode( const GWSCoordinate coor );
-    QSharedPointer<GWSGraphNode> getNodeFromNode( const ListDigraph::Node node );
-    QSharedPointer<GWSGraphEdge> getEdgeFromArc( const ListDigraph::Arc arc );
+    //QSharedPointer<GWSGraphNode> findNearestNode( const GWSCoordinate coor );
+    //QSharedPointer<GWSGraphNode> getNodeFromNode( const ListDigraph::Node node );
+    //QSharedPointer<GWSGraphEdge> getEdgeFromArc( const ListDigraph::Arc arc );
 
 protected:
 
@@ -42,7 +42,7 @@ protected:
     QMap< ListDigraph::Arc , QSharedPointer<GWSGraphEdge> > arc_to_edges;
 
     // To link nodes with its original GSSGraphNode
-    QMap< ListDigraph::Node , QSharedPointer<GWSGraphNode> > node_to_nodes;
+    QMap< GWSCoordinate , ListDigraph::Node > coors_to_node;
 
 private:
 

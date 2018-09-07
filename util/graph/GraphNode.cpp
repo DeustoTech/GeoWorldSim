@@ -45,9 +45,9 @@ const QList< QSharedPointer<GWSGraphEdge> > GWSGraphNode::getArrivingEdges() con
     return this->in_edges;
 }
 
-const QSharedPointer<GWSGraphEdge> GWSGraphNode::getDepartingEdgeTo(QSharedPointer<GWSGraphNode> to) const{
+/*const QSharedPointer<GWSGraphEdge> GWSGraphNode::getDepartingEdgeTo(QSharedPointer<GWSGraphNode> to) const{
     foreach(QSharedPointer<GWSGraphEdge> e , this->getDepartingEdges() ){
-        if( e->getToNode()->equals( to ) ){
+        if( e->getTo().equals( to ) ){
             return e;
         }
     }
@@ -56,12 +56,12 @@ const QSharedPointer<GWSGraphEdge> GWSGraphNode::getDepartingEdgeTo(QSharedPoint
 
 const QSharedPointer<GWSGraphEdge> GWSGraphNode::getArrivingEdgeFrom(QSharedPointer<GWSGraphNode> from) const{
     foreach(QSharedPointer<GWSGraphEdge> e , this->getArrivingEdges() ){
-        if( e->getFromNode()->equals( from ) ){
+        if( e->getFrom().equals( from ) ){
             return e;
         }
     }
     return 0;
-}
+}*/
 
 int GWSGraphNode::getDegree() const{
     int degree = this->out_edges.size();
@@ -89,21 +89,21 @@ GWSCoordinate GWSGraphNode::getCoordinate(){
 **********************************************************************/
 
 void GWSGraphNode::connectEdge(QSharedPointer<GWSGraphEdge> edge){
-    if( edge->getFromNode() == this && !this->getDepartingEdges().contains( edge ) ){
+    if( edge->getFrom() == this->getCoordinate() && !this->getDepartingEdges().contains( edge ) ){
         //geos::planargraph::Node::addOutEdge( edge );
         this->out_edges.append( edge );
     }
-    if( edge->getToNode() == this &&  !this->getArrivingEdges().contains( edge )){
+    if( edge->getTo() == this->getCoordinate() &&  !this->getArrivingEdges().contains( edge )){
         this->in_edges.append( edge );
     }
 }
 
 void GWSGraphNode::disconnectEdge(QSharedPointer<GWSGraphEdge> edge){
-    if( edge->getFromNode() == this ){
+    if( edge->getFrom() == this->getCoordinate() ){
         //geos::planargraph::Node::getOutEdges()->remove( edge );
         this->out_edges.removeAll( edge );
     }
-    if( edge->getToNode() == this ){
+    if( edge->getTo() == this->getCoordinate() ){
         this->in_edges.removeAll( edge );
     }
 }

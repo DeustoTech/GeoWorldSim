@@ -53,6 +53,10 @@ bool GWSCoordinate::operator != (const GWSCoordinate& other) const{
     return !(*this == other);
 }
 
+bool GWSCoordinate::operator < (const GWSCoordinate& other) const{
+    return this->x < other.x && this->y < other.y && this->z < other.z;
+}
+
 GWSCoordinate& GWSCoordinate::operator = (const GWSCoordinate& other){
     this->x = other.x;
     this->y = other.y;

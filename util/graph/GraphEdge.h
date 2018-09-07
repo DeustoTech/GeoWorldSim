@@ -3,6 +3,7 @@
 
 #include "../../util/units/Units.h"
 #include "../../object/Object.h"
+#include "../../util/graph/GraphNode.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
@@ -27,8 +28,8 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    virtual QSharedPointer<GWSGraphNode> getFromNode() const;
-    virtual QSharedPointer<GWSGraphNode> getToNode() const;
+    virtual GWSCoordinate getFrom() const;
+    virtual GWSCoordinate getTo() const;
     virtual GWSLengthUnit getLength() const;
     virtual double getGradient() const; // Positive for climbing up and negative for going down
     virtual bool equals( const QSharedPointer<GWSGraphEdge> other) const;
@@ -41,9 +42,8 @@ public:
     virtual double getCost( double accumulated_cost = 0 ) const; // To be implemented by each child
 
 private:
-
-    QSharedPointer<GWSGraphNode> from;
-    QSharedPointer<GWSGraphNode> to;
+    GWSCoordinate from;
+    GWSCoordinate to;
     GWSLengthUnit length = 0;
 };
 

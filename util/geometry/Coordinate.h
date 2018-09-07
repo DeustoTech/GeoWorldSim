@@ -32,6 +32,7 @@ struct GWSCoordinate {
     // OPERATORS
     bool operator == (const GWSCoordinate&) const;
     bool operator != (const GWSCoordinate&) const;
+    bool operator < (const GWSCoordinate&) const;
     GWSCoordinate& operator= (const GWSCoordinate&);
     GWSCoordinate& operator+ (const GWSCoordinate&);
     GWSCoordinate& operator- (const GWSCoordinate&);

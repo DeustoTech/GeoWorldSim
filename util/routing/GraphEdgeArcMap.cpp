@@ -20,17 +20,19 @@ GWSGraphEdgeArcMap::GWSGraphEdgeArcMap(GWSRouting *parent) : ListDigraph::ArcMap
 
 double GWSGraphEdgeArcMap::operator [](Key arc) const{
 
-    QSharedPointer<GWSGraphEdge> edge = this->parent->getEdgeFromArc( arc );
+    qDebug() << 2;
+
+    QSharedPointer<GWSGraphEdge> edge = this->parent->arc_to_edges.value( arc );
     if( !edge ){ return Q_INFINITY; }
 
     // Get accumulated cost (generally arrival time) at from_node of edge
-    QSharedPointer<GWSGraphNode> from = edge->getFromNode();
-    double acc_cost = this->accumulated_minimum_cost_at_nodes.value( from , 0 );
-    double cost_for_edge = edge->getCost( acc_cost ) + from->getCost();
+    GWSCoordinate from = edge->getFrom();
+    double acc_cost = this->accumulated_minimum_cost.value( from , 0 );
+    double cost_for_edge = edge->getCost( acc_cost );
 
     // Set accumulated cost at to_edge of node
-    QSharedPointer<GWSGraphNode> to = edge->getToNode();
-    this->accumulated_minimum_cost_at_nodes.insert( to , qMin( cost_for_edge , this->accumulated_minimum_cost_at_nodes.value( to , Q_INFINITY ) ) );
+    GWSCoordinate to = edge->getTo();
+    this->accumulated_minimum_cost.insert( to , qMin( cost_for_edge , this->accumulated_minimum_cost.value( to , Q_INFINITY ) ) );
 
     return cost_for_edge;
 }

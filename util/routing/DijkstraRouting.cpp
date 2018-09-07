@@ -21,36 +21,36 @@ GWSDijkstraRouting::~GWSDijkstraRouting(){
  * @param go_through_nodes
  * @return
  */
-QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPath(QList<QSharedPointer<GWSGraphNode> > ordered_nodes ){
+QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPath(QList< GWSCoordinate > ordered_coors ){
     QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
     Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = 0;
     GWSGraphEdgeArcMap* routing_graph_costs = 0;
 
-    for(int i = 0; i < ordered_nodes.size()-1; i++){
+    for(int i = 0; i < ordered_coors.size()-1; i++){
 
         QList<QSharedPointer<GWSGraphEdge> > result_route;
-        QSharedPointer<GWSGraphNode> from_node = ordered_nodes.at( i );
-        QSharedPointer<GWSGraphNode> to_node = ordered_nodes.at( i+1 );
+        GWSCoordinate from_coor = ordered_coors.at( i );
+        GWSCoordinate to_coor = ordered_coors.at( i+1 );
 
-        if( !from_node || !to_node ){
-            qDebug() << QString("Start (%1) or end node (%2) is emtpy").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
+        if( !from_coor.isValid() || !to_coor.isValid() ){
+            qDebug() << QString("Start (%1) or end coordinates (%2) are not valid").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
 
-        if( from_node->getCoordinate() == to_node->getCoordinate() ){
-            qDebug() << QString("Same start and end nodes (%1) (%2)").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
+        if( from_coor == to_coor ){
+            qDebug() << QString("Same start and end coordinates (%1) (%2)").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
 
         // Compute dijkstra shortest path
-        ListDigraph::Node start = this->node_to_nodes.key( from_node );
-        ListDigraph::Node end = this->node_to_nodes.key( to_node );
+        ListDigraph::Node start = this->coors_to_node.value( from_coor );
+        ListDigraph::Node end = this->coors_to_node.value( to_coor );
 
         if ( this->routing_graph->id( start ) < 0 || this->routing_graph->id( end ) < 0 ){
-            qDebug() << QString("Start (%1) or end node (%2) are not in graph").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
+            qDebug() << QString("Start (%1) or end coordinate (%2) are not in graph").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
@@ -60,8 +60,11 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
             dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
         }
 
+        dijkstra_algorithm->init();
+        dijkstra_algorithm->start( start );
+
         if( !dijkstra_algorithm->run( start , end ) ){
-            qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
+            qWarning() << QString("Can not reach end coordinate (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
@@ -70,7 +73,7 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         Path<ListDigraph> shortest_path = dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             ListDigraph::Arc arc = shortest_path.nth( i );
-            result_route.append( this->getEdgeFromArc( arc ) );
+            result_route.append( this->arc_to_edges.value( arc ) );
         }
         result_routes.append( result_route );
     }
@@ -89,24 +92,24 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
  * @param end_nodes
  * @return
  */
-QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
+QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(GWSCoordinate from_coor, QList< GWSCoordinate > to_coors ){
     QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
     GWSGraphEdgeArcMap* routing_graph_costs = new GWSGraphEdgeArcMap( this );
     Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
 
     // Get start node and start graph from it
-    ListDigraph::Node start = this->node_to_nodes.key( from_node );
+    ListDigraph::Node start = this->coors_to_node.value( from_coor );
     dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
-    foreach( QSharedPointer<GWSGraphNode> to_node , to_nodes ){
+    foreach( GWSCoordinate to_coor , to_coors ){
         QList< QSharedPointer<GWSGraphEdge>> route;
 
-        ListDigraph::Node end = this->node_to_nodes.key( to_node );
+        ListDigraph::Node end = this->coors_to_node.value( to_coor );
 
         if( !dijkstra_algorithm->run( start , end ) ){
-            qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_node->getCoordinate().toString() ).arg( to_node->getCoordinate().toString() );
+            qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( route );
             continue;
         }
@@ -115,7 +118,7 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
         Path<ListDigraph> shortest_path = dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             ListDigraph::Arc arc = shortest_path.nth( i );
-            route.append( this->getEdgeFromArc( arc ) );
+            route.append( this->arc_to_edges.value( arc ) );
         }
 
         result_routes.append( route );
@@ -134,13 +137,13 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
  * @param end_node
  * @return
  */
-QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(QSharedPointer<GWSGraphNode> from_node, QSharedPointer<GWSGraphNode> to_node ){
+QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(GWSCoordinate from_coor, GWSCoordinate to_coor ){
 
-    QList< QSharedPointer<GWSGraphNode> > nodes;
-    nodes.append( from_node );
-    nodes.append( to_node );
+    QList< GWSCoordinate > coors;
+    coors.append( from_coor );
+    coors.append( to_coor );
 
-    return this->dijkstraShortestPath(nodes).at(0);
+    return this->dijkstraShortestPath(coors).at(0);
 }
 
 /**
@@ -149,7 +152,7 @@ QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(Q
  * @param nodes
  * @return
  */
-QSharedPointer<GWSGraphNode> GWSDijkstraRouting::dijkstraNearestNode(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
+/*QSharedPointer<GWSGraphNode> GWSDijkstraRouting::dijkstraNearestNode(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
 
     QSharedPointer<GWSGraphNode> result_node = 0;
     GWSLengthUnit min_length( std::numeric_limits<double>::max() );
@@ -174,4 +177,4 @@ QSharedPointer<GWSGraphNode> GWSDijkstraRouting::dijkstraNearestNode(QSharedPoin
     }
 
     return result_node;
-}
+}*/

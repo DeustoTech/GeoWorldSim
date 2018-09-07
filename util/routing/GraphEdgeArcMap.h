@@ -32,7 +32,7 @@ public:
 
 private:
     GWSRouting* parent;
-    mutable QMap< QSharedPointer<GWSGraphNode> , double > accumulated_minimum_cost_at_nodes; // Accumulated minimum costs at reached nodes
+    mutable QMap< GWSCoordinate , double > accumulated_minimum_cost; // Accumulated minimum costs at reached coordinates
 
 };
 
