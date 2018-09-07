@@ -24,8 +24,8 @@ GWSNetworkEnvironment::~GWSNetworkEnvironment(){
 **********************************************************************/
 
 QJsonObject GWSNetworkEnvironment::serialize() const{
-    //QJsonObject json;
-    QJsonObject json = GWSEnvironment::serializeMini();
+    QJsonObject json;
+    //QJsonObject json = GWSEnvironment::serializeMini();
     return json;
 }
 
