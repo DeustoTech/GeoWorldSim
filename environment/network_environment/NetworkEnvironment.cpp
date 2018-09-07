@@ -24,11 +24,13 @@ GWSNetworkEnvironment::~GWSNetworkEnvironment(){
 **********************************************************************/
 
 QJsonObject GWSNetworkEnvironment::serialize() const{
-    QJsonObject json;
+    //QJsonObject json;
+    QJsonObject json = GWSEnvironment::serializeMini();
     return json;
 }
 
 void GWSNetworkEnvironment::deserialize(QJsonObject json){
+
 }
 
 /**********************************************************************

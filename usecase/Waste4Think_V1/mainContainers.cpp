@@ -145,14 +145,14 @@ int main(int argc, char* argv[])
             geo.insert( "@type" , "GWSGeometry" );
 
             // Create GRAPHNODE JSON
-            QJsonObject node;
+            /*QJsonObject node;
             node.insert( "@type" , "GWSGraphNode" );
             node.insert( "node_x" , geo.value( "coordinates" ).toArray().at( 0 ) );
-            node.insert( "node_y" , geo.value( "coordinates" ).toArray().at( 1 ) );
+            node.insert( "node_y" , geo.value( "coordinates" ).toArray().at( 1 ) );*/
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
-            agent_json.insert( "node" , node );
+            //agent_json.insert( "node" , node );
             agent_json.insert( "@type" , "ContainerAgent" );
             agent_json.insert( "@id" , data.value( "id" ) );
             agent_json.insert( "capacity" , 100 );  // This is the attribute that should be changed when humans throw their waste.
@@ -178,12 +178,12 @@ int main(int argc, char* argv[])
 
     pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
+        {
             QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-
             edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
             edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
             edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
@@ -192,19 +192,62 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
             agent_json.insert( "edge" , edge );
-            agent_json.insert( "@id" , data.value("id") );
+            agent_json.insert( "@id" , data.value("osm_id") );
+            agent_json.insert( "@type" , "GWSAgent" );
+
+            QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+            pedestrian->icon_url = "https://image.flaticon.com/icons/svg/1087/1087927.svg";
+            GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
+
+            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian ->serialize() );
+
+        }
+        {
+            QJsonObject geo = data.value( "geometry").toObject();
+            geo.insert( "@type" ,  "GWSGeometry");
+
+            QJsonObject edge;
+            edge.insert( "@type" , "GWSGraphEdge" );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 1 ) );
+
+            QJsonObject agent_json;
+            agent_json.insert( "geo" , geo );
+            agent_json.insert( "edge" , edge );
+            agent_json.insert( "@id" , data.value("osm_id") );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
+            qDebug() << pedestrian->serialize();
+            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian ->serialize() );
+        }
+    });
 
-            //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+    pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+
+        const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
+        GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
+        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86234 , 43.28379 ) );
+        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86084 , 43.28315 ) );
+
+        qDebug() << s->getFrom().toString() << s->getTo().toString();
+
+        QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
+
+        qDebug() << l;
+        foreach( QSharedPointer<GWSGraphEdge> e , l ){
+            //QJsonObject  netenv = GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize();
+            //qDebug() << netenv;
+            emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
+        }
 
     });
 
     // Read FOOTWAY ROAD data from datasource url:
     GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/683ac1fe-0ad0-4c62-af51-29fd1803acb5/read" );
-
     footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
         {
@@ -227,7 +270,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
 
-            //emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
+            emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
         }
         {
             QJsonObject geo = data.value( "geometry").toObject();
@@ -249,12 +292,12 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
 
-            //emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
-        }
+            emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
+       }
 
     });
 
-    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    /*footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
         GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
@@ -264,12 +307,15 @@ int main(int argc, char* argv[])
         qDebug() << s->getFrom().toString() << s->getTo().toString();
 
         QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
+
+        qDebug() << l;
         foreach( QSharedPointer<GWSGraphEdge> e , l ){
-            qDebug() << GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize();
+            QJsonObject  netenv = GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize();
+            //qDebug() << netenv;
             emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
         }
 
-    });
+    });*/
 
     GWSExecutionEnvironment::globalInstance()->run();
 
