@@ -1,11 +1,11 @@
 #include "Graph.h"
 
 GWSGraph::GWSGraph() {
-    this->nodes_index = new GWSQuadtree();
+    this->edges_index = new GWSQuadtree();
 }
 
 GWSGraph::~GWSGraph() {
-    delete this->nodes_index;
+    this->edges_index->deleteLater();
 }
 
 /**********************************************************************
@@ -39,12 +39,16 @@ GWSGraph::~GWSGraph() {
  GETTERS
 **********************************************************************/
 
-bool GWSGraph::containsNode( QSharedPointer<GWSGraphNode> node ) const{
-    return this->nodes.contains( node );
+bool GWSGraph::containsCoordinate( GWSCoordinate coor ) const{
+    return this->coordinates.contains( coor );
 }
 
 bool GWSGraph::containsEdge( QSharedPointer<GWSGraphEdge> edge) const{
     return this->edges.contains( edge );
+}
+
+const QSharedPointer<GWSGraphEdge> GWSGraph::findNearestEdge(GWSCoordinate coor) const{
+    return this->edges_index->getNearestElement( coor ).dynamicCast<GWSGraphEdge>();
 }
 
 const QSharedPointer<GWSGraphEdge> GWSGraph::findEdge(GWSCoordinate from, GWSCoordinate to) const{
@@ -62,27 +66,6 @@ const QSharedPointer<GWSGraphEdge> GWSGraph::findEdge(GWSCoordinate from, GWSCoo
         }
     }*/
     return 0;
-}
-
-const QSharedPointer<GWSGraphNode> GWSGraph::findNode(GWSCoordinate point) const{
-    foreach (QSharedPointer<GWSGraphNode> node, this->nodes) {
-        if( node->getCoordinate() == point ){
-            return node;
-        }
-    }
-    return 0;
-}
-
-/** NOTICE that first of all it will call the FindNode method
- * @brief Graph::findNearestNode
- * @param coor
- * @return
- */
-const QSharedPointer<GWSGraphNode> GWSGraph::findNearestNode(GWSCoordinate point) const{
-    if( this->nodes_index ){
-        return this->nodes_index->getNearestElement( point ).dynamicCast<GWSGraphNode>();
-    }
-    return this->findNode( point );
 }
 
 QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges() const{
@@ -116,18 +99,18 @@ QMap<QSharedPointer<GWSGraphEdge>,double> GWSGraph::getCostMap() const{
     return cost_map;
 }
 
-QList<QSharedPointer<GWSGraphNode>> GWSGraph::findNodesOfDegree( int degree ) const{
+/*QList<QSharedPointer<GWSGraphNode>> GWSGraph::findNodesOfDegree( int degree ) const{
     QList<QSharedPointer<GWSGraphNode>> nodes;
-    foreach( QSharedPointer<GWSGraphNode> node , this->nodes) {
+    foreach( QSharedPointer<GWSGraphNode> node , this->coordinates) {
         if( node->getDegree() == degree ){
             nodes.append( node );
         }
     }
     return nodes;
-}
+}*/
 
 int GWSGraph::countNodes() const{
-    return this->nodes.size();
+    return this->coordinates.size();
 }
 
 int GWSGraph::countEdges() const{
@@ -158,28 +141,29 @@ void GWSGraph::addGraph(const GWSGraph *other){
 }
 
 void GWSGraph::addEdge( QSharedPointer<GWSGraphEdge> edge){
-    /*const QSharedPointer<GWSGraphNode> from = this->findNode( edge->getFrom()->getCoordinate() );
-    if( !from ){
-        this->addNode( edge->getFrom() );
+    GWSCoordinate from_coor = edge->getFrom();
+    GWSCoordinate to_coor = edge->getTo();
+    if( !this->coordinates.contains( from_coor ) ){
+        this->coordinates.append( from_coor );
     }
-    const QSharedPointer<GWSGraphNode> to = this->findNode( edge->getTo()->getCoordinate() );
-    if( !to ){
-        this->addNode( edge->getTo() );
-    }*/
+    if( this->coordinates.contains( to_coor ) ){
+        this->coordinates.append( to_coor );
+    }
     this->edges.append( edge );
+    this->edges_index->upsert( edge , edge->getFrom() );
 }
 
 void GWSGraph::removeEdge(QSharedPointer<GWSGraphEdge> edge){
     this->edges.removeAll( edge );
 }
 
-void GWSGraph::addNode(QSharedPointer<GWSGraphNode> node){
+/*void GWSGraph::addNode(QSharedPointer<GWSGraphNode> node){
     this->nodes_index->upsert( node , node->inner_coordinate );
-    this->nodes.append( node );
+    this->coordinates.append( node );
 }
 
 void GWSGraph::removeNode(QSharedPointer<GWSGraphNode> node){
     this->nodes_index->remove( node );
-    this->nodes.removeAll( node );
-}
+    this->coordinates.removeAll( node );
+}*/
 

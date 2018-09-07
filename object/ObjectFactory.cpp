@@ -15,7 +15,6 @@
 
 #include "../../util/grid/Grid.h"
 #include "../../util/graph/GraphEdge.h"
-#include "../../util/graph/GraphNode.h"
 
 
 #include "../../util/parallelism/ParallelismController.h"
@@ -34,7 +33,6 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSBehaviour::staticMetaObject );
     this->registerType( GWSGeometry::staticMetaObject );
     this->registerType( GWSGraphEdge::staticMetaObject );
-    this->registerType( GWSGraphNode::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

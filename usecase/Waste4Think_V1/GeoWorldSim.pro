@@ -56,7 +56,7 @@ HEADERS += \
     ../../util/geometry/Quadtree.h \
     ../../util/distributed/ExternalListener.h \
             ## GRAPH
-    ../../util/graph/GraphNode.h \
+    #../../util/graph/GraphNode.h \
     ../../util/graph/GraphEdge.h \
     ../../util/graph/Graph.h \
     #../../util/graph/GraphUtils.h \
@@ -114,7 +114,7 @@ SOURCES += mainEmpty.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphNode.cpp \
+    #../../util/graph/GraphNode.cpp \
     ../../util/graph/GraphEdge.cpp \
     ../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \

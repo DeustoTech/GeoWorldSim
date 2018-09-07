@@ -67,7 +67,6 @@ HEADERS += \
     ../../util/routing/DijkstraRouting.h \
     ../../util/routing/GraphEdgeArcMap.h \
             ## GRAPH
-    ../../util/graph/GraphNode.h \
     ../../util/graph/GraphEdge.h \
     ../../util/graph/Graph.h \
     #../../util/graph/GraphUtils.h \
@@ -133,7 +132,6 @@ SOURCES += mainContainers.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphNode.cpp \
     ../../util/graph/GraphEdge.cpp \
     ../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \

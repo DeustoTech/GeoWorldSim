@@ -1,11 +1,9 @@
 #ifndef GWSGRAPHEDGE_H
 #define GWSGRAPHEDGE_H
 
+#include "../../util/geometry/Coordinate.h"
 #include "../../util/units/Units.h"
 #include "../../object/Object.h"
-#include "../../util/graph/GraphNode.h"
-
-QT_FORWARD_DECLARE_CLASS(GWSGraphNode)
 
 class GWSGraphEdge : public GWSObject
 {
@@ -18,8 +16,11 @@ public:
     // PROPERTIES
     static QString EDGE_FROM_X_PROP;
     static QString EDGE_FROM_Y_PROP;
+    static QString EDGE_FROM_Z_PROP;
     static QString EDGE_TO_X_PROP;
     static QString EDGE_TO_Y_PROP;
+    static QString EDGE_TO_Z_PROP;
+
 
     // IMPORTERS
     virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
@@ -42,8 +43,6 @@ public:
     virtual double getCost( double accumulated_cost = 0 ) const; // To be implemented by each child
 
 private:
-    GWSCoordinate from;
-    GWSCoordinate to;
     GWSLengthUnit length = 0;
 };
 

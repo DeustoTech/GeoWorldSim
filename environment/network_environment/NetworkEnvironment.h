@@ -8,7 +8,7 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/graph/Graph.h"
 #include "../../util/graph/GraphEdge.h"
-#include "../../util/graph/GraphNode.h"
+#include "../../util/geometry/Quadtree.h"
 
 class GWSNetworkEnvironment : public GWSEnvironment
 {
@@ -18,7 +18,6 @@ public:
     static GWSNetworkEnvironment* globalInstance();
 
     // PROPERTIES
-    static QString NODE_PROP;
     static QString EDGE_PROP;
 
     // EXPORTERS
@@ -26,11 +25,12 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    const QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
+    //const QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
     const QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
-    QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-    template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-    QSharedPointer<GWSGraphNode> getNearestNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    const QSharedPointer<GWSAgent> getAgent( QSharedPointer<GWSGraphEdge> edge ) const;
+    //QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    //template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
+    QSharedPointer<GWSGraphEdge> getNearestEdgeFromGraph( GWSCoordinate coor , QString class_name ) const;
     QSharedPointer<GWSGraphEdge> getEdgeFromGraph( GWSCoordinate from_point , GWSCoordinate to_point , QString class_name ) const;
 
     const GWSGraph* getGraph( QString class_name ) const;
@@ -46,7 +46,7 @@ private:
     GWSNetworkEnvironment(GWSNetworkEnvironment const&);
     ~GWSNetworkEnvironment();
 
-    QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSGraphNode> > agent_to_node;
+    GWSQuadtree* edges_index = Q_NULLPTR;
     QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSGraphEdge> > agent_to_edge;
     QMap<QString, GWSGraph*> network_graphs; // Graphs
 

@@ -20,8 +20,6 @@ GWSGraphEdgeArcMap::GWSGraphEdgeArcMap(GWSRouting *parent) : ListDigraph::ArcMap
 
 double GWSGraphEdgeArcMap::operator [](Key arc) const{
 
-    qDebug() << 2;
-
     QSharedPointer<GWSGraphEdge> edge = this->parent->arc_to_edges.value( arc );
     if( !edge ){ return Q_INFINITY; }
 
