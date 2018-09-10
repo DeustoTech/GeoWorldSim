@@ -192,7 +192,6 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
             agent_json.insert( "edge" , edge );
-            agent_json.insert( "@id" , data.value("osm_id") );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -216,7 +215,6 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
             agent_json.insert( "edge" , edge );
-            agent_json.insert( "@id" , data.value("osm_id") );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -264,7 +262,6 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
             agent_json.insert( "edge" , edge );
-            agent_json.insert( "@id" , data.value("osm_id") );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -286,13 +283,12 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
             agent_json.insert( "edge" , edge );
-            agent_json.insert( "@id" , data.value("osm_id") );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
+            emit GWSApp::globalInstance()->pushAgentSignal( footway->serialize() );
        }
 
     });
