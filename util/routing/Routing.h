@@ -29,9 +29,15 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
 
     // GETTERS
-    //QSharedPointer<GWSGraphNode> findNearestNode( const GWSCoordinate coor );
+    GWSCoordinate findNearestRoutingCoordinate( const GWSCoordinate coor );
     //QSharedPointer<GWSGraphNode> getNodeFromNode( const ListDigraph::Node node );
     //QSharedPointer<GWSGraphEdge> getEdgeFromArc( const ListDigraph::Arc arc );
+
+    class GWSRoutingNode : public GWSObject {
+    public:
+        GWSRoutingNode( ListDigraph::Node ref ) : referenced_lemon_node(ref){};
+        ListDigraph::Node referenced_lemon_node;
+    };
 
 protected:
 
@@ -46,7 +52,7 @@ protected:
 
 private:
 
-    GWSQuadtree* nodes_index; // In order to be able to find nearest nodes
+    GWSQuadtree* nodes_index = Q_NULLPTR; // In order to be able to find nearest nodes
 
 };
 

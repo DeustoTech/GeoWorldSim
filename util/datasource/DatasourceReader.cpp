@@ -10,7 +10,9 @@
 
 GWSDatasourceReader::GWSDatasourceReader(QString datasource_url) : QObject(){
     this->datasource_url = datasource_url;
+}
 
+void GWSDatasourceReader::startReading(){
     this->requestPaginated( this->last_paginated );
 }
 

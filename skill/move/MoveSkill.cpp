@@ -43,7 +43,7 @@ GWSTimeUnit MoveSkill::getAccTime() const{
     return this->getProperty( MoveSkill::ACCUMULATED_TIME_PROP ).toDouble();
 }
 
-GWSCoordinate MoveSkill::getDestination() const{
+GWSCoordinate MoveSkill::getCurrentDestination() const{
     if( this->getProperty( DESTINATION_X_PROP ).isNull() || this->getProperty( DESTINATION_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
@@ -98,10 +98,10 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
     }
     GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate destination_coor = this->getDestination();
+    GWSCoordinate destination_coor = this->getCurrentDestination();
 
     // Distance
-    double meter_distance = current_coor.getDistance( this->getDestination() ).number();
+    double meter_distance = current_coor.getDistance( this->getCurrentDestination() ).number();
     double distance_percentage = (meters / meter_distance);
 
     distance_percentage = qMin( distance_percentage , 1.0 );
@@ -113,9 +113,9 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     double y_move = y_distance * distance_percentage * ( destination_coor.getY() > current_coor.getY() ? 1 : -1 );
 
     // Set the agents position
-    GWSCoordinate position = GWSCoordinate( x_move , y_move );
-    agent_geom->transformMove( position );
-    qDebug() << "Step = " <<position.toString();
+    GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
+    GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+    qDebug() << "Step = " << apply_movement.toString();
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 

@@ -17,7 +17,7 @@
 // Skills
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
-
+#include "../../skill/move/MoveThroughRouteSkill.h"
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
@@ -26,6 +26,7 @@
 #include "../../behaviour/move/SetHomeBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
+#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/FindClosestBehaviour.h"
 #include "../../behaviour/move/GoHomeBehaviour.h"
 
@@ -68,11 +69,14 @@ int main(int argc, char* argv[])
     // Skills
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );
+
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( DecideAccordingToWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EmptyWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetHomeBehaviour::staticMetaObject );
@@ -102,7 +106,7 @@ int main(int argc, char* argv[])
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveSkill\" , \"maxspeed\" : 800 } ],"
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 800 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
@@ -110,15 +114,15 @@ int main(int argc, char* argv[])
                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" , \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
                                                                                            "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
                                                                                                                                                                         "{ \"@type\" : \"FindClosestBehaviour\" , \"duration\" : 1000  } , "
-                                                                                                                                                                        "{ \"@type\" : \"MoveBehaviour\", \"duration\" : 1000 } , "
+                                                                                                                                                                        "{ \"@type\" : \"MoveThroughRouteBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                                         "{ \"@type\" : \"EmptyWasteBehaviour\", \"duration\" : 1000 } , "
                                                                                                                                                                         "{ \"@type\" : \"GoHomeBehaviour\" , \"duration\" : 1000  } , "
-                                                                                                                                                                        "{ \"@type\" : \"MoveBehaviour\" , \"duration\" : 1000 }  "
+                                                                                                                                                                        "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"duration\" : 1000 }  "
                                                                                                                                                                         "] } ,"
                                                                                            "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true } "
                                                                                       " ] } ")
-                                                       .arg( (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
-                                                       .arg( (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
+                                                       .arg( -2.86101  ) // (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
+                                                       .arg( 43.28149 ) // (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
                                                        .arg( qrand() % 100 + 1 )
                                                        .toLatin1()
                                                         );
@@ -161,12 +165,12 @@ int main(int argc, char* argv[])
             container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
             GWSExecutionEnvironment::globalInstance()->registerAgent( container );
 
-            qDebug() << container->serialize();
+          //  qDebug() << container->serialize();
 
             emit GWSApp::globalInstance()->pushAgentSignal( container ->serialize() );
 
     } );
-
+    reader->startReading();
 
 
     /* ----------------
@@ -195,10 +199,9 @@ int main(int argc, char* argv[])
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            pedestrian->icon_url = "https://image.flaticon.com/icons/svg/1087/1087927.svg";
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian ->serialize() );
+            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
 
         }
         {
@@ -219,8 +222,8 @@ int main(int argc, char* argv[])
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
-            qDebug() << pedestrian->serialize();
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian ->serialize() );
+
+            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
         }
     });
 
@@ -228,21 +231,20 @@ int main(int argc, char* argv[])
 
         const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
         GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
-        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86234 , 43.28379 ) );
-        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86084 , 43.28315 ) );
+        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86453 , 43.28397 ) ); //43.28397, -2.86453
+        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86436 , 43.28346 ) ); //43.28346, -2.86436
 
-        qDebug() << s->getFrom().toString() << s->getTo().toString();
+      //  qDebug() << s->getFrom().toString() << s->getTo().toString();
 
         QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
 
-        qDebug() << l;
+       // qDebug() << l;
         foreach( QSharedPointer<GWSGraphEdge> e , l ){
-            //QJsonObject  netenv = GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize();
-            //qDebug() << netenv;
             emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
         }
 
     });
+    pedestrian_reader->startReading();
 
     // Read FOOTWAY ROAD data from datasource url:
     GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/683ac1fe-0ad0-4c62-af51-29fd1803acb5/read" );
@@ -267,7 +269,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( footway ->serialize() );
+            emit GWSApp::globalInstance()->pushAgentSignal( footway->serialize() );
         }
         {
             QJsonObject geo = data.value( "geometry").toObject();
@@ -293,25 +295,24 @@ int main(int argc, char* argv[])
 
     });
 
-    /*footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
         GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
-        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86234 , 43.28379 ) );
-        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86084 , 43.28315 ) );
+        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86453 , 43.28397 ) );
+        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86436 , 43.28346 ) );
 
-        qDebug() << s->getFrom().toString() << s->getTo().toString();
+      //  qDebug() << s->getFrom().toString() << s->getTo().toString();
 
         QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
 
-        qDebug() << l;
+      //  qDebug() << l;
         foreach( QSharedPointer<GWSGraphEdge> e , l ){
-            QJsonObject  netenv = GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize();
-            //qDebug() << netenv;
             emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
         }
 
-    });*/
+    });
+    footway_reader->startReading();
 
     GWSExecutionEnvironment::globalInstance()->run();
 

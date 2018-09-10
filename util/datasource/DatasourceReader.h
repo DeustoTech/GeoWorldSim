@@ -13,6 +13,9 @@ class GWSDatasourceReader : public QObject
 public:
     explicit GWSDatasourceReader( QString datasource_url );
 
+    // METHODS
+    void startReading();
+
 signals:
     void dataValueReadSignal( QJsonObject json_data );
     void dataReadingFinishedSignal();
