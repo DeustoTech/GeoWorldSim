@@ -28,9 +28,9 @@ GWSRouting::GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSObjec
 
             if( !fast_compare_node_coors.contains( from_coor ) ){
                 s = this->routing_graph->addNode();
-                //this->nodes_index->upsert( from_node.dynamicCast<GWSAgent>() , from_node->getCoordinate() );
                 this->coors_to_node.insert( from_coor , s );
                 fast_compare_node_coors.append( from_coor );
+                this->nodes_index->upsert( QSharedPointer<GWSRoutingNode>( new GWSRoutingNode(s) ) , from_coor );
             } else {
                 s = this->coors_to_node.value( from_coor );
             }
@@ -41,9 +41,9 @@ GWSRouting::GWSRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSObjec
 
             if( !fast_compare_node_coors.contains( to_coor ) ){
                 e = this->routing_graph->addNode();
-                //this->nodes_index->upsert( to_node->getCoordinate() , to_node );
                 this->coors_to_node.insert( to_coor , e );
                 fast_compare_node_coors.append( to_coor );
+                this->nodes_index->upsert( QSharedPointer<GWSRoutingNode>( new GWSRoutingNode(e) ) , to_coor );
             } else {
                 e = this->coors_to_node.value( to_coor );
             }
@@ -93,11 +93,12 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-/*QSharedPointer<GWSGraphNode> GWSRouting::findNearestNode( const GWSCoordinate coor ){
-    return this->nodes_index->getNearestElement( coor ).dynamicCast<GWSGraphNode>();
+GWSCoordinate GWSRouting::findNearestRoutingCoordinate( const GWSCoordinate coor ){
+    QSharedPointer<GWSRoutingNode> nobj = this->nodes_index->getNearestElement( coor ).dynamicCast<GWSRoutingNode>();
+    return this->coors_to_node.key( nobj->referenced_lemon_node );
 }
 
-QSharedPointer<GWSGraphNode> GWSRouting::getNodeFromNode(const ListDigraph::Node node){
+/*QSharedPointer<GWSGraphNode> GWSRouting::getNodeFromNode(const ListDigraph::Node node){
     return this->coors_to_node.value( node );
 }
 

@@ -155,10 +155,8 @@ bool GWSBehaviour::behave(){
     foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {
 
         if( !sub->finished() ){
-            success = sub->tick( this->behaving_time );
-            if( !success ){
-                break;
-            }
+            qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( sub->metaObject()->className() ).arg( sub->getId() );
+            success = success && sub->tick( this->behaving_time );
         }
     }
 

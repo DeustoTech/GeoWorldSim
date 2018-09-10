@@ -140,7 +140,7 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
     }
     QString object_id = object->getId();
 
-    this->mutex.lock();
+    //this->mutex.lock();
     // Check if exists
     if( this->registered_envelopes.keys().contains( object_id ) ){
         this->remove( object );
@@ -159,7 +159,7 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
         this->id_to_geometries.insert( object_id , geom );
         this->inner_index->insert( &e , elm );
     }
-    this->mutex.unlock();
+    //this->mutex.unlock();
 }
 
 void GWSQuadtree::remove(QSharedPointer<GWSObject> object){

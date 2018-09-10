@@ -1,7 +1,7 @@
 #include "FindClosestBehaviour.h"
 
 #include "../../app/App.h"
-#include "../../skill/move/MoveSkill.h"
+#include "../../skill/move/MoveThroughRouteSkill.h"
 #include "../../skill/view/ViewSkill.h"
 
 #include "../../environment/time_environment/TimeEnvironment.h"
@@ -15,13 +15,13 @@ FindClosestBehaviour::FindClosestBehaviour() : GWSBehaviour(){
 bool FindClosestBehaviour::finished(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     if( !mv ){
         qInfo() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->metaObject()->className() ).arg( agent->getId() );
         return true;
     }
 
-    GWSCoordinate destination_coor = mv->getDestination();
+    GWSCoordinate destination_coor = mv->getCurrentDestination();
     if( !destination_coor.isValid() ){
         return false;
     }
@@ -41,13 +41,11 @@ bool FindClosestBehaviour::behave(){
     double ClosestContainer_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getY();
 
 
-    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    mv->setProperty( MoveSkill::DESTINATION_X_PROP , ClosestContainer_coordX );
-    mv->setProperty( MoveSkill::DESTINATION_Y_PROP , ClosestContainer_coordY );
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , ClosestContainer_coordX );
+    mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , ClosestContainer_coordY );
 
     qDebug() << "Found closest container at " << ClosestContainer_coordX << "," << ClosestContainer_coordY;
-
-    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 
     return true;
 

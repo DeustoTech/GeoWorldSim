@@ -39,6 +39,7 @@ HEADERS += \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
+    ../../skill/move/MoveThroughRouteSkill.h \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
@@ -49,6 +50,7 @@ HEADERS += \
     ../../behaviour/waste/EmptyWasteBehaviour.h \
     ../../behaviour/move/GoHomeBehaviour.h \
     ../../behaviour/move/SetHomeBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteBehaviour.h \
     TesisBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -91,7 +93,7 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     ContainerAgent.h \
-    HumanAgent.h \
+    HumanAgent.h
             ## TRANSPORT LINES
 
 
@@ -106,6 +108,7 @@ SOURCES += mainContainers.cpp \
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
     ../../skill/view/ViewSkill.cpp \
+    ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
@@ -115,6 +118,7 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/waste/EmptyWasteBehaviour.cpp \
     ../../behaviour/move/GoHomeBehaviour.cpp \
     ../../behaviour/move/SetHomeBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS
     ../../util/uistyle/Style.cpp \
@@ -156,7 +160,7 @@ SOURCES += mainContainers.cpp \
         # AGENTS
     #agent/person/Person.cpp \
     ContainerAgent.cpp \
-    HumanAgent.cpp \
+    HumanAgent.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

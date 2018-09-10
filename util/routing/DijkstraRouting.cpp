@@ -45,9 +45,13 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
             continue;
         }
 
+        // Move to nearest edges
+        GWSCoordinate moved_from_coor = this->findNearestRoutingCoordinate( from_coor );
+        GWSCoordinate moved_to_coor = this->findNearestRoutingCoordinate( to_coor );
+
         // Compute dijkstra shortest path
-        ListDigraph::Node start = this->coors_to_node.value( from_coor );
-        ListDigraph::Node end = this->coors_to_node.value( to_coor );
+        ListDigraph::Node start = this->coors_to_node.value( moved_from_coor );
+        ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );
 
         if ( this->routing_graph->id( start ) < 0 || this->routing_graph->id( end ) < 0 ){
             qDebug() << QString("Start (%1) or end coordinate (%2) are not in graph").arg( from_coor.toString() ).arg( to_coor.toString() );
@@ -59,9 +63,6 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
             routing_graph_costs = new GWSGraphEdgeArcMap( this );
             dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
         }
-
-        dijkstra_algorithm->init();
-        dijkstra_algorithm->start( start );
 
         if( !dijkstra_algorithm->run( start , end ) ){
             qWarning() << QString("Can not reach end coordinate (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );

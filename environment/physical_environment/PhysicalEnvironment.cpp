@@ -222,12 +222,12 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
         }
     }
 
-    this->mutex.lock();
     GWSEnvironment::registerAgent( agent );
+    //this->mutex.lock();
     foreach (QString s , agent->getInheritanceFamily()) {
         this->spatial_index.value( s )->upsert( agent , this->getGeometry( agent ) );
     }
-    this->mutex.unlock();
+    //this->mutex.unlock();
 
 }
 

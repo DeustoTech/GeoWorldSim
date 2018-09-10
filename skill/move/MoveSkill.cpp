@@ -43,7 +43,7 @@ GWSTimeUnit MoveSkill::getAccTime() const{
     return this->getProperty( MoveSkill::ACCUMULATED_TIME_PROP ).toDouble();
 }
 
-GWSCoordinate MoveSkill::getDestination() const{
+GWSCoordinate MoveSkill::getCurrentDestination() const{
     if( this->getProperty( DESTINATION_X_PROP ).isNull() || this->getProperty( DESTINATION_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
@@ -98,10 +98,10 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
     }
     GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate destination_coor = this->getDestination();
+    GWSCoordinate destination_coor = this->getCurrentDestination();
 
     // Distance
-    double meter_distance = current_coor.getDistance( this->getDestination() ).number();
+    double meter_distance = current_coor.getDistance( this->getCurrentDestination() ).number();
     double distance_percentage = (meters / meter_distance);
 
     distance_percentage = qMin( distance_percentage , 1.0 );

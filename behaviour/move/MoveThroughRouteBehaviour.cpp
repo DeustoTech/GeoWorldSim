@@ -1,39 +1,43 @@
-#include "MoveBehaviour.h"
+#include "MoveThroughRouteBehaviour.h"
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 #include "../../app/App.h"
 #include "../../agent/Agent.h"
-#include "../../skill/move/MoveSkill.h"
+#include "../../skill/move/MoveThroughRouteSkill.h"
 
-MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
+MoveThroughRouteBehaviour::MoveThroughRouteBehaviour() : GWSBehaviour(){
+}
+
+MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-bool MoveBehaviour::finished(){
+bool MoveThroughRouteBehaviour::finished(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    // No move skill
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    // No moveThroughRoute skill
     if( !mv ){
         qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
         return true;
     }
-    // No destination for MoveSkill
-    if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
+    // No destination for MoveThroughRouteSkill
+    if( mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).isNull() ){
         return true;
     }
-    return GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
+    GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    return current_position == mv->getRouteDestination();
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-bool MoveBehaviour::behave(){
+bool MoveThroughRouteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -41,22 +45,22 @@ bool MoveBehaviour::behave(){
     GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
 
     // Check if agent can move
-    QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    if( !move_skill ){
-        qWarning() << QString("Agent %1 does not have a MoveSkill").arg( agent->getId() );
+    QSharedPointer<MoveThroughRouteSkill> move_throughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    if( !move_throughroute_skill ){
+        qWarning() << QString("Agent %1 does not have a move_throughroute_skill").arg( agent->getId() );
         return false;
     }
 
     // Calculate speed
     qDebug() << "Current position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
-    GWSCoordinate destination_coor = move_skill->getCurrentDestination();
+    GWSCoordinate destination_coor = move_throughroute_skill->getRouteDestination();
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().getDistance( destination_coor );
-    if( move_skill->getCurrentSpeed() == 0.0 ){
-        move_skill->changeSpeed( 1 );
+    if( move_throughroute_skill->getCurrentSpeed() == 0.0 ){
+        move_throughroute_skill->changeSpeed( 1 );
     }
 
     // Move towards
-    move_skill->move( duration_of_movement );
+    move_throughroute_skill->move( duration_of_movement );
     emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
 
     qDebug() << "Final position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();

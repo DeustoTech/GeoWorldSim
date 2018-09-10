@@ -85,14 +85,17 @@ void GWSGeometry::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent
                               );
                 }
 
-                if( i == 0 ){
+                if( i == 0 && seq->size() >= 4 ){
                     outer_ring = factory->createLinearRing( seq );
-                } else {
+                } else if( seq->size() >= 4 ) {
                     holes->push_back( factory->createLinearRing( seq ) );
                 }
             }
 
-            this->inner_geometry = factory->createPolygon( outer_ring , holes );
+            if( outer_ring ){
+                this->inner_geometry = factory->createPolygon( outer_ring , holes );
+            }
+
         }
 
     } catch ( std::exception &e ){
@@ -246,24 +249,28 @@ double GWSGeometry::getGeometryMaxX() const{
     if( this->inner_geometry ){
         return this->inner_geometry->getEnvelopeInternal()->getMaxX();
     }
+    return Q_INFINITY;
 }
 
 double GWSGeometry::getGeometryMinX() const{
     if( this->inner_geometry ){
         return this->inner_geometry->getEnvelopeInternal()->getMinX();
     }
+    return Q_INFINITY;
 }
 
 double GWSGeometry::getGeometryMaxY() const{
     if( this->inner_geometry ){
         return this->inner_geometry->getEnvelopeInternal()->getMaxY();
     }
+    return Q_INFINITY;
 }
 
 double GWSGeometry::getGeometryMinY() const{
     if( this->inner_geometry ){
         return this->inner_geometry->getEnvelopeInternal()->getMinY();
     }
+    return Q_INFINITY;
 }
 
 GWSCoordinate GWSGeometry::getCentroid() const{

@@ -26,7 +26,7 @@ public:
     GWSSpeedUnit getCurrentSpeed() const;
     GWSLengthUnit getAccDistance() const;
     GWSTimeUnit getAccTime() const;
-    GWSCoordinate getDestination() const;
+    GWSCoordinate getCurrentDestination() const;
 
     // SETTERS
     void setMaxSpeed( GWSSpeedUnit max_speed ); // In m/s
