@@ -12,7 +12,7 @@ SetHomeBehaviour::SetHomeBehaviour() : GWSBehaviour(){
 bool SetHomeBehaviour::finished(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    this->next_behaviours.clear();
+   // this->next_behaviours.clear();
 
     if ( agent->getProperty( "home_coordX" ).toDouble() == 0. || agent->getProperty( "home_coordY" ).toDouble() == 0. ){
         qWarning() << QString("No home coordinates for agent %1 %2 ").arg( agent->metaObject()->className() ).arg( agent->getId() );
@@ -21,7 +21,7 @@ bool SetHomeBehaviour::finished(){
 
     else{
         qWarning() << QString("Home coordinates set agent %1 %2 ").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        this->next_behaviours.append( agent->getBehaviour( "BH0" ) );
+        //this->next_behaviours.append( agent->getBehaviour( "BH0" ) );
         return true;
     }
 

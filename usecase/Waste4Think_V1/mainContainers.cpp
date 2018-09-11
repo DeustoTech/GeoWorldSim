@@ -99,9 +99,10 @@ int main(int argc, char* argv[])
     double lat_max = -2.84024;
     double lat_min = -2.87092;
 
+
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 1 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -110,6 +111,21 @@ int main(int argc, char* argv[])
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
+                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"BH6\" , \"duration\" : 1000 } ,  "
+                                                                                           "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"BH5\" , \"@next\" : \"BH6\" , \"duration\" : 1000  } , "
+                                                                                           "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"BH4\" , \"@next\" : \"BH5\" , \"duration\" : 1000 } , "
+                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\", \"@id\" : \"BH3\" , \"@next\" : \"BH4\" , \"duration\" : 1000 } , "
+                                                                                           "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : \"BH3\" , \"duration\" : 1000  } , "
+                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
+                                                                                           "{ \"@type\" : \"DecideAccordingToWasteBehaviour\" , \"@id\" : \"BH0\" , \"duration\" : 1000 } , "
+                                                                                           "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : \"BH0\" } "
+                                                                                      " ] } ")
+                                                       .arg( (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
+                                                       .arg( (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
+                                                       .arg( qrand() % 100 + 1 )
+                                                       .toLatin1()
+                                                        );
+         /*"\"@behaviours\" : [  "
                                                                                            "{ \"@type\" : \"DecideAccordingToWasteBehaviour\" , \"@id\" : \"BH0\" , \"duration\" : 1000 , \"next\" : [\"BH1\", \"BH2\"] } , "
                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" , \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
                                                                                            "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
@@ -120,16 +136,10 @@ int main(int argc, char* argv[])
                                                                                                                                                                         "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"duration\" : 1000 }  "
                                                                                                                                                                         "] } ,"
                                                                                            "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true } "
-                                                                                      " ] } ")
-                                                       .arg( (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
-                                                       .arg( (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
-                                                       .arg( qrand() % 100 + 1 )
-                                                       .toLatin1()
-                                                        );
-
+                                                                                      " ]*/
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
-
+        qDebug() << human->serialize();
         emit GWSApp::globalInstance()->pushAgentSignal( human ->serialize() );
 
     }
@@ -201,7 +211,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
 
         }
         {
@@ -223,7 +233,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
         }
 
         } catch (std::exception &e){

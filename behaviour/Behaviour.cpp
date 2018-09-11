@@ -34,6 +34,7 @@ void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behav
     // NEXT BEHAVIOURS
     if( json.keys().contains( NEXT_BEHAVIOURS_PROP ) ){
         QJsonArray next_ids = json.value( NEXT_BEHAVIOURS_PROP ).toArray();
+        if( next_ids.isEmpty() ){ next_ids.append( json.value( NEXT_BEHAVIOURS_PROP ).toString() ); }
         foreach( QJsonValue id , next_ids ){
             // Find next behaviour in agent
             QSharedPointer<GWSBehaviour> next_behaviour = this->getAgent()->getBehaviour( id.toString() );
