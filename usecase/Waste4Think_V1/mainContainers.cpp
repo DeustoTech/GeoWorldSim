@@ -94,14 +94,14 @@ int main(int argc, char* argv[])
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
      Zamudio longitude = -2.8621286*/
-    double lon_max = 43.27839;
+    double lon_max = 43.27939;
     double lon_min = 43.27554;
     double lat_max = -2.84024;
     double lat_min = -2.87092;
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 10 ; i++ ){
+    for( int i = 0 ; i < 100 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
 
-        emit GWSApp::globalInstance()->pushAgentSignal( human ->serialize() );
+        emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
 
     }
 
@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
 
           //  qDebug() << container->serialize();
 
-            emit GWSApp::globalInstance()->pushAgentSignal( container ->serialize() );
+            emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
 
     } );
     reader->startReading();
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            emit GWSApp::globalInstance()->sendAgentSignal( pedestrian->serialize() );
 
         }
         {
@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
-            emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            emit GWSApp::globalInstance()->sendAgentSignal( pedestrian->serialize() );
         }
 
         } catch (std::exception &e){

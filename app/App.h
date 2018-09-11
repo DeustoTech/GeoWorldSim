@@ -18,6 +18,7 @@ public:
 
     // GETTERS
     QString getAppId();
+    QString getUserId();
 
 public slots:
 
@@ -29,19 +30,20 @@ public slots:
     void reconnectSocket();
 
 signals:
-    void pushAgentSignal( QJsonObject agent_json );
-    void pushDataSignal( QString signal , QJsonValue json );
+    void sendAgentSignal( QJsonObject agent_json );
+    void sendAlertSignal( int level, QString title, QString description = QString() );
+    void sendDataSignal( QString signal , QJsonValue json );
 
 private slots:
-    void pushAgent( QJsonObject entity_json );
-    void pushData( QString signal , QJsonValue json );
+    void sendAgent( QJsonObject entity_json );
+    void sendAlert( int level, QString title, QString description );
+    void pushDataToSocket( QString signal , QJsonValue json );
 
 private:
     GWSApp(int argc, char* argv[]);
     GWSApp(GWSApp const&);
     ~GWSApp();
 
-    QString app_id; // Given by args
     QWebSocket websocket; // WS to sockets.geoworldsim.com
     QNetworkAccessManager http_manager; // HTTP Posts to history.geoworldsim.com
     quint64 created_timestamp;

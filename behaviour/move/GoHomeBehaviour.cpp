@@ -39,7 +39,7 @@ bool GoHomeBehaviour::behave(){
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , home_coordX );
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , home_coordY );
 
-    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
     return true;
 }

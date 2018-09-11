@@ -135,25 +135,28 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> agent , GWSCoordinate coor )
 }
 
 void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSGeometry> geom ){
+
     if( object.isNull() ){
         return;
     }
+
     QString object_id = object->getId();
 
     //this->mutex.lock();
-    // Check if exists
-    if( this->registered_envelopes.keys().contains( object_id ) ){
-        this->remove( object );
-    }
-
     if( geom ){
+
+        // Check if exists
+        if( this->registered_envelopes.keys().contains( object_id ) ){
+            this->remove( object );
+        }
+
         geos::geom::Envelope e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,
                     geom->getGeometryMaxX() ,
                     geom->getGeometryMinY() ,
                     geom->getGeometryMaxY() );
         GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id );
-        this->id_to_index_elements.insert( object_id , elm );
+        this->id_to_tree_elements.insert( object_id , elm );
         this->id_to_objects.insert( object_id , object );
         this->registered_envelopes.insert( object_id , e );
         this->id_to_geometries.insert( object_id , geom );
@@ -163,20 +166,27 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 }
 
 void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
+
     if( object.isNull() ){
         return;
     }
+
     QString object_id = object->getId();
 
-    //this->mutex.lock();
+    // Check if exists
+    if( !this->registered_envelopes.keys().contains( object_id ) ){
+        return;
+    }
+
+    this->mutex.lock();
     geos::geom::Envelope e = this->registered_envelopes.value( object_id );
-    GWSQuadtreeElement* elm = this->id_to_index_elements.value( object_id );
+    GWSQuadtreeElement* elm = this->id_to_tree_elements.value( object_id );
     this->inner_index->remove( &e , elm );
     this->registered_envelopes.remove( object_id );
     this->id_to_objects.remove( object_id );
-    this->id_to_index_elements.remove( object_id );
+    this->id_to_tree_elements.remove( object_id );
     this->id_to_geometries.remove( object_id );
     elm->deleteLater();
-    //this->mutex.unlock();
+    this->mutex.unlock();
 
 }

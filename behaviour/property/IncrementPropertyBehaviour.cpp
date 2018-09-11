@@ -35,7 +35,7 @@ bool IncrementPropertyBehaviour::behave(){
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
     this->getAgent()->setProperty( property_name , incremented );
 
-    emit GWSApp::globalInstance()->pushAgentSignal( this->getAgent()->serialize() );
+    //emit GWSApp::globalInstance()->sendAgentSignal( this->getAgent()->serialize() );
 
     return true;
 }

@@ -64,7 +64,7 @@ private:
     geos::index::quadtree::Quadtree* inner_index;
     QMap< QString , geos::geom::Envelope> registered_envelopes;
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
-    QMap< QString , GWSQuadtreeElement* > id_to_index_elements;
+    QMap< QString , GWSQuadtreeElement* > id_to_tree_elements;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
 
     QMutex mutex;

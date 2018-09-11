@@ -1,6 +1,8 @@
 #include "NetworkEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
+#include "../../app/App.h"
+
 QString GWSNetworkEnvironment::EDGE_PROP = "edge";
 
 GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
@@ -102,19 +104,13 @@ const GWSGraph* GWSNetworkEnvironment::getGraph( QString class_name ) const{
 
 void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
-    if( agent.isNull() ){
+    // If already registered
+    if( agent.isNull() || agent->getEnvironments().contains( this ) ){
         return;
     }
 
     // GRAPH EDGE (comes parsed by GWSObject, extract and set it to null)
     QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
-    if( edge.isNull() ){
-        this->unregisterAgent( agent );
-        return;
-    }
-
-    // Set to null
-    agent->setProperty( EDGE_PROP , QVariant() );
 
     if( !edge.isNull() ){
 
@@ -146,33 +142,32 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
             }
 
         } catch (std::exception &e){
-            qWarning() << "Crashed registering agent from GWSNetworkEnvironment" << e.what();
+            emit GWSApp::globalInstance()->sendAlertSignal( 1 , "Catched exception" , QString("Simulation threw an exception registering agent to GWSNetworkEnvironment. Exception %1").arg( e.what() ) );
         }
     }
+
+    // Set to null
+    agent->setProperty( EDGE_PROP , QVariant() );
 }
 
 void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
 
-    QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
-
-    if( !edge.isNull() ){
-
-        try {
+    try {
 
         GWSEnvironment::unregisterAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
         foreach(QString c , classes){
 
             // Remove from spatial graph
+            QSharedPointer<GWSGraphEdge> edge = this->agent_to_edge.value( agent );
             if( !edge.isNull() ){
                 this->network_graphs.value( c )->removeEdge( edge );
-                this->agent_to_edge.remove( agent );
                 this->edges_index->remove( edge );
+                this->agent_to_edge.remove( agent );
             }
         }
 
-        } catch (std::exception &e){
-            qWarning() << "Crashed unregistering agent from GWSNetworkEnvironment" << e.what();
-        }
+    } catch (std::exception &e){
+        emit GWSApp::globalInstance()->sendAlertSignal( 1 , "Catched exception" , QString("Simulation threw an exception unregistering agent from GWSNetworkEnvironment. Exception %1").arg( e.what() ) );
     }
 }

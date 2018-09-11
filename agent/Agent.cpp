@@ -34,7 +34,7 @@ GWSAgent::~GWSAgent() {
 
     // Emit withoug 'ALIVE' property to be removed
     this->setProperty( ALIVE_PROP , false );
-    emit GWSApp::globalInstance()->pushAgentSignal( this->serializeMini() );
+    emit GWSApp::globalInstance()->sendAgentSignal( this->serializeMini() );
 
     qDebug() << QString("%1 deleted").arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }

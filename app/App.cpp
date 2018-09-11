@@ -9,6 +9,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QException>
+#include <QString>
 
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/grid_environment/GridEnvironment.h"
@@ -33,17 +34,15 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
 
     for( int i = 0 ; i < argc ; i++){
         QString arg = QString( argv[i] );
-        if( arg.contains( "-id=" ) ){ this->app_id = arg.replace( "-id=" , "" ); }
-        if( arg.contains( "-user=" ) ){ this->setProperty( "user" , arg.replace( "-user=" , "" ) ); }
-        if( arg.contains( "-autorun=" ) ){ this->setProperty( "autorun" , arg.replace( "-autorun=" , "" ) == "1" ? true : false ); }
-        if( arg.contains( "-live=" ) ){ this->setProperty( "live" , arg.replace( "-live=" , "" ) == "1" ? true : false ); }
-        if( arg.contains( "-console=" ) ){ this->setProperty( "console" , arg.replace( "-console=" , "" ) == "1" ? true : false ); }
-        if( arg.contains( "-speed=" ) ){ this->setProperty( "speed" , arg.replace( "-speed=" , "" ).toDouble() ); }
-        if( arg.contains( "-debug=" ) ){ this->setProperty( "debug" , arg.replace( "-debug=" , "" ).toInt() ); }
-        if( arg.contains( "-localpath=" ) ){ this->setProperty( "localpath" , arg.replace( "-localpath=" , "" ) ); }
+        QStringList splitted = arg.split('=');
+        if( splitted.size() == 2 ){
+            qDebug() << QString("Argument found : %1 = %2").arg( splitted.at(0) ).arg( splitted.at(1 ) );
+            this->setProperty( splitted.at(0).toLatin1() , splitted.at(1) );
+        }
     }
 
-    Q_ASSERT( !this->app_id.isEmpty() );
+    Q_ASSERT( !this->getAppId().isEmpty() );
+    Q_ASSERT( !this->getUserId().isEmpty() );
 
     // Redirect outputs to file
     if( this->property("console").toBool() ){
@@ -61,16 +60,17 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
     qsrand( QDateTime::currentDateTime().time().second() );
 
     // Connect signal to socket slots
-    this->connect( this , &GWSApp::pushAgentSignal , this , &GWSApp::pushAgent );
-    this->connect( this , &GWSApp::pushDataSignal , this , &GWSApp::pushData );
+    this->connect( this , &GWSApp::sendAgentSignal , this , &GWSApp::sendAgent );
+    this->connect( this , &GWSApp::sendAlertSignal , this , &GWSApp::sendAlert );
+    this->connect( this , &GWSApp::sendDataSignal , this , &GWSApp::pushDataToSocket );
 
     // Start WebSocket
     this->startSocket();
 }
 
 GWSApp::~GWSApp(){
-    qInfo() << QString("Destroyed App %1, took %2 miliseconds").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp );
-    this->app_id = QString();
+    emit this->sendAlert( 0 , "Simulation finished" , QString("Simulation %1 finished, took %2 miliseconds").arg( this->getAppId() ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ) );
+    this->setProperty( "id" , QVariant() ); // Set to null
 }
 
 /**********************************************************************
@@ -78,7 +78,11 @@ GWSApp::~GWSApp(){
 **********************************************************************/
 
 QString GWSApp::getAppId(){
-    return this->app_id;
+    return this->property( "id" ).toString();
+}
+
+QString GWSApp::getUserId(){
+    return this->property( "user_id" ).toString();
 }
 
 /**********************************************************************
@@ -87,12 +91,14 @@ QString GWSApp::getAppId(){
 
 int GWSApp::exec(){
 
-    qInfo() << QString("Starting App %1 execution, took %2 miliseconds for %3 agents").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ).arg( GWSAgentEnvironment::globalInstance()->getAmount() );
+    emit this->sendAlert( 0 , "Simulation started" , QString("Simulation %1 started, took %2 miliseconds").arg( this->getAppId() ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ) );
+
     try {
-         QCoreApplication::exec(); // Real exec()
+
+        QCoreApplication::exec(); // Real exec()
+
     } catch(std::exception &e){
-        qCritical() << "App had an error, trying to recover" << e.what();
-        this->pushData( "message" , "Simulation had an error, trying to recover" );
+        emit this->sendAlertSignal( 2 , "Simulation had an error, trying to recover." , QString("Exception : %1").arg( e.what() ) );
         this->exec();
     }
 
@@ -112,26 +118,21 @@ int GWSApp::exec(){
 
 void GWSApp::startSocket(){
 
-    qDebug() << "Trying to connect socket";
+    qDebug() << "Trying to connect to socket";
 
     // Connect and send info
     QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
-        qInfo() << "WebSocket connected successfully to" << this->websocket.peerAddress();
-        this->pushData( "join" , QJsonObject() );
-        this->pushData( "message" , "Simulation connected" );
 
+        qDebug() << QString("Simulation connected. WebSocket connected successfully to %1").arg( this->websocket.peerAddress().toString() );
+        this->pushDataToSocket( "join" , QJsonObject() ); // Join socket
 
-        qInfo() << QString("Connected App %1, took %2 miliseconds for %3 agents").arg( this->app_id ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ).arg( GWSAgentEnvironment::globalInstance()->getAmount() );
-
-        // If Autorun
-        if( this->property("autorun").toBool() ){
+        if( !this->property("autorun").isNull() ){ // If Autorun
 
             QTimer::singleShot( 10000 , [this](){
                 GWSExecutionEnvironment::globalInstance()->run();
             });
 
         }
-
     });
     QObject::connect( &this->websocket , &QWebSocket::pong , [this](quint64 elapsedTime, const QByteArray &payload){
         Q_UNUSED(elapsedTime); Q_UNUSED(payload);
@@ -205,29 +206,52 @@ void GWSApp::socketReceivedData(){
  HTTP SOCKET SLOTS
 **********************************************************************/
 
-void GWSApp::pushAgent(QJsonObject entity_json){
+void GWSApp::sendAgent( QJsonObject entity_json ){
 
     QString entity_type = entity_json.value( GWSObject::GWS_TYPE_PROP ).toString();
     QString entity_id = entity_json.value( GWSObject::GWS_ID_PROP ).toString();
     //entity_json.insert("time" , QString("%1ms").arg( GWSTimeEnvironment::globalInstance()->getCurrentDateTime() ) );
     if( entity_type.isEmpty() || entity_id.isEmpty() ){ return; }
-    this->pushData( "entity" , entity_json );
+    this->pushDataToSocket( "entity" , entity_json );
 }
 
-void GWSApp::pushData(QString signal , QJsonValue json){
+void GWSApp::sendAlert( int level, QString title, QString description ){
+
+    if( level == 0 ){
+        qInfo() << title << description;
+    }
+    if( level == 1 ){
+        qWarning() << title << description;
+    }
+    if( level >= 2 ){
+        qCritical() << title << description;
+    }
+
+    QJsonObject alert_json;
+    alert_json.insert( "level" , level );
+    alert_json.insert( "title" , title );
+    alert_json.insert( "description" , description );
+    alert_json.insert( "user_id" , this->getUserId() );
+    alert_json.insert( "generator_type" , "simulation" );
+    alert_json.insert( "generator_id" , this->getAppId() );
+
+    // TO alerts.geoworldsim.com
+    QUrl url = QString( "https://alerts.geoworldsim.com/api/alert" );
+    QNetworkRequest request = QNetworkRequest( url );
+    request.setHeader( QNetworkRequest::ContentTypeHeader , "application/json" );
+    QNetworkReply* reply = this->http_manager.post( request , QJsonDocument( alert_json ).toJson() );
+    reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
+}
+
+void GWSApp::pushDataToSocket(QString signal , QJsonValue json){
 
     // TO sockets.deusto.io
     QJsonObject socket_json;
     socket_json.insert("signal" , signal );
-    socket_json.insert("socket_id" , this->app_id);
+    socket_json.insert("socket_id" , this->getAppId() );
     socket_json.insert("body" , json );
     this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
 
-    // TO history.deusto.io
-    /*QUrl url = QString( "http://history.deusto.io/api/scenario/%1/entity/%2/%3" ).arg( this->app_id ).arg( entity_type ).arg( entity_id );
-    QNetworkRequest request = QNetworkRequest( url );
-    request.setHeader( QNetworkRequest::ContentTypeHeader , "application/json" );
-    QNetworkReply* reply = this->http_manager.post( request , QJsonDocument( json ).toJson() );
-    reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );*/
+
 
 }

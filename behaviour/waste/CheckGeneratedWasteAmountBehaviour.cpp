@@ -38,7 +38,7 @@ bool DecideAccordingToWasteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     agent->icon_url = "https://image.flaticon.com/icons/svg/1059/1059235.svg";
-    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
     return true;
 }
 

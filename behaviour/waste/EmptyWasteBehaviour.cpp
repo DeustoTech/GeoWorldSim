@@ -25,7 +25,7 @@ bool EmptyWasteBehaviour::behave(){
 
     agent->setProperty("waste_amount", 0.);
 
-    emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
     return true;
 }

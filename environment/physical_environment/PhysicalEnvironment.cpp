@@ -192,28 +192,19 @@ void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
 
 void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
-    if( agent.isNull() ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) ){
         return;
     }
 
     // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
     QSharedPointer<GWSGeometry> geom = agent->getProperty( GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
-    if( !geom ){
-        this->unregisterAgent( agent );
-        return;
-    }
 
-    // Set geometry in agent to null, because it will be stored here in the environment
-    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
     QString agent_id = agent->getId();
 
-    // Remove if existing
-    if( this->agent_ids.contains( agent_id ) ){
-        this->agent_geometries.remove( agent_id );
-    }
-
     // Add the new agents geometry
-    this->agent_ids.append( agent_id );
+    if( !this->agent_ids.contains( agent_id ) ){
+        this->agent_ids.append( agent_id );
+    }
     this->agent_geometries.insert( agent_id , geom.isNull() ? QSharedPointer<GWSGeometry>( new GWSGeometry() ) : geom );
 
     foreach( QString s , agent->getInheritanceFamily() ) {
@@ -229,6 +220,8 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     }
     //this->mutex.unlock();
 
+    // Set geometry in agent to null, because it is be stored here in the environment
+    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
