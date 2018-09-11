@@ -21,7 +21,7 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
-#include "../../behaviour/waste/CheckGeneratedWasteAmountBehaviour.h"
+#include "../../behaviour/waste/DecideAccordingToWasteBehaviour.h"
 #include "../../behaviour/waste/EmptyWasteBehaviour.h"
 #include "../../behaviour/move/SetHomeBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
@@ -29,6 +29,7 @@
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/FindClosestBehaviour.h"
 #include "../../behaviour/move/GoHomeBehaviour.h"
+#include "../../behaviour/move/CheckIfAtPositionBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -117,6 +119,7 @@ int main(int argc, char* argv[])
                                                                                            "{ \"@type\" : \"MoveThroughRouteBehaviour\", \"@id\" : \"BH3\" , \"@next\" : \"BH4\" , \"duration\" : 1000 } , "
                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : \"BH3\" , \"duration\" : 1000  } , "
                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
+                                                                                           "{ \"@type\" : \"CheckIfAtPositionBehaviour\" , \"@id\" : \"BH7\" , \"@next\" : \"BH1\" , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"duration\" : 1000  } , "
                                                                                            "{ \"@type\" : \"DecideAccordingToWasteBehaviour\" , \"@id\" : \"BH0\" , \"duration\" : 1000 } , "
                                                                                            "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : \"BH0\" } "
                                                                                       " ] } ")

@@ -1,4 +1,4 @@
-#include "CheckGeneratedWasteAmountBehaviour.h"
+#include "DecideAccordingToWasteBehaviour.h"
 #include "../../app/App.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
@@ -20,8 +20,8 @@ bool DecideAccordingToWasteBehaviour::finished(){
     if ( agent->property("waste_amount").toDouble() < 100. )
         {
         qDebug() << agent->property("waste_amount").toDouble();
-        qInfo() << "Keep generating waste!";
-        this->next_behaviours.append( agent->getBehaviour( "BH1" ) );
+        qInfo() << "Check if at home position in order to generate waste!";
+        this->next_behaviours.append( agent->getBehaviour( "BH7" ) );
         return true;
         }
     else
