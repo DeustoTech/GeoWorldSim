@@ -30,6 +30,9 @@ bool MoveThroughRouteBehaviour::finished(){
         return true;
     }
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    GWSCoordinate move = mv->getRouteDestination();
+    qDebug() << move.toString();
+    qDebug() << current_position.toString();
     return current_position == mv->getRouteDestination();
 }
 

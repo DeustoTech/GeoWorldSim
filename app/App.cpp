@@ -22,6 +22,7 @@
 #include "../../util/io/log/Logger.h"
 
 GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
+    // int &argc, char *argv[]
     static GWSApp instance(argc , argv);
     return &instance;
 }
@@ -103,6 +104,7 @@ int GWSApp::exec(){
 
     return -1;
 }
+
 
 /**********************************************************************
  TCP SOCLET SLOTS

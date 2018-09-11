@@ -50,6 +50,7 @@
 #include <iostream>
 #include <vector>
 
+
 int main(int argc, char* argv[])
 {
     // CREATE QAPPLICATION
@@ -81,7 +82,6 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 800 } ],"
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
@@ -121,8 +121,8 @@ int main(int argc, char* argv[])
                                                                                                                                                                         "] } ,"
                                                                                            "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true } "
                                                                                       " ] } ")
-                                                       .arg( -2.86101  ) // (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
-                                                       .arg( 43.28149 ) // (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
+                                                       .arg( -2.86072   ) // (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
+                                                       .arg( 43.28281 ) // (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
                                                        .arg( qrand() % 100 + 1 )
                                                        .toLatin1()
                                                         );
@@ -178,20 +178,21 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read PEDESTRIAN ROAD data from datasource url:
-    GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/c956ffdd-8460-4d32-969e-600b585f71b6/read" );
+    GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/22960ed3-59be-443e-8ff7-8b3a5f8d29ac/read" );
 
     pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
+        try {
         {
-            QJsonObject geo = data.value( "geometry").toObject();
+            QJsonObject geo = data.value( "geo").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
             edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
             edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
@@ -205,15 +206,15 @@ int main(int argc, char* argv[])
 
         }
         {
-            QJsonObject geo = data.value( "geometry").toObject();
+            QJsonObject geo = data.value( "geo").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
             edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
             edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
@@ -225,9 +226,14 @@ int main(int argc, char* argv[])
 
             emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
         }
-    });
 
-    pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+        } catch (std::exception &e){
+            qDebug() << "PASO" << e.what();
+        }
+    });
+    pedestrian_reader->startReading();
+
+    /*pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
         GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
@@ -293,9 +299,9 @@ int main(int argc, char* argv[])
             emit GWSApp::globalInstance()->pushAgentSignal( footway->serialize() );
        }
 
-    });
+    });*/
 
-    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    /*footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
         GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
@@ -312,7 +318,7 @@ int main(int argc, char* argv[])
         }
 
     });
-    footway_reader->startReading();
+    footway_reader->startReading();*/
 
     GWSExecutionEnvironment::globalInstance()->run();
 

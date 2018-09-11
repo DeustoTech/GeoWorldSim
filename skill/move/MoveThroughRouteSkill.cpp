@@ -61,7 +61,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     // Get pending route
     QList< QSharedPointer<GWSGraphEdge> > pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor );
-
+    qDebug() << pending_route;
     if( pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );

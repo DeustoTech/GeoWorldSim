@@ -143,7 +143,6 @@ QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(G
     QList< GWSCoordinate > coors;
     coors.append( from_coor );
     coors.append( to_coor );
-
     return this->dijkstraShortestPath(coors).at(0);
 }
 

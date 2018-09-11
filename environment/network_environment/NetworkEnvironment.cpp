@@ -118,29 +118,35 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
     if( !edge.isNull() ){
 
-        GWSEnvironment::registerAgent( agent );
-        QStringList classes = agent->getInheritanceFamily();
-        QList<QString> keys = this->network_graphs.keys();
+        try {
 
-        foreach(QString c , classes){
+            GWSEnvironment::registerAgent( agent );
+            QStringList classes = agent->getInheritanceFamily();
+            QList<QString> keys = this->network_graphs.keys();
 
-            // Insert new spatial graph with the agents class
-            if( !keys.contains( c ) ){
+            foreach(QString c , classes){
 
-                this->mutex.lock();
-                this->network_graphs.insert( c , new GWSGraph() );
-                this->mutex.unlock();
+                // Insert new spatial graph with the agents class
+                if( !keys.contains( c ) ){
+
+                    this->mutex.lock();
+                    this->network_graphs.insert( c , new GWSGraph() );
+                    this->mutex.unlock();
+                }
             }
-        }
 
-        foreach(QString c , classes){
+            foreach(QString c , classes){
 
-            // Add to spatial graph
-            if( !edge.isNull() ){
-                this->network_graphs.value( c )->addEdge( edge );
-                this->agent_to_edge.insert( agent , edge );
-                this->edges_index->upsert( edge , edge->getFrom() );
+                // Add to spatial graph
+                if( !edge.isNull() ){
+                    this->network_graphs.value( c )->addEdge( edge );
+                    this->agent_to_edge.insert( agent , edge );
+                    this->edges_index->upsert( edge , edge->getFrom() );
+                }
             }
+
+        } catch (std::exception &e){
+            qWarning() << "Crashed registering agent from GWSNetworkEnvironment" << e.what();
         }
     }
 }
@@ -150,6 +156,8 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
     QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
 
     if( !edge.isNull() ){
+
+        try {
 
         GWSEnvironment::unregisterAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
@@ -161,6 +169,10 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
                 this->agent_to_edge.remove( agent );
                 this->edges_index->remove( edge );
             }
+        }
+
+        } catch (std::exception &e){
+            qWarning() << "Crashed unregistering agent from GWSNetworkEnvironment" << e.what();
         }
     }
 }
