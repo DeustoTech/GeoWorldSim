@@ -129,7 +129,6 @@ int main(int argc, char* argv[])
 
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
-        GWSExecutionEnvironment::globalInstance()->registerAgent( human );
 
         emit GWSApp::globalInstance()->pushAgentSignal( human ->serialize() );
 
@@ -178,9 +177,9 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read PEDESTRIAN ROAD data from datasource url:
-    GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/22960ed3-59be-443e-8ff7-8b3a5f8d29ac/read" );
+    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/22960ed3-59be-443e-8ff7-8b3a5f8d29ac/read" );
 
-    pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
         try {
         {
@@ -228,99 +227,21 @@ int main(int argc, char* argv[])
         }
 
         } catch (std::exception &e){
-            qDebug() << "PASO" << e.what();
+
         }
     });
-    pedestrian_reader->startReading();
 
-    /*pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
-        const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
-        GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
-        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86453 , 43.28397 ) ); //43.28397, -2.86453
-        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86436 , 43.28346 ) ); //43.28346, -2.86436
-
-      //  qDebug() << s->getFrom().toString() << s->getTo().toString();
-
-        QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
-
-       // qDebug() << l;
-        foreach( QSharedPointer<GWSGraphEdge> e , l ){
-            emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
+        foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( HumanAgent::staticMetaObject.className() ) ){
+            GWSExecutionEnvironment::globalInstance()->registerAgent( a );
         }
+        GWSExecutionEnvironment::globalInstance()->run();
 
-    });
-    pedestrian_reader->startReading();
+    } );
 
-    // Read FOOTWAY ROAD data from datasource url:
-    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/683ac1fe-0ad0-4c62-af51-29fd1803acb5/read" );
-    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+    footway_reader->startReading();
 
-        {
-            QJsonObject geo = data.value( "geometry").toObject();
-            geo.insert( "@type" ,  "GWSGeometry");
-
-            QJsonObject edge;
-            edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 1 ) );
-
-            QJsonObject agent_json;
-            agent_json.insert( "geo" , geo);
-            agent_json.insert( "edge" , edge );
-            agent_json.insert( "@type" , "GWSAgent" );
-
-            QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
-
-            emit GWSApp::globalInstance()->pushAgentSignal( footway->serialize() );
-        }
-        {
-            QJsonObject geo = data.value( "geometry").toObject();
-            geo.insert( "@type" ,  "GWSGeometry");
-
-            QJsonObject edge;
-            edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( geo.value( "coordinates" ).toArray().size() - 1 ).toArray().at( 1 ) );
-
-            QJsonObject agent_json;
-            agent_json.insert( "geo" , geo );
-            agent_json.insert( "edge" , edge );
-            agent_json.insert( "@type" , "GWSAgent" );
-
-            QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            GWSExecutionEnvironment::globalInstance()->registerAgent( footway );
-
-            emit GWSApp::globalInstance()->pushAgentSignal( footway->serialize() );
-       }
-
-    });*/
-
-    /*footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
-
-        const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
-        GWSDijkstraRouting* routing = new GWSDijkstraRouting( graph->getEdges() );
-        QSharedPointer<GWSGraphEdge> s = graph->findNearestEdge( GWSCoordinate( -2.86453 , 43.28397 ) );
-        QSharedPointer<GWSGraphEdge> e = graph->findNearestEdge( GWSCoordinate( -2.86436 , 43.28346 ) );
-
-      //  qDebug() << s->getFrom().toString() << s->getTo().toString();
-
-        QList< QSharedPointer<GWSGraphEdge> > l = routing->dijkstraShortestPath( s->getFrom() , e->getTo() );
-
-      //  qDebug() << l;
-        foreach( QSharedPointer<GWSGraphEdge> e , l ){
-            emit GWSApp::globalInstance()->pushAgentSignal( GWSNetworkEnvironment::globalInstance()->getAgent( e )->serialize() );
-        }
-
-    });
-    footway_reader->startReading();*/
-
-    GWSExecutionEnvironment::globalInstance()->run();
 
     app->exec();
 
