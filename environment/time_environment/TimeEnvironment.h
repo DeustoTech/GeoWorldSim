@@ -57,7 +57,7 @@ private:
 
     // Time speed
     // (How many seconds will there be in a real world second)
-    double time_speed = 0.5;
+    double time_speed = 4;
 
     // Agent internal times
     QMap<QString , quint64> agent_internal_times;

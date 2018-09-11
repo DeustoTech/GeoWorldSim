@@ -22,6 +22,7 @@ public:
     ~GWSDijkstraRouting();
 
     // METHODS
+    void generateGraph();
     QList<QSharedPointer<GWSGraphEdge> > dijkstraShortestPath( GWSCoordinate from, GWSCoordinate to );
     QList<QList<QSharedPointer<GWSGraphEdge> > > dijkstraShortestPath(QList< GWSCoordinate > ordered_coors );
     QList<QList<QSharedPointer< GWSGraphEdge> > > dijkstraShortestPaths( GWSCoordinate from, QList< GWSCoordinate > to );
@@ -29,6 +30,8 @@ public:
 
 private:
     QMutex mutex;
+    Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = Q_NULLPTR;
+    GWSGraphEdgeArcMap* routing_graph_costs = Q_NULLPTR;
 };
 
 #endif // GWSDIJKSTRAROUTING_H

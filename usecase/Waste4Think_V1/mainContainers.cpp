@@ -94,19 +94,19 @@ int main(int argc, char* argv[])
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
      Zamudio longitude = -2.8621286*/
-    double lon_max = 43.3;
-    double lon_min = 43.2;
-    double lat_max = -2.8;
-    double lat_min = -2.9;
+    double lon_max = 43.27839;
+    double lon_min = 43.27554;
+    double lat_max = -2.84024;
+    double lat_min = -2.87092;
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 1 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 25 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
@@ -121,8 +121,8 @@ int main(int argc, char* argv[])
                                                                                                                                                                         "] } ,"
                                                                                            "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true } "
                                                                                       " ] } ")
-                                                       .arg( -2.86072   ) // (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
-                                                       .arg( 43.28281 ) // (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
+                                                       .arg( (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
+                                                       .arg( (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
                                                        .arg( qrand() % 100 + 1 )
                                                        .toLatin1()
                                                         );
@@ -238,10 +238,9 @@ int main(int argc, char* argv[])
         }
         GWSExecutionEnvironment::globalInstance()->run();
 
-    } );
+    });
 
     footway_reader->startReading();
-
 
     app->exec();
 

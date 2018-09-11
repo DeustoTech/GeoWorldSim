@@ -9,11 +9,24 @@ GWSDijkstraRouting::GWSDijkstraRouting( QList<QSharedPointer<GWSGraphEdge> > edg
 }
 
 GWSDijkstraRouting::~GWSDijkstraRouting(){
+    if( this->dijkstra_algorithm ){
+        delete this->dijkstra_algorithm;
+        delete this->routing_graph_costs;
+    }
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
+
+void GWSDijkstraRouting::generateGraph(){
+    if( this->dijkstra_algorithm ){
+        delete this->dijkstra_algorithm;
+        delete this->routing_graph_costs;
+    }
+    this->routing_graph_costs = new GWSGraphEdgeArcMap( this );
+    this->dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
+}
 
 /**
  * @brief DijkstraRoutingGraph::dijkstraShortestPath Given the ordered nodes to go through, calculates the entire route
@@ -23,9 +36,6 @@ GWSDijkstraRouting::~GWSDijkstraRouting(){
  */
 QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPath(QList< GWSCoordinate > ordered_coors ){
     QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
-
-    Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = 0;
-    GWSGraphEdgeArcMap* routing_graph_costs = 0;
 
     for(int i = 0; i < ordered_coors.size()-1; i++){
 
@@ -59,19 +69,18 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
             continue;
         }
 
-        if( !dijkstra_algorithm ){
-            routing_graph_costs = new GWSGraphEdgeArcMap( this );
-            dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
+        if( !this->dijkstra_algorithm ){
+            this->generateGraph();
         }
 
-        if( !dijkstra_algorithm->run( start , end ) ){
+        if( !this->dijkstra_algorithm->run( start , end ) ){
             qWarning() << QString("Can not reach end coordinate (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
 
         // Get route
-        Path<ListDigraph> shortest_path = dijkstra_algorithm->path( end );
+        Path<ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             ListDigraph::Arc arc = shortest_path.nth( i );
             result_route.append( this->arc_to_edges.value( arc ) );
@@ -79,10 +88,6 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         result_routes.append( result_route );
     }
 
-    if( dijkstra_algorithm ){
-        delete dijkstra_algorithm;
-        delete routing_graph_costs;
-    }
     return result_routes;
 }
 
@@ -96,12 +101,13 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
 QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(GWSCoordinate from_coor, QList< GWSCoordinate > to_coors ){
     QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
-    GWSGraphEdgeArcMap* routing_graph_costs = new GWSGraphEdgeArcMap( this );
-    Dijkstra<ListDigraph, GWSGraphEdgeArcMap >* dijkstra_algorithm = new Dijkstra<ListDigraph, GWSGraphEdgeArcMap>( *this->routing_graph , *routing_graph_costs );
+    if( !this->dijkstra_algorithm ){
+        this->generateGraph();
+    }
 
     // Get start node and start graph from it
     ListDigraph::Node start = this->coors_to_node.value( from_coor );
-    dijkstra_algorithm->run( start );
+    this->dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
     foreach( GWSCoordinate to_coor , to_coors ){
@@ -109,14 +115,14 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
 
         ListDigraph::Node end = this->coors_to_node.value( to_coor );
 
-        if( !dijkstra_algorithm->run( start , end ) ){
+        if( !this->dijkstra_algorithm->run( start , end ) ){
             qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( route );
             continue;
         }
 
         // Get route
-        Path<ListDigraph> shortest_path = dijkstra_algorithm->path( end );
+        Path<ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             ListDigraph::Arc arc = shortest_path.nth( i );
             route.append( this->arc_to_edges.value( arc ) );
@@ -124,9 +130,6 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
 
         result_routes.append( route );
     }
-
-    delete dijkstra_algorithm;
-    delete routing_graph_costs;
 
     return result_routes;
 }
