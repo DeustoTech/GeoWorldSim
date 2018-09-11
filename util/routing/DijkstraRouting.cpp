@@ -56,8 +56,8 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         }
 
         // Move to nearest edges
-        GWSCoordinate moved_from_coor = this->findNearestRoutingCoordinate( from_coor );
-        GWSCoordinate moved_to_coor = this->findNearestRoutingCoordinate( to_coor );
+        GWSCoordinate moved_from_coor = this->getNearestRoutingCoordinate( from_coor );
+        GWSCoordinate moved_to_coor = this->getNearestRoutingCoordinate( to_coor );
 
         // Compute dijkstra shortest path
         ListDigraph::Node start = this->coors_to_node.value( moved_from_coor );

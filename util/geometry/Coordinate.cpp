@@ -9,7 +9,8 @@ using namespace geos::geom;
 **********************************************************************/
 
 bool GWSCoordinate::isValid() const{
-    return !(this->x != this->x || this->y != this->y );
+    return !(this->x != this->x || this->y != this->y ) // Checks NAN
+           && this->x != Q_INFINITY && this->y != Q_INFINITY && this->z != Q_INFINITY; // Checks INFINITY
 }
 
 double GWSCoordinate::getX() const{

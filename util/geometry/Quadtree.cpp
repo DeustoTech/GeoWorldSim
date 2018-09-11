@@ -142,27 +142,41 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
     QString object_id = object->getId();
 
-    //this->mutex.lock();
     if( geom ){
 
+        GWSQuadtreeElement* elm = Q_NULLPTR;
+        geos::geom::Envelope e;
+
         // Check if exists
-        if( this->registered_envelopes.keys().contains( object_id ) ){
-            this->remove( object );
+        this->mutex.lock();
+        if( !( e = this->id_to_envelopes.value( object_id ) ).isNull() ){
+
+            // Exists
+            elm = this->id_to_tree_elements.value( object_id );
+            this->inner_index->remove( &e , elm );      // Remove from last position
+
+        } else {
+
+            // Create for first time
+            elm = new GWSQuadtreeElement( object_id );
+            this->id_to_tree_elements.insert( object_id , elm );
+            this->id_to_objects.insert( object_id , object );
+
         }
 
-        geos::geom::Envelope e = geos::geom::Envelope(
+        e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,
                     geom->getGeometryMaxX() ,
                     geom->getGeometryMinY() ,
                     geom->getGeometryMaxY() );
-        GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id );
-        this->id_to_tree_elements.insert( object_id , elm );
-        this->id_to_objects.insert( object_id , object );
-        this->registered_envelopes.insert( object_id , e );
+
+        this->id_to_envelopes.insert( object_id , e );
         this->id_to_geometries.insert( object_id , geom );
-        this->inner_index->insert( &e , elm );
+        this->inner_index->insert( &e , elm );          // Insert in current position
+
+        this->mutex.unlock();
     }
-    //this->mutex.unlock();
+
 }
 
 void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
@@ -174,15 +188,15 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
     QString object_id = object->getId();
 
     // Check if exists
-    if( !this->registered_envelopes.keys().contains( object_id ) ){
+    if( !this->id_to_envelopes.keys().contains( object_id ) ){
         return;
     }
 
     this->mutex.lock();
-    geos::geom::Envelope e = this->registered_envelopes.value( object_id );
+    geos::geom::Envelope e = this->id_to_envelopes.value( object_id );
     GWSQuadtreeElement* elm = this->id_to_tree_elements.value( object_id );
     this->inner_index->remove( &e , elm );
-    this->registered_envelopes.remove( object_id );
+    this->id_to_envelopes.remove( object_id );
     this->id_to_objects.remove( object_id );
     this->id_to_tree_elements.remove( object_id );
     this->id_to_geometries.remove( object_id );

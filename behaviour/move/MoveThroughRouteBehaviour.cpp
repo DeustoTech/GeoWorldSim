@@ -30,9 +30,12 @@ bool MoveThroughRouteBehaviour::finished(){
         return true;
     }
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-    GWSCoordinate move = mv->getRouteDestination();
-    qDebug() << move.toString();
-    qDebug() << current_position.toString();
+    //GWSCoordinate move = mv->getRouteDestination();
+    //qDebug() << move.toString();
+    //qDebug() << current_position.toString();
+    if ( current_position == mv->getRouteDestination() ){
+        qDebug() << "Arrived!";
+        }
     return current_position == mv->getRouteDestination();
 }
 
@@ -55,7 +58,6 @@ bool MoveThroughRouteBehaviour::behave(){
     }
 
     // Calculate speed
-    qDebug() << "Current position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
     GWSCoordinate destination_coor = move_throughroute_skill->getRouteDestination();
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().getDistance( destination_coor );
     if( move_throughroute_skill->getCurrentSpeed() == 0.0 ){
@@ -65,8 +67,6 @@ bool MoveThroughRouteBehaviour::behave(){
     // Move towards
     move_throughroute_skill->move( duration_of_movement );
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-
-    qDebug() << "Final position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
 
     return true;
 }

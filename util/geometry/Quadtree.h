@@ -62,12 +62,13 @@ public:
 private:
 
     geos::index::quadtree::Quadtree* inner_index;
-    QMap< QString , geos::geom::Envelope> registered_envelopes;
+    QMap< QString , geos::geom::Envelope> id_to_envelopes;
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
     QMap< QString , GWSQuadtreeElement* > id_to_tree_elements;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
 
     QMutex mutex;
+    int test = 0;
 };
 
 Q_DECLARE_METATYPE(GWSQuadtree*)

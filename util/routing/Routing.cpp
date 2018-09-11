@@ -93,7 +93,7 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-GWSCoordinate GWSRouting::findNearestRoutingCoordinate( const GWSCoordinate coor ){
+GWSCoordinate GWSRouting::getNearestRoutingCoordinate( const GWSCoordinate coor ){
     QSharedPointer<GWSRoutingNode> nobj = this->nodes_index->getNearestElement( coor ).dynamicCast<GWSRoutingNode>();
     return this->coors_to_node.key( nobj->referenced_lemon_node );
 }

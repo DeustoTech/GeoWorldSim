@@ -29,7 +29,7 @@ public:
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 ) const;
 
     // GETTERS
-    GWSCoordinate findNearestRoutingCoordinate( const GWSCoordinate coor );
+    GWSCoordinate getNearestRoutingCoordinate( const GWSCoordinate coor );
     //QSharedPointer<GWSGraphNode> getNodeFromNode( const ListDigraph::Node node );
     //QSharedPointer<GWSGraphEdge> getEdgeFromArc( const ListDigraph::Arc arc );
 

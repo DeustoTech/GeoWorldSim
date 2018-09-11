@@ -77,7 +77,7 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
     // If already registered
-    if( agent->getEnvironments().contains( this ) ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) ){
         return;
     }
 
@@ -122,6 +122,10 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 }
 
 void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
+
+    if( agent.isNull() || !agent->getEnvironments().contains( this ) ){
+        return;
+    }
 
     agent->incrementBusy();
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
