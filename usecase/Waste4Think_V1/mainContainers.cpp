@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read container data from datasource url:
-    GWSDatasourceReader* reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/990ce49d-542f-4ee1-aa3f-309835149e6f/read" );
+    GWSDatasourceReader* reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/b6ec38d9-ce51-48b3-9934-839c4943cee3/read" );
 
     reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
