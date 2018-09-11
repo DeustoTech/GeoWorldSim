@@ -25,8 +25,8 @@ bool GoHomeBehaviour::finished(){
         return false;
     }
 
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-    return agent_coor != destination_coor;
+
+    return true;
 }
 
 bool GoHomeBehaviour::behave(){
