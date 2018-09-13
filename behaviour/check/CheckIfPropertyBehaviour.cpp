@@ -21,4 +21,5 @@ bool CheckIfPropertyBehaviour::continueToNext(){
 
 bool CheckIfPropertyBehaviour::behave(){
     // EMPTY, DO NOTHING
+    return true;
 }

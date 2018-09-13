@@ -36,4 +36,5 @@ bool CheckIfAtPositionBehaviour::continueToNext(){
 
 bool CheckIfAtPositionBehaviour::behave(){
      // DO NOTHING IF NOT AT POSITION
+    return true;
 }

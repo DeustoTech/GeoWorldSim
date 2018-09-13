@@ -23,4 +23,5 @@ bool CheckIfAtOtherAgentsPositionBehaviour::continueToNext(){
 
 bool CheckIfAtOtherAgentsPositionBehaviour::behave(){
     // EMPTY, DO NOTHING
+    return true;
 }
