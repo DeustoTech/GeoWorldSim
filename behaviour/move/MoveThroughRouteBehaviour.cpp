@@ -18,21 +18,23 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
 **********************************************************************/
 
 bool MoveThroughRouteBehaviour::continueToNext(){
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+
     // No moveThroughRoute skill
     if( !mv ){
         qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
         return false;
     }
+
     // No destination for MoveThroughRouteSkill
     if( mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).isNull() ){
         return false;
     }
+
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-    //GWSCoordinate move = mv->getRouteDestination();
-    //qDebug() << move.toString();
-    //qDebug() << current_position.toString();
+
     if ( current_position == mv->getRouteDestination() ){
         // Return true because we have really reached
         return true;

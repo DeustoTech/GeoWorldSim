@@ -21,9 +21,7 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
-#include "../../behaviour/waste/DecideAccordingToWasteBehaviour.h"
 #include "../../behaviour/waste/EmptyWasteBehaviour.h"
-#include "../../behaviour/move/SetHomeBehaviour.h"
 #include "../../behaviour/move/SelectDestinationBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
@@ -78,13 +76,11 @@ int main(int argc, char* argv[])
 
 
     // Behaviours
-    GWSObjectFactory::globalInstance()->registerType( DecideAccordingToWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EmptyWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );

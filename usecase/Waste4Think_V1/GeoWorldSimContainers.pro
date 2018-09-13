@@ -48,12 +48,10 @@ HEADERS += \
     ../../behaviour/property/IncrementPropertyBehaviour.h \
     ../../behaviour/waste/EmptyWasteBehaviour.h \
     ../../behaviour/move/GoHomeBehaviour.h \
-    ../../behaviour/move/SetHomeBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/check/CheckIfAtPositionBehaviour.h \
     ../../behaviour/check/CheckIfPropertyBehaviour.h \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
-    ../../behaviour/waste/DecideAccordingToWasteBehaviour.h \
     TesisBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -119,12 +117,10 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/property/IncrementPropertyBehaviour.cpp \
     ../../behaviour/waste/EmptyWasteBehaviour.cpp \
     ../../behaviour/move/GoHomeBehaviour.cpp \
-    ../../behaviour/move/SetHomeBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
     ../../behaviour/check/CheckIfPropertyBehaviour.cpp \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
-    ../../behaviour/waste/DecideAccordingToWasteBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS
     ../../util/uistyle/Style.cpp \

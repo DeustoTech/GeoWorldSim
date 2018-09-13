@@ -62,7 +62,5 @@ bool MoveBehaviour::behave(){
     move_skill->move( duration_of_movement );
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
-    qDebug() << "Final position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
-
     return true;
 }

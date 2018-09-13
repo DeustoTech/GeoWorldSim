@@ -21,7 +21,6 @@ bool IncrementPropertyBehaviour::continueToNext(){
     QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );
     QVariant min_value = this->getProperty( MIN_VALUE_PROP );
-    //qDebug() << ( value.toDouble() >= max_value.toDouble() ) << ( value.toDouble() <= min_value.toDouble());
     return value >= max_value && value <= min_value;
 }
 
@@ -35,6 +34,5 @@ bool IncrementPropertyBehaviour::behave(){
     QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
     this->getAgent()->setProperty( property_name , incremented );
-    qDebug() << incremented;
     return true;
 }
