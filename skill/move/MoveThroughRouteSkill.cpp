@@ -55,27 +55,36 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     if( !agent_geom ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
+        return;
     }
-    GWSCoordinate current_coor = agent_geom->getCentroid();
 
     // Extract destination coordinates
+    GWSCoordinate current_coor = agent_geom->getCentroid();
     GWSCoordinate destination_coor = this->getRouteDestination();
 
+    if( current_coor == destination_coor ){
+        return;
+    }
 
-    if (this->pending_route.isEmpty()){
+    if( this->pending_route.isEmpty() ){
         // Generate pending route
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
     }
-
 
     if( pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
     } else {
         QSharedPointer<GWSGraphEdge> current_edge = pending_route.at(0);
-        this->setProperty( MoveSkill::DESTINATION_X_PROP , current_edge->getTo().getX() );
-        this->setProperty( MoveSkill::DESTINATION_Y_PROP , current_edge->getTo().getY() );
-        this->pending_route.removeAt(0);
+
+        // Check if we have reached current_edge
+        GWSCoordinate current_edge_end = current_edge->getTo();
+        this->setProperty( MoveSkill::DESTINATION_X_PROP , current_edge_end.getX() );
+        this->setProperty( MoveSkill::DESTINATION_Y_PROP , current_edge_end.getY() );
+
+        if( current_coor == current_edge_end ){
+            this->pending_route.removeAt(0);
+        }
     }
 
     MoveSkill::move( movement_duration );

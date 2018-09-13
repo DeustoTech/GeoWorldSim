@@ -97,9 +97,9 @@ int main(int argc, char* argv[])
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
      Zamudio longitude = -2.8621286*/
-    double lat_max = 43.29139;
+    double lat_max = 43.28539;
     double lat_min = 43.27554;
-    double lon_max = -2.84024;
+    double lon_max = -2.85024;
     double lon_min = -2.87092;
 
 
@@ -111,6 +111,7 @@ int main(int argc, char* argv[])
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"home_coordX\" : %1 , "
                                                                      "\"home_coordY\" : %2 , "
+                                                                     "\"wait_for_me\" : true , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
                                                                                      "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "

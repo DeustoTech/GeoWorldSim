@@ -44,13 +44,12 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         GWSCoordinate to_coor = ordered_coors.at( i+1 );
 
         if( !from_coor.isValid() || !to_coor.isValid() ){
-            qDebug() << QString("Start (%1) or end coordinates (%2) are not valid").arg( from_coor.toString() ).arg( to_coor.toString() );
             result_routes.append( result_route );
             continue;
         }
 
         if( from_coor == to_coor ){
-            qDebug() << QString("Same start and end coordinates (%1) (%2)").arg( from_coor.toString() ).arg( to_coor.toString() );
+            qDebug() << QString("Asking for same start and end coordinates routing [%1,%2]").arg( from_coor.getX() ).arg( from_coor.getY() );
             result_routes.append( result_route );
             continue;
         }
@@ -62,6 +61,11 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         // Compute dijkstra shortest path
         ListDigraph::Node start = this->coors_to_node.value( moved_from_coor );
         ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );
+
+        if( start == end ){
+            result_routes.append( result_route );
+            continue;
+        }
 
         if ( this->routing_graph->id( start ) < 0 || this->routing_graph->id( end ) < 0 ){
             qDebug() << QString("Start (%1) or end coordinate (%2) are not in graph").arg( from_coor.toString() ).arg( to_coor.toString() );

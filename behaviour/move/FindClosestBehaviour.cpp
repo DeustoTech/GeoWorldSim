@@ -26,6 +26,7 @@ bool FindClosestBehaviour::behave(){
     QSharedPointer<GWSAgent> ClosestContainer = env->getNearestAgent( agent_coord , "ContainerAgent");
 
     agent->setProperty( "compare_agent_id" , ClosestContainer->getId() );
+    agent->color = QColor("red");
 
     double ClosestContainer_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getX();
     double ClosestContainer_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getY();

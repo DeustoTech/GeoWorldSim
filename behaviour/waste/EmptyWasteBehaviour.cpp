@@ -20,6 +20,7 @@ bool EmptyWasteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     agent->setProperty("waste_amount", 0.);
+    agent->color = QColor("green");
 
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
