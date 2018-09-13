@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 500 ; i++ ){
+    for( int i = 0 ; i < 1000 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -164,7 +164,6 @@ int main(int argc, char* argv[])
 
             QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
-            GWSExecutionEnvironment::globalInstance()->registerAgent( container );
 
             emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
 
@@ -199,7 +198,6 @@ int main(int argc, char* argv[])
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
             //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
 
@@ -221,7 +219,6 @@ int main(int argc, char* argv[])
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            GWSExecutionEnvironment::globalInstance()->registerAgent( pedestrian );
 
             //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
         }

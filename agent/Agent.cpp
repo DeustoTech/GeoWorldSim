@@ -91,7 +91,7 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
-    // MUST BE MADE AT THIS LAST PART. Add to environments
+    // ADD to MAIN environments
     GWSEnvironmentsGroup::globalInstance()->registerAgent( this->getSharedPointer() );
 }
 
