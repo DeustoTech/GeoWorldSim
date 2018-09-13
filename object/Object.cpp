@@ -25,7 +25,7 @@ GWSObject::GWSObject(const GWSObject &other) : QObject(){
 }
 
 GWSObject::~GWSObject(){
-    qDebug() << QString("Deleting %1 %2").arg( this->metaObject()->className() ).arg( this->getId() );
+    //qDebug() << QString("Deleting %1 %2").arg( this->metaObject()->className() ).arg( this->getId() );
     this->deleted = true;
 }
 

@@ -63,7 +63,7 @@ bool MoveThroughRouteBehaviour::behave(){
 
     GWSCoordinate destination_coor = move_throughroute_skill->getRouteDestination();
     if( !destination_coor.isValid() ){
-        return false;
+        return true;
     }
 
     // Calculate speed

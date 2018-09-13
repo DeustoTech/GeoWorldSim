@@ -269,9 +269,9 @@ void GWSAgent::addStartBehaviour( QSharedPointer<GWSBehaviour> behaviour){
  **/
 void GWSAgent::tick(){
 
-    this->incrementBusy();
+    // Increment has been made in Execution environment
     this->behave();
-    this->decrementBusy();
+    this->decrementBusy(); // Decrement is made here
 
     emit this->agentBehavedSignal();
 }
@@ -280,7 +280,7 @@ void GWSAgent::behave(){
 
     // No start behaviour
     if( this->start_behaviours.isEmpty() && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
-        qWarning() << QString("Agent %1 %2 has no start behaviour. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
+        qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
     }
     if( this->start_behaviours.isEmpty() ){
         return;
@@ -317,17 +317,18 @@ void GWSAgent::behave(){
         iterators = next_loop_iterators;
     }
 
+    qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
+
     if( !next_execute_behaviours.isEmpty() ){
 
-        qint64 all_start_same_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
         foreach( QSharedPointer<GWSBehaviour> b, next_execute_behaviours) {
 
-            this->timer->singleShot( 10 + (qrand() % 100) , [this , b , all_start_same_time ](){
-                b->tick( all_start_same_time );
+            this->timer->singleShot( 10 + (qrand() % 100) , [ b , behaving_time ](){
+                b->tick( behaving_time );
             });
         }
     } else {
-        GWSTimeEnvironment::globalInstance()->incrementAgentInternalTime( this->getSharedPointer() , 1 );
+        GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + 100 );
     }
 }

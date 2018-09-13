@@ -55,7 +55,7 @@ double GWSTimeEnvironment::getTimeSpeed() const{
     return this->time_speed;
 }
 
-qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ) const{
+qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
     return this->agent_internal_times.value( agent->getId() , 0 );
 }
 
@@ -75,16 +75,16 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
-void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , const qint64 datetime){
+void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime){
     this->agent_internal_times.insert( agent->getId() , datetime );
 }
 
-void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
+/*void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
     QString agent_id = agent->getId();
     if( this->agent_internal_times.value( agent_id ) > 0 ){
         this->agent_internal_times.insert( agent_id , this->agent_internal_times.value( agent_id , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
     }
-}
+}*/
 
 /**********************************************************************
  METHODS
