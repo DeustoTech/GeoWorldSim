@@ -72,8 +72,4 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     MoveSkill::move( movement_duration );
 
-    /*qDebug() << "Step = " <<position.toString();
-    this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
-    this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );*/
-
 }

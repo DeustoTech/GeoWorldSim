@@ -34,9 +34,6 @@ bool FindClosestBehaviour::behave(){
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , ClosestContainer_coordX );
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , ClosestContainer_coordY );
 
-    qDebug() << "Found closest container at " << ClosestContainer_coordX << "," << ClosestContainer_coordY;
-    //this->next_behaviours.clear();
-    //this->next_behaviours.append( agent->getBehaviour( "BH3" ) );
     return true;
 
 }
