@@ -128,7 +128,7 @@ void GWSBehaviour::addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour
  **/
 bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
-    qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
+ //   qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     bool behaved_correctly = false;
     this->behaving_time = behaviour_ticked_time;
@@ -156,7 +156,7 @@ bool GWSBehaviour::behave(){
     foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {
 
         if( !sub->continueToNext() ){
-            qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( sub->metaObject()->className() ).arg( sub->getId() );
+           // qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( sub->metaObject()->className() ).arg( sub->getId() );
             success = success && sub->tick( this->behaving_time );
         }
     }
