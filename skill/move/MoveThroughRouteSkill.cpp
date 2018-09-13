@@ -31,6 +31,8 @@ void MoveThroughRouteSkill::generateGraph(){
     this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
 }
 
+
+
 GWSCoordinate MoveThroughRouteSkill::getRouteDestination() const{
     if( this->getProperty( ROUTE_DESTINATION_X_PROP ).isNull() || this->getProperty( ROUTE_DESTINATION_Y_PROP ).isNull() ){
         return GWSCoordinate( Q_INFINITY , Q_INFINITY , Q_INFINITY );
@@ -59,8 +61,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     // Extract destination coordinates
     GWSCoordinate destination_coor = this->getRouteDestination();
 
-    // Get pending route
-    QList< QSharedPointer<GWSGraphEdge> > pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor );
+
+    if (this->pending_route.isEmpty()){
+        // Generate pending route
+        this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
+    }
+
+
     if( pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
@@ -68,6 +75,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         QSharedPointer<GWSGraphEdge> current_edge = pending_route.at(0);
         this->setProperty( MoveSkill::DESTINATION_X_PROP , current_edge->getTo().getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , current_edge->getTo().getY() );
+        this->pending_route.removeAt(0);
     }
 
     MoveSkill::move( movement_duration );
