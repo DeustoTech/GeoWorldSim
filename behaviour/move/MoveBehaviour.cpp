@@ -14,17 +14,17 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool MoveBehaviour::finished(){
+bool MoveBehaviour::continueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     // No move skill
     if( !mv ){
         qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
-        return true;
+        return false;
     }
     // No destination for MoveSkill
     if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
-        return true;
+        return false;
     }
     return GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
 }
@@ -47,9 +47,12 @@ bool MoveBehaviour::behave(){
         return false;
     }
 
-    // Calculate speed
-    qDebug() << "Current position" << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
     GWSCoordinate destination_coor = move_skill->getCurrentDestination();
+    if( !destination_coor.isValid() ){
+        return false;
+    }
+
+    // Calculate speed
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );

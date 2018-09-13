@@ -13,7 +13,7 @@ public:
     // PROPERTIES
     static QString COUTDOWN_PROP;
 
-    virtual bool finished();
+    virtual bool continueToNext();
     bool behave();
 };
 

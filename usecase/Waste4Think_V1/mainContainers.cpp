@@ -29,7 +29,9 @@
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/FindClosestBehaviour.h"
 #include "../../behaviour/move/GoHomeBehaviour.h"
-#include "../../behaviour/move/CheckIfAtPositionBehaviour.h"
+#include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
+#include "../../behaviour/check/CheckIfPropertyBehaviour.h"
+#include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -45,6 +47,7 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/graph/Graph.h"
 #include "../../util/routing/DijkstraRouting.h"
+#include "../../util/random/UniformDistribution.h"
 //#include "../../util/grid/Grid.h"
 
 #include <time.h>
@@ -84,6 +87,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SetHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -96,7 +101,7 @@ int main(int argc, char* argv[])
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
      Zamudio longitude = -2.8621286*/
-    double lat_max = 43.28139;
+    double lat_max = 43.29139;
     double lat_min = 43.27554;
     double lon_max = -2.84024;
     double lon_min = -2.87092;
@@ -104,42 +109,31 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 500 ; i++ ){
+    for( int i = 0 ; i < 10 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
+                                                                     "\"home_coordX\" : %1 , "
+                                                                     "\"home_coordY\" : %2 , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 25 } ],"
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 300 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"BH6\" , \"duration\" : 1000 } ,  "
-                                                                                           "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"BH5\" , \"@next\" : \"BH6\" , \"duration\" : 1000  } , "
-                                                                                           "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"BH4\" , \"@next\" : \"BH5\" , \"duration\" : 1000 } , "
-                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\", \"@id\" : \"BH3\" , \"@next\" : \"BH4\" , \"duration\" : 1000 } , "
-                                                                                           "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"BH2\" , \"@next\" : \"BH3\" , \"duration\" : 1000  } , "
-                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
-                                                                                           "{ \"@type\" : \"CheckIfAtPositionBehaviour\" , \"@id\" : \"BH7\" , \"@next\" : \"BH1\" , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"duration\" : 1000  } , "
-                                                                                           "{ \"@type\" : \"DecideAccordingToWasteBehaviour\" , \"@id\" : \"BH0\" , \"duration\" : 1000 } , "
-                                                                                           "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true , \"@next\" : \"BH0\" } "
-                                                                                      " ] } ")
-                                                       .arg( (lon_max - lon_min) * ( (double)qrand() / (double)RAND_MAX ) + lon_min )
-                                                       .arg( (lat_max - lat_min) * ( (double)qrand() / (double)RAND_MAX ) + lat_min )
+                                                                                            "{ \"@type\" : \"CheckIfAtPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"@next\" : [\"INCREMENT\",\"WASTE_FULL\"] } , "
+                                                                                            "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : [\"FIND_CLOSEST\"] } , "
+                                                                                            "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
+                                                                                            "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
+                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
+                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST\" , \"duration\" : 1000  } , "
+                                                                                            "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
+                                                                                            "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "
+                                                                                            " ] } ")
+                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
+                                                       .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .arg( qrand() % 100 + 1 )
                                                        .toLatin1()
                                                         );
-         /*"\"@behaviours\" : [  "
-                                                                                           "{ \"@type\" : \"DecideAccordingToWasteBehaviour\" , \"@id\" : \"BH0\" , \"duration\" : 1000 , \"next\" : [\"BH1\", \"BH2\"] } , "
-                                                                                           "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"BH1\" , \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
-                                                                                           "{ \"@type\" : \"GWSBehaviour\" , \"@id\" : \"BH2\" , \"@sub_behaviours\" : ["
-                                                                                                                                                                        "{ \"@type\" : \"FindClosestBehaviour\" , \"duration\" : 1000  } , "
-                                                                                                                                                                        "{ \"@type\" : \"MoveThroughRouteBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                                        "{ \"@type\" : \"EmptyWasteBehaviour\", \"duration\" : 1000 } , "
-                                                                                                                                                                        "{ \"@type\" : \"GoHomeBehaviour\" , \"duration\" : 1000  } , "
-                                                                                                                                                                        "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"duration\" : 1000 }  "
-                                                                                                                                                                        "] } ,"
-                                                                                           "{ \"@type\" : \"SetHomeBehaviour\" , \"duration\" : 1000 , \"start\" : true } "
-                                                                                      " ]*/
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );

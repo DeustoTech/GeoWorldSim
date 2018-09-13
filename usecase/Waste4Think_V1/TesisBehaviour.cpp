@@ -6,7 +6,7 @@ TesisBehaviour::TesisBehaviour() : GWSBehaviour(){
     this->setProperty( TesisBehaviour::COUTDOWN_PROP , 3 );
 }
 
-bool TesisBehaviour::finished(){
+bool TesisBehaviour::continueToNext(){
     return (this->getProperty( COUTDOWN_PROP ).toInt() <= 0);
 }
 

@@ -11,7 +11,7 @@ public:
     Q_INVOKABLE explicit SetHomeBehaviour();
 
     // GETTERS
-    virtual bool finished();
+    virtual bool continueToNext();
 
 private slots:
     virtual bool behave();

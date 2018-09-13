@@ -11,34 +11,26 @@ DecideAccordingToWasteBehaviour::DecideAccordingToWasteBehaviour() : GWSBehaviou
 }
 
 
-bool DecideAccordingToWasteBehaviour::finished(){
+bool DecideAccordingToWasteBehaviour::continueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    this->next_behaviours.clear();
-
 
     if ( agent->property("waste_amount").toDouble() < 100. )
         {
         qDebug() << agent->property("waste_amount").toDouble();
         qInfo() << "Check if at home position in order to generate waste!";
-        this->next_behaviours.append( agent->getBehaviour( "BH7" ) );
-        return true;
+        return false;
         }
     else
         {
         qDebug() << agent->property("waste_amount").toDouble();
         qInfo() << "Maximum waste generated! Find container!";
-        this->next_behaviours.append( agent->getBehaviour( "BH2" ) );
         return true;
         }
 
 }
 
 bool DecideAccordingToWasteBehaviour::behave(){
-
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    agent->icon_url = "https://image.flaticon.com/icons/svg/1059/1059235.svg";
-    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
     return true;
 }
 

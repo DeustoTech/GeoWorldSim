@@ -10,7 +10,7 @@ public:
     Q_INVOKABLE explicit DecideAccordingToWasteBehaviour();
 
     // GETTERS
-    virtual bool finished();
+    virtual bool continueToNext();
 
     virtual bool behave();
 };

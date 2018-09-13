@@ -71,7 +71,8 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
             this->behaviours->deleteLater();
         }
         QJsonArray jsbehaviours = json.value("@behaviours").toArray();
-        foreach( QJsonValue js , jsbehaviours ){
+        for( int i = jsbehaviours.size()-1 ; i >= 0 ; i-- ){ // Iterate backwards to have @nexts already created
+            QJsonValue js = jsbehaviours.at( i );
             QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
             if( behaviour.isNull() ){ continue; }
             this->addBehaviour( behaviour );
@@ -120,7 +121,7 @@ QJsonObject GWSAgent::serialize() const{
     // BEHAVIOUR
     QJsonArray behaviours;
     if( this->behaviours ){
-        foreach (QSharedPointer<GWSObject> s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
+        foreach( QSharedPointer<GWSObject> s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
             behaviours.append( s->serializeMini() );
         }
     }
@@ -298,7 +299,7 @@ void GWSAgent::behave(){
         // Behaviours
         foreach (QSharedPointer<GWSBehaviour> b, iterators) {
 
-            if( b->finished() ){
+            if( b->continueToNext() ){
 
                 next_loop_iterators.append( b->getNext() );
 
@@ -306,7 +307,7 @@ void GWSAgent::behave(){
 
                 // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
                 foreach( QSharedPointer<GWSBehaviour> sb, b->getSubs()) {
-                    if( sb->finished() ){
+                    if( sb->continueToNext() ){
                         next_loop_iterators.append( sb->getNext() );
                     }
                 }

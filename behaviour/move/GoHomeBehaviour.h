@@ -10,7 +10,7 @@ public:
     Q_INVOKABLE explicit GoHomeBehaviour();
 
     // GETTERS
-    virtual bool finished();
+    virtual bool continueToNext();
 
 private slots:
     virtual bool behave();

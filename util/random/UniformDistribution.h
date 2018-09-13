@@ -1,11 +1,8 @@
 #ifndef UNIFORMDISTRIBUTION_H
 #define UNIFORMDISTRIBUTION_H
 
-#include <QObject>
-
-class UniformDistribution : public QObject
+class UniformDistribution
 {
-    Q_OBJECT
 
 public:
     UniformDistribution();

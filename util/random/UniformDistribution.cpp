@@ -2,7 +2,7 @@
 
 #include <random>
 
-UniformDistribution::UniformDistribution() : QObject(){
+UniformDistribution::UniformDistribution() {
 }
 
 /** Generate value from uniform distribution

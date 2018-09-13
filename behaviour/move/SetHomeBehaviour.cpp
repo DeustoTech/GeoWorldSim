@@ -9,7 +9,7 @@ SetHomeBehaviour::SetHomeBehaviour() : GWSBehaviour(){
 }
 
 
-bool SetHomeBehaviour::finished(){
+bool SetHomeBehaviour::continueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
    // this->next_behaviours.clear();

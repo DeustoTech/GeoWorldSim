@@ -15,7 +15,7 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
  SLOTS
 **********************************************************************/
 
-bool IncrementPropertyBehaviour::finished(){
+bool IncrementPropertyBehaviour::continueToNext(){
     this->next_behaviours.clear();
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
@@ -35,6 +35,6 @@ bool IncrementPropertyBehaviour::behave(){
     QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
     this->getAgent()->setProperty( property_name , incremented );
-
+    qDebug() << incremented;
     return true;
 }

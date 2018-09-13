@@ -12,25 +12,9 @@ FindClosestBehaviour::FindClosestBehaviour() : GWSBehaviour(){
 }
 
 
-bool FindClosestBehaviour::finished(){
+bool FindClosestBehaviour::continueToNext(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-
-    if( !mv ){
-        qInfo() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        return true;
-    }
-
-    GWSCoordinate destination_coor = mv->getRouteDestination();
-    if( !destination_coor.isValid() ){
-        return false;
-    }
-
-
-    //GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-    //return agent_coor != destination_coor;
-    return true;
+    return false;
 }
 
 bool FindClosestBehaviour::behave(){
@@ -40,6 +24,8 @@ bool FindClosestBehaviour::behave(){
 
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
     QSharedPointer<GWSAgent> ClosestContainer = env->getNearestAgent( agent_coord , "ContainerAgent");
+
+    agent->setProperty( "compare_agent_id" , ClosestContainer->getId() );
 
     double ClosestContainer_coordX = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getX();
     double ClosestContainer_coordY = GWSPhysicalEnvironment::globalInstance()->getGeometry( ClosestContainer )->getCentroid().getY();

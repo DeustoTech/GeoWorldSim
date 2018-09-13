@@ -10,7 +10,7 @@ GoHomeBehaviour::GoHomeBehaviour() : GWSBehaviour(){
 
 }
 
-bool GoHomeBehaviour::finished(){
+bool GoHomeBehaviour::continueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
@@ -25,6 +25,9 @@ bool GoHomeBehaviour::finished(){
         return false;
     }
 
+    if ( ( agent->getProperty("home_coordX") != destination_coor.getX() ) || ( agent->getProperty( "home_coordY" ) != destination_coor.getY() ) ){
+        return false;
+    }
 
     return true;
 }

@@ -50,7 +50,9 @@ HEADERS += \
     ../../behaviour/move/GoHomeBehaviour.h \
     ../../behaviour/move/SetHomeBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/move/CheckIfAtPositionBehaviour.h \
+    ../../behaviour/check/CheckIfAtPositionBehaviour.h \
+    ../../behaviour/check/CheckIfPropertyBehaviour.h \
+    ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
     ../../behaviour/waste/DecideAccordingToWasteBehaviour.h \
     TesisBehaviour.h \
         # UTILS
@@ -119,7 +121,9 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/move/GoHomeBehaviour.cpp \
     ../../behaviour/move/SetHomeBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/move/CheckIfAtPositionBehaviour.cpp \
+    ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
+    ../../behaviour/check/CheckIfPropertyBehaviour.cpp \
+    ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
     ../../behaviour/waste/DecideAccordingToWasteBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS

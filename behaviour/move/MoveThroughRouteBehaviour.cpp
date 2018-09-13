@@ -17,26 +17,28 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool MoveThroughRouteBehaviour::finished(){
+bool MoveThroughRouteBehaviour::continueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     // No moveThroughRoute skill
     if( !mv ){
         qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
-        return true;
+        return false;
     }
     // No destination for MoveThroughRouteSkill
     if( mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).isNull() ){
-        return true;
+        return false;
     }
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
     //GWSCoordinate move = mv->getRouteDestination();
     //qDebug() << move.toString();
     //qDebug() << current_position.toString();
     if ( current_position == mv->getRouteDestination() ){
-        qDebug() << "Arrived!";
-        }
-    return current_position == mv->getRouteDestination();
+        // Return true because we have really reached
+        return true;
+    }
+
+    return false;
 }
 
 /**********************************************************************
@@ -57,8 +59,12 @@ bool MoveThroughRouteBehaviour::behave(){
         return false;
     }
 
-    // Calculate speed
     GWSCoordinate destination_coor = move_throughroute_skill->getRouteDestination();
+    if( !destination_coor.isValid() ){
+        return false;
+    }
+
+    // Calculate speed
     GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().getDistance( destination_coor );
     if( move_throughroute_skill->getCurrentSpeed() == 0.0 ){
         move_throughroute_skill->changeSpeed( 1 );

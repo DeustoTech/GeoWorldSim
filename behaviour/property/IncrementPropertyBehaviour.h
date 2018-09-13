@@ -16,7 +16,7 @@ public:
     static QString MAX_VALUE_PROP;
     static QString MIN_VALUE_PROP;
 
-    virtual bool finished(); // Behaviour finished check
+    virtual bool continueToNext(); // Behaviour finished check
 
 private slots:
     virtual bool behave();
