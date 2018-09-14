@@ -52,7 +52,6 @@ HEADERS += \
     ../../behaviour/check/CheckIfAtPositionBehaviour.h \
     ../../behaviour/check/CheckIfPropertyBehaviour.h \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
-    ../../behaviour/move/TravelingSalesmanProblemBehaviour.h \
     TesisBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -70,6 +69,7 @@ HEADERS += \
     ../../util/routing/Routing.h \
     ../../util/routing/DijkstraRouting.h \
     ../../util/routing/GraphEdgeArcMap.h \
+    ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/GraphEdge.h \
     ../../util/graph/Graph.h \
@@ -123,7 +123,6 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
     ../../behaviour/check/CheckIfPropertyBehaviour.cpp \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
-    ../../behaviour/move/TravelingSalesmanProblemBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS
     ../../util/uistyle/Style.cpp \
@@ -136,6 +135,7 @@ SOURCES += mainContainers.cpp \
     ../../util/routing/Routing.cpp \
     ../../util/routing/DijkstraRouting.cpp \
     ../../util/routing/GraphEdgeArcMap.cpp \
+    ../../util/routing/TSPRouting.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \

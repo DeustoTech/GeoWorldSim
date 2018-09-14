@@ -20,6 +20,8 @@
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/MoveTSPSkill.h"
+
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
@@ -32,7 +34,7 @@
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfPropertyBehaviour.h"
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
-#include "../../behaviour/move/TravelingSalesmanProblemBehaviour.h"
+//#include "../../behaviour/move/MoveTSPBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -49,6 +51,7 @@
 #include "../../util/graph/Graph.h"
 #include "../../util/routing/DijkstraRouting.h"
 #include "../../util/random/UniformDistribution.h"
+#include "../../util/routing/TSPRouting.h"
 //#include "../../util/grid/Grid.h"
 
 #include <time.h>
@@ -76,19 +79,19 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );
-
+    //GWSObjectFactory::globalInstance()->registerType( MoveTSPSkill::staticMetaObject );
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( MoveTSPBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EmptyWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( TravelingSalesmanProblemBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -141,7 +144,12 @@ int main(int argc, char* argv[])
         qDebug() << human ->serialize();
     }
 
-    for( int i = 0 ; i < 1 ; i++ ){
+
+    /* ----------------
+     * Truck Agents
+     * ----------------*/
+
+    /*for( int i = 0 ; i < 1 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -149,21 +157,24 @@ int main(int argc, char* argv[])
                                                                      "\"home_coordY\" : %2 , "
                                                                      "\"wait_for_me\" : true , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
+                                                                                     "{ \"@type\" : \"MoveTSPSkill\" , \"maxspeed\" : 8 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
-                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/776/776588.svg\" , \"color\" : \"purple\" } , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"purple\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                            "{ \"@type\" : \"TravelingSalesmanProblemBehaviour\"  , \"start\" : true , \"duration\" : 1000  } "
+                                                                                            "{ \"@type\" : \"MoveTSPBehaviour\"  , \"start\" : true , \"duration\" : 1000  } "
                                                                                             " ] } ")
                                                        .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
                                                        .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .toLatin1()
                                                         );
 
+
+
+
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
         emit GWSApp::globalInstance()->sendAgentSignal( trucks ->serialize() );
         qDebug() << trucks ->serialize();
-    }
+    }*/
 
 
 
@@ -196,11 +207,27 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
+
+
             emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+
+
 
     } );
     reader->startReading();
 
+
+    //QSharedPointer<GWSAgent> containers = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className());
+
+
+
+
+   // QList< GWSCoordinate > container_route = GSSTSPRouting::nearestNeighborTsp( containers.at(0) , container_coor_array , containers.at(0) );
+   // QList< GWSCoordinate > route = GSSTSPRouting::nearestNeighborTsp( container_coord, QList<GWSCoordinate > visit_coordinates, container_coord );
+
+   /* foreach (GWSCoordinate i, container_route){
+        qDebug() << i;
+    }*/
 
 
     /* ----------------
@@ -234,6 +261,8 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
             //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+
+
 
         }
         {
@@ -278,9 +307,34 @@ int main(int argc, char* argv[])
         }
         GWSExecutionEnvironment::globalInstance()->run();
 
+        QList < GWSCoordinate > container_coord_array;
+
+        foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className())  ){
+            GWSCoordinate container_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
+            container_coord_array.append(container_coord);
+        }
+
+        const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
+
+
+        // Get all the Edges from the graph
+        //GWSDijkstraRouting* route = new GWSDijkstraRouting( graph->getEdges() );
+        //QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges()
+        //GSSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
+
+        QList< QSharedPointer<GWSGraphEdge> > edges = graph->getEdges();
+        GSSTSPRouting* route = new GSSTSPRouting( edges );
+        QList< GWSCoordinate > container_route_nodes = route->nearestNeighborTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , container_coord_array , GWSCoordinate( -2.8621287 , 43.2803458 ) );
+        QList< GWSCoordinate > ordered_container_route_nodes = route->orderCircularTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , GWSCoordinate( -2.8621287 , 43.2803458 ) , container_route_nodes);
+
+
     });
 
     footway_reader->startReading();
+
+
+
+
 
     app->exec();
 
