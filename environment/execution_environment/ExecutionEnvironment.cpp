@@ -208,7 +208,7 @@ void GWSExecutionEnvironment::behave(){
 
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->incrementBusy(); // Increment here, Decrement after agent Tick()
-                agent->timer->singleShot( 10 + (qrand() % 100) , agent.data() , &GWSAgent::tick );
+                agent->timer->singleShot( 10 + (qrand() % 100) , Qt::CoarseTimer , agent.data() , &GWSAgent::tick );
 
                 ticked_agents++;
             }
