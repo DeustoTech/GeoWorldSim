@@ -52,6 +52,7 @@ HEADERS += \
     ../../behaviour/check/CheckIfAtPositionBehaviour.h \
     ../../behaviour/check/CheckIfPropertyBehaviour.h \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
+    ../../behaviour/move/TravelingSalesmanProblemBehaviour.h \
     TesisBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -94,7 +95,8 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     ContainerAgent.h \
-    HumanAgent.h
+    HumanAgent.h \
+    TruckAgent.h
             ## TRANSPORT LINES
 
 
@@ -121,6 +123,7 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
     ../../behaviour/check/CheckIfPropertyBehaviour.cpp \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
+    ../../behaviour/move/TravelingSalesmanProblemBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS
     ../../util/uistyle/Style.cpp \
@@ -162,7 +165,8 @@ SOURCES += mainContainers.cpp \
         # AGENTS
     #agent/person/Person.cpp \
     ContainerAgent.cpp \
-    HumanAgent.cpp
+    HumanAgent.cpp \
+    TruckAgent.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

@@ -25,7 +25,7 @@ public:
     void generateGraph();
     QList<QSharedPointer<GWSGraphEdge> > dijkstraShortestPath( GWSCoordinate from, GWSCoordinate to );
     QList<QList<QSharedPointer<GWSGraphEdge> > > dijkstraShortestPath(QList< GWSCoordinate > ordered_coors );
-    QList<QList<QSharedPointer< GWSGraphEdge> > > dijkstraShortestPaths( GWSCoordinate from, QList< GWSCoordinate > to );
+    QList<QList<QSharedPointer< GWSGraphEdge> > > dijkstraShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many );
     //QSharedPointer<GWSGraphNode> dijkstraNearestNode( GWSCoordinate from_node, QList< GWSCoordinate > to_nodes );
 
 private:

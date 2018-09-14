@@ -102,7 +102,7 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
  * @param end_nodes
  * @return
  */
-QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(GWSCoordinate from_coor, QList< GWSCoordinate > to_coors ){
+QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortestPaths(GWSCoordinate from_coor, QList< GWSCoordinate > to_many_coors ){
     QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
 
     if( !this->dijkstra_algorithm ){
@@ -114,7 +114,7 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
     this->dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
-    foreach( GWSCoordinate to_coor , to_coors ){
+    foreach( GWSCoordinate to_coor , to_many_coors ){
         QList< QSharedPointer<GWSGraphEdge>> route;
 
         ListDigraph::Node end = this->coors_to_node.value( to_coor );

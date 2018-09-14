@@ -13,6 +13,8 @@
 // Agents
 #include "ContainerAgent.h"
 #include "HumanAgent.h"
+#include "TruckAgent.h"
+
 
 // Skills
 #include "../../skill/view/ViewSkill.h"
@@ -30,6 +32,7 @@
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfPropertyBehaviour.h"
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
+#include "../../behaviour/move/TravelingSalesmanProblemBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -68,7 +71,7 @@ int main(int argc, char* argv[])
     // Agents
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
-
+    GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
     // Skills
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
@@ -85,6 +88,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( TravelingSalesmanProblemBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -105,7 +109,7 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 1000 ; i++ ){
+    for( int i = 0 ; i < 1 ; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -134,8 +138,34 @@ int main(int argc, char* argv[])
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
-
+        qDebug() << human ->serialize();
     }
+
+    for( int i = 0 ; i < 1 ; i++ ){
+
+        QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
+                                                                     "\"waste_amount\" : 0 , "
+                                                                     "\"home_coordX\" : %1 , "
+                                                                     "\"home_coordY\" : %2 , "
+                                                                     "\"wait_for_me\" : true , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
+                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/776/776588.svg\" , \"color\" : \"purple\" } , "
+                                                                     "\"@behaviours\" : [  "
+                                                                                            "{ \"@type\" : \"TravelingSalesmanProblemBehaviour\"  , \"start\" : true , \"duration\" : 1000  } "
+                                                                                            " ] } ")
+                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
+                                                       .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
+                                                       .toLatin1()
+                                                        );
+
+        QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
+        emit GWSApp::globalInstance()->sendAgentSignal( trucks ->serialize() );
+        qDebug() << trucks ->serialize();
+    }
+
+
 
     /* ----------------
      * Container Agents
@@ -172,6 +202,7 @@ int main(int argc, char* argv[])
     reader->startReading();
 
 
+
     /* ----------------
      * Zamudio roads
      * ----------------*/
@@ -196,9 +227,11 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
             agent_json.insert( "edge" , edge );
+            QJsonArray family_array; family_array.append( "Road" );
+            agent_json.insert( "@family" , family_array );
             agent_json.insert( "@type" , "GWSAgent" );
 
-            QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+            QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
             //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
 
@@ -217,9 +250,14 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
             agent_json.insert( "edge" , edge );
+            QJsonArray family_array; family_array.append( "Road" );
+            agent_json.insert( "@family" , family_array );
             agent_json.insert( "@type" , "GWSAgent" );
 
-            QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+            QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+
+            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
+            env->getId();
 
             //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
         }
@@ -232,6 +270,10 @@ int main(int argc, char* argv[])
     footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( HumanAgent::staticMetaObject.className() ) ){
+            GWSExecutionEnvironment::globalInstance()->registerAgent( a );
+        }
+
+        foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( TruckAgent::staticMetaObject.className() ) ){
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
         }
         GWSExecutionEnvironment::globalInstance()->run();
