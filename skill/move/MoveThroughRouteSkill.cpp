@@ -46,9 +46,9 @@ GWSCoordinate MoveThroughRouteSkill::getRouteDestination() const{
 
 void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
-    if( !this->routing_graph ){
+   /* if( !this->routing_graph ){
         this->generateGraph();
-    }
+    }*/
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -58,6 +58,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
+
     // Extract destination coordinates
     GWSCoordinate current_coor = agent_geom->getCentroid();
     GWSCoordinate destination_coor = this->getRouteDestination();
@@ -66,15 +67,17 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-    if( this->pending_route.isEmpty() ){
+    /*if( this->pending_route.isEmpty() ){
         // Generate pending route
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
-    }
+    }*/
 
     if( pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
     } else {
+
+        // Move along route edges
         QSharedPointer<GWSGraphEdge> current_edge = pending_route.at(0);
 
         // Check if we have reached current_edge
@@ -88,5 +91,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     }
 
     MoveSkill::move( movement_duration );
+
 
 }

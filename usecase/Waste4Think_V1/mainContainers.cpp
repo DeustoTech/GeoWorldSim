@@ -20,7 +20,7 @@
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
-#include "../../skill/move/MoveTSPSkill.h"
+//#include "../../skill/move/MoveAlongStagedRouteSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
@@ -34,7 +34,10 @@
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfPropertyBehaviour.h"
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
-//#include "../../behaviour/move/MoveTSPBehaviour.h"
+//#include "../../behaviour/move/MoveAlongStagedRouteBehaviour.h"
+#include "../../behaviour/move/LoopOverRouteStagesBehaviour.h"
+#include "../../behaviour/property/ExchangePropertyBehaviour.h"
+#include "../../behaviour/information/BroadcastToHistoryBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -75,23 +78,28 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
+
+
     // Skills
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );
-    //GWSObjectFactory::globalInstance()->registerType( MoveTSPSkill::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( MoveAlongStagedRouteSkill::staticMetaObject );
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
-    //GWSObjectFactory::globalInstance()->registerType( MoveTSPBehaviour::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( MoveAlongStagedRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( EmptyWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( LoopOverRouteStagesBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -149,20 +157,22 @@ int main(int argc, char* argv[])
      * Truck Agents
      * ----------------*/
 
-    /*for( int i = 0 ; i < 1 ; i++ ){
+    for( int i = 0 ; i < 0 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"home_coordX\" : %1 , "
                                                                      "\"home_coordY\" : %2 , "
+                                                                     "\"loop_stage\"  : 0 , "
                                                                      "\"wait_for_me\" : true , "
-                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
-                                                                                     "{ \"@type\" : \"MoveTSPSkill\" , \"maxspeed\" : 8 } ],"
-                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
-                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"purple\" } , "
-                                                                     "\"@behaviours\" : [  "
-                                                                                            "{ \"@type\" : \"MoveTSPBehaviour\"  , \"start\" : true , \"duration\" : 1000  } "
-                                                                                            " ] } ")
+                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 1000 } ]  , "
+                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0] } , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/226/226592.svg\" , \"color\" : \"purple\" } , "
+                                                                    "\"@behaviours\" : [   { \"@type\" : \"LoopOverRouteStagesBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
+                                                                                          "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
+                                                                                          "{ \"@type\" : \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1000 } , "
+                                                                                          "{ \"@type\" : \"ExchangePropertyBehaviour\" , \"start\" : true ,  \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
+                                                                                        " ] } ")
                                                        .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
                                                        .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .toLatin1()
@@ -174,7 +184,7 @@ int main(int argc, char* argv[])
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
         emit GWSApp::globalInstance()->sendAgentSignal( trucks ->serialize() );
         qDebug() << trucks ->serialize();
-    }*/
+    }
 
 
 
@@ -213,6 +223,7 @@ int main(int argc, char* argv[])
 
 
 
+
     } );
     reader->startReading();
 
@@ -237,9 +248,10 @@ int main(int argc, char* argv[])
     // Read PEDESTRIAN ROAD data from datasource url:
     GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/22960ed3-59be-443e-8ff7-8b3a5f8d29ac/read" );
 
+    {
     footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
-        try {
+        //try {
         {
             QJsonObject geo = data.value( "geo").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
@@ -254,13 +266,13 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo);
             agent_json.insert( "edge" , edge );
-            QJsonArray family_array; family_array.append( "Road" );
-            agent_json.insert( "@family" , family_array );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
-            //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            emit GWSApp::globalInstance()->sendAgentSignal( footway->serialize() );
 
 
 
@@ -279,8 +291,8 @@ int main(int argc, char* argv[])
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
             agent_json.insert( "edge" , edge );
-            QJsonArray family_array; family_array.append( "Road" );
-            agent_json.insert( "@family" , family_array );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
             agent_json.insert( "@type" , "GWSAgent" );
 
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -288,15 +300,17 @@ int main(int argc, char* argv[])
             GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
             env->getId();
 
-            //emit GWSApp::globalInstance()->pushAgentSignal( pedestrian->serialize() );
+            emit GWSApp::globalInstance()->sendAgentSignal( footway->serialize() );
         }
 
-        } catch (std::exception &e) {
+      //  } catch (std::exception &e) {
 
-        }
+        //}
     });
 
-    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    footway_reader->startReading();
+
+    //footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( HumanAgent::staticMetaObject.className() ) ){
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
@@ -305,16 +319,18 @@ int main(int argc, char* argv[])
         foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( TruckAgent::staticMetaObject.className() ) ){
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
         }
+
+    }
         GWSExecutionEnvironment::globalInstance()->run();
 
-        QList < GWSCoordinate > container_coord_array;
+       /* QList < GWSCoordinate > container_coord_array;
 
         foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className())  ){
             GWSCoordinate container_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
             container_coord_array.append(container_coord);
-        }
+        }*/
 
-        const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
+        //const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
 
 
         // Get all the Edges from the graph
@@ -322,15 +338,15 @@ int main(int argc, char* argv[])
         //QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges()
         //GSSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
 
-        QList< QSharedPointer<GWSGraphEdge> > edges = graph->getEdges();
+        /*QList< QSharedPointer<GWSGraphEdge> > edges = graph->getEdges();
         GSSTSPRouting* route = new GSSTSPRouting( edges );
         QList< GWSCoordinate > container_route_nodes = route->nearestNeighborTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , container_coord_array , GWSCoordinate( -2.8621287 , 43.2803458 ) );
         QList< GWSCoordinate > ordered_container_route_nodes = route->orderCircularTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , GWSCoordinate( -2.8621287 , 43.2803458 ) , container_route_nodes);
+*/
 
+   // });
 
-    });
-
-    footway_reader->startReading();
+    //footway_reader->startReading();
 
 
 

@@ -29,9 +29,14 @@ bool MoveThroughRouteBehaviour::continueToNext(){
     }
 
     // No destination for MoveThroughRouteSkill
-    if( mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).isNull() ){
+    QString x = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).toString();
+    QString y = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).toString();
+
+    // No destination for MoveThroughRouteSkill
+    if( x.isNull() || y.isNull() ){
         return false;
     }
+
 
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 

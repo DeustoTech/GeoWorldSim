@@ -96,7 +96,13 @@ HEADERS += \
     #agent/person/Person.h \
     ContainerAgent.h \
     HumanAgent.h \
-    TruckAgent.h
+    TruckAgent.h \
+    #../../skill/move/MoveAlongStagedRouteSkill.h \
+    #../../behaviour/move/MoveAlongStagedRouteBehaviour.h \
+    #../../behaviour/move/FindBestRouteBehaviour.h \
+    ../../behaviour/move/LoopOverRouteStagesBehaviour.h \
+    ../../behaviour/property/ExchangePropertyBehaviour.h \
+    ../../behaviour/information/BroadcastToHistoryBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -166,7 +172,13 @@ SOURCES += mainContainers.cpp \
     #agent/person/Person.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
-    TruckAgent.cpp
+    TruckAgent.cpp \
+    #../../skill/move/MoveAlongStagedRouteSkill.cpp \
+    #../../behaviour/move/MoveAlongStagedRouteBehaviour.cpp \
+    #../../behaviour/move/FindBestRouteBehaviour.cpp \
+    ../../behaviour/move/LoopOverRouteStagesBehaviour.cpp \
+    ../../behaviour/property/ExchangePropertyBehaviour.cpp \
+    ../../behaviour/information/BroadcastToHistoryBehaviour.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

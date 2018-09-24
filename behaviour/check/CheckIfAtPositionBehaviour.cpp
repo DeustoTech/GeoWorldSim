@@ -1,6 +1,9 @@
 #include "CheckIfAtPositionBehaviour.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
+#include "../../app/App.h"
+
+
 QString CheckIfAtPositionBehaviour::KEY_POSITION_X = "key_position_x";
 QString CheckIfAtPositionBehaviour::KEY_POSITION_Y = "key_position_y";
 
@@ -20,6 +23,7 @@ bool CheckIfAtPositionBehaviour::continueToNext(){
        GWSCoordinate key_position = GWSCoordinate( key_x , key_y );
 
     if (agent_coord == key_position ){
+        emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
         return true;
     }
 

@@ -115,6 +115,9 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     // Set the agents position
     GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
     GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+
+    GWSCoordinate new_coor = agent_geom->getCentroid();
+
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 
