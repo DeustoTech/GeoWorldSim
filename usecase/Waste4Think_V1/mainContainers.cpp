@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 1 ; i++ ){
+    for( int i = 0 ; i < 0; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
      * Truck Agents
      * ----------------*/
 
-    for( int i = 0 ; i < 0 ; i++ ){
+    for( int i = 0 ; i < 1 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "

@@ -29,7 +29,7 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
 
 bool ExchangePropertyBehaviour::continueToNext(){
 
-    /*QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
@@ -37,14 +37,14 @@ bool ExchangePropertyBehaviour::continueToNext(){
     if ( current_position == mv->getRouteDestination() ){
         return false;
     }
-    return true;*/
+    return true;
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    /*QSharedPointer<GWSAgent> agent = this->getAgent();
 
     if ( agent->getProperty( "waste_amount" ) != 0. ){
         return false;
     }
-    return true;
+    return true;*/
 }
 
 /**********************************************************************
@@ -63,16 +63,16 @@ bool ExchangePropertyBehaviour::behave(){
 
         QSharedPointer< GWSAgent > agent = this->getAgent();
         QString other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
-        QSharedPointer<GWSAgent> other_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , other_agent_id );
+        QSharedPointer<GWSAgent> other_agent = GWSAgentEnvironment::globalInstance()->getById( other_agent_id );
 
 
     }
 
-    if ( this->getAgent()->getProperty( "@type" ) == "HumanAgent" ){
+    if ( this->getAgent()->getProperty( "@type" ) == "TruckAgent" ){
 
         QSharedPointer< GWSAgent > other_agent = this->getAgent();
         QString agent_id = other_agent->getProperty( "compare_agent_id" ).toString();
-        QSharedPointer< GWSAgent > agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , agent_id );
+        QSharedPointer< GWSAgent > agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
 
 
     }

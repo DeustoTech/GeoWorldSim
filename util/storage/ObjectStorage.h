@@ -29,6 +29,7 @@ public:
     template <class T>
     QSharedPointer<T> getByClassAndId( QString class_name , QString id ) const;
     QSharedPointer<GWSObject> getByClassAndId( QString class_name , QString id ) const;
+    QSharedPointer<GWSObject> getById( QString id );
 
     template <class T>
     QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const;
