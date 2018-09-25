@@ -58,21 +58,22 @@ bool ExchangePropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > agent;
     QSharedPointer< GWSAgent > other_agent;
+    QString other_agent_id;
+    QString agent_id;
 
     if ( this->getAgent()->getProperty( "@type" ) == "HumanAgent" ){
 
-        QSharedPointer< GWSAgent > agent = this->getAgent();
-        QString other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
-        QSharedPointer<GWSAgent> other_agent = GWSAgentEnvironment::globalInstance()->getById( other_agent_id );
-
+        agent = this->getAgent();
+        other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
+        other_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , other_agent_id );
 
     }
 
     if ( this->getAgent()->getProperty( "@type" ) == "TruckAgent" ){
 
-        QSharedPointer< GWSAgent > other_agent = this->getAgent();
-        QString agent_id = other_agent->getProperty( "compare_agent_id" ).toString();
-        QSharedPointer< GWSAgent > agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
+        other_agent = this->getAgent();
+        agent_id = other_agent->getProperty( "compare_agent_id" ).toString();
+        agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , agent_id );
 
 
     }

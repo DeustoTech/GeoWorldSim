@@ -76,10 +76,6 @@ template <class T> QList<QSharedPointer<T> > GWSAgentEnvironment::getByClass( QS
     return agents;
 }
 
-QSharedPointer<GWSAgent> GWSAgentEnvironment::getById( QString id ) const{
-    return this->getById( id );
-}
-
 
 QSharedPointer<GWSAgent> GWSAgentEnvironment::getByName( QString agent_name ) const{
     return this->getByName<GWSAgent>( agent_name );
