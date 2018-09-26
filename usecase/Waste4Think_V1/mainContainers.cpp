@@ -5,6 +5,7 @@
 #include <QString>
 #include <QJsonDocument>
 #include <QProcess>
+#include <QtMath>
 
 
 #include "TesisBehaviour.h"
