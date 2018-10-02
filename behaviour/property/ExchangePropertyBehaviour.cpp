@@ -29,7 +29,7 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
 
 bool ExchangePropertyBehaviour::continueToNext(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+   /* QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
@@ -37,7 +37,7 @@ bool ExchangePropertyBehaviour::continueToNext(){
     if ( current_position == mv->getRouteDestination() ){
         return false;
     }
-    return true;
+    return true;*/
 
     /*QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -45,6 +45,7 @@ bool ExchangePropertyBehaviour::continueToNext(){
         return false;
     }
     return true;*/
+    return false;
 }
 
 /**********************************************************************

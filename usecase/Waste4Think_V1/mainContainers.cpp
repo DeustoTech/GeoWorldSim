@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 2; i++ ){
+    for( int i = 0 ; i < 0; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                     "\"waste_amount\" : 0 , "
@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
                                                                                             "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : [\"FIND_CLOSEST\"] } , "
                                                                                             "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
                                                                                             "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
+                                                                                            "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
                                                                                             "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST\" , \"duration\" : 1000  } , "
                                                                                             "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
@@ -163,25 +164,26 @@ int main(int argc, char* argv[])
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
-                                                                     "\"home_coordX\" : %1 , "
-                                                                     "\"home_coordY\" : %2 , "
+                                                                     "\"home_coordX\" :  %1, "
+                                                                     "\"home_coordY\" :  %2, "
                                                                      "\"loop_stage\"  : 0 , "
                                                                      "\"wait_for_me\" : true , "
-                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 100 } ]  , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 10 } ]  , "
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0] } , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/226/226592.svg\" , \"color\" : \"purple\" } , "
                                                                     "\"@behaviours\" : [   { \"@type\" : \"LoopOverRouteStagesBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
                                                                                           "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1000 } , "
-                                                                                          "{ \"@type\" : \"ExchangePropertyBehaviour\" , \"start\" : true ,  \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
-                                                                                        " ] } ")
-                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
-                                                       .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
+                                                                                          "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
+                                                                                          "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
+                                                                    " ] } ")
+                                                       .arg( -2.8644994224613356  )
+                                                       .arg( 43.28428545332489 )
                                                        .toLatin1()
                                                         );
 
-
-
+        // .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
+        //.arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
 
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( trucks );
@@ -226,8 +228,179 @@ int main(int argc, char* argv[])
 
     } );
 
-    reader->startReading();
+    //reader->startReading();
 
+    // Create 4 containers
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.8642509898002118 );
+        coors.append( 43.28394217429335 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER1" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.863631059684394  );
+        coors.append( 43.28349894289374 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER2" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.863246887189689 );
+        coors.append( 43.282988768169616 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER3" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.8636843417772297 );
+        coors.append( 43.282377094765025 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER4" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.862962516695802 );
+        coors.append( 43.28158014470859 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER5" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.8616804207866835 );
+        coors.append( 43.28318909049451 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER6" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.863166364580934 );
+        coors.append( 43.28387053650099 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER7" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
+
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.8638798321788954  );
+        coors.append( 43.28185448859504 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER8" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }
 
 
 
@@ -295,6 +468,66 @@ int main(int argc, char* argv[])
 
         }
 
+    });
+
+    // Read MISSING ROAD data from datasource url:
+    GWSDatasourceReader* other_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" );
+
+    other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+
+        try {
+        {
+            QJsonObject geo = data.value( "geometry").toObject();
+            geo.insert( "@type" ,  "GWSGeometry");
+
+            QJsonObject edge;
+            edge.insert( "@type" , "GWSGraphEdge" );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+
+            QJsonObject agent_json;
+            agent_json.insert( "geo" , geo);
+            agent_json.insert( "edge" , edge );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
+            agent_json.insert( "@type" , "GWSAgent" );
+
+            QSharedPointer<GWSAgent> other = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+
+            emit GWSApp::globalInstance()->sendAgentSignal( other->serialize() );
+        }
+        {
+            QJsonObject geo = data.value( "geometry").toObject();
+            geo.insert( "@type" ,  "GWSGeometry");
+
+            QJsonObject edge;
+            edge.insert( "@type" , "GWSGraphEdge" );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+
+            QJsonObject agent_json;
+            agent_json.insert( "geo" , geo );
+            agent_json.insert( "edge" , edge );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
+            agent_json.insert( "@type" , "GWSAgent" );
+
+            QSharedPointer<GWSAgent> other = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+
+            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
+            env->getId();
+
+            emit GWSApp::globalInstance()->sendAgentSignal( other->serialize() );
+        }
+
+        }
+        catch (std::exception &e){
+
+        }
     });
 
 
@@ -380,7 +613,7 @@ int main(int argc, char* argv[])
 
         footway_reader->startReading();
         pedestrian_reader->startReading();
-
+        other_reader->startReading();
 
 
 

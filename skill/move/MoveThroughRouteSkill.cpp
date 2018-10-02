@@ -72,13 +72,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
     }
 
-    if( pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
+    if( this->pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
     } else {
 
         // Move along route edges
-        QSharedPointer<GWSGraphEdge> current_edge = pending_route.at(0);
+        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
 
         // Check if we have reached current_edge
         GWSCoordinate current_edge_end = current_edge->getTo();

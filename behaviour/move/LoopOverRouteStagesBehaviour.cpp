@@ -103,7 +103,7 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
     QList< GWSCoordinate > ordered_container_tsp_route_coord_array = container_route->orderCircularTsp( agent_home_coor , agent_home_coor , container_tsp_route_coord_array );
 
     // Generate a QPair QList so that we can access the ordered container coordinates and their IDs:
-    QList< QPair < GWSCoordinate , QString > > ordered_container_tsp_route_coord_id_array;
+    //QList< QPair < GWSCoordinate , QString > > ordered_container_tsp_route_coord_id_array;
 
     // Compare the coordinates of the ordered route and those in the initial QPair QList of coors and IDs to extract
     // the ID of the ordered coors and generate a new QList of QPairs:
@@ -113,12 +113,12 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
                QPair< GWSCoordinate, QString > pair = container_coord_id_array.at(j);
 
                if ( ordered_container_tsp_route_coord_array.at( i ) == pair.first ) {
-                   ordered_container_tsp_route_coord_id_array.append( qMakePair( ordered_container_tsp_route_coord_array.at( i ), pair.second ) );
+                   this->ordered_container_tsp_route_coord_id_array.append( qMakePair( ordered_container_tsp_route_coord_array.at( i ), pair.second ) );
                }
            }
          }
     //this->ordered_container_tsp_route_coord_id_array = container_coord_id_array;
-    return ordered_container_tsp_route_coord_id_array;
+    return this->ordered_container_tsp_route_coord_id_array;
 
 }
 
@@ -134,8 +134,8 @@ bool LoopOverRouteStagesBehaviour::behave(){
          route_nodes = this->generateRouteCoordinateArray( );
      }*/
 
-     if ( ordered_container_tsp_route_coord_id_array.isEmpty() ){
-         ordered_container_tsp_route_coord_id_array = this->generateOrderedTSPRoute();
+     if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
+         this->ordered_container_tsp_route_coord_id_array = this->generateOrderedTSPRoute();
      }
 
      QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -143,58 +143,36 @@ bool LoopOverRouteStagesBehaviour::behave(){
 
      int loop_stage = agent->getProperty( "loop_stage" ).toInt();
      int route_size = this->ordered_container_tsp_route_coord_id_array.size();
-     if ( loop_stage <= route_size ){
+     qDebug() << route_size;
 
-                QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
-                GWSCoordinate stage_coors = pair.first;
-                QString stage_id = pair.second;
+     if ( loop_stage < route_size  ){
 
-                double x = stage_coors.getX();
-                double y = stage_coors.getY();
+        QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
+        GWSCoordinate stage_coors = pair.first;
+        QString stage_id = pair.second;
 
-                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , x );
-                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , y );
-
-                agent->setProperty( "compare_agent_id" , stage_id );
-
-                loop_stage = loop_stage + 1;
-     }
-
-        if ( loop_stage >= this->ordered_container_tsp_route_coord_id_array.size() ){
-
-        qWarning() << "Finished your route, set home as destination!";
-
-        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , agent->getProperty( "home_coordX").toDouble() );
-        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , agent->getProperty( "home_coordY").toDouble() );
-
-        loop_stage = 0;
-
-       }
-
-
-     /*if ( loop_stage >= 3 ) {
-
-        qWarning() << "Finished your route, set home as destination!";
-
-        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , agent->getProperty( "home_coordX").toDouble() );
-        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , agent->getProperty( "home_coordY").toDouble() );
-
-        loop_stage = 0;
-     }
-
-     else {
-
-        GWSCoordinate stage_coors =  route_nodes[ loop_stage ] ;
         double x = stage_coors.getX();
         double y = stage_coors.getY();
 
         mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , x );
         mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , y );
 
-        agent->setProperty( "compare_agent_id" , loop_stage );
-        loop_stage = loop_stage + 1;
+        agent->setProperty( "compare_agent_id" , stage_id );
 
-    }*/
+        loop_stage = loop_stage + 1;
+        }
+       else {
+
+                qWarning() << "Finished your route, set home as destination!";
+
+                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , agent->getProperty( "home_coordX" ).toDouble() );
+                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , agent->getProperty( "home_coordY" ).toDouble() );
+
+                loop_stage = 0;
+
+
+        }
+
 
     agent->setProperty( "loop_stage" , loop_stage );
 

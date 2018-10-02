@@ -1,4 +1,6 @@
 #include "BroadcastToHistoryBehaviour.h"
+#include "../../util/datasource/DatasourceReader.h"
+
 
 BroadcastToHistoryBehaviour::BroadcastToHistoryBehaviour() : GWSBehaviour()
 {
