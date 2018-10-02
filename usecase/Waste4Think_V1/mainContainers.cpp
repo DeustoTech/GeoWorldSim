@@ -121,10 +121,12 @@ int main(int argc, char* argv[])
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 0; i++ ){
+    for( int i = 0 ; i < 2; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
-                                                                     "\"input_resource\" : \"Wood\" , "
+                                                                    "\"waste_amount\" : 0 , "
+                                                                    "\"home_coordX\" : %1 , "
+                                                                    "\"home_coordY\" : %2 , "
                                                                      "\"wait_for_me\" : true , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
                                                                                      "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
@@ -165,7 +167,7 @@ int main(int argc, char* argv[])
                                                                      "\"home_coordY\" : %2 , "
                                                                      "\"loop_stage\"  : 0 , "
                                                                      "\"wait_for_me\" : true , "
-                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 1000 } ]  , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 100 } ]  , "
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0] } , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/226/226592.svg\" , \"color\" : \"purple\" } , "
                                                                     "\"@behaviours\" : [   { \"@type\" : \"LoopOverRouteStagesBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
@@ -221,6 +223,7 @@ int main(int argc, char* argv[])
 
             emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
 
+
     } );
 
     reader->startReading();
@@ -232,9 +235,71 @@ int main(int argc, char* argv[])
      * Zamudio roads
      * ----------------*/
 
-    // Read PEDESTRIAN ROAD data from datasource url:
-    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" );
 
+    // Read PEDESTRIAN ROAD data from datasource url:
+    GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" );
+
+    pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+
+        try {
+        {
+            QJsonObject geo = data.value( "geometry").toObject();
+            geo.insert( "@type" ,  "GWSGeometry");
+
+            QJsonObject edge;
+            edge.insert( "@type" , "GWSGraphEdge" );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+
+            QJsonObject agent_json;
+            agent_json.insert( "geo" , geo);
+            agent_json.insert( "edge" , edge );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
+            agent_json.insert( "@type" , "GWSAgent" );
+
+            QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+
+            emit GWSApp::globalInstance()->sendAgentSignal( pedestrian->serialize() );
+        }
+        {
+            QJsonObject geo = data.value( "geometry").toObject();
+            geo.insert( "@type" ,  "GWSGeometry");
+
+            QJsonObject edge;
+            edge.insert( "@type" , "GWSGraphEdge" );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+
+            QJsonObject agent_json;
+            agent_json.insert( "geo" , geo );
+            agent_json.insert( "edge" , edge );
+            //QJsonArray family_array; family_array.append( "Road" );
+            //agent_json.insert( "@family" , family_array );
+            agent_json.insert( "@type" , "GWSAgent" );
+
+            QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+
+            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
+            env->getId();
+
+            emit GWSApp::globalInstance()->sendAgentSignal( pedestrian->serialize() );
+        }
+
+        }
+        catch (std::exception &e){
+
+        }
+
+    });
+
+
+    // Read FOOTWAY ROAD data from datasource url:
+    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" );
 
     footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
@@ -314,6 +379,7 @@ int main(int argc, char* argv[])
     });
 
         footway_reader->startReading();
+        pedestrian_reader->startReading();
 
 
 
