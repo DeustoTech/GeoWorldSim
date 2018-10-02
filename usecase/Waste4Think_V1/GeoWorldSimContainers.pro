@@ -103,9 +103,9 @@ HEADERS += \
     ../../behaviour/move/LoopOverRouteStagesBehaviour.h \
     ../../behaviour/property/ExchangePropertyBehaviour.h \
     ../../behaviour/information/BroadcastToHistoryBehaviour.h \
-    ../../util/geometry/SnapToPointFromEdge.h \
     ../../behaviour/move/FindClosestEdgePointBehaviour.h \
-    ../../behaviour/move/GoToHallBehaviour.h
+    ../../behaviour/move/GoToHallBehaviour.h \
+    ../../util/geometry/SnapToEdgeFromPoint.h
             ## TRANSPORT LINES
 
 
@@ -182,9 +182,9 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/move/LoopOverRouteStagesBehaviour.cpp \
     ../../behaviour/property/ExchangePropertyBehaviour.cpp \
     ../../behaviour/information/BroadcastToHistoryBehaviour.cpp \
-    ../../util/geometry/SnapFromPointToEdge.cpp \
     ../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
-    ../../behaviour/move/GoToHallBehaviour.cpp
+    ../../behaviour/move/GoToHallBehaviour.cpp \
+    ../../util/geometry/SnapToEdgeFromPoint.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

@@ -124,9 +124,7 @@ int main(int argc, char* argv[])
     for( int i = 0 ; i < 0; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
-                                                                     "\"waste_amount\" : 0 , "
-                                                                     "\"home_coordX\" : %1 , "
-                                                                     "\"home_coordY\" : %2 , "
+                                                                     "\"input_resource\" : \"Wood\" , "
                                                                      "\"wait_for_me\" : true , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
                                                                                      "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
@@ -149,6 +147,7 @@ int main(int argc, char* argv[])
                                                         );
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
+        GWSExecutionEnvironment::globalInstance()->registerAgent( human );
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
         qDebug() << human ->serialize();
     }
@@ -183,8 +182,10 @@ int main(int argc, char* argv[])
 
 
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
+        GWSExecutionEnvironment::globalInstance()->registerAgent( trucks );
+
         emit GWSApp::globalInstance()->sendAgentSignal( trucks ->serialize() );
-        qDebug() << trucks ->serialize();
+
     }
 
 
@@ -194,12 +195,12 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read container data from datasource url:
-    GWSDatasourceReader* reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/b6ec38d9-ce51-48b3-9934-839c4943cee3/read" );
+    GWSDatasourceReader* reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
 
     reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
             // Create GEOMETRY JSON
-            QJsonObject geo = data.value("the_geom").toObject();
+            QJsonObject geo = data.value("geometry").toObject();
             geo.insert( "@type" , "GWSGeometry" );
 
             // Create GRAPHNODE JSON
@@ -212,34 +213,19 @@ int main(int argc, char* argv[])
             agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
             //agent_json.insert( "node" , node );
             agent_json.insert( "@type" , "ContainerAgent" );
-            agent_json.insert( "@id" , data.value( "id" ) );
-            agent_json.insert( "capacity" , 100 );  // This is the attribute that should be changed when humans throw their waste.
+            agent_json.insert( "id" , data.value( "osm_id" ) );
+            agent_json.insert( "waste_amount" , 0 );  // This is the attribute that should be changed when humans throw their waste.
 
             QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
             container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
-
-
             emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
 
-
-
-
     } );
+
     reader->startReading();
 
 
-    //QSharedPointer<GWSAgent> containers = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className());
-
-
-
-
-   // QList< GWSCoordinate > container_route = GSSTSPRouting::nearestNeighborTsp( containers.at(0) , container_coor_array , containers.at(0) );
-   // QList< GWSCoordinate > route = GSSTSPRouting::nearestNeighborTsp( container_coord, QList<GWSCoordinate > visit_coordinates, container_coord );
-
-   /* foreach (GWSCoordinate i, container_route){
-        qDebug() << i;
-    }*/
 
 
     /* ----------------
@@ -247,14 +233,14 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read PEDESTRIAN ROAD data from datasource url:
-    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/22960ed3-59be-443e-8ff7-8b3a5f8d29ac/read" );
+    GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" );
 
-    {
+
     footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
-        //try {
+        try {
         {
-            QJsonObject geo = data.value( "geo").toObject();
+            QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
 
             QJsonObject edge;
@@ -274,12 +260,9 @@ int main(int argc, char* argv[])
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
             emit GWSApp::globalInstance()->sendAgentSignal( footway->serialize() );
-
-
-
         }
         {
-            QJsonObject geo = data.value( "geo").toObject();
+            QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
 
             QJsonObject edge;
@@ -304,14 +287,14 @@ int main(int argc, char* argv[])
             emit GWSApp::globalInstance()->sendAgentSignal( footway->serialize() );
         }
 
-      //  } catch (std::exception &e) {
+        }
+        catch (std::exception &e){
 
-        //}
+        }
     });
 
-    footway_reader->startReading();
 
-    //footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
+    footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
 
         foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( HumanAgent::staticMetaObject.className() ) ){
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
@@ -321,33 +304,17 @@ int main(int argc, char* argv[])
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
         }
 
-    }
+        foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ){
+            GWSExecutionEnvironment::globalInstance()->registerAgent( a );
+        }
+
         GWSExecutionEnvironment::globalInstance()->run();
 
-       /* QList < GWSCoordinate > container_coord_array;
 
-        foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className())  ){
-            GWSCoordinate container_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
-            container_coord_array.append(container_coord);
-        }*/
+    });
 
-        //const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
+        footway_reader->startReading();
 
-
-        // Get all the Edges from the graph
-        //GWSDijkstraRouting* route = new GWSDijkstraRouting( graph->getEdges() );
-        //QList<QSharedPointer<GWSGraphEdge>> GWSGraph::getEdges()
-        //GSSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
-
-        /*QList< QSharedPointer<GWSGraphEdge> > edges = graph->getEdges();
-        GSSTSPRouting* route = new GSSTSPRouting( edges );
-        QList< GWSCoordinate > container_route_nodes = route->nearestNeighborTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , container_coord_array , GWSCoordinate( -2.8621287 , 43.2803458 ) );
-        QList< GWSCoordinate > ordered_container_route_nodes = route->orderCircularTsp( GWSCoordinate( -2.8521286 , 43.2803457 ) , GWSCoordinate( -2.8621287 , 43.2803458 ) , container_route_nodes);
-*/
-
-   // });
-
-    //footway_reader->startReading();
 
 
 
@@ -355,4 +322,6 @@ int main(int argc, char* argv[])
 
     app->exec();
 
-    }
+}
+
+

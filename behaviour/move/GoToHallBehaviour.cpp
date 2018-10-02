@@ -22,7 +22,7 @@ bool GoToHallBehaviour::continueToNext(){
         return false;
     }
 
-    if ( ( agent->getProperty( "closest_edge_point" ) != destination_coor  ) ){
+    if ( ( agent->getProperty( "closest_edge_pointX" ) != destination_coor.getX() ) ||  ( agent->getProperty( "closest_edge_pointY" ) != destination_coor.getY() ) ){
         return false;
     }
 
@@ -33,10 +33,9 @@ bool GoToHallBehaviour::continueToNext(){
 bool GoToHallBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate hall_coord = agent->getProperty( "closest_edge_point" );
 
-    double hall_coordX = hall_coord.getX();
-    double hall_coordY = hall_coord.getY();
+    double hall_coordX = agent->getProperty( "closest_edge_pointX" ).toDouble();
+    double hall_coordY = agent->getProperty( "closest_edge_pointY" ).toDouble();
 
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , hall_coordX );

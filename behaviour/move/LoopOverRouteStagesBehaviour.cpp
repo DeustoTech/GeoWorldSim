@@ -78,10 +78,11 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
     QList < QPair <GWSCoordinate , QString > > container_coord_id_array;
     QList < GWSCoordinate > container_coord_array;
 
+    QList<QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className()) ;
     foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className())  ){
 
          GWSCoordinate container_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
-         QString container_id = a->getId();
+         QString container_id = a->getProperty("@id").toString();
          container_coord_array.append( container_coord ) ;
          container_coord_id_array.append( qMakePair( container_coord, container_id ) );
      }
@@ -116,7 +117,8 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
                }
            }
          }
-    return ordered_container_tsp_route_coord_id_array;
+    this->ordered_container_tsp_route_coord_id_array = container_coord_id_array;
+    return this->ordered_container_tsp_route_coord_id_array;
 
 }
 
@@ -128,22 +130,22 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
 bool LoopOverRouteStagesBehaviour::behave(){
 
 
-     if( route_nodes.isEmpty() ){
+    /* if( route_nodes.isEmpty() ){
          route_nodes = this->generateRouteCoordinateArray( );
-     }
-
-    /* if ( ordered_container_tsp_route_coord_id_array.isEmpty() ){
-         ordered_container_tsp_route_coord_id_array = this->generateOrderedTSPRoute();
      }*/
+
+     if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
+         this->ordered_container_tsp_route_coord_id_array = this->generateOrderedTSPRoute();
+     }
 
      QSharedPointer<GWSAgent> agent = this->getAgent();
      QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
      int loop_stage = agent->getProperty( "loop_stage" ).toInt();
 
-     /* if ( loop_stage < ordered_container_tsp_route_coord_id_array.size() ){
-      *
-                QPair<QString, QString> pair = ordered_container_tsp_route_coord_id_array.at( loop_stage );
+     if ( loop_stage < this->ordered_container_tsp_route_coord_id_array.size() ){
+
+                QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
                 GWSCoordinate stage_coors = pair.first;
                 QString stage_id = pair.second;
 
@@ -156,9 +158,9 @@ bool LoopOverRouteStagesBehaviour::behave(){
                 agent->setProperty( "compare_agent_id" , stage_id );
 
                 loop_stage = loop_stage + 1;
-     * }
-     *
-        if ( loop_stage >= container_array.size() ){
+     }
+
+        if ( loop_stage >= this->ordered_container_tsp_route_coord_id_array.size() ){
 
         qWarning() << "Finished your route, set home as destination!";
 
@@ -168,9 +170,9 @@ bool LoopOverRouteStagesBehaviour::behave(){
         loop_stage = 0;
 
        }
-    */
 
-     if ( loop_stage >= 3 ) {
+
+     /*if ( loop_stage >= 3 ) {
 
         qWarning() << "Finished your route, set home as destination!";
 
@@ -192,7 +194,7 @@ bool LoopOverRouteStagesBehaviour::behave(){
         agent->setProperty( "compare_agent_id" , loop_stage );
         loop_stage = loop_stage + 1;
 
-    }
+    }*/
 
     agent->setProperty( "loop_stage" , loop_stage );
 

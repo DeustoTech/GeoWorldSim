@@ -1,4 +1,4 @@
-#include "SnapToPointFromEdge.h"
+#include "SnapToEdgeFromPoint.h"
 
 #include "../../util/graph/Graph.h"
 #include "../../util/graph/GraphEdge.h"
@@ -30,7 +30,7 @@ SnapToEdgeFromPoint::SnapToEdgeFromPoint( GWSCoordinate home_coor )  {
     double zatitzailea =  qPow( x2 - x1 , 2 ) + qPow( y1 - y2 , 2 ) ;
 
     double x = zatikizuna / zatitzailea;
-    double y = ( (y2 - y1) * x + x2 * y1 - x1 * y2 )/ ( x2 - x1 );
+    double y = ( (y2 - y1) * x + x2 * y1 - x1 * y2 ) / ( x2 - x1 );
 
     this->coors_to_snap_to = GWSCoordinate( x , y );
 

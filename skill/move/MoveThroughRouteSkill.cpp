@@ -67,7 +67,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-    /*if( this->pending_route.isEmpty() ){
+   /* if( this->pending_route.isEmpty() ){
         // Generate pending route
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
     }*/

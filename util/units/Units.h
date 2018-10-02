@@ -11,11 +11,16 @@
 struct GWSUnit {
     double value = 0;
     const char* unit = "undefined";
+    QString type = Q_NULLPTR;
 
     // CONSTRUCTORS
     GWSUnit() : value(0) , unit("undefined"){}
     GWSUnit(double value, const char* unit) : value(value) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
     GWSUnit(const GWSUnit &other) : GWSUnit(other.value , other.unit ){}
+
+    //GWSUnit() : type(0) , unit("undefined"){}
+    GWSUnit(QString type, const char* unit) : type(type) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
+    //GWSUnit(const GWSUnit &other) : GWSUnit(other.type , other.unit ){}
     ~GWSUnit(){}
 
     // GETTERS
@@ -181,6 +186,17 @@ struct GWSFrequencyUnit : GWSUnit {
     GWSFrequencyUnit(double hertzs) : GWSUnit(hertzs , "hertz"){}
     GWSFrequencyUnit(const GWSUnit &other) : GWSFrequencyUnit(other.value){}
     GWSFrequencyUnit() : GWSFrequencyUnit(0){}
+};
+
+
+/**********************************************************************
+ RESOURCES TO BE USED AS INPUT/OUTPUT PROPERTIES
+**********************************************************************/
+
+struct GWSResourceUnit : GWSUnit {
+    GWSResourceUnit(QString resource) : GWSUnit( resource, "resource"){}
+    GWSResourceUnit(const GWSUnit &other) : GWSResourceUnit(other.type) {}
+    GWSResourceUnit() : GWSResourceUnit(0){}
 };
 
 // DO NOT Declare Units to be used as QMETAPROPERTY
