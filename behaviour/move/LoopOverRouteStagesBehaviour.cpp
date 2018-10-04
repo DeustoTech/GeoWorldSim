@@ -69,17 +69,17 @@ QList<GWSCoordinate> LoopOverRouteStagesBehaviour::generateRouteCoordinateArray(
 
 // Generate Ordered TSP route for ContainerAgents
 
-QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
+void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_home_coor = GWSCoordinate( agent->getProperty( "home_coordX").toDouble() , agent->getProperty( "home_coordY").toDouble() );
 
     // Generate list of containers to visit:
-    QList < QPair <GWSCoordinate , QString > > container_coord_id_array;
+    QMap<QString , GWSCoordinate > container_coord_id_array;
     QList < GWSCoordinate > container_coord_array;
 
-    container_coord_array.append( agent_home_coor ) ;
-    container_coord_id_array.append(qMakePair( agent_home_coor, agent->getProperty("@id").toString() ) );
+    //container_coord_array.append( agent_home_coor ) ;
+    //container_coord_id_array.insert( agent->getProperty("@id").toString() , agent_home_coor );
 
 
     QList<QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className()) ;
@@ -88,7 +88,7 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
          GWSCoordinate container_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
          QString container_id = a->getProperty("@id").toString();
          container_coord_array.append( container_coord ) ;
-         container_coord_id_array.append( qMakePair( container_coord, container_id ) );
+         container_coord_id_array.insert( container_id , container_coord );
      }
 
     // Generate graph:
@@ -97,34 +97,27 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
 
     // Get graph edges:
     QList< QSharedPointer< GWSGraphEdge > > edges = graph->getEdges();
-    //this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
 
     // Generate TSP algorithm with those edges:
-    GSSTSPRouting* container_route = new GSSTSPRouting( edges );
+    GWSTSPRouting* container_route = new GWSTSPRouting( edges );
 
     // Get nearest neighbour given start coordinates and containers to visit:
     QList< GWSCoordinate > container_tsp_route_coord_array = container_route->nearestNeighborTsp( agent_home_coor , container_coord_array , agent_home_coor );
+    foreach (GWSCoordinate c, container_tsp_route_coord_array) {
+        qDebug() << "Before" << container_coord_id_array.key( c );
+    }
 
     // Order the nodes to get best route. This is the route to follow.
     QList< GWSCoordinate > ordered_container_tsp_route_coord_array = container_route->orderCircularTsp( agent_home_coor , agent_home_coor , container_tsp_route_coord_array );
-
-    // Generate a QPair QList so that we can access the ordered container coordinates and their IDs:
-    //QList< QPair < GWSCoordinate , QString > > ordered_container_tsp_route_coord_id_array;
+    foreach (GWSCoordinate c, ordered_container_tsp_route_coord_array) {
+        qDebug() << "After" <<  container_coord_id_array.key( c );
+    }
 
     // Compare the coordinates of the ordered route and those in the initial QPair QList of coors and IDs to extract
     // the ID of the ordered coors and generate a new QList of QPairs:
-    for ( int i = 0; i < ordered_container_tsp_route_coord_array.size(); i++ ){
-           for ( int j = 0; j < container_coord_id_array.size(); j++ ){
-
-               QPair< GWSCoordinate, QString > pair = container_coord_id_array.at(j);
-
-               if ( ordered_container_tsp_route_coord_array.at( i ) == pair.first ) {
-                   this->ordered_container_tsp_route_coord_id_array.append( qMakePair( ordered_container_tsp_route_coord_array.at( i ), pair.second ) );
-               }
-           }
-         }
-    //this->ordered_container_tsp_route_coord_id_array = container_coord_id_array;
-    return this->ordered_container_tsp_route_coord_id_array;
+    foreach (GWSCoordinate c, ordered_container_tsp_route_coord_array) {
+        this->ordered_container_tsp_route_coord_id_array.append( qMakePair( c , container_coord_id_array.key( c ) ) );
+    }
 
 }
 
@@ -141,7 +134,7 @@ bool LoopOverRouteStagesBehaviour::behave(){
      }*/
 
      if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
-         this->ordered_container_tsp_route_coord_id_array = this->generateOrderedTSPRoute();
+         this->generateOrderedTSPRoute();
      }
 
      QSharedPointer<GWSAgent> agent = this->getAgent();

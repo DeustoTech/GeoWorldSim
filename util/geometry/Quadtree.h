@@ -67,7 +67,7 @@ private:
     QMap< QString , GWSQuadtreeElement* > id_to_tree_elements;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
 
-    QMutex mutex;
+    mutable QMutex mutex;
     int test = 0;
 };
 
