@@ -17,6 +17,8 @@ bool FindClosestEdgePointBehaviour::continueToNext(){
         return false;
    }
 
+   return true;
+
 }
 
 
@@ -28,14 +30,14 @@ bool FindClosestEdgePointBehaviour::continueToNext(){
 
 bool FindClosestEdgePointBehaviour::behave(){
 
-    /*QSharedPointer< GWSAgent> agent = this->getAgent();
+    QSharedPointer< GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_home_coor = GWSCoordinate( agent->getProperty( "home_coordX").toDouble() , agent->getProperty( "home_coordY").toDouble() );
-    SnapToEdgeFromPoint *snap = new SnapToEdgeFromPoint();
-    GWSCoordinate closest_point_in_edge = snap->SnapToEdgeFromPoint( agent_home_coor ).getCoordinates();
+    SnapToEdgeFromPoint *snap = new SnapToEdgeFromPoint( agent_home_coor );
+    GWSCoordinate closest_point_in_edge = snap->getCoordinates();
 
     agent->setProperty( "closest_edge_pointX" , closest_point_in_edge.getX());
     agent->setProperty( "closest_edge_pointY" , closest_point_in_edge.getY());
-*/
+
     return true;
 
 

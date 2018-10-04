@@ -78,6 +78,10 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
     QList < QPair <GWSCoordinate , QString > > container_coord_id_array;
     QList < GWSCoordinate > container_coord_array;
 
+    container_coord_array.append( agent_home_coor ) ;
+    container_coord_id_array.append(qMakePair( agent_home_coor, agent->getProperty("@id").toString() ) );
+
+
     QList<QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className()) ;
     foreach ( QSharedPointer<GWSAgent> a, agents  ){
 
@@ -89,9 +93,11 @@ QList< QPair <GWSCoordinate , QString > > LoopOverRouteStagesBehaviour::generate
 
     // Generate graph:
     const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
+    //const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( this->getProperty( MoveThroughRouteSkill::EDGES_CLASS_PROP ).toString() );
 
     // Get graph edges:
     QList< QSharedPointer< GWSGraphEdge > > edges = graph->getEdges();
+    //this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
 
     // Generate TSP algorithm with those edges:
     GSSTSPRouting* container_route = new GSSTSPRouting( edges );

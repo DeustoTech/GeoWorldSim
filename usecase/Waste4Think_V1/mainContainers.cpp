@@ -39,6 +39,7 @@
 #include "../../behaviour/move/LoopOverRouteStagesBehaviour.h"
 #include "../../behaviour/property/ExchangePropertyBehaviour.h"
 #include "../../behaviour/information/BroadcastToHistoryBehaviour.h"
+#include "../../behaviour/move/FindClosestEdgePointBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -101,6 +102,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( LoopOverRouteStagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( FindClosestEdgePointBehaviour::staticMetaObject );
+
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -113,10 +116,10 @@ int main(int argc, char* argv[])
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
      Zamudio longitude = -2.8621286*/
-    double lat_max = 43.28539;
-    double lat_min = 43.27554;
-    double lon_max = -2.85024;
-    double lon_min = -2.87092;
+    double lat_max = 43.28472587082224;
+    double lat_min = 43.280961278501344;
+    double lon_max = -2.859949952301804 ;
+    double lon_min = -2.8665803729866184;
 
 
     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
@@ -172,6 +175,7 @@ int main(int argc, char* argv[])
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0] } , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/226/226592.svg\" , \"color\" : \"purple\" } , "
                                                                     "\"@behaviours\" : [   { \"@type\" : \"LoopOverRouteStagesBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
+                                                                                          "{ \"@type\" : \"FindClosestEdgePointBehaviour\", \"start\" : true , \"duration\" : 1000 } , "
                                                                                           "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                           "{ \"@type\" : \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1000 } , "
                                                                                           "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
@@ -316,7 +320,7 @@ int main(int argc, char* argv[])
     }
 
 
-    {
+    /*{
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -401,6 +405,28 @@ int main(int argc, char* argv[])
 
         emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
     }
+
+    {
+        QJsonObject geo;
+        geo.insert( "@type" , "GWSGeometry" );
+        geo.insert( "type" , "Point" );
+        QJsonArray coors;
+        coors.append( -2.862347847161118  );
+        coors.append( 43.282492136677476 );
+        geo.insert( "coordinates" , coors );
+
+        QJsonObject agent_json;
+        agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
+        agent_json.insert( "@type" , "ContainerAgent" );
+        agent_json.insert( "id" , "CONTAINER8" );
+        agent_json.insert( "waste_amount" , 0 );
+
+        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
+        container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+
+        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+    }*/
+
 
 
 
