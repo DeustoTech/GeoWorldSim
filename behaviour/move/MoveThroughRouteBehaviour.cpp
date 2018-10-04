@@ -37,7 +37,6 @@ bool MoveThroughRouteBehaviour::continueToNext(){
         return false;
     }
 
-
     GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
     if ( current_position == mv->getRouteDestination() ){

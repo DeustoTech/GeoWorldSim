@@ -38,6 +38,7 @@ public:
     double getGeometryMaxY() const;
     double getGeometryMinY() const;
     GWSCoordinate getCentroid() const;
+    QList<GWSCoordinate> getCoordinates() const;
 
     // SPATIAL COMPARATORS
     bool isInBounds( double minX , double maxX , double minY , double maxY ) const;

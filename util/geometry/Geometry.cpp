@@ -282,6 +282,20 @@ GWSCoordinate GWSGeometry::getCentroid() const{
     return GWSCoordinate();
 }
 
+QList<GWSCoordinate> GWSGeometry::getCoordinates() const{
+    QList<GWSCoordinate> coordinates;
+    if( this && this->inner_geometry ){
+        geos::geom::CoordinateSequence* seq = this->inner_geometry->getCoordinates();
+        if( seq ){
+            for(int i = 0; i < seq->size() ; i++){
+                const geos::geom::Coordinate coor = seq->getAt( i );
+                coordinates.append( GWSCoordinate( coor.x , coor.y , coor.z ) );
+            }
+        }
+    }
+    return coordinates;
+}
+
 /**********************************************************************
  SPATIAL COMPARATORS
 **********************************************************************/
