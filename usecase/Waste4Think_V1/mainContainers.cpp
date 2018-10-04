@@ -136,15 +136,14 @@ int main(int argc, char* argv[])
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
+                                                                                            "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"CheckIfAtPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"@next\" : [\"INCREMENT\",\"WASTE_FULL\"] } , "
-                                                                                            "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : [\"GOTO_CLOSEST_EDGE\"] } , "
+                                                                                            "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : \"FIND_CLOSEST_EDGE\" } , "
                                                                                             "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
                                                                                             "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
-                                                                                            "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
-                                                                                            "{ \"@type\" : \"FindClosestEdgePointBehaviour\", \"@id\" : \"FIND_CLOSEST_EDGE\", \"start\" : true , \"duration\" : 1000 } , "
-                                                                                            "{ \"@type\" : \"GoToClosestEdgePointBehaviour\", \"@id\" : \"GOTO_CLOSEST_EDGE\", \"duration\" : 1000 , \"@next\" : [\"FIND_CLOSEST\"] } , "
-                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST\" , \"duration\" : 1000  } , "
+                                                                                            "{ \"@type\" : \"FindClosestEdgePointBehaviour\", \"@id\" : \"FIND_CLOSEST_EDGE\", \"duration\" : 1000 } , "
+                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST\" , \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
                                                                                             "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "
                                                                                             " ] } ")
@@ -182,14 +181,14 @@ int main(int argc, char* argv[])
                                                                                           "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
                                                                                           "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
                                                                     " ] } ")
-                                                       .arg( -2.8644994224613356  )
-                                                       .arg( 43.28428545332489 )
+                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
+                                                       .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .toLatin1()
                                                         );
 
-        // .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
-        //.arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
-
+        //
+        //
+// -2.8644994224613356 , 43.28428545332489
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( trucks );
 
@@ -233,10 +232,10 @@ int main(int argc, char* argv[])
 
     } );
 
-    containerReader->startReading();
+    //containerReader->startReading();
 
     // Create 4 containers
-    /*{
+    {
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -318,10 +317,10 @@ int main(int argc, char* argv[])
         container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
         emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
-    }*/
+    }
 
 
-    /*{
+    {
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -426,7 +425,7 @@ int main(int argc, char* argv[])
         container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
         emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
-    }*/
+    }
 
 
 

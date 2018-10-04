@@ -47,32 +47,13 @@ bool LoopOverRouteStagesBehaviour::continueToNext(){
 
 }
 
-// Generate Route Coordinate array randomly
-
-QList<GWSCoordinate> LoopOverRouteStagesBehaviour::generateRouteCoordinateArray( ) const{
-
-    // SET ROUTE STAGES
-    // Generate random vector to try TSP algorithms
-    double lat_max = 43.28539;
-    double lat_min = 43.27554;
-    double lon_max = -2.85024;
-    double lon_min = -2.87092;
-
-    int n = 3;
-    QList<GWSCoordinate> route_nodes;
-    for(int i = 0; i < n; i++){
-        GWSCoordinate coor = GWSCoordinate( ( lon_max - lon_min ) * UniformDistribution::uniformDistribution()  + lon_min , ( lat_max - lat_min ) * UniformDistribution::uniformDistribution() + lat_min );
-        route_nodes.append( coor );
-    }
-    return route_nodes;
-}
 
 // Generate Ordered TSP route for ContainerAgents
 
 void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_home_coor = GWSCoordinate( agent->getProperty( "home_coordX").toDouble() , agent->getProperty( "home_coordY").toDouble() );
+    GWSCoordinate agent_home_coor = GWSCoordinate( agent->getProperty( "home_coordX" ).toDouble(), agent->getProperty( "home_coordY" ).toDouble() );
 
     // Generate list of containers to visit:
     QMap<QString , GWSCoordinate > container_coord_id_array;
@@ -144,7 +125,7 @@ bool LoopOverRouteStagesBehaviour::behave(){
      int route_size = this->ordered_container_tsp_route_coord_id_array.size();
      qDebug() << route_size;
 
-     if ( loop_stage < route_size  ){
+     if ( loop_stage <= ( route_size - 1)  ){
 
         QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
         GWSCoordinate stage_coors = pair.first;
@@ -162,12 +143,10 @@ bool LoopOverRouteStagesBehaviour::behave(){
         }
        else {
 
-                qWarning() << "Finished your route, set home as destination!";
+        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , agent->getProperty( "home_coordX" ).toDouble() );
+        mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , agent->getProperty( "home_coordY" ).toDouble() );
 
-                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , agent->getProperty( "home_coordX" ).toDouble() );
-                mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , agent->getProperty( "home_coordY" ).toDouble() );
-
-                loop_stage = 0;
+        loop_stage = 0;
 
 
         }
