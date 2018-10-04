@@ -1,13 +1,13 @@
-#include "GoToHallBehaviour.h"
+#include "GoToClosestEdgePointBehaviour.h"
 
 #include "../../app/App.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
-GoToHallBehaviour::GoToHallBehaviour() : GWSBehaviour(){
+GoToClosestEdgePointBehaviour::GoToClosestEdgePointBehaviour() : GWSBehaviour(){
 }
 
 
-bool GoToHallBehaviour::continueToNext(){
+bool GoToClosestEdgePointBehaviour::continueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
@@ -30,7 +30,7 @@ bool GoToHallBehaviour::continueToNext(){
 }
 
 
-bool GoToHallBehaviour::behave(){
+bool GoToClosestEdgePointBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 

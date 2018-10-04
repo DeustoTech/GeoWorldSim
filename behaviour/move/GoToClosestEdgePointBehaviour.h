@@ -3,12 +3,12 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class GoToHallBehaviour : public GWSBehaviour
+class GoToClosestEdgePointBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GoToHallBehaviour();
+    Q_INVOKABLE explicit GoToClosestEdgePointBehaviour();
     virtual bool continueToNext();
 
 protected slots:
