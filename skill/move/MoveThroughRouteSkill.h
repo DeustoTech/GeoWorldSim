@@ -31,6 +31,7 @@ protected:
 
     GWSDijkstraRouting* routing_graph = Q_NULLPTR;
     QList< QSharedPointer<GWSGraphEdge> > pending_route;
+    QList<GWSCoordinate> pending_edge_coordinates;
 
 };
 

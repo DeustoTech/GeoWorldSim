@@ -232,10 +232,10 @@ int main(int argc, char* argv[])
 
     } );
 
-    //reader->startReading();
+    reader->startReading();
 
     // Create 4 containers
-    {
+    /* {
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -317,7 +317,7 @@ int main(int argc, char* argv[])
         container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
         emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
-    }
+    }*/
 
 
     /*{
@@ -359,7 +359,7 @@ int main(int argc, char* argv[])
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
         container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
-        emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
+        emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
     }
 
 
@@ -466,13 +466,18 @@ int main(int argc, char* argv[])
         {
             QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
+            QJsonArray reversed_coordinates;
+            for(int i = geo.value( "coordinates" ).toArray().size()-1 ; i >= 0 ; i-- ){
+                reversed_coordinates.append( geo.value( "coordinates" ).toArray().at(i) );
+            }
+            geo.insert( "coordinates" , reversed_coordinates );
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
@@ -527,13 +532,18 @@ int main(int argc, char* argv[])
         {
             QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
+            QJsonArray reversed_coordinates;
+            for(int i = geo.value( "coordinates" ).toArray().size()-1 ; i >= 0 ; i-- ){
+                reversed_coordinates.append( geo.value( "coordinates" ).toArray().at(i) );
+            }
+            geo.insert( "coordinates" , reversed_coordinates );
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
@@ -588,13 +598,18 @@ int main(int argc, char* argv[])
         {
             QJsonObject geo = data.value( "geometry").toObject();
             geo.insert( "@type" ,  "GWSGeometry");
+            QJsonArray reversed_coordinates;
+            for(int i = geo.value( "coordinates" ).toArray().size()-1 ; i >= 0 ; i-- ){
+                reversed_coordinates.append( geo.value( "coordinates" ).toArray().at(i) );
+            }
+            geo.insert( "coordinates" , reversed_coordinates );
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );
@@ -639,7 +654,7 @@ int main(int argc, char* argv[])
 
         footway_reader->startReading();
         pedestrian_reader->startReading();
-        other_reader->startReading();
+        //other_reader->startReading();
 
 
 

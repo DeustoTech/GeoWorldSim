@@ -2,6 +2,7 @@
 #include "../../environment/Environment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../app/App.h"
 
 QString MoveThroughRouteSkill::EDGES_CLASS_PROP = "edges_class";
 QString MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP = "route_destination_x";
@@ -72,23 +73,46 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
     }
 
-    if( this->pending_route.isEmpty() ){ // Assume we have reached route end, free move to destination
+    // Assume we have reached route end OR not found route, free move to destination
+    if( this->pending_route.isEmpty() ){
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
-    } else {
-
-        // Move along route edges
-        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
-
-        // Check if we have reached current_edge
-        GWSCoordinate current_edge_end = current_edge->getTo();
-        this->setProperty( MoveSkill::DESTINATION_X_PROP , current_edge_end.getX() );
-        this->setProperty( MoveSkill::DESTINATION_Y_PROP , current_edge_end.getY() );
-
-        if( current_coor == current_edge_end ){
-            this->pending_route.removeAt(0);
-        }
     }
+
+    if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
+
+        // We have reached current_edge's geometry last real coordinate (which should be equal to the edge's "getTo" coordinate)
+
+        // Get next pending_route edge, to get its coordinates and move along them
+        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
+        QSharedPointer<GWSAgent> current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( current_edge );
+        QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( current_edge_agent );
+        this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
+        this->pending_route.removeAt( 0 );
+
+        current_edge_agent->border_color = QColor("Red");
+        GWSApp::globalInstance()->sendAgentSignal( current_edge_agent->serialize() );
+
+    }
+
+    if ( !this->pending_edge_coordinates.isEmpty() ) {
+
+        // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
+        GWSCoordinate check_if_arrived = this->pending_edge_coordinates.at( 0 );
+        if( current_coor == check_if_arrived ){
+            this->pending_edge_coordinates.removeAt( 0 );
+        }
+        GWSCoordinate move_to;
+        if( this->pending_edge_coordinates.isEmpty() ){
+            move_to = current_coor;
+        } else {
+            move_to = this->pending_edge_coordinates.at( 0 );
+        }
+        this->setProperty( MoveSkill::DESTINATION_X_PROP , move_to.getX() );
+        this->setProperty( MoveSkill::DESTINATION_Y_PROP , move_to.getY() );
+
+    }
+
 
     MoveSkill::move( movement_duration );
 
