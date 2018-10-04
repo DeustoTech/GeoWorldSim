@@ -48,7 +48,9 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double m
     }
 
     geos::geom::Envelope* e = new geos::geom::Envelope( minX , maxX , minY , maxY );
+    this->mutex.lock();
     this->inner_index->query( e , vector );
+    this->mutex.unlock();
     delete e;
 
     if( vector.empty() ){
@@ -60,7 +62,9 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double m
             GWSQuadtreeElement* elm = (GWSQuadtreeElement*)vector.at(i);
             if( elm ){
                 QSharedPointer<GWSObject> obj = this->id_to_objects.value( elm->referenced_object_id );
-                objects.append( obj );
+                if( obj ){
+                   objects.append( obj );
+                }
             }
         }
     }

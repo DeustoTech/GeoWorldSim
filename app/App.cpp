@@ -148,7 +148,7 @@ void GWSApp::startSocket(){
 }
 
 void GWSApp::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://laika.energia.deusto.es:8070" )); //ws://localhost:8070" ) );
+    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com" )); //ws://localhost:8070" ) );
 }
 
 /*void GWSApp::socketPushData(QJsonValue json){

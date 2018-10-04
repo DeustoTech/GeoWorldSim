@@ -7,14 +7,14 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
-GSSTSPRouting::GSSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSRouting( edges ) {
+GWSTSPRouting::GWSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSRouting( edges ) {
 
     // Create dijkstra routing for distances
     this->dijkstra_routing = new GWSDijkstraRouting( edges );
 
 }
 
-GSSTSPRouting::~GSSTSPRouting(){
+GWSTSPRouting::~GWSTSPRouting(){
     // Delete created stuff
     this->dijkstra_routing->deleteLater();
 }
@@ -23,7 +23,7 @@ GSSTSPRouting::~GSSTSPRouting(){
  METHODS
 **********************************************************************/
 
-QList<GWSCoordinate> GSSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
@@ -44,7 +44,7 @@ QList<GWSCoordinate> GSSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coord
     return tsp_circular_route_nodes;// this->orderCircularTsp(start_coordinate , end_coordinate , tsp_circular_route_nodes);
 }
 
-QList<GWSCoordinate> GSSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
@@ -64,7 +64,7 @@ QList<GWSCoordinate> GSSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QL
 
 }
 
-QList<GWSCoordinate> GSSTSPRouting::insertionTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::insertionTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
@@ -83,7 +83,7 @@ QList<GWSCoordinate> GSSTSPRouting::insertionTsp(GWSCoordinate start_coordinate,
 
 }
 
-QList<GWSCoordinate> GSSTSPRouting::christofidesTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
@@ -101,7 +101,7 @@ QList<GWSCoordinate> GSSTSPRouting::christofidesTsp(GWSCoordinate start_coordina
     }
 }
 
-QList<GWSCoordinate> GSSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
@@ -124,7 +124,7 @@ QList<GWSCoordinate> GSSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QLis
  PRIVATE
 **********************************************************************/
 
-void GSSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_coordinates ){
+void GWSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_coordinates ){
 
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
@@ -139,6 +139,7 @@ void GSSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::
             foreach( QSharedPointer <GWSGraphEdge> e , route ){
                 length = length + e->getLength();
             }
+            if( length <= GWSLengthUnit( 0 ) ){ length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) ); }
 
             distance_matrix_weights->set( edge , length.number() );
         }
@@ -153,7 +154,7 @@ void GSSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::
  * @param tsp_circular_nodes
  * @return
  */
-QList<GWSCoordinate> GSSTSPRouting::orderCircularTsp(GWSCoordinate start_coordinate, GWSCoordinate end_coordinate, QList<GWSCoordinate> tsp_circular_nodes){
+QList<GWSCoordinate> GWSTSPRouting::orderCircularTsp(GWSCoordinate start_coordinate, GWSCoordinate end_coordinate, QList<GWSCoordinate> tsp_circular_nodes){
     Q_UNUSED(end_coordinate)
 
     QList<GWSCoordinate> tsp_ordered_nodes;

@@ -8,14 +8,14 @@
 #include <lemon/list_graph.h>
 #include <lemon/full_graph.h>
 
-class GSSTSPRouting : public GWSRouting
+class GWSTSPRouting : public GWSRouting
 {
     Q_OBJECT
 
 public:
 
-    GSSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
-    ~GSSTSPRouting();
+    GWSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
+    ~GWSTSPRouting();
 
     // METHODS
     QList<GWSCoordinate> nearestNeighborTsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);

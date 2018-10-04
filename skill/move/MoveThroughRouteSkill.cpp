@@ -68,13 +68,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-    if( this->pending_route.isEmpty() ){
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
         // Generate pending route
         this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
     }
 
     // Assume we have reached route end OR not found route, free move to destination
-    if( this->pending_route.isEmpty() ){
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
     }

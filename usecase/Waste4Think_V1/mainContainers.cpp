@@ -203,9 +203,9 @@ int main(int argc, char* argv[])
      * ----------------*/
 
     // Read container data from datasource url:
-    GWSDatasourceReader* reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
+    GWSDatasourceReader* containerReader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
 
-    reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+    containerReader->connect( containerReader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
             // Create GEOMETRY JSON
             QJsonObject geo = data.value("geometry").toObject();
@@ -232,10 +232,10 @@ int main(int argc, char* argv[])
 
     } );
 
-    reader->startReading();
+    containerReader->startReading();
 
     // Create 4 containers
-    /* {
+    /*{
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER1" );
+        agent_json.insert( "@id" , "CONTAINER1" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER2" );
+        agent_json.insert( "@id" , "CONTAINER2" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -289,7 +289,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER3" );
+        agent_json.insert( "@id" , "CONTAINER3" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER4" );
+        agent_json.insert( "@id" , "CONTAINER4" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -647,9 +647,6 @@ int main(int argc, char* argv[])
             GWSExecutionEnvironment::globalInstance()->registerAgent( a );
         }
 
-        GWSExecutionEnvironment::globalInstance()->run();
-
-
     });
 
         footway_reader->startReading();
@@ -657,9 +654,9 @@ int main(int argc, char* argv[])
         //other_reader->startReading();
 
 
-
-
-
+        QTimer::singleShot( 10*1000 , [](){
+            GWSExecutionEnvironment::globalInstance()->run();
+        } );
     app->exec();
 
 }
