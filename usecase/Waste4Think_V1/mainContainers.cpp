@@ -35,6 +35,7 @@
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfPropertyBehaviour.h"
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
+#include "../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h"
 //#include "../../behaviour/move/MoveAlongStagedRouteBehaviour.h"
 #include "../../behaviour/move/LoopOverRouteStagesBehaviour.h"
 #include "../../behaviour/property/ExchangePropertyBehaviour.h"
@@ -103,15 +104,11 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( FindClosestEdgePointBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfAtClosestEdgePointBehaviour::staticMetaObject );
 
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
-
-
-    /* ----------------
-     * Human Agents
-     * ----------------*/
 
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
@@ -122,7 +119,10 @@ int main(int argc, char* argv[])
     double lon_min = -2.8665803729866184;
 
 
-    // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
+    /* ----------------
+     * Human Agents
+     * ----------------*/
+     // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
     for( int i = 0 ; i < 1; i++ ){
 
@@ -138,13 +138,12 @@ int main(int argc, char* argv[])
                                                                      "\"@behaviours\" : [  "
                                                                                             "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"CheckIfAtPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"@next\" : [\"INCREMENT\",\"WASTE_FULL\"] } , "
-                                                                                            "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : \"FIND_CLOSEST_EDGE\" } , "
+                                                                                            "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : \"FIND_CLOSEST_CONTAINER\" } , "
                                                                                             "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
                                                                                             "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
                                                                                             "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
-                                                                                            "{ \"@type\" : \"FindClosestEdgePointBehaviour\", \"@id\" : \"FIND_CLOSEST_EDGE\", \"duration\" : 1000 } , "
-                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST\" , \"duration\" : 1000 } , "
-                                                                                            "{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
+                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST_CONTAINER\" , \"duration\" : 1000 } , "
+                                                                                            "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" }  , "
                                                                                             "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "
                                                                                             " ] } ")
                                                        .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
@@ -152,6 +151,20 @@ int main(int argc, char* argv[])
                                                        .arg( qrand() % 100 + 1 )
                                                        .toLatin1()
                                                         );
+        //"{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
+
+        /*"{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
+        "{ \"@type\" : \"CheckIfAtPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"@next\" : [\"INCREMENT\",\"WASTE_FULL\"] } , "
+        "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : \"FIND_CLOSEST_EDGE\" } , "
+        "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
+        "{ \"@type\" : \"CheckIfAtClosestEdgePointBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"FIND_CLOSEST_CONTAINER\"] } , "
+        "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
+        "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
+        "{ \"@type\" : \"FindClosestEdgePointBehaviour\" , \"@id\" : \"FIND_CLOSEST_EDGE\" , \"duration\" : 1000 } , "
+        "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST_CONTAINER\" , \"duration\" : 1000 } , "
+        "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" }  , "
+        "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "*/
+
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( human );
@@ -332,7 +345,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER5" );
+        agent_json.insert( "@id" , "CONTAINER5" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -353,7 +366,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER6" );
+        agent_json.insert( "@id" , "CONTAINER6" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -375,7 +388,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER7" );
+        agent_json.insert( "@id" , "CONTAINER7" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -397,7 +410,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER8" );
+        agent_json.insert( "@id" , "CONTAINER8" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -418,7 +431,7 @@ int main(int argc, char* argv[])
         QJsonObject agent_json;
         agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
         agent_json.insert( "@type" , "ContainerAgent" );
-        agent_json.insert( "id" , "CONTAINER8" );
+        agent_json.insert( "@id" , "CONTAINER9" );
         agent_json.insert( "waste_amount" , 0 );
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();

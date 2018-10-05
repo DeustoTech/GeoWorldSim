@@ -159,29 +159,29 @@ QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(G
  * @param nodes
  * @return
  */
-/*QSharedPointer<GWSGraphNode> GWSDijkstraRouting::dijkstraNearestNode(QSharedPointer<GWSGraphNode> from_node, QList< QSharedPointer<GWSGraphNode> > to_nodes ){
+GWSCoordinate GWSDijkstraRouting::dijkstraNearestNode(GWSCoordinate from_coor, QList< GWSCoordinate > to_coors ){
 
-    QSharedPointer<GWSGraphNode> result_node = 0;
+    GWSCoordinate result_coor = GWSCoordinate( 0 ,  0 ); // Caution!!!!
     GWSLengthUnit min_length( std::numeric_limits<double>::max() );
 
-    QList<QList<QSharedPointer<GWSGraphEdge> > > routes = this->dijkstraShortestPaths(from_node , to_nodes);
+    QList< QList< QSharedPointer<GWSGraphEdge> > > routes = this->dijkstraShortestPaths(from_coor , to_coors);
 
-    if( routes.size() != to_nodes.size() ){
+    if( routes.size() != to_coors.size() ){
         qWarning() << "Node list and routes size do not match";
     }
 
-    for(int node_pos = 0; node_pos < routes.size() && node_pos < to_nodes.size() ; node_pos++){
+    for(int coor_pos = 0; coor_pos < routes.size() && coor_pos < to_coors.size() ; coor_pos++){
         GWSLengthUnit c;
 
-        foreach( QSharedPointer<GWSGraphEdge> edge , routes.at(node_pos) ){
+        foreach( QSharedPointer<GWSGraphEdge> edge , routes.at(coor_pos) ){
             c = c + edge->getLength();
         }
 
         if( c <= min_length ){
             min_length = c;
-            result_node = to_nodes.at( node_pos );
+            result_coor = to_coors.at( coor_pos );
         }
     }
 
-    return result_node;
-}*/
+    return result_coor;
+}

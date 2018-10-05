@@ -4,6 +4,8 @@
 
 #include "../Behaviour.h"
 #include "../../skill/move/MoveSkill.h"
+#include "../../util/routing/DijkstraRouting.h"
+
 
 class FindClosestBehaviour : public GWSBehaviour
 {
@@ -14,8 +16,14 @@ public:
     // GETTERS
     virtual bool continueToNext();
 
-private slots:
+    // METHODS
+    virtual void generateGraph();
+
+protected:
     virtual bool behave();
+    GWSDijkstraRouting* routing_graph = Q_NULLPTR;
+    GWSCoordinate closest_coor;
+    QPair< GWSCoordinate, QString > closest_coor_id;
 };
 
 #endif // FINDCLOSESTBEHAVIOUR_H

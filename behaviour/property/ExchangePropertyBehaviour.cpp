@@ -29,23 +29,22 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
 
 bool ExchangePropertyBehaviour::continueToNext(){
 
-   /* QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    QSharedPointer< GWSAgent > agent = this->getAgent();
+    QString other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
+    QSharedPointer< GWSAgent > other_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , other_agent_id );
 
+    if ( ( agent->getProperty( "@type" ) == "HumanAgent" )  && ( agent->getProperty( "waste_amount" ) != 0. ) ){
+        return false;
 
-    if ( current_position == mv->getRouteDestination() ){
+    }
+
+    if ( ( agent->getProperty( "@type" ) == "TruckAgent" ) && ( other_agent->getProperty( "waste_amount" ) != 0. ) ){
         return false;
     }
-    return true;*/
 
-    /*QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    if ( agent->getProperty( "waste_amount" ) != 0. ){
-        return false;
-    }
-    return true;*/
-    return false;
+
+    return true;
 }
 
 /**********************************************************************
@@ -54,8 +53,6 @@ bool ExchangePropertyBehaviour::continueToNext(){
 
 
 bool ExchangePropertyBehaviour::behave(){
-
-    qDebug() << "Exchange Property behaviour";
 
     QSharedPointer< GWSAgent > agent;
     QSharedPointer< GWSAgent > other_agent;
@@ -81,7 +78,8 @@ bool ExchangePropertyBehaviour::behave(){
 
 
     // The other agent takes the property of the agent:
-    other_agent->setProperty( "waste_amount" , agent->getProperty( "waste_amount" ) );
+    double new_waste = other_agent->getProperty( "waste_amount" ).toDouble() + agent->getProperty( "waste_amount" ).toDouble();
+    other_agent->setProperty( "waste_amount" , new_waste );
 
     // And that changes the value of the property of the agent:
     agent->setProperty("waste_amount", 0.);

@@ -27,9 +27,6 @@ bool LoopOverRouteStagesBehaviour::continueToNext(){
 
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
-    //qDebug() << mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP );
-    //qDebug() << mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP );
-
     QString x = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).toString();
     QString y = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).toString();
 
@@ -59,10 +56,6 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
     QMap<QString , GWSCoordinate > container_coord_id_array;
     QList < GWSCoordinate > container_coord_array;
 
-    //container_coord_array.append( agent_home_coor ) ;
-    //container_coord_id_array.insert( agent->getProperty("@id").toString() , agent_home_coor );
-
-
     QList<QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className()) ;
     foreach ( QSharedPointer<GWSAgent> a, agents  ){
 
@@ -74,7 +67,6 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
 
     // Generate graph:
     const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( GWSAgent::staticMetaObject.className()  );
-    //const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( this->getProperty( MoveThroughRouteSkill::EDGES_CLASS_PROP ).toString() );
 
     // Get graph edges:
     QList< QSharedPointer< GWSGraphEdge > > edges = graph->getEdges();
@@ -85,13 +77,11 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
     // Get nearest neighbour given start coordinates and containers to visit:
     QList< GWSCoordinate > container_tsp_route_coord_array = container_route->nearestNeighborTsp( agent_home_coor , container_coord_array , agent_home_coor );
     foreach (GWSCoordinate c, container_tsp_route_coord_array) {
-        qDebug() << "Before" << container_coord_id_array.key( c );
     }
 
     // Order the nodes to get best route. This is the route to follow.
     QList< GWSCoordinate > ordered_container_tsp_route_coord_array = container_route->orderCircularTsp( agent_home_coor , agent_home_coor , container_tsp_route_coord_array );
     foreach (GWSCoordinate c, ordered_container_tsp_route_coord_array) {
-        qDebug() << "After" <<  container_coord_id_array.key( c );
     }
 
     // Compare the coordinates of the ordered route and those in the initial QPair QList of coors and IDs to extract
@@ -109,10 +99,6 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
 
 bool LoopOverRouteStagesBehaviour::behave(){
 
-
-    /* if( route_nodes.isEmpty() ){
-         route_nodes = this->generateRouteCoordinateArray( );
-     }*/
 
      if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
          this->generateOrderedTSPRoute();
