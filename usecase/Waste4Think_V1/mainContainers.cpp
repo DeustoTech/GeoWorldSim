@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
      * ----------------*/
      // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 1; i++ ){
+    for( int i = 0 ; i < 0; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                     "\"waste_amount\" : 0 , "
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( human );
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
-        qDebug() << human ->serialize();
+        //qDebug() << human ->serialize();
     }
 
 
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
      * Truck Agents
      * ----------------*/
 
-    for( int i = 0 ; i < 0 ; i++ ){
+    for( int i = 0 ; i < 2 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
                                                                                           "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
                                                                                           "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
                                                                     " ] } ")
-                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
+                                                       .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution() + lon_min )
                                                        .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .toLatin1()
                                                         );
@@ -245,10 +245,10 @@ int main(int argc, char* argv[])
 
     } );
 
-    //containerReader->startReading();
+    containerReader->startReading();
 
     // Create 4 containers
-    {
+    /*{
         QJsonObject geo;
         geo.insert( "@type" , "GWSGeometry" );
         geo.insert( "type" , "Point" );
@@ -438,7 +438,7 @@ int main(int argc, char* argv[])
         container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
 
         emit GWSApp::globalInstance()->sendAgentSignal( container ->serialize() );
-    }
+    }*/
 
 
 

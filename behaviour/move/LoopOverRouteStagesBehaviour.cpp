@@ -109,9 +109,9 @@ bool LoopOverRouteStagesBehaviour::behave(){
 
      int loop_stage = agent->getProperty( "loop_stage" ).toInt();
      int route_size = this->ordered_container_tsp_route_coord_id_array.size();
-     qDebug() << route_size;
+     //qDebug() << route_size;
 
-     if ( loop_stage <= ( route_size - 1)  ){
+     if ( loop_stage <= ( route_size - 1 )  ){
 
         QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
         GWSCoordinate stage_coors = pair.first;

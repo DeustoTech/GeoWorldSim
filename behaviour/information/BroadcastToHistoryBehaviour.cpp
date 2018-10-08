@@ -32,7 +32,7 @@ QUrl url = QString( "http://history.geoworldsim.com/api/scenario/%1/entity" ).ar
 QMap<QString, QString> headers;
 QNetworkReply* reply = api_driver.POST( url, headers, app_id.toLatin1() );
 //reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
-qDebug() << "Broadcasting information to history website!";
+//qDebug() << "Broadcasting information to history website!";
 
 return true;
 }

@@ -298,7 +298,7 @@ void GWSAgent::behave(){
 
         // Behaviours
         foreach (QSharedPointer<GWSBehaviour> b, iterators) {
-
+            qDebug() << "Executing " << b->metaObject()->className();
             if( b->continueToNext() ){
 
                 next_loop_iterators.append( b->getNext() );
@@ -324,6 +324,7 @@ void GWSAgent::behave(){
 
         foreach( QSharedPointer<GWSBehaviour> b, next_execute_behaviours) {
 
+            qDebug() << "Executing " << b->metaObject()->className();
             this->timer->singleShot( 10 + (qrand() % 100) , [ b , behaving_time ](){
                 b->tick( behaving_time );
             });

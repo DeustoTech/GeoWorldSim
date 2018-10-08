@@ -54,6 +54,7 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double m
     delete e;
 
     if( vector.empty() ){
+        qDebug() << "Empty vector";
         vector = *this->inner_index->queryAll();
     }
 

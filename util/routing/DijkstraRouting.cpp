@@ -109,15 +109,27 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
         this->generateGraph();
     }
 
+    // this this this
+    // Move to nearest edges
+    GWSCoordinate moved_from_coor = this->getNearestRoutingCoordinate( from_coor );
+    //GWSCoordinate moved_to_coor = this->getNearestRoutingCoordinate( to_coor );
+
+    // Compute dijkstra shortest path
+    ListDigraph::Node start = this->coors_to_node.value( moved_from_coor );
+    //ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );
+    // this this this
+
     // Get start node and start graph from it
-    ListDigraph::Node start = this->coors_to_node.value( from_coor );
+    //ListDigraph::Node start = this->coors_to_node.value( from_coor ); this is the original one
     this->dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
     foreach( GWSCoordinate to_coor , to_many_coors ){
         QList< QSharedPointer<GWSGraphEdge>> route;
 
-        ListDigraph::Node end = this->coors_to_node.value( to_coor );
+        GWSCoordinate moved_to_coor = this->getNearestRoutingCoordinate( to_coor );
+        ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );
+        //ListDigraph::Node end = this->coors_to_node.value( to_coor ); // this is the original
 
         if( !this->dijkstra_algorithm->run( start , end ) ){
             qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
@@ -161,7 +173,7 @@ QList< QSharedPointer<GWSGraphEdge> > GWSDijkstraRouting::dijkstraShortestPath(G
  */
 GWSCoordinate GWSDijkstraRouting::dijkstraNearestNode(GWSCoordinate from_coor, QList< GWSCoordinate > to_coors ){
 
-    GWSCoordinate result_coor = GWSCoordinate( 0 ,  0 ); // Caution!!!!
+    GWSCoordinate result_coor = GWSCoordinate(0, 0); // Caution!!!!
     GWSLengthUnit min_length( std::numeric_limits<double>::max() );
 
     QList< QList< QSharedPointer<GWSGraphEdge> > > routes = this->dijkstraShortestPaths(from_coor , to_coors);

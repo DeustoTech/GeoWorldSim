@@ -38,7 +38,7 @@ bool ExchangePropertyBehaviour::continueToNext(){
 
     }
 
-    if ( ( agent->getProperty( "@type" ) == "TruckAgent" ) && ( other_agent->getProperty( "waste_amount" ) != 0. ) ){
+    if ( ( agent->getProperty( "@type" ) == "TruckAgent" )  ){
         return false;
     }
 
