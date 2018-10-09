@@ -13,7 +13,7 @@ bool SetAgentPropertyBehaviour::continueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Unless the value of the property equals the behaviour's input value
-    if ( agent->getProperty( PROPERTY_NAME ).toString() != ( SetAgentPropertyBehaviour::PROPERTY_VALUE ) ){
+    if ( this->getProperty( PROPERTY_VALUE ) != agent->getProperty( this->getProperty( PROPERTY_NAME ).toString() ) ){
         return false;
     }
 
@@ -24,7 +24,7 @@ bool SetAgentPropertyBehaviour::continueToNext(){
 bool SetAgentPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    agent->setProperty(  PROPERTY_NAME , PROPERTY_VALUE  );
+    agent->setProperty(  this->getProperty( PROPERTY_NAME ).toString() , this->getProperty( PROPERTY_VALUE )  );
     return true;
 
 }

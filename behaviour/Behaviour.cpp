@@ -37,16 +37,7 @@ void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behav
         QJsonArray next_ids = json.value( NEXT_BEHAVIOURS_PROP ).toArray();
         if( next_ids.isEmpty() ){ next_ids.append( json.value( NEXT_BEHAVIOURS_PROP ).toString() ); }
         foreach( QJsonValue id , next_ids ){
-            // Find next behaviour in agent
-            QSharedPointer<GWSBehaviour> next_behaviour = this->getAgent()->getBehaviour( id.toString() );
-            if( next_behaviour ){
-                this->addNextBehaviour( next_behaviour );
-            } else {
-                qDebug() << QString("Behaviour %1 %2 tried to find next %3 but does not exist. Please define in the JSON first the referenced Behaviour.")
-                            .arg( this->metaObject()->className() )
-                            .arg( this->getId() )
-                            .arg( id.toString() );
-            }
+            this->next_behaviour_ids.append( id.toString() );
         }
     }
 
@@ -70,10 +61,10 @@ QJsonObject GWSBehaviour::serialize() const{
         }
         json.insert( SUB_BEHAVIOURS_PROP , arr );
     }
-    if( !this->next_behaviours.isEmpty() ){
+    if( !this->next_behaviour_ids.isEmpty() ){
         QJsonArray arr;
-        foreach( QSharedPointer<GWSBehaviour>b , this->next_behaviours ){
-            arr.append( b->getId() );
+        foreach( QString id , this->next_behaviour_ids ){
+            arr.append( id );
         }
         json.insert( NEXT_BEHAVIOURS_PROP , arr );
     }
@@ -92,8 +83,15 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs(){
     return this->sub_behaviours;
 }
 
-QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNext(){
-    return this->next_behaviours;
+QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNexts(){
+    QList< QSharedPointer<GWSBehaviour> > nexts;
+    foreach(QString id , this->next_behaviour_ids ){
+        QSharedPointer<GWSBehaviour> b = this->getAgent()->getBehaviour( id );
+        if( b ){
+            nexts.append( b );
+        }
+    }
+    return nexts;
 }
 
 bool GWSBehaviour::continueToNext(){
@@ -117,7 +115,7 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
 }
 
 void GWSBehaviour::addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour){
-    this->next_behaviours.append( next_behaviour );
+    this->next_behaviour_ids.append( next_behaviour->getId() );
 }
 
 /**********************************************************************

@@ -1,6 +1,8 @@
 #ifndef GWSBEHAVIOUR_H
 #define GWSBEHAVIOUR_H
 
+#include <QStringList>
+
 #include "../../object/Object.h"
 #include "../../agent/Agent.h"
 
@@ -28,17 +30,17 @@ public:
     // GETTERS
     QSharedPointer<GWSAgent> getAgent();
     QList< QSharedPointer<GWSBehaviour> > getSubs();
-    QList< QSharedPointer<GWSBehaviour> > getNext();
+    QList< QSharedPointer<GWSBehaviour> > getNexts();
     virtual bool continueToNext(); // Behaviour finished check
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
-    void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviours );
+    void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour );
 
 protected:
 
     QList< QSharedPointer<GWSBehaviour> > sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
-    QList< QSharedPointer<GWSBehaviour> > next_behaviours;
+    QStringList next_behaviour_ids;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     bool tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
