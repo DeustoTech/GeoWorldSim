@@ -22,8 +22,23 @@ FindClosestBehaviour::~FindClosestBehaviour(){
 }
 
 bool FindClosestBehaviour::continueToNext(){
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    if( agent->getProperty( "closest_found_id" ).isNull() ){
+    QVariant closest_agent_id = agent->getProperty( "closest_found_id" );
+
+    // If there is no closest found agent assigned, go to behave:
+    if( closest_agent_id.isNull() ){
+        return false;
+    }
+
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    GWSCoordinate destination_coor = mv->getRouteDestination();
+
+    QSharedPointer<GWSAgent> closest_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( ContainerAgent::staticMetaObject.className(), closest_agent_id.toString() );
+    GWSCoordinate closest_agent_coors = GWSPhysicalEnvironment::globalInstance()->getGeometry( closest_agent )->getCentroid();
+
+    // If the destination is not that of the closest agent, behave:
+    if( destination_coor != closest_agent_coors){
         return false;
     }
     return true;
