@@ -41,6 +41,9 @@
 #include "../../behaviour/property/ExchangePropertyBehaviour.h"
 #include "../../behaviour/information/BroadcastToHistoryBehaviour.h"
 #include "../../behaviour/move/FindClosestEdgePointBehaviour.h"
+#include "../../behaviour/property/SetAgentPropertyBehaviour.h"
+#include "../../behaviour/property/SetSkillPropertyBehaviour.h"
+
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -105,7 +108,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( FindClosestEdgePointBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtClosestEdgePointBehaviour::staticMetaObject );
-
+    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetSkillPropertyBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -124,23 +128,27 @@ int main(int argc, char* argv[])
      * ----------------*/
      // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 1000; i++ ){
+    for( int i = 0 ; i < 10; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                     "\"waste_amount\" : 0 , "
                                                                     "\"home_coordX\" : %1 , "
                                                                     "\"home_coordY\" : %2 , "
-                                                                    "\"color\" : \"Red\" , "
+                                                                    "\"color\" : \"Green\" , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
                                                                                      "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
                                                                      "\"@behaviours\" : [  "
-                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : -1 , \"duration\" : 1000 , \"@next\" : \"FIND_CLOSEST_CONTAINER\" } , "
+                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : -1 , \"duration\" : 1000 , \"@next\" : \"SET_COLOR_FULL\" } , "
+                                                                                            "{ \"@type\" : \"SetAgentPropertyBehaviour\" , \"@id\" : \"SET_COLOR_FULL\" , \"property_name\" : \"color\" , \"property_value\" : \"Red\" , \"duration\" : 1000 , \"@next\" : \"FIND_CLOSEST_CONTAINER\" } , "
                                                                                             "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST_CONTAINER\" , \"duration\" : 1000 , \"@next\" : \"MOVE\" } , "
                                                                                             "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"MOVE\" , \"duration\" : %4 , \"@next\" : \"EMPTY_WASTE\" } , "
-                                                                                            "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" }  , "
-                                                                                            "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "
+                                                                                            "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"SET_COLOR_EMPTY\" }  , "
+                                                                                            "{ \"@type\" : \"SetAgentPropertyBehaviour\" , \"@id\" : \"SET_COLOR_EMPTY\" , \"property_name\" : \"color\" , \"property_value\" : \"Green\" , \"duration\" : 1000 , \"@next\" : \"SET_HOME_X\" } , "
+                                                                                            "{ \"@type\" : \"SetSkillPropertyBehaviour\" , \"@id\" : \"SET_HOME_X\" , \"skill\" : \"MoveThroughRouteSkill\" , \"skill_property_name\" : \"route_destination_x\" , \"skill_property_value\" : %1 , \"duration\" : 1000 , \"@next\" : \"SET_HOME_Y\" } , "
+                                                                                            "{ \"@type\" : \"SetSkillPropertyBehaviour\" , \"@id\" : \"SET_HOME_Y\" , \"skill\" : \"MoveThroughRouteSkill\" , \"skill_property_name\" : \"route_destination_y\" , \"skill_property_value\" : %2 , \"duration\" : 1000 , \"@next\" : \"MOVE_HOME\" }  , "
+                                                                                            "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"MOVE_HOME\" , \"duration\" : %4 , \"@next\" : \"INCREMENT\" }  "
                                                                                             " ] } ")
                                                        .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
                                                        .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
@@ -148,25 +156,12 @@ int main(int argc, char* argv[])
                                                         .arg( (qrand() % 4 + 1) * 250 )
                                                        .toLatin1()
                                                         );
-        //"{ \"@type\" : \"EmptyWasteBehaviour\", \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" } , "
 
-        /*"{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
-        "{ \"@type\" : \"CheckIfAtPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"key_position_x\" : %1 , \"key_position_y\" : %2 , \"@next\" : [\"INCREMENT\",\"WASTE_FULL\"] } , "
-        "{ \"@type\" : \"CheckIfPropertyBehaviour\", \"@id\" : \"WASTE_FULL\" , \"duration\" : 1000 , \"property_name\" : \"waste_amount\" , \"check_value\" : 100 , \"@next\" : \"FIND_CLOSEST_EDGE\" } , "
-        "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EMPTY_WASTE\"] } , "
-        "{ \"@type\" : \"CheckIfAtClosestEdgePointBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"FIND_CLOSEST_CONTAINER\"] } , "
-        "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"start\" : true , \"duration\" : 1000 } , "
-        "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : 0 , \"duration\" : 1000  } , "
-        "{ \"@type\" : \"FindClosestEdgePointBehaviour\" , \"@id\" : \"FIND_CLOSEST_EDGE\" , \"duration\" : 1000 } , "
-        "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST_CONTAINER\" , \"duration\" : 1000 } , "
-        "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"GO_HOME\" }  , "
-        "{ \"@type\" : \"GoHomeBehaviour\" , \"@id\" : \"GO_HOME\" , \"duration\" : 1000  } "*/
 
 
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( human );
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
-        //qDebug() << human ->serialize();
     }
 
 

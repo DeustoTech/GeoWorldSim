@@ -298,14 +298,14 @@ void GWSAgent::behave(){
         foreach (QSharedPointer<GWSBehaviour> b, iterators) {
             if( b->continueToNext() ){
 
-                next_loop_iterators.append( b->getNext() );
+                next_loop_iterators.append( b->getNexts() );
 
             } else {
 
                 // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
                 foreach( QSharedPointer<GWSBehaviour> sb , b->getSubs() ) {
                     if( sb->continueToNext() ){
-                        next_loop_iterators.append( sb->getNext() );
+                        next_loop_iterators.append( sb->getNexts() );
                     }
                 }
                 next_execute_behaviours.append( b );
