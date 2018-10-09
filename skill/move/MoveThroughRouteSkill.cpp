@@ -113,8 +113,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     }
 
-
     MoveSkill::move( movement_duration );
-
 
 }

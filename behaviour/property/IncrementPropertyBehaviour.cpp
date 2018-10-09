@@ -16,12 +16,11 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 **********************************************************************/
 
 bool IncrementPropertyBehaviour::continueToNext(){
-    this->next_behaviours.clear();
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
     QVariant max_value = this->getProperty( MAX_VALUE_PROP );
     QVariant min_value = this->getProperty( MIN_VALUE_PROP );
-    return value >= max_value && value <= min_value;
+    return value >= max_value || value <= min_value;
 }
 
 bool IncrementPropertyBehaviour::behave(){

@@ -3,6 +3,7 @@
 #include <QtMath>
 
 #include "../../environment/Environment.h"
+#include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 QString MoveSkill::MAX_SPEED_PROP = "maxspeed";
@@ -116,9 +117,10 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
     GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
 
-    GWSCoordinate new_coor = agent_geom->getCentroid();
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
+
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
     // Lose some speed
     //this->setProperty( CURRENT_SPEED_PROP , this->getCurrentSpeed() * 0.9 );

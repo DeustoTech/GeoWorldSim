@@ -30,19 +30,16 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
 bool ExchangePropertyBehaviour::continueToNext(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
-    QString other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
+    QString other_agent_id = agent->getProperty( "closest_found_id" ).toString();
     QSharedPointer< GWSAgent > other_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , other_agent_id );
 
     if ( ( agent->getProperty( "@type" ) == "HumanAgent" )  && ( agent->getProperty( "waste_amount" ) != 0. ) ){
         return false;
-
     }
 
     if ( ( agent->getProperty( "@type" ) == "TruckAgent" )  ){
         return false;
     }
-
-
 
     return true;
 }
@@ -62,7 +59,7 @@ bool ExchangePropertyBehaviour::behave(){
     if ( this->getAgent()->getProperty( "@type" ) == "HumanAgent" ){
 
         agent = this->getAgent();
-        other_agent_id = agent->getProperty( "compare_agent_id" ).toString();
+        other_agent_id = agent->getProperty( "closest_found_id" ).toString();
         other_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , other_agent_id );
 
     }
@@ -70,7 +67,7 @@ bool ExchangePropertyBehaviour::behave(){
     if ( this->getAgent()->getProperty( "@type" ) == "TruckAgent" ){
 
         other_agent = this->getAgent();
-        agent_id = other_agent->getProperty( "compare_agent_id" ).toString();
+        agent_id = other_agent->getProperty( "closest_found_id" ).toString();
         agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , agent_id );
 
 

@@ -210,8 +210,8 @@ QList< QSharedPointer<GWSSkill> > GWSAgent::getSkills( QString class_name ) cons
     return s;
 }*/
 
-QList< QSharedPointer<GWSBehaviour> > GWSAgent::getStartBehaviour() const{
-    return this->start_behaviours;
+QList< QSharedPointer<GWSBehaviour> > GWSAgent::getCurrentlyExecutingBehaviours() const{
+    return this->currently_executing_behaviours;
 }
 
 QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const{
@@ -256,8 +256,8 @@ void GWSAgent::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     this->behaviours->add( behaviour );
 }
 
-void GWSAgent::addStartBehaviour( QSharedPointer<GWSBehaviour> behaviour){
-    this->start_behaviours.append( behaviour );
+void GWSAgent::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> behaviour){
+    this->currently_executing_behaviours.append( behaviour );
 }
 
 /**********************************************************************
@@ -279,10 +279,10 @@ void GWSAgent::tick(){
 void GWSAgent::behave(){
 
     // No start behaviour
-    if( this->start_behaviours.isEmpty() && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+    if( this->currently_executing_behaviours.isEmpty() && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
         qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
     }
-    if( this->start_behaviours.isEmpty() ){
+    if( this->currently_executing_behaviours.isEmpty() ){
         return;
     }
 
@@ -290,7 +290,7 @@ void GWSAgent::behave(){
     QList< QSharedPointer<GWSBehaviour> > checked_behaviours; // TODO check infinite loops
     QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
 
-    QList< QSharedPointer<GWSBehaviour> > iterators = this->start_behaviours;
+    QList< QSharedPointer<GWSBehaviour> > iterators = this->currently_executing_behaviours;
 
     while( !iterators.isEmpty() ){
 
@@ -305,7 +305,7 @@ void GWSAgent::behave(){
             } else {
 
                 // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
-                foreach( QSharedPointer<GWSBehaviour> sb, b->getSubs()) {
+                foreach( QSharedPointer<GWSBehaviour> sb , b->getSubs() ) {
                     if( sb->continueToNext() ){
                         next_loop_iterators.append( sb->getNext() );
                     }
@@ -319,7 +319,11 @@ void GWSAgent::behave(){
     qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
     if( !next_execute_behaviours.isEmpty() ){
-        foreach( QSharedPointer<GWSBehaviour> b, next_execute_behaviours) {
+
+        // Keep track of which behaviours we have last executed
+        this->currently_executing_behaviours = next_execute_behaviours;
+
+        foreach( QSharedPointer<GWSBehaviour> b , this->currently_executing_behaviours ) {
             this->timer->singleShot( 10 + (qrand() % 100) , [ b , behaving_time ](){
                 b->tick( behaving_time );
             });
