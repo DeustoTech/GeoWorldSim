@@ -12,6 +12,7 @@ class FindClosestBehaviour : public GWSBehaviour
     Q_OBJECT
 public:
     Q_INVOKABLE explicit FindClosestBehaviour();
+    ~FindClosestBehaviour();
 
     // GETTERS
     virtual bool continueToNext();

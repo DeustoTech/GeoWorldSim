@@ -18,7 +18,6 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
 **********************************************************************/
 
 bool MoveThroughRouteBehaviour::continueToNext(){
-     qDebug() << "Move behaviour continueToNext";
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
@@ -52,12 +51,11 @@ bool MoveThroughRouteBehaviour::continueToNext(){
 **********************************************************************/
 
 bool MoveThroughRouteBehaviour::behave(){
-    qDebug() << "Move behaviour";
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
-    qDebug() << "Move behaviour";
+
     // Check if agent can move
     QSharedPointer<MoveThroughRouteSkill> move_throughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     if( !move_throughroute_skill ){
@@ -77,9 +75,7 @@ bool MoveThroughRouteBehaviour::behave(){
     }
 
     // Move towards
-    qDebug() << "Move Towards";
     move_throughroute_skill->move( duration_of_movement );
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-    qDebug() << "Moved";
     return true;
 }

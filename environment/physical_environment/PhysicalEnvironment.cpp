@@ -250,7 +250,6 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 void GWSPhysicalEnvironment::transformMove(QSharedPointer<GWSAgent> agent, const GWSCoordinate &apply_movement){
     QSharedPointer<GWSGeometry> geom = this->agent_geometries.value( agent->getId() );
     if( geom ){
-        qDebug() << "transformMove";
         geom->transformMove( apply_movement );
         foreach (QString s , agent->getInheritanceFamily()) {
             this->spatial_index.value( s )->upsert( agent , this->getGeometry( agent ) );

@@ -3,13 +3,14 @@
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSBehaviour::INCREMENT_AGENT_TIME_PROP = "duration";
+QString GWSBehaviour::BEHAVIOUR_DURATION = "duration";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString GWSBehaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString GWSBehaviour::NEXT_BEHAVIOURS_PROP = "@next";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
 GWSBehaviour::GWSBehaviour() : GWSObject(){
+    this->setProperty( BEHAVIOUR_DURATION , 1000 );
 }
 
 /**********************************************************************
@@ -128,7 +129,7 @@ void GWSBehaviour::addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour
  **/
 bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
- //   qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
+    //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     bool behaved_correctly = false;
     this->behaving_time = behaviour_ticked_time;
@@ -138,13 +139,12 @@ bool GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     this->getAgent()->decrementBusy();
 
     // Calculate how much to increment agent internal time
-    qint64 increment_time = qMax( 100 , this->getProperty( INCREMENT_AGENT_TIME_PROP ).toInt() ); // At least 0.1 seconds
+    qint64 increment_time = qMax( 100 , this->getProperty( BEHAVIOUR_DURATION ).toInt() ); // At least 0.1 seconds
     qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
-    qDebug() << agent_current_time;
+
     // Compare how much has been spent or if some other behaviour incremented the time
     qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
     GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent() , max_time );
-    qDebug() << GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
     return behaved_correctly;
 }
 

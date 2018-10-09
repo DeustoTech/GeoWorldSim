@@ -37,7 +37,9 @@ public:
     template <class T = GWSObject> QList< QSharedPointer<T> > getElements( double minX, double maxX, double minY, double maxY ) const{
         QList< QSharedPointer<T> > objects;
         foreach (QSharedPointer<GWSObject> o, this->getObjects( minX , maxX , minY , maxY ) ) {
-            objects.append( o.dynamicCast<T>() );
+            if( o ){
+                objects.append( o.dynamicCast<T>() );
+            }
         }
         return objects;
     }

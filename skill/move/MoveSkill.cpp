@@ -111,17 +111,15 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     double y_distance = qAbs( destination_coor.getY() - current_coor.getY() );
     double x_move = x_distance * distance_percentage * ( destination_coor.getX() > current_coor.getX() ? 1 : -1 );
     double y_move = y_distance * distance_percentage * ( destination_coor.getY() > current_coor.getY() ? 1 : -1 );
-    qDebug() << "MoveSkill";
+
     // Set the agents position
     GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
     GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
 
     GWSCoordinate new_coor = agent_geom->getCentroid();
-
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
-    qDebug() << "Accumulated Time";
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
-    qDebug() << "Accumulated Time" << this->getProperty(ACCUMULATED_TIME_PROP);
+
     // Lose some speed
     //this->setProperty( CURRENT_SPEED_PROP , this->getCurrentSpeed() * 0.9 );
 }

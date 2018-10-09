@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE explicit GWSBehaviour();
 
     // PROPERTIES
-    static QString INCREMENT_AGENT_TIME_PROP; // In milliseconds
+    static QString BEHAVIOUR_DURATION; // In milliseconds, IT WILL INCREMENT AGENTS INTERNAL DATETIME
     static QString SUB_BEHAVIOURS_PROP;
     static QString FINISH_CONDITION_PROP;
     static QString NEXT_BEHAVIOURS_PROP;

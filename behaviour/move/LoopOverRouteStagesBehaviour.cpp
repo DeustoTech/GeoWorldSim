@@ -99,7 +99,6 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
 
 bool LoopOverRouteStagesBehaviour::behave(){
 
-
      if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
          this->generateOrderedTSPRoute();
      }
@@ -135,7 +134,7 @@ bool LoopOverRouteStagesBehaviour::behave(){
         loop_stage = 0;
 
 
-        }
+    }
 
 
     agent->setProperty( "loop_stage" , loop_stage );

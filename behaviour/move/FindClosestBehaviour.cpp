@@ -17,9 +17,11 @@
 FindClosestBehaviour::FindClosestBehaviour() : GWSBehaviour(){
 }
 
+FindClosestBehaviour::~FindClosestBehaviour(){
+    this->routing_graph->deleteLater();
+}
 
 bool FindClosestBehaviour::continueToNext(){
-
     return false;
 }
 
@@ -31,8 +33,6 @@ void FindClosestBehaviour::generateGraph(){
     // Get all the Edges from the graph
     this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
 }
-
-
 
 
 bool FindClosestBehaviour::behave(){

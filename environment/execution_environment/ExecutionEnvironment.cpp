@@ -183,11 +183,13 @@ void GWSExecutionEnvironment::behave(){
     int ticked_agents = 0;
 
     foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
-        if( agent && !agent->isBusy() ){
-            agents_to_tick = true;
+        if( agent ){
             qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
-            if( agent_time > 0 && agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+            if( agent_time <= 0 ){
+                agents_to_tick = true;
+            } else if( agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() || !agent->isBusy() ){
                 min_tick = qMin( min_tick , agent_time );
+                agents_to_tick = true;
             }
         }
     }
