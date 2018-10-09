@@ -106,7 +106,9 @@ HEADERS += \
     ../../behaviour/move/FindClosestEdgePointBehaviour.h \
     ../../util/geometry/SnapToEdgeFromPoint.h \
     ../../behaviour/move/GoToClosestEdgePointBehaviour.h \
-    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h
+    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
+    ../../behaviour/property/SetAgentPropertyBehaviour.h \
+    ../../behaviour/property/SetSkillPropertyBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -186,7 +188,9 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
     ../../util/geometry/SnapToEdgeFromPoint.cpp \
     ../../behaviour/move/GoToClosestEdgePointBehaviour.cpp \
-    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp
+    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
+    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/SetSkillPropertyBehaviour.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY
