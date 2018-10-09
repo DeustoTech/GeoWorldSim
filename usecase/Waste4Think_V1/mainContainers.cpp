@@ -132,6 +132,7 @@ int main(int argc, char* argv[])
                                                                     "\"waste_amount\" : 0 , "
                                                                     "\"home_coordX\" : %1 , "
                                                                     "\"home_coordY\" : %2 , "
+                                                                    "\"color\" : \"Red\" , "
                                                                      "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
                                                                                      "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 8 } ],"
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
@@ -237,7 +238,7 @@ int main(int argc, char* argv[])
             agent_json.insert( "waste_amount" , 0 );  // This is the attribute that should be changed when humans throw their waste.
 
             QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+            container->setProperty( GWSAgent::STYLE_ICON_URL_PROP , "https://image.flaticon.com/icons/svg/382/382314.svg" );
 
             emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
 

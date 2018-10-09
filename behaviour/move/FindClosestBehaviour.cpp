@@ -65,7 +65,6 @@ bool FindClosestBehaviour::behave(){
     this->closest_coor = this->routing_graph->dijkstraNearestNode( agent_home_coord , container_coord_array);
     QString closest_id = container_coord_id_array.key( this->closest_coor );
     agent->setProperty( "closest_found_id" , closest_id );
-    agent->color = QColor("red");
 
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , this->closest_coor.getX() );

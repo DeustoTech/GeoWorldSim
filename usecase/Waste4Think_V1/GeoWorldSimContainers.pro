@@ -58,7 +58,6 @@ HEADERS += \
     ../../util/io/log/Logger.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
-    ../../util/uistyle/Style.h \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
@@ -137,7 +136,6 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
     TesisBehaviour.cpp \
         # UTILS
-    ../../util/uistyle/Style.cpp \
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \

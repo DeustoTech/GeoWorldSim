@@ -22,9 +22,7 @@
 
 #include "./../util/units/Units.h"
 #include "./../util/geometry/Geometry.h"
-#include "./../util/uistyle/Style.h"
 #include "./../util/storage/ObjectStorage.h"
-#include "./../util/uistyle/Style.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSEnvironment)
 QT_FORWARD_DECLARE_CLASS(GWSPhysicalEnvironment)
@@ -35,7 +33,7 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 // Declare Coordinate to be used as QMETAPROPERTY
 // Q_DECLARE_METATYPE(GWSGeometry)
 
-class GWSAgent : public GWSObject , public GWSStyle
+class GWSAgent : public GWSObject
 {
     friend class GWSEnvironment; // Environment will be able to overwrite the attributes
     friend class GWSExecutionEnvironment;
@@ -49,7 +47,15 @@ public:
 
     // PROPERTIES
     static QString ALIVE_PROP;
-    static QString STYLE_PROP;
+
+    // STYLE PROPERTIES
+    static QString STYLE_COLOR_PROP;
+    static QString STYLE_OPACITY_PROP;
+    static QString STYLE_BORDER_COLOR_PROP;
+    static QString STYLE_BORDER_WEIGHT_PROP;
+    static QString STYLE_DASH_ARRAY_PROP;
+    static QString STYLE_ICON_URL_PROP;
+    static QString STYLE_ZOOM_LEVEL_PROP;
 
     // IMPORTERS
     virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );

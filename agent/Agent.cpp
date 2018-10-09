@@ -19,9 +19,15 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 
 QString GWSAgent::ALIVE_PROP = "alive";
-QString GWSAgent::STYLE_PROP = "style";
+QString GWSAgent::STYLE_COLOR_PROP = "color";
+QString GWSAgent::STYLE_OPACITY_PROP = "opacity";
+QString GWSAgent::STYLE_BORDER_COLOR_PROP = "border_color";
+QString GWSAgent::STYLE_BORDER_WEIGHT_PROP = "border_weight";
+QString GWSAgent::STYLE_DASH_ARRAY_PROP = "dash_array";
+QString GWSAgent::STYLE_ICON_URL_PROP = "icon_url";
+QString GWSAgent::STYLE_ZOOM_LEVEL_PROP = "zoom_level";
 
-GWSAgent::GWSAgent() : GWSObject() , GWSStyle( this ) , busy_counter(0) {
+GWSAgent::GWSAgent() : GWSObject() , busy_counter(0) {
     this->setProperty( ALIVE_PROP , true );
 }
 
@@ -79,11 +85,6 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         }
     }
 
-    // STYLE
-    if( !json.value( STYLE_PROP ).isNull() ){
-        GWSStyle::deserialize( json.value( STYLE_PROP ).toObject() );
-    }
-
     // RUNNING
     if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
         GWSExecutionEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
@@ -116,7 +117,7 @@ QJsonObject GWSAgent::serialize() const{
             skills.append( s->serializeMini() );
         }
     }
-    //json.insert( "@skills" , skills );
+    //json.insert( "@skills" , skills ); // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
 
     // BEHAVIOUR
     QJsonArray behaviours;
@@ -125,7 +126,7 @@ QJsonObject GWSAgent::serialize() const{
             behaviours.append( s->serializeMini() );
         }
     }
-    //json.insert( "@behaviours" , behaviours );
+    //json.insert( "@behaviours" , behaviours );  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
 
     // INTERNAL TIME
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );
@@ -135,9 +136,6 @@ QJsonObject GWSAgent::serialize() const{
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
-
-    // STYLE
-    json.insert( STYLE_PROP , GWSStyle::serialize() );
 
     return json;
 }
