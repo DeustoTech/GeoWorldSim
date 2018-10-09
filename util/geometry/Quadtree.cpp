@@ -153,7 +153,6 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
         geos::geom::Envelope e;
 
         // Check if exists
-        //this->mutex.lock();
         if( !( e = this->id_to_envelopes.value( object_id ) ).isNull() ){
 
             // Exists
@@ -168,9 +167,7 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
             this->id_to_objects.insert( object_id , object );
 
         }
-        //this->mutex.unlock();
 
-        //this->mutex.lock();
         e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,
                     geom->getGeometryMaxX() ,
@@ -179,9 +176,9 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
         this->id_to_envelopes.insert( object_id , e );
         this->id_to_geometries.insert( object_id , geom );
+        this->mutex.lock();
         this->inner_index->insert( &e , elm );          // Insert in current position
-
-        //this->mutex.unlock();
+        this->mutex.unlock();
     }
 
 }
