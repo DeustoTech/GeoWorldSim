@@ -36,6 +36,7 @@ HEADERS += \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
     ../../agent/Agent.h \
+    ../../agent/AgentSource.h \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
@@ -116,6 +117,7 @@ SOURCES += mainContainers.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
     ../../agent/Agent.cpp \
+    ../../agent/AgentSource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
