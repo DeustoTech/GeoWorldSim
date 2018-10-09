@@ -90,9 +90,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
         this->pending_route.removeAt( 0 );
 
-        current_edge_agent->border_color = QColor("Red");
-        GWSApp::globalInstance()->sendAgentSignal( current_edge_agent->serialize() );
-
     }
 
     if ( !this->pending_edge_coordinates.isEmpty() ) {

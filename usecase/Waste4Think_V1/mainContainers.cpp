@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
             agent_json.insert( "waste_amount" , 0 );  // This is the attribute that should be changed when humans throw their waste.
 
             QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-            container->icon_url = "https://image.flaticon.com/icons/svg/382/382314.svg";
+            container->setProperty( GWSAgent::STYLE_ICON_URL_PROP , "https://image.flaticon.com/icons/svg/382/382314.svg" );
 
             emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
 

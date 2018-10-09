@@ -27,7 +27,6 @@ bool EmptyWasteBehaviour::behave(){
     other_agent->setProperty( "waste_amount" , agent->getProperty( "waste_amount" ) );
 
     agent->setProperty("waste_amount", 0.);
-    agent->color = QColor("green");
 
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
     emit GWSApp::globalInstance()->sendAgentSignal( other_agent->serialize() );

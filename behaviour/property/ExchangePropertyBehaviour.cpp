@@ -80,7 +80,6 @@ bool ExchangePropertyBehaviour::behave(){
 
     // And that changes the value of the property of the agent:
     agent->setProperty("waste_amount", 0.);
-    agent->color = QColor("green");
 
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
     emit GWSApp::globalInstance()->sendAgentSignal( other_agent->serialize() );
