@@ -3,7 +3,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 
-QString CheckIfAtOtherAgentsPositionBehaviour::OTHER_AGENT_ID_PROP = "compare_agent_id";
+QString CheckIfAtOtherAgentsPositionBehaviour::OTHER_AGENT_ID_PROP = "closest_found_id";
 
 CheckIfAtOtherAgentsPositionBehaviour::CheckIfAtOtherAgentsPositionBehaviour() : GWSBehaviour() {
 }
