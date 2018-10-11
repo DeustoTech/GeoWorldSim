@@ -296,7 +296,7 @@ void GWSAgent::behave(){
 
         // Behaviours
         foreach (QSharedPointer<GWSBehaviour> b, iterators) {
-            if( b->continueToNext() ){
+            if( b->canContinueToNext() ){
 
                 next_loop_iterators.append( b->getNexts() );
 
@@ -304,7 +304,7 @@ void GWSAgent::behave(){
 
                 // SubBehaviours (although Behaviour not finished, maybe some of its subbehaviours has)
                 foreach( QSharedPointer<GWSBehaviour> sb , b->getSubs() ) {
-                    if( sb->continueToNext() ){
+                    if( sb->canContinueToNext() ){
                         next_loop_iterators.append( sb->getNexts() );
                     }
                 }

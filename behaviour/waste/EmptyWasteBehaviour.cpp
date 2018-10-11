@@ -5,7 +5,7 @@
 EmptyWasteBehaviour::EmptyWasteBehaviour() : GWSBehaviour(){
 }
 
-bool EmptyWasteBehaviour::continueToNext(){
+bool EmptyWasteBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 

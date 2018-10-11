@@ -12,7 +12,7 @@ CheckIfAtPositionBehaviour::CheckIfAtPositionBehaviour() : GWSBehaviour(){
 }
 
 
-bool CheckIfAtPositionBehaviour::continueToNext(){
+bool CheckIfAtPositionBehaviour::canContinueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 

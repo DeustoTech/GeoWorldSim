@@ -21,7 +21,7 @@ LoopOverRouteStagesBehaviour::LoopOverRouteStagesBehaviour() : GWSBehaviour(){
 **********************************************************************/
 
 
-bool LoopOverRouteStagesBehaviour::continueToNext(){
+bool LoopOverRouteStagesBehaviour::canContinueToNext(){
 
     QSharedPointer< GWSAgent> agent = this->getAgent();
 

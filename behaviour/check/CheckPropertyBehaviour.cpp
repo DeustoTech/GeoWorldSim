@@ -1,12 +1,12 @@
-#include "CheckIfPropertyBehaviour.h"
+#include "CheckPropertyBehaviour.h"
 
-QString CheckIfPropertyBehaviour::CHECK_PROPERTY_NAME_PROP = "property_name";
-QString CheckIfPropertyBehaviour::CHECK_PROPERTY_VALUE_PROP = "check_value";
+QString CheckPropertyBehaviour::CHECK_PROPERTY_NAME_PROP = "property_name";
+QString CheckPropertyBehaviour::CHECK_PROPERTY_VALUE_PROP = "check_value";
 
-CheckIfPropertyBehaviour::CheckIfPropertyBehaviour() : GWSBehaviour(){
+CheckPropertyBehaviour::CheckPropertyBehaviour() : GWSBehaviour(){
 }
 
-bool CheckIfPropertyBehaviour::continueToNext(){
+bool CheckPropertyBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant compare_value = this->getProperty( CHECK_PROPERTY_VALUE_PROP );
@@ -19,7 +19,7 @@ bool CheckIfPropertyBehaviour::continueToNext(){
     return false;
 }
 
-bool CheckIfPropertyBehaviour::behave(){
+bool CheckPropertyBehaviour::behave(){
     // EMPTY, DO NOTHING
     return true;
 }

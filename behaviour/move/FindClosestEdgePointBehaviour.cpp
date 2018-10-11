@@ -9,7 +9,7 @@ FindClosestEdgePointBehaviour::FindClosestEdgePointBehaviour() : GWSBehaviour()
 
 }
 
-bool FindClosestEdgePointBehaviour::continueToNext(){
+bool FindClosestEdgePointBehaviour::canContinueToNext(){
 
    QSharedPointer<GWSAgent> agent = this->getAgent();
 

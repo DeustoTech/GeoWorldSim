@@ -4,12 +4,12 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
 
-QString MoveThroughRouteSkill::EDGES_CLASS_PROP = "edges_class";
+QString MoveThroughRouteSkill::NETWORK_CLASS_PROP = "network_type";
 QString MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP = "route_destination_x";
 QString MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP = "route_destination_y";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
-    this->setProperty( EDGES_CLASS_PROP , "GWSAgent" );
+    this->setProperty( NETWORK_CLASS_PROP , "GWSAgent" );
 }
 
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){
@@ -26,7 +26,7 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
 
 void MoveThroughRouteSkill::generateGraph(){
     // Generate graph of all GWSAgents in the network environment
-    const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( this->getProperty( MoveThroughRouteSkill::EDGES_CLASS_PROP ).toString() );
+    const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( this->getProperty( MoveThroughRouteSkill::NETWORK_CLASS_PROP ).toString() );
 
     // Get all the Edges from the graph
     this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );

@@ -14,7 +14,7 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool MoveBehaviour::continueToNext(){
+bool MoveBehaviour::canContinueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
     // No move skill

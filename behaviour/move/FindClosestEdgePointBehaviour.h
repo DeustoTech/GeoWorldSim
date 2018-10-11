@@ -10,7 +10,7 @@ class FindClosestEdgePointBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit FindClosestEdgePointBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

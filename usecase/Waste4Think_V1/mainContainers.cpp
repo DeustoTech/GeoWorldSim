@@ -33,7 +33,7 @@
 #include "../../behaviour/move/FindClosestBehaviour.h"
 #include "../../behaviour/move/GoHomeBehaviour.h"
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
-#include "../../behaviour/check/CheckIfPropertyBehaviour.h"
+#include "../../behaviour/check/CheckPropertyBehaviour.h"
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h"
 //#include "../../behaviour/move/MoveAlongStagedRouteBehaviour.h"
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( LoopOverRouteStagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );

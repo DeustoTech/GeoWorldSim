@@ -13,7 +13,7 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // GETTERS
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

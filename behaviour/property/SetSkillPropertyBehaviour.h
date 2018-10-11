@@ -10,7 +10,7 @@ class SetSkillPropertyBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit SetSkillPropertyBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
     //PROPERTIES
     static QString SKILL_TYPE;

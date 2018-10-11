@@ -9,7 +9,7 @@ class GoToClosestEdgePointBehaviour : public GWSBehaviour
 
 public:
     Q_INVOKABLE explicit GoToClosestEdgePointBehaviour();
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 protected slots:
     bool behave();

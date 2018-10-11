@@ -11,7 +11,7 @@ class BroadcastToHistoryBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit BroadcastToHistoryBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
 

@@ -27,7 +27,7 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool ExchangePropertyBehaviour::continueToNext(){
+bool ExchangePropertyBehaviour::canContinueToNext(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
     QString other_agent_id = agent->getProperty( "closest_found_id" ).toString();

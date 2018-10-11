@@ -21,7 +21,7 @@ FindClosestBehaviour::~FindClosestBehaviour(){
     this->routing_graph->deleteLater();
 }
 
-bool FindClosestBehaviour::continueToNext(){
+bool FindClosestBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant closest_agent_id = agent->getProperty( "closest_found_id" );

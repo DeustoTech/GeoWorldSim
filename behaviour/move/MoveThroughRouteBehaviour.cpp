@@ -17,7 +17,7 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool MoveThroughRouteBehaviour::continueToNext(){
+bool MoveThroughRouteBehaviour::canContinueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 

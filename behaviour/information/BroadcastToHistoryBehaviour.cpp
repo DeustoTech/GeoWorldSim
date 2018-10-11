@@ -13,7 +13,7 @@ BroadcastToHistoryBehaviour::BroadcastToHistoryBehaviour() : GWSBehaviour()
  GETTERS
 **********************************************************************/
 
-bool BroadcastToHistoryBehaviour::continueToNext(){
+bool BroadcastToHistoryBehaviour::canContinueToNext(){
 
     return false;
 }
