@@ -99,7 +99,6 @@ HEADERS += \
     #../../skill/move/MoveAlongStagedRouteSkill.h \
     #../../behaviour/move/MoveAlongStagedRouteBehaviour.h \
     #../../behaviour/move/FindBestRouteBehaviour.h \
-    ../../behaviour/move/LoopOverRouteStagesBehaviour.h \
     ../../behaviour/property/ExchangePropertyBehaviour.h \
     ../../behaviour/information/BroadcastToHistoryBehaviour.h \
     ../../behaviour/move/FindClosestEdgePointBehaviour.h \
@@ -108,7 +107,10 @@ HEADERS += \
     ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
     ../../behaviour/property/SetSkillPropertyBehaviour.h \
-    ../../behaviour/stop/StopAgentBehaviour.h
+    ../../behaviour/execution/StopAgentBehaviour.h \
+    ../../behaviour/execution/DeleteAgentBehaviour.h \
+    ../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
+    ../../skill/move/GenerateOrderedTSPSkill.h
             ## TRANSPORT LINES
 
 
@@ -181,7 +183,6 @@ SOURCES += mainContainers.cpp \
     #../../skill/move/MoveAlongStagedRouteSkill.cpp \
     #../../behaviour/move/MoveAlongStagedRouteBehaviour.cpp \
     #../../behaviour/move/FindBestRouteBehaviour.cpp \
-    ../../behaviour/move/LoopOverRouteStagesBehaviour.cpp \
     ../../behaviour/property/ExchangePropertyBehaviour.cpp \
     ../../behaviour/information/BroadcastToHistoryBehaviour.cpp \
     ../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
@@ -190,7 +191,10 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/SetSkillPropertyBehaviour.cpp \
-    ../../behaviour/stop/StopAgentBehaviour.cpp
+    ../../behaviour/execution/StopAgentBehaviour.cpp \
+    ../../behaviour/execution/DeleteAgentBehaviour.cpp
+    ../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
+    ../../skill/move/GenerateOrderedTSPSkill.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

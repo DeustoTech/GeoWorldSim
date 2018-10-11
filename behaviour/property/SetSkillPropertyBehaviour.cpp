@@ -15,7 +15,7 @@ bool SetSkillPropertyBehaviour::canContinueToNext(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString skill  = this->getProperty( SKILL_TYPE ).toString();
     QString property_name  = this->getProperty( SKILL_PROPERTY_NAME ).toString();
-    QVariant property_value = this->getProperty( SKILL_PROPERTY_VALUE );
+    //QVariant property_value = this->getProperty( SKILL_PROPERTY_VALUE );
     QSharedPointer<GWSSkill> skill_to_modify = agent->getSkill( skill );
 
     // Unless the value of the property equals the behaviour's input value

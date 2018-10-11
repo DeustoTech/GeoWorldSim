@@ -1,9 +1,8 @@
-#include "LoopOverRouteStagesBehaviour.h"
-
-LoopOverRouteStagesBehaviour::LoopOverRouteStagesBehaviour() : GWSBehaviour(){
-}
+#include "MoveAlongTSPRouteBehaviour.h"
 
 #include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/GenerateOrderedTSPSkill.h"
+
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/routing/TSPRouting.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -16,6 +15,7 @@ LoopOverRouteStagesBehaviour::LoopOverRouteStagesBehaviour() : GWSBehaviour(){
 #include <QJsonDocument>
 
 
+<<<<<<< HEAD:behaviour/move/LoopOverRouteStagesBehaviour.cpp
 /**********************************************************************
  GETTERS
 **********************************************************************/
@@ -34,20 +34,20 @@ bool LoopOverRouteStagesBehaviour::canContinueToNext(){
     if( x.isNull() || y.isNull() ){
         return false;
     }
-
-    GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-
-    if ( current_position == mv->getRouteDestination() ){
-        return false;
-    }
-    return true;
-
+=======
+MoveAlongTSPRouteBehaviour::MoveAlongTSPRouteBehaviour() : GWSBehaviour(){
 }
+>>>>>>> b615d0c24ecbbdc0221adc246ff6e0ca6dadd7d3:behaviour/move/MoverAlongTSPRouteBehaviour.cpp
 
+
+
+/**********************************************************************
+ GETTERS
+**********************************************************************/
 
 // Generate Ordered TSP route for ContainerAgents
 
-void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
+/*void MoveAlongTSPRouteBehaviour::generateOrderedTSPRoute() {
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_home_coor = GWSCoordinate( agent->getProperty( "home_coordX" ).toDouble(), agent->getProperty( "home_coordY" ).toDouble() );
@@ -90,29 +90,69 @@ void LoopOverRouteStagesBehaviour::generateOrderedTSPRoute() {
         this->ordered_container_tsp_route_coord_id_array.append( qMakePair( c , container_coord_id_array.key( c ) ) );
     }
 
+}*/
+
+
+bool MoveAlongTSPRouteBehaviour::continueToNext(){
+
+    QSharedPointer< GWSAgent> agent = this->getAgent();
+
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+
+    QString x = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).toString();
+    QString y = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).toString();
+
+    // No destination for MoveThroughRouteSkill
+    if( x.isNull() || y.isNull() ){
+        return false;
+    }
+
+    GWSCoordinate current_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+
+    if ( current_position == mv->getRouteDestination() ){
+        return false;
+    }
+    return true;
+
 }
+
+
+
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
 
-bool LoopOverRouteStagesBehaviour::behave(){
+bool MoveAlongTSPRouteBehaviour::behave(){
 
-     if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
-         this->generateOrderedTSPRoute();
-     }
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    // Here one should write the orderedTSP obtained from the Skill:
+    //
+    QSharedPointer<GenerateOrderedTSPSkill> tsp = agent->getSkill( GenerateOrderedTSPSkill::staticMetaObject.className() ).dynamicCast<GenerateOrderedTSPSkill>();
 
-     QSharedPointer<GWSAgent> agent = this->getAgent();
+    if ( this->route.isEmpty() ){
+        this->route = tsp->generateOrderedTSP();
+    }
+    //QList< QPair< GWSCoordinate , QString > > route = tsp->generateOrderedTSP();
+    int route_size = this->route.size();
+    // if ( tsp->ordered_container_tsp_route_coord_id_array.isEmpty() ){
+            //tsp->generateOrderedTSPRoute();
+    //}
+    //int size = this->ordered_container_tsp_route_coord_id_array.size();
+     //if ( this->ordered_container_tsp_route_coord_id_array.isEmpty() ){
+       //  this->generateOrderedTSPRoute();
+     //}
+
+
      QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
-     int loop_stage = agent->getProperty( "loop_stage" ).toInt();
-     int route_size = this->ordered_container_tsp_route_coord_id_array.size();
-     //qDebug() << route_size;
+     int loop_stage = agent->getProperty( "loop_stage" ).toInt();   
+     //int route_size = this->ordered_container_tsp_route_coord_id_array.size();
 
      if ( loop_stage <= ( route_size - 1 )  ){
 
-        QPair<GWSCoordinate, QString> pair = this->ordered_container_tsp_route_coord_id_array.at( loop_stage );
+        QPair<GWSCoordinate, QString> pair = this->route.at( loop_stage );
         GWSCoordinate stage_coors = pair.first;
         QString stage_id = pair.second;
 
@@ -122,7 +162,7 @@ bool LoopOverRouteStagesBehaviour::behave(){
         mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP , x );
         mv->setProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP , y );
 
-        agent->setProperty( "compare_agent_id" , stage_id );
+        agent->setProperty( "closest_found_id" , stage_id );
 
         loop_stage = loop_stage + 1;
         }

@@ -37,12 +37,13 @@
 #include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
 #include "../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h"
 //#include "../../behaviour/move/MoveAlongStagedRouteBehaviour.h"
-#include "../../behaviour/move/LoopOverRouteStagesBehaviour.h"
+#include "../../behaviour/move/MoveAlongTSPRouteBehaviour.h"
 #include "../../behaviour/property/ExchangePropertyBehaviour.h"
 #include "../../behaviour/information/BroadcastToHistoryBehaviour.h"
 #include "../../behaviour/move/FindClosestEdgePointBehaviour.h"
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
 #include "../../behaviour/property/SetSkillPropertyBehaviour.h"
+#include "../../skill/move/GenerateOrderedTSPSkill.h"
 
 
 //Environments
@@ -90,7 +91,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );
-    //GWSObjectFactory::globalInstance()->registerType( MoveAlongStagedRouteSkill::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateOrderedTSPSkill::staticMetaObject );
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
@@ -103,7 +104,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( LoopOverRouteStagesBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveAlongTSPRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( FindClosestEdgePointBehaviour::staticMetaObject );
@@ -128,7 +129,7 @@ int main(int argc, char* argv[])
      * ----------------*/
      // The random position generator will eventually be substituted by data from the census, similar to the procedure for containers
 
-    for( int i = 0 ; i < 200; i++ ){
+   /* for( int i = 0 ; i < 4; i++ ){
 
         QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
                                                                     "\"waste_amount\" : 0 , "
@@ -162,44 +163,90 @@ int main(int argc, char* argv[])
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( human );
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
-    }
+    }*/
 
 
     /* ----------------
      * Truck Agents
      * ----------------*/
 
-    for( int i = 0 ; i < 0 ; i++ ){
+    for( int i = 0 ; i < 4 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "
                                                                      "\"home_coordX\" :  %1, "
                                                                      "\"home_coordY\" :  %2, "
+                                                                     "\"color\" : \"Blue\" , "
                                                                      "\"loop_stage\"  : 0 , "
                                                                      "\"wait_for_me\" : true , "
-                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 20 } ]  , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 40 } , "
+                                                                                     "{ \"@type\" : \"GenerateOrderedTSPSkill\" , \"visit_agents_type\" : \"ContainerAgent\" }  ]  , "
                                                                      "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0] } , "
                                                                      "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/226/226592.svg\" , \"color\" : \"purple\" } , "
-                                                                    "\"@behaviours\" : [   { \"@type\" : \"LoopOverRouteStagesBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
-                                                                                          "{ \"@type\" : \"BroadcastToHistoryBehaviour\" , \"start\" : true ,  \"duration\" : 1000 } , "
-                                                                                          "{ \"@type\" : \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1000 } , "
-                                                                                          "{ \"@type\" : \"CheckIfAtOtherAgentsPositionBehaviour\", \"start\" : true , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
-                                                                                          "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000  } "
-                                                                    " ] } ")
+                                                                    "\"@behaviours\" : [   { \"@type\" : \"MoveAlongTSPRouteBehaviour\" , \"start\" : true ,  \"@id\" : \"LOOP_STAGES\" , \"duration\" : 1000 , \"@next\" : \"MOVE_STAGES\" } , "
+                                                                                          "{ \"@type\" : \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1000 , \"@next\" : [\"EXCHANGE_WASTE\"] } , "
+                                                                                          "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EXCHANGE_WASTE\" , \"duration\" : 1000 , \"@next\" : [\"SET_COLOR_EXCHANGED\"]  } ,"
+                                                                                          "{ \"@type\" : \"SetAgentPropertyBehaviour\" , \"@id\" : \"SET_COLOR_EXCHANGED\" , \"property_name\" : \"color\" , \"property_value\" : \"Orange\" , \"duration\" : 1000 , \"@next\" : \"LOOP_STAGES\" }  "
+                                                                                          " ] } ")
                                                        .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution() + lon_min )
                                                        .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
                                                        .toLatin1()
                                                         );
 
-        //
-        //
-// -2.8644994224613356 , 43.28428545332489
         QSharedPointer<GWSAgent> trucks = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( trucks );
-
         emit GWSApp::globalInstance()->sendAgentSignal( trucks ->serialize() );
 
     }
+
+    /* ---------------------------
+     * Zamudio census
+     * ---------------------------*/
+
+    // Generated from a CSV with headers: x, y, total, varones, mujeres, direccion
+
+    // Read container data from datasource url:
+    GWSDatasourceReader* censusReader = new GWSDatasourceReader( "https://datasources.geoworldsim.com/api/datasource/f8054929-c791-4777-b4bf-954dbf05166a/read" );
+
+    censusReader->connect( censusReader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
+
+
+        QJsonDocument jsonHumans = QJsonDocument::fromJson( QString("{ \"@type\" : \"HumanAgent\" , "
+                                                                    "\"waste_amount\" : 0 , "
+                                                                    "\"home_coordX\" : %1 , "
+                                                                    "\"home_coordY\" : %2 , "
+                                                                    "\"color\" : \"Green\" , "
+                                                                     "\"@skills\" : [ { \"@type\" : \"ViewSkill\" , \"view_agents_type\" : \"ContainerAgent\" , \"view_geom\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Polygon\" , \"coordinates\" : [[ [-1, -1],[-1, 1],[1, 1],[1, -1],[-1, -1] ]] } } , "
+                                                                                     "{ \"@type\" : \"MoveThroughRouteSkill\" , \"maxspeed\" : 25 } ],"
+                                                                     "\"geo\" : { \"@type\" : \"GWSGeometry\" , \"type\" : \"Point\" , \"coordinates\" : [ %1 , %2 , 0]} , "
+                                                                     "\"style\" : { \"icon_url\" : \"https://image.flaticon.com/icons/svg/145/145852.svg\" , \"color\" : \"red\" } , "
+                                                                     "\"@behaviours\" : [  "
+                                                                                            "{ \"@type\" : \"IncrementPropertyBehaviour\" , \"start\" : true , \"@id\" : \"INCREMENT\" ,  \"property\" : \"waste_amount\" , \"increment\" : %3 , \"max\" : 100. , \"min\" : -1 , \"duration\" : 1000 , \"@next\" : \"SET_COLOR_FULL\" } , "
+                                                                                            "{ \"@type\" : \"SetAgentPropertyBehaviour\" , \"@id\" : \"SET_COLOR_FULL\" , \"property_name\" : \"color\" , \"property_value\" : \"Red\" , \"duration\" : 1000 , \"@next\" : \"FIND_CLOSEST_CONTAINER\" } , "
+                                                                                            "{ \"@type\" : \"FindClosestBehaviour\" , \"@id\" : \"FIND_CLOSEST_CONTAINER\" , \"duration\" : 1000 , \"@next\" : \"MOVE\" } , "
+                                                                                            "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"MOVE\" , \"duration\" : %4 , \"@next\" : \"EMPTY_WASTE\" } , "
+                                                                                            "{ \"@type\" : \"ExchangePropertyBehaviour\" ,   \"@id\" : \"EMPTY_WASTE\" , \"duration\" : 1000 , \"@next\" : \"SET_COLOR_EMPTY\" }  , "
+                                                                                            "{ \"@type\" : \"SetAgentPropertyBehaviour\" , \"@id\" : \"SET_COLOR_EMPTY\" , \"property_name\" : \"color\" , \"property_value\" : \"Green\" , \"duration\" : 1000 , \"@next\" : \"SET_HOME_X\" } , "
+                                                                                            "{ \"@type\" : \"SetSkillPropertyBehaviour\" , \"@id\" : \"SET_HOME_X\" , \"skill\" : \"MoveThroughRouteSkill\" , \"skill_property_name\" : \"route_destination_x\" , \"skill_property_value\" : %1 , \"duration\" : 1000 , \"@next\" : \"SET_HOME_Y\" } , "
+                                                                                            "{ \"@type\" : \"SetSkillPropertyBehaviour\" , \"@id\" : \"SET_HOME_Y\" , \"skill\" : \"MoveThroughRouteSkill\" , \"skill_property_name\" : \"route_destination_y\" , \"skill_property_value\" : %2 , \"duration\" : 1000 , \"@next\" : \"MOVE_HOME\" }  , "
+                                                                                            "{ \"@type\" : \"MoveThroughRouteBehaviour\" , \"@id\" : \"MOVE_HOME\" , \"duration\" : %4 , \"@next\" : \"INCREMENT\" }  "
+                                                                                            " ] } ")
+                                                       .arg( data.value( "X" ).toString() )
+                                                       .arg( data.value( "Y" ).toString() )
+                                                       .arg( qrand() % 25 + 1 )
+                                                       .arg( (qrand() % 4 + 1) * 250 )
+                                                       .toLatin1()
+                                                        );
+
+        QSharedPointer<GWSAgent> humans = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
+        GWSExecutionEnvironment::globalInstance()->registerAgent( humans );
+        emit GWSApp::globalInstance()->sendAgentSignal( humans->serialize() );
+
+    } );
+
+    censusReader->startReading();
+
+
 
 
 
@@ -215,12 +262,6 @@ int main(int argc, char* argv[])
             // Create GEOMETRY JSON
             QJsonObject geo = data.value("geometry").toObject();
             geo.insert( "@type" , "GWSGeometry" );
-
-            // Create GRAPHNODE JSON
-            /*QJsonObject node;
-            node.insert( "@type" , "GWSGraphNode" );
-            node.insert( "node_x" , geo.value( "coordinates" ).toArray().at( 0 ) );
-            node.insert( "node_y" , geo.value( "coordinates" ).toArray().at( 1 ) );*/
 
             QJsonObject agent_json;
             agent_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
@@ -363,8 +404,8 @@ int main(int argc, char* argv[])
 
             QSharedPointer<GWSAgent> other = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
-            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
-            env->getId();
+           // GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
+           // env->getId();
 
             emit GWSApp::globalInstance()->sendAgentSignal( other->serialize() );
         }
@@ -429,8 +470,8 @@ int main(int argc, char* argv[])
 
             QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
 
-            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
-            env->getId();
+            //GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
+            //env->getId();
 
             emit GWSApp::globalInstance()->sendAgentSignal( footway->serialize() );
         }

@@ -59,7 +59,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-
     // Extract destination coordinates
     GWSCoordinate current_coor = agent_geom->getCentroid();
     GWSCoordinate destination_coor = this->getRouteDestination();
