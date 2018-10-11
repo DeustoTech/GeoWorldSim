@@ -4,33 +4,36 @@
 #include "../../app/App.h"
 
 
-QString CheckIfAtPositionBehaviour::KEY_POSITION_X = "key_position_x";
-QString CheckIfAtPositionBehaviour::KEY_POSITION_Y = "key_position_y";
+QString CheckIfAtPositionBehaviour::PROPERTY_NAME_X = "property_name_x";
+QString CheckIfAtPositionBehaviour::PROPERTY_NAME_Y = "property_name_y";
+QString CheckIfAtPositionBehaviour::NEXTS_IF_AT_POSITION = "nexts_if_at_position";
+QString CheckIfAtPositionBehaviour::NEXTS_IF_NOT_AT_POSITION = "nexts_if_not_at_position";
+
 
 
 CheckIfAtPositionBehaviour::CheckIfAtPositionBehaviour() : GWSBehaviour(){
 }
 
 
-bool CheckIfAtPositionBehaviour::canContinueToNext(){
+QStringList CheckIfAtPositionBehaviour::behave(){
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
-    double key_x = this->getProperty( KEY_POSITION_X ).toDouble();
-    double key_y = this->getProperty( KEY_POSITION_Y ).toDouble();
+    double coor_x = this->getProperty( PROPERTY_NAME_X ).toDouble();
+    double coor_y = this->getProperty( PROPERTY_NAME_Y ).toDouble();
 
-       GWSCoordinate key_position = GWSCoordinate( key_x , key_y );
+    GWSCoordinate key_position = GWSCoordinate( coor_x , coor_y );
 
     if (agent_coord == key_position ){
-        emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-        return true;
+
+        QStringList next = this->getProperty( NEXTS_IF_AT_POSITION );
+        return next;
+    }
+    else {
+
+        QStringList next = this->getProperty( NEXTS_IF_NOT_AT_POSITION );
+        return next;
     }
 
-    return false;
-}
-
-
-bool CheckIfAtPositionBehaviour::behave(){
-     // DO NOTHING IF NOT AT POSITION
-    return true;
 }

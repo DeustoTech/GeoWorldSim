@@ -12,14 +12,14 @@ public:
     Q_INVOKABLE explicit CheckIfAtPositionBehaviour();
 
     // PROPERTIES
-    static QString KEY_POSITION_X;
-    static QString KEY_POSITION_Y;
+    static QString PROPERTY_NAME_X;
+    static QString PROPERTY_NAME_Y;
+    static QString NEXTS_IF_AT_POSITION;
+    static QString NEXTS_IF_NOT_AT_POSITION;
 
-    // GETTERS
-    virtual bool canContinueToNext();
 
 private slots:
-    virtual bool behave();
+    virtual QStringList behave();
 };
 
 #endif // CHECKIFATPOSITION_H

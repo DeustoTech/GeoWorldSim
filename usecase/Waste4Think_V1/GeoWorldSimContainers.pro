@@ -110,7 +110,8 @@ HEADERS += \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/execution/DeleteAgentBehaviour.h \
     ../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
-    ../../skill/move/GenerateOrderedTSPSkill.h
+    ../../skill/move/GenerateOrderedTSPSkill.h \
+    ../../behaviour/waste4think/GenerateWasteBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -192,7 +193,8 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/SetSkillPropertyBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/execution/DeleteAgentBehaviour.cpp
+    ../../behaviour/execution/DeleteAgentBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp
     ../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
     ../../skill/move/GenerateOrderedTSPSkill.cpp
 
