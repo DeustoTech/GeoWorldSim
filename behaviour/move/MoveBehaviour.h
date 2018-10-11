@@ -11,6 +11,9 @@ public:
 
     Q_INVOKABLE explicit MoveBehaviour();
 
+    // PROPERTIES
+    static QString MAX_SPEED_PROP;
+
     // GETTERS
     virtual bool continueToNext();
 

@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 
     /* Returns a random double between min and max
      Zamudio latitude = 43.2803457
-     Zamudio longitude = -2.8621286*/
+     Zamudio longitude = -2.8621286 */
     double lat_max = 43.28472587082224;
     double lat_min = 43.280961278501344;
     double lon_max = -2.859949952301804 ;
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
      * Truck Agents
      * ----------------*/
 
-    for( int i = 0 ; i < 4 ; i++ ){
+    for( int i = 0 ; i < 0 ; i++ ){
 
         QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                      "\"waste_amount\" : 0 , "

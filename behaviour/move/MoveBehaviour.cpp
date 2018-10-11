@@ -7,7 +7,14 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
+QString MoveBehaviour::MAX_SPEED_PROP = "maxspeed";
+
 MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSSkill> skill = agent->getSkill( MoveSkill::staticMetaObject.className() );
+    //if( skill.isNull() ){
+    //    agent->addSkill( new MoveSkill() );
+    //}
 }
 
 /**********************************************************************
