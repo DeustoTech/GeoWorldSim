@@ -16,7 +16,7 @@ public:
     static QString KEY_POSITION_Y;
 
     // GETTERS
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

@@ -15,7 +15,7 @@ public:
     static QString MAX_SPEED_PROP;
 
     // GETTERS
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

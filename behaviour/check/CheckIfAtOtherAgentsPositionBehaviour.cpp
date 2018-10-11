@@ -8,7 +8,7 @@ QString CheckIfAtOtherAgentsPositionBehaviour::OTHER_AGENT_ID_PROP = "closest_fo
 CheckIfAtOtherAgentsPositionBehaviour::CheckIfAtOtherAgentsPositionBehaviour() : GWSBehaviour() {
 }
 
-bool CheckIfAtOtherAgentsPositionBehaviour::continueToNext(){
+bool CheckIfAtOtherAgentsPositionBehaviour::canContinueToNext(){
 
     QString agent_id = this->getAgent()->getProperty( OTHER_AGENT_ID_PROP ).toString();
     QSharedPointer<GWSAgent> other = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , agent_id );

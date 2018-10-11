@@ -10,7 +10,7 @@ class SetAgentPropertyBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit SetAgentPropertyBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
     //- PROPERTIES
     static QString PROPERTY_NAME;

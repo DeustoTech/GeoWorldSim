@@ -31,11 +31,13 @@ public:
     QSharedPointer<GWSAgent> getAgent();
     QList< QSharedPointer<GWSBehaviour> > getSubs();
     QList< QSharedPointer<GWSBehaviour> > getNexts();
-    virtual bool continueToNext(); // Behaviour finished check
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
     void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour );
+
+    // METHODS
+    virtual bool canContinueToNext(); // Behaviour finished check
 
 protected:
 

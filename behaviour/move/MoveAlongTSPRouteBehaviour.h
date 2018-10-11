@@ -14,7 +14,7 @@ public:
     // GETTERS
     QList<GWSCoordinate> generateRouteCoordinateArray() const;
     void generateOrderedTSPRoute();
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

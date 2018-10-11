@@ -10,7 +10,7 @@ SetSkillPropertyBehaviour::SetSkillPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-bool SetSkillPropertyBehaviour::continueToNext(){
+bool SetSkillPropertyBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString skill  = this->getProperty( SKILL_TYPE ).toString();

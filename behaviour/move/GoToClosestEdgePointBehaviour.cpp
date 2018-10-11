@@ -7,7 +7,7 @@ GoToClosestEdgePointBehaviour::GoToClosestEdgePointBehaviour() : GWSBehaviour(){
 }
 
 
-bool GoToClosestEdgePointBehaviour::continueToNext(){
+bool GoToClosestEdgePointBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();

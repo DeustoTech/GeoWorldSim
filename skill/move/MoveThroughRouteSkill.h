@@ -16,7 +16,7 @@ public:
     ~MoveThroughRouteSkill();
 
     //- PROPERTIES
-    static QString EDGES_CLASS_PROP;
+    static QString NETWORK_CLASS_PROP;
     static QString ROUTE_DESTINATION_X_PROP;
     static QString ROUTE_DESTINATION_Y_PROP;
 

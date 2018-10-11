@@ -8,7 +8,7 @@ SetAgentPropertyBehaviour::SetAgentPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-bool SetAgentPropertyBehaviour::continueToNext(){
+bool SetAgentPropertyBehaviour::canContinueToNext(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 

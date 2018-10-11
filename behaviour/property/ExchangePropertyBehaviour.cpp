@@ -27,7 +27,7 @@ ExchangePropertyBehaviour::ExchangePropertyBehaviour() : GWSBehaviour(){
  GETTERS
 **********************************************************************/
 
-bool ExchangePropertyBehaviour::continueToNext(){
+bool ExchangePropertyBehaviour::canContinueToNext(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
     GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();

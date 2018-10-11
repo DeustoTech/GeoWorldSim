@@ -15,7 +15,7 @@ public:
     ~FindClosestBehaviour();
 
     // GETTERS
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
     // METHODS
     virtual void generateGraph();

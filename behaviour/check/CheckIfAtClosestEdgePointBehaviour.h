@@ -11,7 +11,7 @@ class CheckIfAtClosestEdgePointBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit CheckIfAtClosestEdgePointBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
     private slots:
     virtual bool behave();

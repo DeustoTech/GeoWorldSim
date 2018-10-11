@@ -6,7 +6,7 @@ CheckIfAtClosestEdgePointBehaviour::CheckIfAtClosestEdgePointBehaviour() : GWSBe
 
 }
 
-bool CheckIfAtClosestEdgePointBehaviour::continueToNext(){
+bool CheckIfAtClosestEdgePointBehaviour::canContinueToNext(){
 
     QSharedPointer< GWSAgent> agent = this->getAgent();
     double closestEdgeX = agent->getProperty( "closest_edge_pointX" ).toDouble();

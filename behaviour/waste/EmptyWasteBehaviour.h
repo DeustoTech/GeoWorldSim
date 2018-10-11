@@ -10,7 +10,7 @@ class EmptyWasteBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit EmptyWasteBehaviour();
 
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

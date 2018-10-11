@@ -15,8 +15,29 @@
 #include <QJsonDocument>
 
 
+<<<<<<< HEAD:behaviour/move/LoopOverRouteStagesBehaviour.cpp
+/**********************************************************************
+ GETTERS
+**********************************************************************/
+
+
+bool LoopOverRouteStagesBehaviour::canContinueToNext(){
+
+    QSharedPointer< GWSAgent> agent = this->getAgent();
+
+    QSharedPointer<MoveThroughRouteSkill> mv = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+
+    QString x = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP ).toString();
+    QString y = mv->getProperty( MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP ).toString();
+
+    // No destination for MoveThroughRouteSkill
+    if( x.isNull() || y.isNull() ){
+        return false;
+    }
+=======
 MoveAlongTSPRouteBehaviour::MoveAlongTSPRouteBehaviour() : GWSBehaviour(){
 }
+>>>>>>> b615d0c24ecbbdc0221adc246ff6e0ca6dadd7d3:behaviour/move/MoverAlongTSPRouteBehaviour.cpp
 
 
 

@@ -12,7 +12,7 @@ public:
     Q_INVOKABLE explicit SelectDestinationBehaviour();
 
     // GETTERS
-    virtual bool continueToNext();
+    virtual bool canContinueToNext();
 
 private slots:
     virtual bool behave();

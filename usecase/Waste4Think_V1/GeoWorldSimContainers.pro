@@ -51,9 +51,8 @@ HEADERS += \
     ../../behaviour/move/GoHomeBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/check/CheckIfAtPositionBehaviour.h \
-    ../../behaviour/check/CheckIfPropertyBehaviour.h \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
-    TesisBehaviour.h \
+    ../../behaviour/check/CheckPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -108,6 +107,8 @@ HEADERS += \
     ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
     ../../behaviour/property/SetSkillPropertyBehaviour.h \
+    ../../behaviour/execution/StopAgentBehaviour.h \
+    ../../behaviour/execution/DeleteAgentBehaviour.h \
     ../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
     ../../skill/move/GenerateOrderedTSPSkill.h
             ## TRANSPORT LINES
@@ -135,9 +136,8 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/move/GoHomeBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
-    ../../behaviour/check/CheckIfPropertyBehaviour.cpp \
     ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
-    TesisBehaviour.cpp \
+    ../../behaviour/check/CheckPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -191,6 +191,8 @@ SOURCES += mainContainers.cpp \
     ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/SetSkillPropertyBehaviour.cpp \
+    ../../behaviour/execution/StopAgentBehaviour.cpp \
+    ../../behaviour/execution/DeleteAgentBehaviour.cpp
     ../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
     ../../skill/move/GenerateOrderedTSPSkill.cpp
 

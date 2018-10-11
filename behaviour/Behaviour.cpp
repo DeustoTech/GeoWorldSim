@@ -49,7 +49,7 @@ void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behav
 }
 
 /**********************************************************************
- EXPOERTERS
+ EXPORTERS
 **********************************************************************/
 
 QJsonObject GWSBehaviour::serialize() const{
@@ -94,14 +94,14 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNexts(){
     return nexts;
 }
 
-bool GWSBehaviour::continueToNext(){
+bool GWSBehaviour::canContinueToNext(){
 
     int condition = this->getProperty( FINISH_CONDITION_PROP ).toInt();
     if( condition <= 0 ){ condition = this->sub_behaviours.size(); }
     int finished_amount = 0;
 
     foreach (QSharedPointer<GWSBehaviour> sub, this->sub_behaviours){
-        finished_amount += sub->continueToNext() ? 1 : 0;
+        finished_amount += sub->canContinueToNext() ? 1 : 0;
     }
     return finished_amount >= condition;
 }
@@ -153,7 +153,7 @@ bool GWSBehaviour::behave(){
     // A parent behaviour will iterate all its child behaviours at each behave call
     foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {
 
-        if( !sub->continueToNext() ){
+        if( !sub->canContinueToNext() ){
            // qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( sub->metaObject()->className() ).arg( sub->getId() );
             success = success && sub->tick( this->behaving_time );
         }
