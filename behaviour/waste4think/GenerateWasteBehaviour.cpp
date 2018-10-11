@@ -17,7 +17,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
 
 QStringList GenerateWasteBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    /*QSharedPointer<GWSAgent> agent = this->getAgent();
     QVariant value = agent->getProperty( this->getProperty( WASTE_TYPE ).toString() );
     QVariant max_value = this->getProperty( MAX_VALUE);
 
@@ -36,6 +36,6 @@ QStringList GenerateWasteBehaviour::behave(){
     if ( value >= max_value  ){
         QStringList next = this->getProperty( NEXTS_IF_FULL);
         return next;
-    }
+    }*/
 
 }

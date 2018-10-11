@@ -23,7 +23,7 @@ bool IncrementPropertyBehaviour::canContinueToNext(){
     return value >= max_value || value <= min_value;
 }
 
-bool IncrementPropertyBehaviour::behave(){
+QStringList IncrementPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
@@ -34,5 +34,5 @@ bool IncrementPropertyBehaviour::behave(){
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
     this->getAgent()->setProperty( property_name , incremented );
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-    return true;
+    return QStringList();
 }

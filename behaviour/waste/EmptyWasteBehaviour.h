@@ -13,7 +13,7 @@ public:
     virtual bool canContinueToNext();
 
 private slots:
-    virtual bool behave();
+    virtual QStringList behave();
 };
 
 #endif // EMPTYWASTEBEHAVIOUR_H

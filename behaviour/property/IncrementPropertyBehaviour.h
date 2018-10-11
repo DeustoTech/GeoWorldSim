@@ -19,7 +19,7 @@ public:
     virtual bool canContinueToNext(); // Behaviour finished check
 
 private slots:
-    virtual bool behave();
+    virtual QStringList behave();
 
 };
 

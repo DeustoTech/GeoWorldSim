@@ -7,8 +7,6 @@
 #include <QProcess>
 #include <QtMath>
 
-
-#include "TesisBehaviour.h"
 #include "../../agent/Agent.h"
 
 // Agents
@@ -21,29 +19,11 @@
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
-//#include "../../skill/move/MoveAlongStagedRouteSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/property/IncrementPropertyBehaviour.h"
-#include "../../behaviour/waste/EmptyWasteBehaviour.h"
-#include "../../behaviour/move/SelectDestinationBehaviour.h"
-#include "../../behaviour/move/MoveBehaviour.h"
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
-#include "../../behaviour/move/FindClosestBehaviour.h"
-#include "../../behaviour/move/GoHomeBehaviour.h"
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
-#include "../../behaviour/check/CheckPropertyBehaviour.h"
-#include "../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h"
-#include "../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h"
-//#include "../../behaviour/move/MoveAlongStagedRouteBehaviour.h"
-#include "../../behaviour/move/MoveAlongTSPRouteBehaviour.h"
-#include "../../behaviour/property/ExchangePropertyBehaviour.h"
-#include "../../behaviour/information/BroadcastToHistoryBehaviour.h"
-#include "../../behaviour/move/FindClosestEdgePointBehaviour.h"
-#include "../../behaviour/property/SetAgentPropertyBehaviour.h"
-#include "../../behaviour/property/SetSkillPropertyBehaviour.h"
-#include "../../skill/move/GenerateOrderedTSPSkill.h"
+#include "../../behaviour/waste4think/GenerateWasteBehaviour.h"
 
 
 //Environments
@@ -86,31 +66,14 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
 
-
     // Skills
     GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GenerateOrderedTSPSkill::staticMetaObject );
 
     // Behaviours
-    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
-    //GWSObjectFactory::globalInstance()->registerType( MoveAlongStagedRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( EmptyWasteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GoHomeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfAtOtherAgentsPositionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveAlongTSPRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( ExchangePropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( BroadcastToHistoryBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( FindClosestEdgePointBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfAtClosestEdgePointBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetSkillPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );

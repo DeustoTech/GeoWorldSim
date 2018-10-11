@@ -112,7 +112,7 @@ protected:
      * @brief Agent behaviour
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
-    QList< QSharedPointer<GWSBehaviour> > currently_executing_behaviours;
+    QList< QSharedPointer<GWSBehaviour> > to_be_executed_behaviours;
 
     /**
       * Mutex for paralelism

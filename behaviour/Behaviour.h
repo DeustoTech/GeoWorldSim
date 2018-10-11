@@ -15,10 +15,9 @@ public:
     Q_INVOKABLE explicit GWSBehaviour();
 
     // PROPERTIES
-    static QString BEHAVIOUR_DURATION; // In milliseconds, IT WILL INCREMENT AGENTS INTERNAL DATETIME
+    static QString BEHAVIOUR_DURATION; // In seconds, IT WILL INCREMENT AGENTS INTERNAL DATETIME
     static QString SUB_BEHAVIOURS_PROP;
     static QString FINISH_CONDITION_PROP;
-    static QString NEXT_BEHAVIOURS_PROP;
     static QString START_BEHAVIOUR_PROP;
 
     // IMPORTERS
@@ -30,23 +29,23 @@ public:
     // GETTERS
     QSharedPointer<GWSAgent> getAgent();
     QList< QSharedPointer<GWSBehaviour> > getSubs();
-    QList< QSharedPointer<GWSBehaviour> > getNexts();
+    //QList< QSharedPointer<GWSBehaviour> > getNexts();
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
-    void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour );
+    //void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour );
 
     // METHODS
-    virtual bool canContinueToNext(); // Behaviour finished check
+    //virtual bool canContinueToNext(); // Behaviour finished check
 
 protected:
 
     QList< QSharedPointer<GWSBehaviour> > sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
-    QStringList next_behaviour_ids;
+    //QStringList next_behaviour_ids;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
-    bool tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
-    virtual bool behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asyncrhonous
+    QStringList tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
+    virtual QStringList behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asyncrhonous
 
 private:
     quint64 behaving_time = 0;

@@ -44,15 +44,15 @@ HEADERS += \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/move/MoveBehaviour.h \
-    ../../behaviour/move/FindClosestBehaviour.h \
-    ../../behaviour/property/IncrementPropertyBehaviour.h \
-    ../../behaviour/waste/EmptyWasteBehaviour.h \
-    ../../behaviour/move/GoHomeBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    #../../behaviour/move/MoveBehaviour.h \
+    #../../behaviour/move/FindClosestBehaviour.h \
+    #../../behaviour/property/IncrementPropertyBehaviour.h \
+    #../../behaviour/waste/EmptyWasteBehaviour.h \
+    #../../behaviour/move/GoHomeBehaviour.h \
+    #../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/check/CheckIfAtPositionBehaviour.h \
-    ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
-    ../../behaviour/check/CheckPropertyBehaviour.h \
+    #../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
+    #../../behaviour/check/CheckPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -99,18 +99,18 @@ HEADERS += \
     #../../skill/move/MoveAlongStagedRouteSkill.h \
     #../../behaviour/move/MoveAlongStagedRouteBehaviour.h \
     #../../behaviour/move/FindBestRouteBehaviour.h \
-    ../../behaviour/property/ExchangePropertyBehaviour.h \
-    ../../behaviour/information/BroadcastToHistoryBehaviour.h \
-    ../../behaviour/move/FindClosestEdgePointBehaviour.h \
-    ../../util/geometry/SnapToEdgeFromPoint.h \
-    ../../behaviour/move/GoToClosestEdgePointBehaviour.h \
-    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
-    ../../behaviour/property/SetAgentPropertyBehaviour.h \
-    ../../behaviour/property/SetSkillPropertyBehaviour.h \
-    ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/execution/DeleteAgentBehaviour.h \
-    ../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
-    ../../skill/move/GenerateOrderedTSPSkill.h \
+    #../../behaviour/property/ExchangePropertyBehaviour.h \
+    #../../behaviour/information/BroadcastToHistoryBehaviour.h \
+    #../../behaviour/move/FindClosestEdgePointBehaviour.h \
+    #../../util/geometry/SnapToEdgeFromPoint.h \
+    #../../behaviour/move/GoToClosestEdgePointBehaviour.h \
+    #../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
+    #../../behaviour/property/SetAgentPropertyBehaviour.h \
+    #../../behaviour/property/SetSkillPropertyBehaviour.h \
+    #../../behaviour/execution/StopAgentBehaviour.h \
+    #../../behaviour/execution/DeleteAgentBehaviour.h \
+    #../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
+    #../../skill/move/GenerateOrderedTSPSkill.h \
     ../../behaviour/waste4think/GenerateWasteBehaviour.h
             ## TRANSPORT LINES
 
@@ -130,15 +130,15 @@ SOURCES += mainContainers.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/move/FindClosestBehaviour.cpp \
-    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
-    ../../behaviour/waste/EmptyWasteBehaviour.cpp \
-    ../../behaviour/move/GoHomeBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    #../../behaviour/move/MoveBehaviour.cpp \
+    #../../behaviour/move/FindClosestBehaviour.cpp \
+    #../../behaviour/property/IncrementPropertyBehaviour.cpp \
+    #../../behaviour/waste/EmptyWasteBehaviour.cpp \
+    #../../behaviour/move/GoHomeBehaviour.cpp \
+    #../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
-    ../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
-    ../../behaviour/check/CheckPropertyBehaviour.cpp \
+    #../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
+    #../../behaviour/check/CheckPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -184,19 +184,19 @@ SOURCES += mainContainers.cpp \
     #../../skill/move/MoveAlongStagedRouteSkill.cpp \
     #../../behaviour/move/MoveAlongStagedRouteBehaviour.cpp \
     #../../behaviour/move/FindBestRouteBehaviour.cpp \
-    ../../behaviour/property/ExchangePropertyBehaviour.cpp \
-    ../../behaviour/information/BroadcastToHistoryBehaviour.cpp \
-    ../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
-    ../../util/geometry/SnapToEdgeFromPoint.cpp \
-    ../../behaviour/move/GoToClosestEdgePointBehaviour.cpp \
-    ../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
-    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
-    ../../behaviour/property/SetSkillPropertyBehaviour.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/execution/DeleteAgentBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp
-    ../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
-    ../../skill/move/GenerateOrderedTSPSkill.cpp
+    #../../behaviour/property/ExchangePropertyBehaviour.cpp \
+    #../../behaviour/information/BroadcastToHistoryBehaviour.cpp \
+    #../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
+    #../../util/geometry/SnapToEdgeFromPoint.cpp \
+    #../../behaviour/move/GoToClosestEdgePointBehaviour.cpp \
+    #../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
+    #../../behaviour/property/SetAgentPropertyBehaviour.cpp \
+    #../../behaviour/property/SetSkillPropertyBehaviour.cpp \
+    #../../behaviour/execution/StopAgentBehaviour.cpp \
+    #../../behaviour/execution/DeleteAgentBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp \
+    #../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
+    #../../skill/move/GenerateOrderedTSPSkill.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

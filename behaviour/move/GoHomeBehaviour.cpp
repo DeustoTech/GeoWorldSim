@@ -32,7 +32,7 @@ bool GoHomeBehaviour::canContinueToNext(){
     return true;
 }
 
-bool GoHomeBehaviour::behave(){
+QStringList GoHomeBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     double home_coordX = agent->getProperty("home_coordX").toDouble();
