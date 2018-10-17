@@ -16,8 +16,12 @@ public:
 
     // PROPERTIES
     static QString CLOSEST_AGENT_TYPE;
-    static QString CLOSEST_AGENT_SUBTYPE;
-    static QString CLOSEST_ID;
+    static QString TRANSPORT_NETWORK_TYPE;
+    static QString STORE_CLOSEST_ID_AS;
+    //static QString STORE_CLOSEST_ROUTE_AS;
+    static QString STORE_CLOSEST_ROUTE_DISTANCE_AS;
+    //static QString CLOSEST_FROM_X;
+    //static QString CLOSEST_FROM_Y;
     static QString NEXTS;
 
 

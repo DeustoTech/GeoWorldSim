@@ -4,7 +4,6 @@
 
 QString TransferAgentPropertyBehaviour::PROPERTY_TO_TRANSFER = "transfer_property";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
-QString TransferAgentPropertyBehaviour::ID_FROM_PROPERTY = "id_from_property";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
 
 
@@ -18,15 +17,18 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     QString property_to_transfer = this->getProperty( PROPERTY_TO_TRANSFER );
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
-    QString closest_agent_id;
+    QVariant closest_agent_id = this->getProperty( RECEIVING_AGENT_ID );
 
-    if ( !this->getProperty( RECEIVING_AGENT_ID ).isNull() ){
-       closest_agent_id = this->getProperty( RECEIVING_AGENT_ID ).toString();
-    }
-    if ( !this->getProperty( ID_FROM_PROPERTY ).isNull() ){
-       closest_agent_id = this->getProperty( ID_FROM_PROPERTY ).toString();
+    bool is_property = closest_agent_id.toString().startsWith( "<" ) && closest_agent_id.toString().endsWith( ">" );
+
+    if (is_property ){
+
+        QString property_name = closest_agent_id.toString().remove( 0 , 1);
+        property_name = property_name.remove( property_name.length() - 1 , 1 );
+        closest_agent_id = agent->getProperty( property_name );
     }
 
+    closest_agent_id = closest_agent_id.toString();
     QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id );
 
     double new_waste = closest_agent->getProperty( property_to_transfer ).toDouble() + agent->getProperty( property_to_transfer ).toDouble();
