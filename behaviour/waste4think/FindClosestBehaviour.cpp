@@ -39,10 +39,12 @@ QStringList FindClosestBehaviour::behave(){
     // CAREFUL!! WE NEED TO SPECIFY THE WASTE TYPE WE WANT TO THROW!
     QList<QSharedPointer<GWSAgent> > agents_to_search = GWSAgentEnvironment::globalInstance()->getByClass( CLOSEST_AGENT_TYPE) ;
     foreach ( QSharedPointer<GWSAgent> a, agents_to_search  ){
+
          GWSCoordinate agents_to_search_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
          QString agents_to_search_id = a->getProperty("@id").toString();
          agents_to_search_coord_array.append( agents_to_search_coord ) ;
          agents_to_search_id_coord_array.insert( agents_to_search_id , agents_to_search_coord );
+
      }
 
     if( !this->routing_graph ){
