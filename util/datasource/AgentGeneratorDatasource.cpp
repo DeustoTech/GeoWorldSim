@@ -10,6 +10,7 @@ AgentGeneratorDatasource::AgentGeneratorDatasource( QJsonObject agent_json, QStr
 {
 
     GWSDatasourceReader* agentReader = new GWSDatasourceReader( datasource_url );
+
     agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [agent_json]( QJsonObject data ){
 
         QJsonObject template_to_be_constructed = agent_json;

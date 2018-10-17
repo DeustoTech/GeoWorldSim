@@ -14,7 +14,6 @@ public:
     static QString AGENT_PROPERTY_TO_COMPARE;
     static QString COMPARISON_OPERATOR;
     static QString COMPARISON_VALUE;
-    static QString COMPARISON_PROPERTY;
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
 

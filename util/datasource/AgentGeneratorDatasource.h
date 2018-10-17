@@ -10,7 +10,6 @@ class AgentGeneratorDatasource : public QObject
 public:
     AgentGeneratorDatasource();
 
-    QJsonObject template_agent;
 };
 
 #endif // AGENTGENERATORDATASOURCE_H
