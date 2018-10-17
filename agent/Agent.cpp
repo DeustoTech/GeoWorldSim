@@ -241,6 +241,7 @@ void GWSAgent::addSkill( QSharedPointer<GWSSkill> skill ){
         this->skills = new GWSObjectStorage();
     }
     this->skills->add( skill );
+    skill->skilled_agent = this->getSharedPointer();
 }
 
 void GWSAgent::removeSkill(QSharedPointer<GWSSkill> skill){

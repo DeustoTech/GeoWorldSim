@@ -101,7 +101,13 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
 
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_TYPE_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
-    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){ this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray().toVariantList() ); }
+    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){
+        QStringList family;
+        foreach(QJsonValue v , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() ){
+            family.append( v.toString() );
+        }
+        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , family );
+    }
 
     // Set properties
     foreach( QString property_name , json.keys() ){
@@ -118,7 +124,11 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
         case QJsonValue::Bool: {
                 this->setProperty( property_name , property_value.toBool() ); break; }
         case QJsonValue::Array: {
-                //this->setProperty( property_name , property_value.toArray() );
+                QVariantList list;
+                foreach (QJsonValue v , property_value.toArray() ) {
+                    list.append( v.toVariant() );
+                }
+                this->setProperty( property_name , list );
                 break; }
         case QJsonValue::Object: {
 

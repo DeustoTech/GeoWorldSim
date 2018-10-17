@@ -14,13 +14,7 @@ QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
 MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSSkill> skill = agent->getSkill( MoveSkill::staticMetaObject.className() );
-    //if( skill.isNull() ){
-    //    agent->addSkill( new MoveSkill() );
-    //}
 }
-
 
 /**********************************************************************
  METHODS
@@ -29,12 +23,20 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
 QStringList MoveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    GWSCoordinate agent_coors = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+
 
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
 
-    // Check if agent can move
+    // Check if agent has a MoveSkill, otherwise create it and set its max_speed
     QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
+    if( move_skill.isNull() ){
+        move_skill = QSharedPointer<MoveSkill>( new MoveSkill() );
+        agent->addSkill( move_skill );
+    }
+    move_skill->setProperty( MoveSkill::MAX_SPEED_PROP , this->getProperty( MoveBehaviour::MAX_SPEED_PROP ) );
+
     QVariant x_destination = this->getProperty( X_VALUE );
     QVariant y_destination = this->getProperty( Y_VALUE );
 
@@ -72,6 +74,7 @@ QStringList MoveBehaviour::behave(){
     move_skill->move( duration_of_movement );
 
     GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+
     if ( agent_position == destination_coor ){
         QStringList nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
         return nexts;
