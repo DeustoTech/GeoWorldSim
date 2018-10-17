@@ -214,11 +214,11 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     }
 
     GWSEnvironment::registerAgent( agent );
-    //this->mutex.lock();
+
+    QSharedPointer<GWSGeometry> agent_geom = this->getGeometry( agent );
     foreach (QString s , agent->getInheritanceFamily()) {
-        this->spatial_index.value( s )->upsert( agent , this->getGeometry( agent ) );
+        this->spatial_index.value( s )->upsert( agent , agent_geom );
     }
-    //this->mutex.unlock();
 
     // Set geometry in agent to null, because it is be stored here in the environment
     agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );

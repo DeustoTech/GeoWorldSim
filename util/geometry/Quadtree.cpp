@@ -147,7 +147,7 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
     QString object_id = object->getId();
 
-    if( geom ){
+    if( geom && geom->isGeometryValid() ){
 
         GWSQuadtreeElement* elm = Q_NULLPTR;
         geos::geom::Envelope e;

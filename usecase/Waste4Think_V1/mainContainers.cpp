@@ -126,9 +126,17 @@ int main(int argc, char* argv[])
         QSharedPointer<GWSAgent> human = GWSObjectFactory::globalInstance()->fromJSON( jsonHumans.object() ).dynamicCast<GWSAgent>();
         GWSExecutionEnvironment::globalInstance()->registerAgent( human );
         emit GWSApp::globalInstance()->sendAgentSignal( human ->serialize() );
+
     }*/
 
-
+    QJsonDocument json = QJsonDocument::fromJson(
+                                            QString( "{ \"@type\" : \"GWSAgent\" , \"@family\": [ \"GWSAgent\" ], \"color\" : \"red\" , "
+                                                     "\"@behaviours\": [ { \"@id\": \"BH0\", \"@type\": \"CheckIfAtPositionBehaviour\", \"duration\": 1, \"position_x_value\": -2.45423, \"position_y_value\": 43.3423, \"nexts_if_not_at_position\": [ \"BH0\" ], \"nexts_if_at_position\": [ \"BH1\" ] } , "
+                                                                        "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"BH1\", \"duration\": 1, \"waste_type\": \"batteries\" } "
+                                                     "] }" )
+                                            .toLatin1() );
+    QSharedPointer<GWSAgent> element = GWSObjectFactory::globalInstance()->fromJSON( json.object() ).dynamicCast<GWSAgent>();
+    qDebug() << element->serialize();
     /* ----------------
      * Truck Agents
      * ----------------*/
@@ -207,7 +215,8 @@ int main(int argc, char* argv[])
 
     } );
 
-    censusReader->startReading();
+    //censusReader->startReading();
+
 
 
 
