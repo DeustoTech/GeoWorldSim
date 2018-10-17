@@ -87,17 +87,17 @@ QStringList FindClosestBehaviour::behave(){
     agent->setProperty( STORE_CLOSEST_ID_AS , closest_id );
 
     // Extract and store the route to it:
-    //QList< QSharedPointer<GWSGraphEdge> > closest_route = this->routing_graph->dijkstraShortestPath( agent_coor , this->closest_coor );
+    QList< QSharedPointer<GWSGraphEdge> > closest_route = this->routing_graph->dijkstraShortestPath( agent_coor , this->closest_coor );
     //agent->setProperty(STORE_CLOSEST_ROUTE_AS , closest_route );
 
     // Extract and store the distance of the route:
     GWSLengthUnit closest_route_distance = 0;
-    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route_distance ){
+    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
         closest_route_distance = closest_route_distance + edge->getLength();
     }
     agent->setProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS , closest_route_distance );
 
     // Set next behaviours:
-    QStringList next = this->getProperty( NEXTS );
+    QStringList next = this->getProperty( NEXTS ).toStringList();
     return next;
 }

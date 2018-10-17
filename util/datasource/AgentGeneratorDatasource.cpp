@@ -6,14 +6,14 @@
 #include <QObject>
 
 
-AgentGeneratorDatasource::AgentGeneratorDatasource( QJsonObject agent_json, QString datasource_url)
+AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url)
 {
 
-    GWSDatasourceReader* agentReader = new GWSDatasourceReader( datasource_url );
+    GWSDatasourceReader* agentReader = new GWSDatasourceReader( url );
 
-    agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [agent_json]( QJsonObject data ){
+    agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [json]( QJsonObject data ){
 
-        QJsonObject template_to_be_constructed = agent_json;
+        QJsonObject template_to_be_constructed = json;
         foreach ( QString key , data.keys()) {
             template_to_be_constructed.insert( key , data.value( key ) );
         }

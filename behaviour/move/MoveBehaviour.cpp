@@ -8,6 +8,10 @@
 #include "../../skill/move/MoveSkill.h"
 
 QString MoveBehaviour::MAX_SPEED_PROP = "maxspeed";
+QString MoveBehaviour::X_VALUE = "x_value";
+QString MoveBehaviour::Y_VALUE = "y_value";
+QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
+QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
 MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -17,30 +21,12 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
     //}
 }
 
-/**********************************************************************
- GETTERS
-**********************************************************************/
-
-bool MoveBehaviour::canContinueToNext(){
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<MoveSkill> mv = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    // No move skill
-    if( !mv ){
-        qWarning() << QString("Agent %1 %2 wants to move but has no MoveSkill").arg( agent->staticMetaObject.className() ).arg( agent->getId() );
-        return false;
-    }
-    // No destination for MoveSkill
-    if( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).isNull() || mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).isNull() ){
-        return false;
-    }
-    return GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid() == GWSCoordinate( mv->getProperty( MoveSkill::DESTINATION_X_PROP ).toDouble() , mv->getProperty( MoveSkill::DESTINATION_Y_PROP ).toDouble() );
-}
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-bool MoveBehaviour::behave(){
+QStringList MoveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -49,14 +35,31 @@ bool MoveBehaviour::behave(){
 
     // Check if agent can move
     QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-    if( !move_skill ){
-        qWarning() << QString("Agent %1 does not have a MoveSkill").arg( agent->getId() );
-        return false;
+    QVariant x_destination = this->getProperty( X_VALUE );
+    QVariant y_destination = this->getProperty( Y_VALUE );
+
+    bool x_is_property = x_destination.toString().startsWith( "<" ) && x_destination.toString().endsWith( ">" );
+    bool y_is_property = y_destination.toString().startsWith( "<" ) && y_destination.toString().endsWith( ">" );
+
+    if ( x_is_property && y_is_property ){
+
+        QString x_property_name = x_destination.toString().remove( 0 , 1 );
+        QString y_property_name = y_destination.toString().remove( 0 , 1 );
+
+        x_property_name = x_property_name.remove( x_property_name.length() - 1 , 1 );
+        y_property_name = y_property_name.remove( y_property_name.length() - 1 , 1 );
+
+        x_destination = agent->getProperty( x_property_name );
+        y_destination = agent->getProperty( y_property_name );
+
     }
+
+    move_skill->setProperty( MoveSkill::DESTINATION_X_PROP , x_destination.toDouble() );
+    move_skill->setProperty( MoveSkill::DESTINATION_Y_PROP , y_destination.toDouble() );
 
     GWSCoordinate destination_coor = move_skill->getCurrentDestination();
     if( !destination_coor.isValid() ){
-        return false;
+        QStringList nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
     }
 
     // Calculate speed
@@ -67,7 +70,16 @@ bool MoveBehaviour::behave(){
 
     // Move towards
     move_skill->move( duration_of_movement );
-    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
-    return true;
+    GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    if ( agent_position == destination_coor ){
+        QStringList nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
+        return nexts;
+    }
+
+    if ( agent_position != destination_coor ){
+        QStringList nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
+        return nexts;
+    }
+
 }

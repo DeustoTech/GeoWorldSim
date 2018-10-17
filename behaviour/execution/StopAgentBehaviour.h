@@ -10,11 +10,8 @@ class StopAgentBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit StopAgentBehaviour();
 
-    // METHODS
-    virtual bool canContinueToNext(); // Behaviour finished check
-
 private slots:
-    virtual bool behave();
+    virtual QStringList behave();
 };
 
 #endif // STOPAGENTBEHAVIOUR_H

@@ -24,6 +24,8 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteBehaviour.h"
+#include "../../behaviour/waste4think/FindClosestBehaviour.h"
+#include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
 
 
 //Environments
@@ -137,6 +139,12 @@ int main(int argc, char* argv[])
                                             .toLatin1() );
     QSharedPointer<GWSAgent> element = GWSObjectFactory::globalInstance()->fromJSON( json.object() ).dynamicCast<GWSAgent>();
     qDebug() << element->serialize();
+
+
+
+
+
+
     /* ----------------
      * Truck Agents
      * ----------------*/

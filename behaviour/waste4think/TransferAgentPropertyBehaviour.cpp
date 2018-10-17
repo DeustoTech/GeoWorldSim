@@ -14,7 +14,7 @@ TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(
 
 QStringList TransferAgentPropertyBehaviour::behave(){
 
-    QString property_to_transfer = this->getProperty( PROPERTY_TO_TRANSFER );
+    QString property_to_transfer = this->getProperty( PROPERTY_TO_TRANSFER ).toString();
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
     QVariant closest_agent_id = this->getProperty( RECEIVING_AGENT_ID );
@@ -28,13 +28,13 @@ QStringList TransferAgentPropertyBehaviour::behave(){
         closest_agent_id = agent->getProperty( property_name );
     }
 
-    closest_agent_id = closest_agent_id.toString();
-    QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id );
+    QString closest_agent_id_str = closest_agent_id.toString();
+    QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id_str );
 
     double new_waste = closest_agent->getProperty( property_to_transfer ).toDouble() + agent->getProperty( property_to_transfer ).toDouble();
     closest_agent->setProperty( property_to_transfer , new_waste );
     agent->setProperty( property_to_transfer , 0.);
-    QStringList nexts = this->getProperty( NEXTS );
+    QStringList nexts = this->getProperty( NEXTS ).toStringList();
 
     return nexts;
 

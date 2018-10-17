@@ -8,7 +8,7 @@ class AgentGeneratorDatasource : public QObject
 {
 
 public:
-    AgentGeneratorDatasource();
+    AgentGeneratorDatasource( QJsonObject json, QString url );
 
 };
 

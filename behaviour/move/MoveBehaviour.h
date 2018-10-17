@@ -13,12 +13,13 @@ public:
 
     // PROPERTIES
     static QString MAX_SPEED_PROP;
-
-    // GETTERS
-    virtual bool canContinueToNext();
+    static QString X_VALUE;
+    static QString Y_VALUE;
+    static QString NEXTS_IF_ARRIVED;
+    static QString NEXTS_IF_NOT_ARRIVED;
 
 private slots:
-    virtual bool behave();
+    virtual QStringList behave();
 
 };
 

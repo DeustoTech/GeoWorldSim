@@ -16,8 +16,9 @@ public:
     static QString SAVE_GENERATED_WASTE_AS;
     static QString FAMILY_MEMBERS;
     static QString MAX_VALUE;
-    static QString NEXTS_IF_FULL;
-    static QString NEXTS_IF_NOT_FULL;
+    static QString NEXTS_IF_TRUE;
+    static QString NEXTS_IF_FALSE;
+    static QString STORE_GENERATED_WASTE_AS;
 
 protected slots:
     virtual QStringList behave();

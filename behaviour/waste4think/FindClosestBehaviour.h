@@ -24,12 +24,13 @@ public:
     //static QString CLOSEST_FROM_Y;
     static QString NEXTS;
 
-
-protected slots:
-    virtual QStringList behave();
+protected:
     GWSDijkstraRouting* routing_graph = Q_NULLPTR;
     GWSCoordinate closest_coor;
     QPair< GWSCoordinate, QString > closest_coor_id;
+protected slots:
+    virtual QStringList behave();
+
 };
 
 #endif // FINDCLOSESTBEHAVIOUR_H
