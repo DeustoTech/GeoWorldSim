@@ -11,7 +11,7 @@ GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
 }
 
 GWSNetworkEnvironment::GWSNetworkEnvironment() : GWSEnvironment(){
-    this->edges_index = new GWSQuadtree();
+    //this->edges_index = new GWSQuadtree();
     qInfo() << "NetworkEnvironment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
@@ -137,7 +137,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
                 if( !edge.isNull() ){
                     this->network_graphs.value( c )->addEdge( edge );
                     this->agent_to_edge.insert( agent , edge );
-                    this->edges_index->upsert( edge , edge->getFrom() );
+                    //this->edges_index->upsert( edge , edge->getFrom() );
                 }
             }
 
@@ -162,7 +162,7 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
             QSharedPointer<GWSGraphEdge> edge = this->agent_to_edge.value( agent );
             if( !edge.isNull() ){
                 this->network_graphs.value( c )->removeEdge( edge );
-                this->edges_index->remove( edge );
+                //this->edges_index->remove( edge );
                 this->agent_to_edge.remove( agent );
             }
         }

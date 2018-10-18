@@ -67,6 +67,13 @@ QJsonObject GWSObject::serialize() const{
                 json.insert( property_name , this->getProperty( property_name ).toBool() ); break;
             case QVariant::String:
                 json.insert( property_name , this->getProperty( property_name ).toString() ); break;
+            case QVariant::StringList: {
+                QJsonArray array;
+                foreach(QString str , this->getProperty( property_name ).toStringList() ){
+                    array.append( str );
+                }
+                json.insert( property_name , array ); break;
+            }
             default:
 
                 // case GWSGeometry

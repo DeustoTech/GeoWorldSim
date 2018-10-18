@@ -5,24 +5,21 @@
 #include "geos/geom/Envelope.h"
 
 
-GWSQuadtree::GWSQuadtree() : GWSObject(){
-    this->inner_index = new geos::index::quadtree::Quadtree();
+GWSQuadtree::GWSQuadtree() : QObject(){
 }
 
 GWSQuadtree::~GWSQuadtree(){
-    delete this->inner_index;
-    this->inner_index = Q_NULLPTR;
 }
 
-/*QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements( GWSCoordinate coor ) const{
+/*QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements( GWSCoordinate coor ) {
     return this->getElements<GWSObject>( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
 }
 
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( GWSCoordinate coor ) const{
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( GWSCoordinate coor ) {
 
 }
 
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( QSharedPointer<GWSGeometry> geom ) const{
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( QSharedPointer<GWSGeometry> geom ) {
     QList< QSharedPointer<T> > intersecting_agents;
     foreach( QSharedPointer<GWSObject> o , this->getElements<GWSObject>( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() ) ){
         QSharedPointer<GWSGeometry> o_geom = this->id_to_geometries.value( o->getId() );
@@ -34,46 +31,32 @@ template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( QSharedP
 }
 
 
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) const{
+template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
 
 }*/
 
-QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double maxX, double minY, double maxY) const{
+QSharedPointer<GWSGeometry> GWSQuadtree::getGeometry( QString object_id ){
+    return this->id_to_geometries.value( object_id , Q_NULLPTR );
+}
+
+QList< QSharedPointer<GWSObject> > GWSQuadtree::getObjects(double minX, double maxX, double minY, double maxY) {
     QList< QSharedPointer<GWSObject> > objects;
-    std::vector<void*> vector;
 
-    if( !this->inner_index ){
-        qWarning() << "Quadtree has no inner index";
-        return objects;
-    }
-
-    geos::geom::Envelope* e = new geos::geom::Envelope( minX , maxX , minY , maxY );
-    this->mutex.lock();
-    this->inner_index->query( e , vector );
-    this->mutex.unlock();
-    delete e;
-
-    if( vector.empty() ){
-        qDebug() << "Empty vector";
-        vector = *this->inner_index->queryAll();
-    }
-
-    if( vector.size() ){
-        for(unsigned int i = 0 ; i < vector.size() ; i++){
-            GWSQuadtreeElement* elm = (GWSQuadtreeElement*)vector.at(i);
-            if( elm ){
-                QSharedPointer<GWSObject> obj = this->id_to_objects.value( elm->referenced_object_id );
-                if( obj ){
-                   objects.append( obj );
-                }
-            }
+    geos::geom::Envelope e = geos::geom::Envelope( minX , maxX , minY , maxY );
+    foreach( QString object_id , this->id_to_envelopes.keys() ){
+        if( e.intersects( this->id_to_envelopes.value( object_id ) ) ){
+            objects.append( this->id_to_objects.value( object_id ) );
         }
+    }
+
+    if( objects.isEmpty() ){
+        return this->id_to_objects.values(); // Return all values, no object could be found inside given bounds
     }
 
     return objects;
 }
 
-QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) const{
+QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) {
     QSharedPointer<GWSObject> found;
     QList< QSharedPointer<GWSObject> > objects = this->getElements<GWSObject>( coor );
 
@@ -102,7 +85,7 @@ QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) con
     return found;
 }
 
-QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeometry> geometry) const{
+QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(QSharedPointer<GWSGeometry> geometry) {
 
     QSharedPointer<GWSObject> found = Q_NULLPTR;
     QList< QSharedPointer<GWSObject> > agents = this->getElements<GWSObject>( geometry );
@@ -149,36 +132,15 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
     if( geom && geom->isGeometryValid() ){
 
-        GWSQuadtreeElement* elm = Q_NULLPTR;
-        geos::geom::Envelope e;
-
-        // Check if exists
-        if( !( e = this->id_to_envelopes.value( object_id ) ).isNull() ){
-
-            // Exists
-            elm = this->id_to_tree_elements.value( object_id );
-            this->inner_index->remove( &e , elm );      // Remove from last position
-
-        } else {
-
-            // Create for first time
-            elm = new GWSQuadtreeElement( object_id );
-            this->id_to_tree_elements.insert( object_id , elm );
-            this->id_to_objects.insert( object_id , object );
-
-        }
-
-        e = geos::geom::Envelope(
+        geos::geom::Envelope e = geos::geom::Envelope(
                     geom->getGeometryMinX() ,
                     geom->getGeometryMaxX() ,
                     geom->getGeometryMinY() ,
                     geom->getGeometryMaxY() );
 
+        this->id_to_objects.insert( object_id , object );
         this->id_to_envelopes.insert( object_id , e );
         this->id_to_geometries.insert( object_id , geom );
-        this->mutex.lock();
-        this->inner_index->insert( &e , elm );          // Insert in current position
-        this->mutex.unlock();
     }
 
 }
@@ -196,15 +158,7 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
         return;
     }
 
-    this->mutex.lock();
-    geos::geom::Envelope e = this->id_to_envelopes.value( object_id );
-    GWSQuadtreeElement* elm = this->id_to_tree_elements.value( object_id );
-    this->inner_index->remove( &e , elm );
     this->id_to_envelopes.remove( object_id );
     this->id_to_objects.remove( object_id );
-    this->id_to_tree_elements.remove( object_id );
     this->id_to_geometries.remove( object_id );
-    elm->deleteLater();
-    this->mutex.unlock();
-
 }

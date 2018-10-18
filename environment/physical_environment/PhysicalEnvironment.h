@@ -55,11 +55,10 @@ private:
     QSharedPointer<GWSGeometry> environment_bounds;
 
     // SPATIAL INDEX
-    QMap<QString , GWSQuadtree*> spatial_index; // Spatial indexes
+    QMap<QString , GWSQuadtree* > spatial_index; // Spatial indexes
 
     // Agent geometries
     QStringList agent_ids;
-    QMap<QString , QSharedPointer<GWSGeometry> > agent_geometries;
 
     // Mutex, for avoiding concurrency
     QMutex mutex;
