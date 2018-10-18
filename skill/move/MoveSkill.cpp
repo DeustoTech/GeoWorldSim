@@ -103,7 +103,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
 
     // Distance
     double meter_distance = current_coor.getDistance( this->getCurrentDestination() ).number();
-    double distance_percentage = (meters / meter_distance);
+    double distance_percentage = ( meters / meter_distance );
 
     distance_percentage = qMin( distance_percentage , 1.0 );
 

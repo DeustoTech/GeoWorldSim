@@ -117,7 +117,8 @@ HEADERS += \
     ../../behaviour/waste4think/FindClosestBehaviour.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveBehaviour.h
+    ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -206,7 +207,8 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/FindClosestBehaviour.cpp \
     ../../util/datasource/AgentGeneratorDatasource.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp
+    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp
     #../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
     #../../skill/move/GenerateOrderedTSPSkill.cpp
 

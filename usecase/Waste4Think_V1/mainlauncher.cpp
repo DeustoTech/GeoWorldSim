@@ -22,6 +22,7 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
+#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteBehaviour.h"
 #include "../../behaviour/waste4think/FindClosestBehaviour.h"
@@ -75,6 +76,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );*/
 
     // Behaviours
+    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
@@ -87,7 +89,8 @@ int main(int argc, char* argv[])
 QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"waste\": 100 , "
-                                                        "\"@behaviours\": [ { \"@type\": \"MoveBehaviour\", \"@id\": \"MOVE\", \"duration\": 1, \"maxspeed\": 400, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts_if_arrived\" : [\"FIND\"], \"nexts_if_not_arrived\" : [\"MOVE\"] }, "
+                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"MOVE\"] }, "
+                                                                    "{ \"@type\": \"MoveBehaviour\", \"@id\": \"MOVE\", \"duration\": 1, \"maxspeed\": 400, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts_if_arrived\" : [\"FIND\"], \"nexts_if_not_arrived\" : [\"MOVE\"] }, "
                                                                     "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_distance_as\": \"closest_container_distance\", \"@id\": \"FIND\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                     "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" } "
                                                         "] } ")
