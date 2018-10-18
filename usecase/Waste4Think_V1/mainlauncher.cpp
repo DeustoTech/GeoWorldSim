@@ -89,8 +89,7 @@ int main(int argc, char* argv[])
 QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"waste\": 100 , "
-                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"MOVE\"] }, "
-                                                                    "{ \"@type\": \"MoveBehaviour\", \"@id\": \"MOVE\", \"duration\": 1, \"maxspeed\": 400, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts_if_arrived\" : [\"FIND\"], \"nexts_if_not_arrived\" : [\"MOVE\"] }, "
+                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"FIND\"] }, "
                                                                     "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_distance_as\": \"closest_container_distance\", \"@id\": \"FIND\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                     "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" } "
                                                         "] } ")
@@ -98,11 +97,9 @@ QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         );
 
 
-AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object() , "https://datasources.geoworldsim.com/api/datasource/f8054929-c791-4777-b4bf-954dbf05166a/read" );
+AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object() , "http://datasources.geoworldsim.com/api/datasource/f8054929-c791-4777-b4bf-954dbf05166a/read" );
 
-//QSharedPointer<GWSAgent> element = GWSObjectFactory::globalInstance()->fromJSON( agent_json.object() ).dynamicCast<GWSAgent>();
-//qDebug() << element->serialize();
-//GWSExecutionEnvironment::globalInstance()->registerAgent( element );
+
 
 
 /* ----------------
@@ -131,17 +128,13 @@ containerReader->connect( containerReader , &GWSDatasourceReader::dataValueReadS
 
         emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
 
-        //qDebug() << GWSAgentEnvironment::globalInstance()->getByClass( "ContainerAgent" ).size();
-
-       // qDebug() << GWSExecutionEnvironment::globalInstance()->getByClass( "ContainerAgent" ).size();
 
 
 } );
 
-qDebug() << GWSAgentEnvironment::globalInstance()->getByClass( "GWSAgent" ).size();
-qDebug() << GWSAgentEnvironment::globalInstance()->getByClass( "ContainerAgent" ).size();
 
-//containerReader->startReading();
+
+containerReader->startReading();
 
 
 /* ----------------
@@ -359,8 +352,8 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinis
 
 });
 
-    //footway_reader->startReading();
-    //pedestrian_reader->startReading();
+    footway_reader->startReading();
+    pedestrian_reader->startReading();
     //other_reader->startReading();
 
 

@@ -1,5 +1,6 @@
 #include "GenerateAgentGeometryBehaviour.h"
 #include "../../util/geometry/Geometry.h"
+#include "../../app/App.h"
 
 
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -42,8 +43,8 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
     GWSCoordinate  destination_coor = GWSCoordinate( x_value.toDouble() , y_value.toDouble());
 
     // Displacement
-    double x_distance = qAbs( destination_coor.getX() - current_coor.getX() );
-    double y_distance = qAbs( destination_coor.getY() - current_coor.getY() );
+    double x_distance = destination_coor.getX() - current_coor.getX() ;
+    double y_distance = destination_coor.getY() - current_coor.getY() ;
 
     // Set the agents position
     GWSCoordinate apply_movement = GWSCoordinate( x_distance , y_distance );
@@ -51,7 +52,9 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
 
     QSharedPointer<GWSGeometry> new_agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    qDebug() << new_agent_geom;
+    //qDebug() << new_agent_geom;
+
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
 
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
