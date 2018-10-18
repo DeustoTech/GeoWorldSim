@@ -64,7 +64,7 @@ QStringList FindClosestBehaviour::behave(){
     QMap<QString , GWSCoordinate > agents_to_search_id_coord_array;
     QList < GWSCoordinate > agents_to_search_coord_array;
 
-    QList<QSharedPointer<GWSAgent> > agents_to_search = GWSAgentEnvironment::globalInstance()->getByClass( CLOSEST_AGENT_TYPE) ;
+    QList<QSharedPointer<GWSAgent> > agents_to_search = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() ) ;
     foreach ( QSharedPointer<GWSAgent> a, agents_to_search  ){
 
          GWSCoordinate agents_to_search_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
@@ -84,7 +84,7 @@ QStringList FindClosestBehaviour::behave(){
 
     // Extract and store its ID:
     QString closest_id = agents_to_search_id_coord_array.key( this->closest_coor );
-    agent->setProperty( STORE_CLOSEST_ID_AS , closest_id );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() , closest_id );
 
     // Extract and store the route to it:
     QList< QSharedPointer<GWSGraphEdge> > closest_route = this->routing_graph->dijkstraShortestPath( agent_coor , this->closest_coor );
@@ -95,9 +95,9 @@ QStringList FindClosestBehaviour::behave(){
     foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
         closest_route_distance = closest_route_distance + edge->getLength();
     }
-    agent->setProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS , closest_route_distance );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
 
     // Set next behaviours:
-    QStringList next = this->getProperty( NEXTS ).toStringList();
-    return next;
+    QStringList nexts = this->getProperty( NEXTS ).toStringList();
+    return nexts;
 }

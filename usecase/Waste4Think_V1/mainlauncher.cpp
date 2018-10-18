@@ -90,7 +90,7 @@ QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"waste\": 100 , "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"FIND\"] }, "
-                                                                    "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_distance_as\": \"closest_container_distance\", \"@id\": \"FIND\", \"nexts\": [ \"TRANSFER\" ] }, "
+                                                                    "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"@id\": \"FIND\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                     "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" } "
                                                         "] } ")
                                                         .toLatin1()

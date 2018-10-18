@@ -224,7 +224,7 @@ void GWSExecutionEnvironment::behave(){
         this->timer->singleShot( (1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
-    qInfo() << QString("Ticking %3 , Agents %1 / %2")
+    qInfo() << QString("Ticking %3 , Agents %1 / %2 , Min tick %4" )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
