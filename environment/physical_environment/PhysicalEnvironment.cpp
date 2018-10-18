@@ -33,7 +33,7 @@ GWSCoordinate GWSPhysicalEnvironment::getRandomCoordinate() const{
 }
 
 QSharedPointer<GWSGeometry> GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
-    return this->agent_geometries.value( agent->getId() , 0 );
+    return this->agent_geometries.value( agent->getId() , Q_NULLPTR );
 }
 
 QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::orderByDistance(QSharedPointer<GWSAgent> source, QList<QSharedPointer<GWSAgent>> agents) const{
@@ -198,6 +198,9 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
     // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
     QSharedPointer<GWSGeometry> geom = agent->getProperty( GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    if( geom.isNull() ){
+        geom = QSharedPointer<GWSGeometry>( new GWSGeometry( GWSCoordinate( 0 , 0 , 0 ) ) );
+    }
 
     QString agent_id = agent->getId();
 
@@ -205,7 +208,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     if( !this->agent_ids.contains( agent_id ) ){
         this->agent_ids.append( agent_id );
     }
-    this->agent_geometries.insert( agent_id , geom.isNull() ? QSharedPointer<GWSGeometry>( new GWSGeometry() ) : geom );
+    this->agent_geometries.insert( agent_id , geom );
 
     foreach( QString s , agent->getInheritanceFamily() ) {
         if( !this->spatial_index.keys().contains(s) ){

@@ -282,15 +282,19 @@ void GWSAgent::behave(){
         qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
     }
 
+    qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
+
     if( this->to_be_executed_behaviours.isEmpty() ){
+        GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + 1000 );
         return;
     }
 
-    qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
+    double max_behaviour_time_to_increment = 0;
     QStringList next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
         next_execute_behaviour_ids.append( behaviour->tick( behaving_time ) );
+        max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , behaviour->getProperty( GWSBehaviour::BEHAVIOUR_DURATION ).toDouble() );
     }
 
     QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
@@ -305,4 +309,5 @@ void GWSAgent::behave(){
 
     // Store to be executed in next tick
     this->to_be_executed_behaviours = next_execute_behaviours;
+    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + (max_behaviour_time_to_increment * 1000) );
 }

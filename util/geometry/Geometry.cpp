@@ -20,6 +20,16 @@
 GWSGeometry::GWSGeometry() : GWSObject(){
 }
 
+GWSGeometry::GWSGeometry(GWSCoordinate coor){
+    const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
+    this->inner_geometry = factory->createPoint(
+                geos::geom::Coordinate(
+                    coor.getX() ,
+                    coor.getY() ,
+                    coor.getZ() )
+                );
+}
+
 GWSGeometry::GWSGeometry( geos::geom::Geometry* inner_geometry ) : GWSObject(){
     this->inner_geometry = inner_geometry;
 }
@@ -376,7 +386,9 @@ void TransformMoveFilter::filter_rw(CoordinateSequence&  seq , std::size_t i ){
     geos::geom::Coordinate moved( origin.x + this->apply_movement.getX() , origin.y + this->apply_movement.getY() , origin.z + this->apply_movement.getZ() );
     seq.setAt(moved, i);
     this->moved_coor_indexes.append( i );
-    if( this->moved_coor_indexes.size() == seq.size() ){ this->finished = true; }
+    if( this->moved_coor_indexes.size() == seq.size() ){
+        this->finished = true;
+    }
 }
 void TransformMoveFilter::filter_ro(CoordinateSequence &seq, std::size_t i){}
 bool TransformMoveFilter::isDone() const { return this->finished; }

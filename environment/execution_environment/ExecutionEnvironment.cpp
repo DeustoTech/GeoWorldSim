@@ -179,6 +179,7 @@ void GWSExecutionEnvironment::behave(){
     // Get min tick time and add some threshold to execute the agents that are more delayed.
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     qint64 min_tick = current_datetime;
+    QString who_is_min_tick;
     bool agents_to_tick = false;
     int ticked_agents = 0;
 
@@ -189,6 +190,7 @@ void GWSExecutionEnvironment::behave(){
                 agents_to_tick = true;
             } else if( agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() || !agent->isBusy() ){
                 min_tick = qMin( min_tick , agent_time );
+                if( min_tick == agent_time ){ who_is_min_tick = agent->getId(); }
                 agents_to_tick = true;
             }
         }
@@ -222,10 +224,11 @@ void GWSExecutionEnvironment::behave(){
         this->timer->singleShot( (1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
-    qInfo() << QString("Ticking %3 , Agents %1 / %2")
+    qInfo() << QString("Ticking %3 , Agents %1 / %2 , Min tick %4")
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
-               .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") );
+               .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
+               .arg( who_is_min_tick );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }

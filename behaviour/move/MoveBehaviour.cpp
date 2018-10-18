@@ -23,7 +23,6 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
 QStringList MoveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_coors = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
 
     // Tick in 1 second duration to move in small parts
@@ -36,6 +35,8 @@ QStringList MoveBehaviour::behave(){
         agent->addSkill( move_skill );
     }
     move_skill->setProperty( MoveSkill::MAX_SPEED_PROP , this->getProperty( MoveBehaviour::MAX_SPEED_PROP ) );
+
+    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
     QVariant x_destination = this->getProperty( X_VALUE );
     QVariant y_destination = this->getProperty( Y_VALUE );
@@ -59,13 +60,16 @@ QStringList MoveBehaviour::behave(){
     move_skill->setProperty( MoveSkill::DESTINATION_X_PROP , x_destination.toDouble() );
     move_skill->setProperty( MoveSkill::DESTINATION_Y_PROP , y_destination.toDouble() );
 
+    QStringList nexts;
+
     GWSCoordinate destination_coor = move_skill->getCurrentDestination();
     if( !destination_coor.isValid() ){
-        QStringList nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
+        nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
     }
 
     // Calculate speed
-    GWSLengthUnit distance = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().getDistance( destination_coor );
+    GWSCoordinate agent_position = agent_geom->getCentroid();
+    GWSLengthUnit distance = agent_position.getDistance( destination_coor );
     if( move_skill->getCurrentSpeed() == 0.0 ){
         move_skill->changeSpeed( 1 );
     }
@@ -73,16 +77,14 @@ QStringList MoveBehaviour::behave(){
     // Move towards
     move_skill->move( duration_of_movement );
 
-    GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-
     if ( agent_position == destination_coor ){
-        QStringList nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
-        return nexts;
+        nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
     }
 
     if ( agent_position != destination_coor ){
-        QStringList nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
-        return nexts;
+        nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
     }
+
+   return nexts;
 
 }
