@@ -8,7 +8,7 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/graph/Graph.h"
 #include "../../util/graph/GraphEdge.h"
-#include "../../util/geometry/Quadtree.h"
+//#include "../../util/geometry/Quadtree.h"
 
 class GWSNetworkEnvironment : public GWSEnvironment
 {
