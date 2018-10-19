@@ -10,6 +10,9 @@ class AgentGeneratorDatasource : public QObject
 public:
     AgentGeneratorDatasource( QJsonObject json, QString url );
 
+private:
+    QJsonObject joinJSON( QJsonObject json_template , QJsonObject json_data );
+
 };
 
 #endif // AGENTGENERATORDATASOURCE_H

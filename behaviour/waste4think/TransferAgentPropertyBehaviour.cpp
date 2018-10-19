@@ -1,4 +1,6 @@
 #include "TransferAgentPropertyBehaviour.h"
+
+#include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 
@@ -35,6 +37,9 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     closest_agent->setProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() , new_waste );
     agent->setProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() , 0.);
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
+
+    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentSignal( closest_agent->serialize() );
 
     return nexts;
 

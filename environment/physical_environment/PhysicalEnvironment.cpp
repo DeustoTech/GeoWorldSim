@@ -1,7 +1,7 @@
 #include "PhysicalEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
-QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geo";
+QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geometry";
 
 GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
     static GWSPhysicalEnvironment instance;

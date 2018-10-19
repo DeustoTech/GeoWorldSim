@@ -84,9 +84,9 @@ int main(int argc, char* argv[])
 
 QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\", "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
-                                                        "\"home_x\": -2, \"home_y\": 43,  "
+                                                        "\"home_x\": -2, \"home_y\": 43, \"running\" : true, "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"WASTE\"] }, "
-                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
+                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": 10, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
                                                                             "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": 10,  \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"GEOM\"]} "
@@ -107,7 +107,7 @@ AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object()
 // Read container data from datasource url:
 
 QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"ContainerAgent\", "
-                                                                 "\"home_x\": -2, \"home_y\": 43,  "
+                                                                 "\"home_x\": -2, \"home_y\": 43, \"geometry\" : { \"@type\" : \"GWSGeometry\" }, "
                                                                  "\"@family\": [ \"GWSAgent\", \"Container\" ] } ")
                                                                  .toLatin1()
                                                                  );
@@ -140,7 +140,7 @@ pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueR
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo);
+        agent_json.insert( "geometry" , geo);
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
@@ -167,7 +167,7 @@ pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueR
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo );
+        agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
@@ -206,7 +206,7 @@ other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal 
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo);
+        agent_json.insert( "geometry" , geo);
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
@@ -233,7 +233,7 @@ other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal 
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo );
+        agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
@@ -272,7 +272,7 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSig
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo);
+        agent_json.insert( "geometry" , geo);
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
@@ -299,7 +299,7 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSig
         edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
         QJsonObject agent_json;
-        agent_json.insert( "geo" , geo );
+        agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
         //QJsonArray family_array; family_array.append( "Road" );
         //agent_json.insert( "@family" , family_array );
