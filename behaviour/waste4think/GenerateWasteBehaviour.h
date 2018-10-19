@@ -20,6 +20,9 @@ public:
     static QString NEXTS_IF_FALSE;
     static QString STORE_GENERATED_WASTE_AS;
 
+    // METHODS:
+    double partialModel( double rest, double uni, double tasParo , double urb );
+
 protected slots:
     virtual QStringList behave();
 };

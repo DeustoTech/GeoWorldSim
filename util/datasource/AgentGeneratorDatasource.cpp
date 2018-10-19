@@ -6,6 +6,7 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include <QObject>
+#include "../../app/App.h"
 
 
 AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url)
@@ -22,16 +23,12 @@ AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url
         if ( !template_to_be_constructed.isEmpty() ){
             QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
             GWSExecutionEnvironment::globalInstance()->registerAgent( agent );
+            emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
         }
 
     });
 
-    agentReader->connect( agentReader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
-
-        qDebug() << GWSAgentEnvironment::globalInstance()->getByClass( "GWSAgent" ).size();
-        qDebug() << GWSAgentEnvironment::globalInstance()->getByClass( "Citizen" ).size();
-
-    } );
 
     agentReader->startReading();
+
 }

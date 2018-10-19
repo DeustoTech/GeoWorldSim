@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
 
-QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
+QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\", "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43,  "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"WASTE\"] }, "
@@ -106,45 +106,15 @@ AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object()
 
 // Read container data from datasource url:
 
-/*QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
-                                                        "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
-                                                        "\"home_x\": -2, \"home_y\": 43, \"waste\": 0 , "
-                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true "
-                                                        "] } ")
-                                                        .toLatin1()
-                                                        );
+QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"ContainerAgent\", "
+                                                                 "\"home_x\": -2, \"home_y\": 43,  "
+                                                                 "\"@family\": [ \"GWSAgent\", \"Container\" ] } ")
+                                                                 .toLatin1()
+                                                                 );
+
+AgentGeneratorDatasource* ds_container = new AgentGeneratorDatasource( container_json.object() , "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
 
 
-AgentGeneratorDatasource* ds_container = new AgentGeneratorDatasource( container_json.object() , "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
-*/
-
-GWSDatasourceReader* containerReader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
-
-containerReader->connect( containerReader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
-
-        // Create GEOMETRY JSON
-        QJsonObject geo = data.value("geometry").toObject();
-        geo.insert( "@type" , "GWSGeometry" );
-
-        QJsonObject container_json;
-        container_json.insert( "geo" , geo );  // Attribute that should be checked so that the human finds the closest container.
-        //agent_json.insert( "node" , node );
-        container_json.insert( "@type" , "ContainerAgent" );
-        container_json.insert( "id" , data.value( "osm_id" ) );
-        container_json.insert( "waste_amount" , 0 );  // This is the attribute that should be changed when humans throw their waste.
-
-        QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( container_json ).dynamicCast<GWSAgent>();
-        //container->setProperty( GWSAgent::STYLE_ICON_URL_PROP , "https://image.flaticon.com/icons/svg/382/382314.svg" );
-
-        emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
-
-
-
-} );
-
-
-
-containerReader->startReading();
 
 
 /* ----------------

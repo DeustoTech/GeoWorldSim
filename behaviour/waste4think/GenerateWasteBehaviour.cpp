@@ -16,14 +16,31 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
  * METHODS
  ***********************************************************/
 
+/* Formula for Zamudio waste generation based on Iraia's thesis:
+   Data from UdalMap:
+            |  2016 |  2015 |
+      rest  |  9.56 |  9.52 |
+      uni   | 20.16 | 20.13 |
+    tasParo |  7.65 |  8.35 |
+      urb   | 12.48 | 12.44 |*/
+
+
+double GenerateWasteBehaviour::partialModel ( double rest, double uni, double tasParo , double urb){
+
+    // Fracción resto kg / habitante / año:
+
+    double model = 344.57 + 2.56 * rest  + 1.44 * uni - 1.42 * tasParo - 1.01 * urb;
+    return model;
+}
+
+
+
+
 QStringList GenerateWasteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    //double initial_waste = 0;
     double daily_waste_amount = agent->getProperty( "kg_viviend").toDouble();
-    //QVariant waste_type = this->getProperty( WASTE_TYPE );
-    agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , daily_waste_amount  );
-
+    //agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , daily_waste_amount  );
 
     /*QVariant max_value = this->getProperty( MAX_VALUE);
 
@@ -46,7 +63,20 @@ QStringList GenerateWasteBehaviour::behave(){
         return next;
     }*/
 
+    // Set waste generation by means of partial model:
+    // 2016 data:
+    double rest = 9.56 ;
+    double uni = 20.16 ;
+    double paro =  7.65;
+    double urb = 12.48 ;
+    double waste = GenerateWasteBehaviour::partialModel( rest , uni , paro , urb ) ;
+    agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , waste );
+
+
+
     QStringList nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
     return nexts;
 
 }
+
+
