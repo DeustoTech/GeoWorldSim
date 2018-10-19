@@ -52,9 +52,11 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
 
     QSharedPointer<GWSGeometry> new_agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    //qDebug() << new_agent_geom;
+    //qDebug() << new_agent_geom->getCentroid().toString();
 
     emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
+
+
 
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;

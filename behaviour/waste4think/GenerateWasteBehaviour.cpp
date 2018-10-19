@@ -19,9 +19,13 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
 QStringList GenerateWasteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QVariant waste_type = this->getProperty( WASTE_TYPE );
-    QVariant agent_waste_amount = agent->getProperty( STORE_GENERATED_WASTE_AS );
-    QVariant max_value = this->getProperty( MAX_VALUE);
+    //double initial_waste = 0;
+    double daily_waste_amount = agent->getProperty( "kg_viviend").toDouble();
+    //QVariant waste_type = this->getProperty( WASTE_TYPE );
+    agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , daily_waste_amount  );
+
+
+    /*QVariant max_value = this->getProperty( MAX_VALUE);
 
     // Keep incrementing
     if ( agent_waste_amount < max_value ){
@@ -40,6 +44,9 @@ QStringList GenerateWasteBehaviour::behave(){
     if ( agent_waste_amount >= max_value  ){
         QStringList next = this->getProperty( NEXTS_IF_TRUE ).toStringList();
         return next;
-    }
+    }*/
+
+    QStringList nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
+    return nexts;
 
 }

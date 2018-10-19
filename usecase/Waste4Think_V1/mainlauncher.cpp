@@ -23,11 +23,11 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/check/CheckIfAtPositionBehaviour.h"
+#include "../../behaviour/waste4think/DelayBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteBehaviour.h"
 #include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
-#include "../../behaviour/move/MoveBehaviour.h"
+
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -70,34 +70,32 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
 
-    // Skills
-    /*GWSObjectFactory::globalInstance()->registerType( ViewSkill::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveSkill::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteSkill::staticMetaObject );*/
-
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfAtPositionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( DelayBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
+
+
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
 
 QJsonDocument agent_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
-                                                        "\"home_x\": -2, \"home_y\": 43, \"waste\": 100 , "
-                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"FIND\"] }, "
-                                                                    "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"@id\": \"FIND\", \"nexts\": [ \"TRANSFER\" ] }, "
-                                                                    "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" } "
+                                                        "\"home_x\": -2, \"home_y\": 43,  "
+                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true, \"nexts\" : [\"WASTE\"] }, "
+                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
+                                                                            "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": 10,  \"nexts\" : [\"FIND\"] }, "
+                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"TRANSFER\" ] }, "
+                                                                            "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"GEOM\"]} "
                                                         "] } ")
                                                         .toLatin1()
                                                         );
 
-
-AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object() , "http://datasources.geoworldsim.com/api/datasource/f8054929-c791-4777-b4bf-954dbf05166a/read" );
+QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
+AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object() , url_censo_kg_resto );
 
 
 
@@ -107,6 +105,18 @@ AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( agent_json.object()
  * ----------------*/
 
 // Read container data from datasource url:
+
+/*QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
+                                                        "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
+                                                        "\"home_x\": -2, \"home_y\": 43, \"waste\": 0 , "
+                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"start\": true "
+                                                        "] } ")
+                                                        .toLatin1()
+                                                        );
+
+
+AgentGeneratorDatasource* ds_container = new AgentGeneratorDatasource( container_json.object() , "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
+*/
 
 GWSDatasourceReader* containerReader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
 
@@ -124,7 +134,7 @@ containerReader->connect( containerReader , &GWSDatasourceReader::dataValueReadS
         container_json.insert( "waste_amount" , 0 );  // This is the attribute that should be changed when humans throw their waste.
 
         QSharedPointer<GWSAgent> container = GWSObjectFactory::globalInstance()->fromJSON( container_json ).dynamicCast<GWSAgent>();
-        container->setProperty( GWSAgent::STYLE_ICON_URL_PROP , "https://image.flaticon.com/icons/svg/382/382314.svg" );
+        //container->setProperty( GWSAgent::STYLE_ICON_URL_PROP , "https://image.flaticon.com/icons/svg/382/382314.svg" );
 
         emit GWSApp::globalInstance()->sendAgentSignal( container->serialize() );
 
@@ -341,10 +351,6 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSig
 
 
 footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinishedSignal , [](){
-
-   // foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( HumanAgent::staticMetaObject.className() ) ){
-     //   GWSExecutionEnvironment::globalInstance()->registerAgent( a );
-    //}
 
     foreach ( QSharedPointer<GWSAgent> a, GWSAgentEnvironment::globalInstance()->getByClass( TruckAgent::staticMetaObject.className() ) ){
         GWSExecutionEnvironment::globalInstance()->registerAgent( a );
