@@ -8,7 +8,7 @@
 
 
 QString FindClosestBehaviour::CLOSEST_AGENT_TYPE = "closest_agent_type";  // e.g. glass ContainerAgent
-QString FindClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  // e.g. glass ContainerAgent
+QString FindClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  //
 QString FindClosestBehaviour::STORE_CLOSEST_ID_AS = "store_closest_id_as";
 //QString FindClosestBehaviour::STORE_CLOSEST_ROUTE_AS = "store_closest_route_as";
 QString FindClosestBehaviour::STORE_CLOSEST_ROUTE_DISTANCE_AS = "store_closest_route_distance_as";

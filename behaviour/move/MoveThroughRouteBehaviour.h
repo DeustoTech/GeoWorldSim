@@ -1,5 +1,5 @@
-#ifndef MOVETHROUGHROUTEBEHAVIOUR_H
-#define MOVETHROUGHROUTEBEHAVIOUR_H
+#ifndef GWSMOVETHROUGHROUTEBEHAVIOUR_H
+#define GWSMOVETHROUGHROUTEBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
 
@@ -12,13 +12,18 @@ public:
     Q_INVOKABLE explicit MoveThroughRouteBehaviour();
     ~MoveThroughRouteBehaviour();
 
-    // GETTERS
-    virtual bool canContinueToNext();
 
-private slots:
-    virtual bool behave();
+    // PROPERTIES
+    static QString MAX_SPEED_PROP;
+    static QString X_VALUE;
+    static QString Y_VALUE;
+    static QString NEXTS_IF_ARRIVED;
+    static QString NEXTS_IF_NOT_ARRIVED;
+
+protected slots:
+    virtual QStringList behave();
 
 };
 
-#endif // MOVETHROUGHROUTEBEHAVIOUR_H
+#endif // GWSMOVETHROUGHROUTEBEHAVIOUR_H
 

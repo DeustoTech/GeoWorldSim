@@ -29,15 +29,15 @@ public slots:
     void startSocket();
     void reconnectSocket();
 
-signals:
-    void sendAgentSignal( QJsonObject agent_json );
-    void sendAlertSignal( int level, QString title, QString description = QString() );
-    void sendDataSignal( QString signal , QJsonValue json );
+signals: // MUST BE USED THROUGH THESE SIGNALS
+    void sendAgentToSocketSignal( QJsonObject agent_json );
+    void sendAlertToSocketSignal( int level, QString title, QString description = QString() );
+    void sendDataToSocketSignal( QString signal , QJsonValue json );
 
 private slots:
-    void sendAgent( QJsonObject entity_json );
-    void sendAlert( int level, QString title, QString description );
-    void pushDataToSocket( QString signal , QJsonValue json );
+    void sendAgentToSocket( QJsonObject agent_json );
+    void sendAlertToSocket( int level, QString title, QString description );
+    void sendDataToSocket( QString signal , QJsonValue json );
 
 private:
     GWSApp(int argc, char* argv[]);

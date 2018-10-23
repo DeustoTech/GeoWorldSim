@@ -8,6 +8,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QBuffer>
+#include <QJsonObject>
 
 class GWSAPIDriver : public QObject
 {
@@ -15,6 +16,7 @@ class GWSAPIDriver : public QObject
 
 public:
     GWSAPIDriver(QObject* parent = 0);
+    GWSAPIDriver(const GWSAPIDriver& other);
     ~GWSAPIDriver();
 
     // GET
@@ -22,9 +24,11 @@ public:
 
     // POST
     virtual QNetworkReply* POST( QUrl url , QMap<QString, QString> headers = QMap<QString, QString>(), QByteArray data = QByteArray() );
+    virtual QNetworkReply* POST( QUrl url , QMap<QString, QString> headers = QMap<QString, QString>(), QJsonObject data = QJsonObject() );
 
     // PUT
     virtual QNetworkReply* PUT( QUrl url , QMap<QString, QString> headers = QMap<QString, QString>(), QByteArray data = QByteArray() );
+    virtual QNetworkReply* PUT( QUrl url , QMap<QString, QString> headers = QMap<QString, QString>(), QJsonObject data = QJsonObject() );
 
     // PATCH
     virtual QNetworkReply* PATCH( QUrl url , QMap<QString, QString> headers = QMap<QString, QString>(), QByteArray data = QByteArray());

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QNetworkProxyFactory>
 #include <QNetworkProxy>
+#include <QJsonDocument>
 
 GWSAPIDriver::GWSAPIDriver(QObject *parent) : QObject( parent ){
 
@@ -14,6 +15,10 @@ GWSAPIDriver::GWSAPIDriver(QObject *parent) : QObject( parent ){
 
     this->access_manager = new QNetworkAccessManager();
     this->access_manager->setProxy( proxies_list.at(0) );
+}
+
+GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
+    Q_UNUSED( other );
 }
 
 GWSAPIDriver::~GWSAPIDriver(){
@@ -48,6 +53,10 @@ QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QByt
     return this->operation( QNetworkAccessManager::PostOperation , url , headers , data );
 }
 
+QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QJsonObject data){
+    return this->POST( url , headers , QJsonDocument( data ).toJson() );
+}
+
 /**********************************************************************
  PUT
 **********************************************************************/
@@ -60,6 +69,10 @@ QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QByt
  */
 QNetworkReply* GWSAPIDriver::PUT(QUrl url, QMap<QString, QString> headers, QByteArray data ){
     return this->operation( QNetworkAccessManager::PutOperation , url , headers , data );
+}
+
+QNetworkReply* GWSAPIDriver::PUT(QUrl url, QMap<QString, QString> headers, QJsonObject data){
+    return this->POST( url , headers , QJsonDocument( data ).toJson() );
 }
 
 /**********************************************************************

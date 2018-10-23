@@ -158,7 +158,7 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    emit GWSApp::globalInstance()->sendAlertSignal( 0 , "Simulation running" , QString("Agents' execution started") );
+    emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation running" , QString("Agents' execution started") );
     this->timer = new QTimer();
     this->timer->singleShot( 1000 , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
 
@@ -170,7 +170,7 @@ void GWSExecutionEnvironment::behave(){
     QList< QSharedPointer<GWSAgent> > currently_running_agents = this->getRunningAgents();
 
     if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
-        emit GWSApp::globalInstance()->sendAlertSignal( 0 , "Simulation has no (more) agents" , QString("Simulation has no (more) agents to run, stopping and finishing.") );
+        emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation has no (more) agents" , QString("Simulation has no (more) agents to run, stopping and finishing.") );
         this->stop();
         GWSApp::exit( 0 );
     }
@@ -237,7 +237,7 @@ void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
-    emit GWSApp::globalInstance()->sendAlertSignal( 0 , "Simulation stopped" , QString("Agents execution stopped.") );
+    emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation stopped" , QString("Agents execution stopped.") );
     this->timer->deleteLater();
     this->timer = Q_NULLPTR;
 

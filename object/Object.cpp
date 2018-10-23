@@ -67,7 +67,8 @@ QJsonObject GWSObject::serialize() const{
                 json.insert( property_name , this->getProperty( property_name ).toBool() ); break;
             case QVariant::String:
                 json.insert( property_name , this->getProperty( property_name ).toString() ); break;
-            case QVariant::StringList: {
+            case QVariant::StringList:
+            case QVariant::List: {
                 QJsonArray array;
                 foreach(QString str , this->getProperty( property_name ).toStringList() ){
                     array.append( str );

@@ -54,7 +54,7 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
 
     //qDebug() << new_agent_geom->getCentroid().toString();
 
-    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
 
 

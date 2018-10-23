@@ -40,7 +40,7 @@ GWSAgent::~GWSAgent() {
 
     // Emit withoug 'ALIVE' property to be removed
     this->setProperty( ALIVE_PROP , false );
-    emit GWSApp::globalInstance()->sendAgentSignal( this->serializeMini() );
+    emit GWSApp::globalInstance()->sendAgentToSocketSignal( this->serializeMini() );
 
     qDebug() << QString("%1 deleted").arg( this->getId() );
     if( this->timer ){ this->timer->deleteLater(); }
@@ -92,7 +92,7 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
     }
 
-    // ADD to MAIN environments
+    // ADD to MAIN environments !WARNING, DO NOT RE-REGISTER THEM AGAIN
     GWSEnvironmentsGroup::globalInstance()->registerAgent( this->getSharedPointer() );
 }
 

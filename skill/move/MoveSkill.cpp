@@ -120,7 +120,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
     this->setProperty( ACCUMULATED_DISTANCE_PROP , this->getAccDistance() + meters );
     this->setProperty( ACCUMULATED_TIME_PROP , this->getAccTime() + movement_duration );
 
-    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
+    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
     // Lose some speed
     //this->setProperty( CURRENT_SPEED_PROP , this->getCurrentSpeed() * 0.9 );

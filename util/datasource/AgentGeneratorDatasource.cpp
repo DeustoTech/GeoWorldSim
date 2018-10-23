@@ -19,8 +19,7 @@ AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url
 
         if ( !template_to_be_constructed.isEmpty() ){
             QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
-            GWSEnvironmentsGroup::globalInstance()->registerAgent( agent );
-            emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
+            emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
         }
 
     });

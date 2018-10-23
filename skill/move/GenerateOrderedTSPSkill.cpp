@@ -21,7 +21,7 @@ QList< QPair< GWSCoordinate , QString > > GenerateOrderedTSPSkill::generateOrder
 
         // Get agent class to visit:
         QString agent_type_to_visit = this->getProperty( VISIT_AGENTS_PROP ).toString();
-        QList<QSharedPointer<GWSAgent> > agents_to_visit = GWSAgentEnvironment::globalInstance()->getByClass( agent_type_to_visit ) ;
+        QList<QSharedPointer<GWSAgent> > agents_to_visit = GWSAgentEnvironment::globalInstance()->getByClass( "ContainerAgent" ) ;
 
         // Generate list of containers to visit:
         QList < GWSCoordinate > agents_to_visit_coord_array;

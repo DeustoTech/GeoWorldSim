@@ -44,15 +44,17 @@ HEADERS += \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    #../../behaviour/move/MoveBehaviour.h \
-    #../../behaviour/move/FindClosestBehaviour.h \
-    #../../behaviour/property/IncrementPropertyBehaviour.h \
-    #../../behaviour/waste/EmptyWasteBehaviour.h \
-    #../../behaviour/move/GoHomeBehaviour.h \
-    #../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/check/CheckIfAtPositionBehaviour.h \
-    #../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.h \
-    #../../behaviour/check/CheckPropertyBehaviour.h \
+    ../../behaviour/waste4think/GenerateWasteBehaviour.h \
+    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.h \
+    ../../behaviour/waste4think/FindClosestBehaviour.h \
+    ../../util/datasource/AgentGeneratorDatasource.h \
+    ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/waste4think/DelayBehaviour.h \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
+    ../../behaviour/waste4think/FollowTSPRouteBehaviour.h \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -96,31 +98,7 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    #../../skill/move/MoveAlongStagedRouteSkill.h \
-    #../../behaviour/move/MoveAlongStagedRouteBehaviour.h \
-    #../../behaviour/move/FindBestRouteBehaviour.h \
-    #../../behaviour/property/ExchangePropertyBehaviour.h \
-    #../../behaviour/information/BroadcastToHistoryBehaviour.h \
-    #../../behaviour/move/FindClosestEdgePointBehaviour.h \
-    #../../util/geometry/SnapToEdgeFromPoint.h \
-    #../../behaviour/move/GoToClosestEdgePointBehaviour.h \
-    #../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.h \
-    #../../behaviour/property/SetAgentPropertyBehaviour.h \
-    #../../behaviour/property/SetSkillPropertyBehaviour.h \
-    #../../behaviour/execution/StopAgentBehaviour.h \
-    #../../behaviour/execution/DeleteAgentBehaviour.h \
-    #../../behaviour/move/MoveAlongTSPRouteBehaviour.h \
-    #../../skill/move/GenerateOrderedTSPSkill.h \
-    ../../behaviour/waste4think/GenerateWasteBehaviour.h \
-    ../../behaviour/waste4think/CompareAgentPropertyBehaviour.h \
-    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.h \
-    ../../behaviour/waste4think/FindClosestBehaviour.h \
-    ../../util/datasource/AgentGeneratorDatasource.h \
-    ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveBehaviour.h \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
-    ../../behaviour/waste4think/GenerateWasteFromMeasurements.h \
-    ../../behaviour/waste4think/DelayBehaviour.h
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -139,15 +117,16 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    #../../behaviour/move/MoveBehaviour.cpp \
-    #../../behaviour/move/FindClosestBehaviour.cpp \
-    #../../behaviour/property/IncrementPropertyBehaviour.cpp \
-    #../../behaviour/waste/EmptyWasteBehaviour.cpp \
-    #../../behaviour/move/GoHomeBehaviour.cpp \
-    #../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/check/CheckIfAtPositionBehaviour.cpp \
-    #../../behaviour/check/CheckIfAtOtherAgentsPositionBehaviour.cpp \
-    #../../behaviour/check/CheckPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp \
+    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/FindClosestBehaviour.cpp \
+    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/waste4think/DelayBehaviour.cpp \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
+    ../../behaviour/waste4think/FollowTSPRouteBehaviour.cpp \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -159,6 +138,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/routing/DijkstraRouting.cpp \
     ../../util/routing/GraphEdgeArcMap.cpp \
     ../../util/routing/TSPRouting.cpp \
+    ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
@@ -190,31 +170,8 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    #../../skill/move/MoveAlongStagedRouteSkill.cpp \
-    #../../behaviour/move/MoveAlongStagedRouteBehaviour.cpp \
-    #../../behaviour/move/FindBestRouteBehaviour.cpp \
-    #../../behaviour/property/ExchangePropertyBehaviour.cpp \
-    #../../behaviour/information/BroadcastToHistoryBehaviour.cpp \
-    #../../behaviour/move/FindClosestEdgePointBehaviour.cpp \
-    #../../util/geometry/SnapToEdgeFromPoint.cpp \
-    #../../behaviour/move/GoToClosestEdgePointBehaviour.cpp \
-    #../../behaviour/check/CheckIfAtClosestEdgePointBehaviour.cpp \
-    #../../behaviour/property/SetAgentPropertyBehaviour.cpp \
-    #../../behaviour/property/SetSkillPropertyBehaviour.cpp \
-    #../../behaviour/execution/StopAgentBehaviour.cpp \
-    #../../behaviour/execution/DeleteAgentBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp \
-    ../../behaviour/waste4think/CompareAgentPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/FindClosestBehaviour.cpp \
-    ../../util/datasource/AgentGeneratorDatasource.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateWasteFromMeasurements.cpp \
-    ../../behaviour/waste4think/DelayBehaviour.cpp
-    #../../behaviour/move/MoverAlongTSPRouteBehaviour.cpp \
-    #../../skill/move/GenerateOrderedTSPSkill.cpp
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp
+
 
 
 #INCLUDE LEMON COMPILED LIBRARY
