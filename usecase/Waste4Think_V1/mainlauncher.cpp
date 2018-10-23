@@ -96,14 +96,14 @@ int main(int argc, char* argv[])
 
 QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
-                                                        "\"home_x\": -2, \"home_y\": 43, \"running\" : true, "
+                                                        "\"home_x\": -2, \"home_y\": 43, \"running\" : true, \"color\" : \"Green\" , "
                                                         "\"@behaviours\": [ { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
                                                                             "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"WASTE\"] }, "
-                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": 10, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
-                                                                            "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": 10,  \"nexts\" : [\"FIND\"] }, "
+                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": %1, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
+                                                                            "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": %1,  \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"HISTORY\"] } "
-                                                        "] } ")
+                                                        "] } ").arg( qrand() % 10 )
                                                         .toLatin1()
                                                         );
 
@@ -124,7 +124,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 1 ; i++ ){
+for( int i = 0 ; i < 0 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -134,7 +134,7 @@ for( int i = 0 ; i < 1 ; i++ ){
                                                                                        "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\",  \"nexts\" : [\"FOLLOW_TSP\"] } , "
                                                                                        "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, \"store_closest_id_as\": \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\", \"nexts\" : [\"MOVE_STAGES\"] } ,"
                                                                                        "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\",  \"nexts_if_arrived\" : [\"GATHER\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
-                                                                                       "{ \"@type\": \"GatherAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"GATHER\", \"property_to_gather\": \"waste\", \"emitting_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
+                                                                                       "{ \"@type\": \"GatherAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"GATHER\", \"gather_property\": \"waste\", \"emitting_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
                                                                                        " ] } ")
                                                    .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
                                                    .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )

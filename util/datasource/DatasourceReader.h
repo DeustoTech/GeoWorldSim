@@ -31,7 +31,7 @@ private:
     unsigned int page_size = 100;
 
     unsigned int downloaded_total = 0;
-    unsigned int download_limit = 20;
+    unsigned int download_limit = 99;
 
 };
 

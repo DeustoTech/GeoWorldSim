@@ -16,7 +16,7 @@ GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(
 }
 
 QStringList GenerateAgentGeometryBehaviour::behave(){
-
+    bool ok = false;
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
@@ -40,7 +40,7 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
 
     // Set the geometry of the agent through the TransferMove method within the physical environment:
     GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate  destination_coor = GWSCoordinate( x_value.toDouble() , y_value.toDouble());
+    GWSCoordinate  destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
 
     // Displacement
     double x_distance = destination_coor.getX() - current_coor.getX() ;
