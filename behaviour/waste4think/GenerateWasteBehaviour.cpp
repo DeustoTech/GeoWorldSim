@@ -70,7 +70,7 @@ QStringList GenerateWasteBehaviour::behave(){
     double paro =  7.65;
     double urb = 12.48 ;
     double waste = GenerateWasteBehaviour::partialModel( rest , uni , paro , urb ) ;
-    agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , waste );
+    agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , waste / agent->getProperty( "TOTAL" ).toDouble() );
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
