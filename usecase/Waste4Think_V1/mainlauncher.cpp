@@ -32,6 +32,7 @@
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
+#include "../../behaviour/property/CopyPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GatherAgentPropertyBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -101,7 +103,8 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                                             "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"WASTE\"] }, "
                                                                             "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": %1, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
                                                                             "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": %1,  \"nexts\" : [\"FIND\"] }, "
-                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"TRANSFER\" ] }, "
+                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
+                                                                            "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] }, "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"HISTORY\"] } "
                                                         "] } ").arg( qrand() % 100 )
                                                         .toLatin1()
@@ -124,7 +127,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 1 ; i++ ){
+for( int i = 0 ; i < 0 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -152,7 +155,7 @@ for( int i = 0 ; i < 1 ; i++ ){
 // Read container data from datasource url:
 
 QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
-                                                                 "\"home_x\": -2, \"home_y\": 43, \"geometry\" : { \"@type\" : \"GWSGeometry\" }, "
+                                                                 "\"home_x\": -2, \"home_y\": 43, \"geometry\" : { \"@type\" : \"GWSGeometry\" } , "
                                                                  "\"@family\": [ \"ContainerAgent\", \"Container\" ] } ")
                                                                  .toLatin1()
                                                                  );
@@ -376,6 +379,10 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinis
 
 
     QTimer::singleShot( 10*1000 , [](){
+        foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
+            a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
+        }
+
         GWSExecutionEnvironment::globalInstance()->run();
     } );
 

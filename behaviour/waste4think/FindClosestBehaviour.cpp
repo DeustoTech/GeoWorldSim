@@ -37,29 +37,6 @@ QStringList FindClosestBehaviour::behave(){
 
     if ( agent->getProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() ).isNull() ){
 
-
-
-       /* QVariant reference_x = this->getProperty( CLOSEST_FROM_X );
-        QVariant reference_y = this->getProperty( CLOSEST_FROM_Y );
-
-        // Check if the reference (X, Y) position was inputted as agent's property:
-        bool reference_x_is_property = reference_x.toString().startsWith( "<" ) && reference_x.toString().endsWith( ">" );
-        bool reference_y_is_property = reference_y.toString().startsWith( "<" ) && reference_y.toString().endsWith( ">" );
-
-        if (reference_x_is_property && reference_y_is_property ){
-
-            QString reference_x_property_name = reference_x.toString().remove( 0 , 1 );
-            reference_x_property_name = reference_x_property_name.remove(reference_x_property_name.length() - 1 , 1 );
-            reference_x = agent->getProperty( reference_x_property_name );
-
-            QString reference_y_property_name = reference_y.toString().remove( 0 , 1 );
-            reference_y_property_name = reference_y_property_name.remove(reference_y_property_name.length() - 1 , 1 );
-            reference_y = agent->getProperty( reference_y_property_name );
-
-        }
-
-        GWSCoordinate reference_coord = GWSCoordinate( reference_x.toDouble(), reference_y.toDouble() );*/
-
         GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
 
 
@@ -83,11 +60,14 @@ QStringList FindClosestBehaviour::behave(){
         }
 
         // Obtain closest agent coordinates:
-        this->closest_coor = this->routing_graph->dijkstraNearestNode( agent_coor , agents_to_search_coord_array);
+        this->closest_coor = this->routing_graph->dijkstraNearestNode( agent_coor , agents_to_search_coord_array );
 
         // Extract and store its ID:
         QString closest_id = agents_to_search_id_coord_array.key( this->closest_coor );
-        agent->setProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() , closest_id );
+        QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString();
+        if( save_closest_id_as.isEmpty() ){ save_closest_id_as = "closest_agent_id"; }
+        agent->setProperty( save_closest_id_as , closest_id );
+
 
         // Extract and store the route to it:
         QList< QSharedPointer<GWSGraphEdge> > closest_route = this->routing_graph->dijkstraShortestPath( agent_coor , this->closest_coor );
