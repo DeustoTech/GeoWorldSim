@@ -103,7 +103,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                                             "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": %1,  \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"TRANSFER\" ] }, "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"HISTORY\"] } "
-                                                        "] } ").arg( qrand() % 10 )
+                                                        "] } ").arg( qrand() % 100 )
                                                         .toLatin1()
                                                         );
 

@@ -197,6 +197,9 @@ unix|win32: LIBS += -lpq
 #INCLUDE LIBGEOS SYSTEM LIBRARY (sudo apt-get install libgeos-dev libgeos++-dev)
 unix|win32: LIBS += -lgeos
 
+#INCLUDE SPATIALINDEX SYSTEM LIBRARY (sudo apt-get install libspatialindex-dev)
+unix|win32: LIBS += -lspatialindex
+
 #INCLUDE LIBPROJ SYSTEM LIBRARY (sudo apt-get install libproj-dev)
 unix|win32: LIBS += -lproj
 

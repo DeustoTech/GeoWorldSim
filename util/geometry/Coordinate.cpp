@@ -55,7 +55,7 @@ bool GWSCoordinate::operator != (const GWSCoordinate& other) const{
 }
 
 bool GWSCoordinate::operator < (const GWSCoordinate& other) const{
-    return this->toString() < other.toString();
+    return this->x < other.x;
 }
 
 GWSCoordinate& GWSCoordinate::operator = (const GWSCoordinate& other){

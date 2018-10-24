@@ -3,16 +3,17 @@
 
 #include <QObject>
 #include <QString>
+#include <QtMath>
 
 #include "../units/Units.h"
 
 struct GWSCoordinate {
-    double x = 0;
-    double y = 0;
-    double z = 0;
+    double x = std::nan("0");
+    double y = std::nan("0");
+    double z = std::nan("0");
 
     // CONSTRUCTORS
-    GWSCoordinate() : x(0) , y(0) , z(0){}
+    GWSCoordinate() : x( std::nan("0") ) , y( std::nan("0") ) , z( std::nan("0") ){}
     GWSCoordinate(double x, double y, double z = 0.0) : x(x) , y(y) , z(z){
         if(this->z != this->z ){ this->z = 0; }
     }

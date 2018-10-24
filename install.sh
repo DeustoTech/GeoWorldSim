@@ -25,6 +25,7 @@ echo "============================================"
 sudo apt-get install -y unzip
 sudo apt-get install -y libpq-dev
 sudo apt-get install -y libgeos-dev libgeos++-dev
+sudo apt-get install -y libspatialindex-dev
 sudo apt-get install -y libproj-dev
 sudo apt-get install -y libgdal-dev
 sudo apt-get install -y libsvm-dev

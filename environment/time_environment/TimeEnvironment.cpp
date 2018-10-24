@@ -4,7 +4,7 @@
 #include "TimeEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
-QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "internal_time";
+QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "time";
 QString GWSTimeEnvironment::WAIT_FOR_ME_PROP = "wait_for_me";
 
 GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){

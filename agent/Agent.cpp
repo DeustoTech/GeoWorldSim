@@ -110,23 +110,25 @@ QJsonObject GWSAgent::serialize() const{
 
     QJsonObject json = GWSObject::serialize();
 
-    //Skills
-    QJsonArray skills;
+    //Skills  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
+    /*QJsonArray skills;
     if( this->skills ){
         foreach (QSharedPointer<GWSObject> s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
             skills.append( s->serializeMini() );
         }
     }
-    //json.insert( "@skills" , skills ); // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
+    json.insert( "@skills" , skills );
+    */
 
-    // BEHAVIOUR
-    QJsonArray behaviours;
+    // BEHAVIOUR  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
+    /*QJsonArray behaviours;
     if( this->behaviours ){
         foreach( QSharedPointer<GWSObject> s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
             behaviours.append( s->serializeMini() );
         }
     }
-    //json.insert( "@behaviours" , behaviours );  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
+    json.insert( "@behaviours" , behaviours );
+    */
 
     // INTERNAL TIME
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );

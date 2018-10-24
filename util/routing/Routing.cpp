@@ -95,6 +95,10 @@ GWSRouting::~GWSRouting(){
 
 GWSCoordinate GWSRouting::getNearestRoutingCoordinate( const GWSCoordinate coor ){
     QSharedPointer<GWSRoutingNode> nobj = this->nodes_index->getNearestElement( coor ).dynamicCast<GWSRoutingNode>();
+    if( nobj.isNull() ){
+        qWarning() << "No nearest routing coordinate found";
+        return GWSCoordinate();
+    }
     return this->coors_to_node.key( nobj->referenced_lemon_node );
 }
 

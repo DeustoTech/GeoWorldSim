@@ -49,7 +49,7 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShortes
         }
 
         if( from_coor == to_coor ){
-            qDebug() << QString("Asking for same start and end coordinates routing [%1,%2]").arg( from_coor.getX() ).arg( from_coor.getY() );
+            //qDebug() << QString("Asking for same start and end coordinates routing [%1,%2]").arg( from_coor.getX() ).arg( from_coor.getY() );
             result_routes.append( result_route );
             continue;
         }
@@ -112,20 +112,16 @@ QList<QList< QSharedPointer<GWSGraphEdge> > > GWSDijkstraRouting::dijkstraShorte
     // this this this
     // Move to nearest edges
     GWSCoordinate moved_from_coor = this->getNearestRoutingCoordinate( from_coor );
-    //GWSCoordinate moved_to_coor = this->getNearestRoutingCoordinate( to_coor );
 
     // Compute dijkstra shortest path
     ListDigraph::Node start = this->coors_to_node.value( moved_from_coor );
-    //ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );
-    // this this this
 
     // Get start node and start graph from it
-    //ListDigraph::Node start = this->coors_to_node.value( from_coor ); this is the original one
     this->dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
     foreach( GWSCoordinate to_coor , to_many_coors ){
-        QList< QSharedPointer<GWSGraphEdge>> route;
+        QList< QSharedPointer<GWSGraphEdge> > route;
 
         GWSCoordinate moved_to_coor = this->getNearestRoutingCoordinate( to_coor );
         ListDigraph::Node end = this->coors_to_node.value( moved_to_coor );

@@ -4,13 +4,17 @@
 #include <QObject>
 #include <QMutex>
 #include <QMap>
+#include <spatialindex/SpatialIndex.h>
+#include <spatialindex/Region.h>
+#include <spatialindex/RTree.h>
 
 #include "../../agent/Agent.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Geometry.h"
-#include "geos/index/quadtree/Quadtree.h"
 
-using namespace geos::index;
+using namespace SpatialIndex;
+using namespace SpatialIndex::StorageManager;
+using namespace SpatialIndex::RTree;
 
 class GWSQuadtree : public QObject
 {
@@ -21,32 +25,50 @@ public:
     ~GWSQuadtree();
 
     // GETTERS
+    QSharedPointer<GWSGeometry> getGeometry( QString object_id );
+
     template <class T = GWSObject> QList< QSharedPointer<T> > getElements( GWSCoordinate coor ){
         return this->getElements<T>( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
     }
     template <class T = GWSObject> QList< QSharedPointer<T> > getElements( QSharedPointer<GWSGeometry> geom ){
-        QList< QSharedPointer<T> > intersecting_agents;
-        foreach( QSharedPointer<GWSObject> o , this->getElements<GWSObject>( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() ) ){
-            QSharedPointer<GWSGeometry> o_geom = this->id_to_geometries.value( o->getId() );
-            if( geom->intersects( o_geom ) ){
-                intersecting_agents.append( o.dynamicCast<T>() );
-            }
-        }
-        return intersecting_agents;
+        return this->getElements<T>( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() );
     }
     template <class T = GWSObject> QList< QSharedPointer<T> > getElements( double minX, double maxX, double minY, double maxY ){
         QList< QSharedPointer<T> > objects;
-        foreach (QSharedPointer<GWSObject> o, this->getObjects( minX , maxX , minY , maxY ) ) {
-            if( o ){
-                objects.append( o.dynamicCast<T>() );
-            }
+        foreach( QSharedPointer<GWSObject> o, this->getElements( minX , maxX , minY , maxY ) ) {
+            if( o ){ objects.append( o.dynamicCast<T>() ); }
         }
         return objects;
     }
+    QList< QSharedPointer<GWSObject> > getElements( double minX, double maxX, double minY, double maxY );
 
-    QList< QSharedPointer<GWSObject> > getObjects( double minX, double maxX, double minY, double maxY );
-    QSharedPointer<GWSGeometry> getGeometry( QString object_id );
+
+    template <class T = GWSObject> QList< QSharedPointer<T> > getNearestElements( GWSCoordinate coor , unsigned int amount = 1 ){
+        QList< QSharedPointer<T> > objects;
+        foreach( QSharedPointer<GWSObject> o, this->getNearestElements( coor , amount ) ) {
+            if( o ){ objects.append( o.dynamicCast<T>() ); }
+        }
+        return objects;
+    }
+    QList< QSharedPointer<GWSObject> > getNearestElements( GWSCoordinate coor , unsigned int amount = 1 );
+
+    template <class T = GWSObject> QList< QSharedPointer<T> > getNearestElements( QSharedPointer<GWSGeometry> geometry , unsigned int amount = 1 ){
+        QList< QSharedPointer<T> > objects;
+        foreach( QSharedPointer<GWSObject> o, this->getNearestElements( geometry , amount ) ) {
+            if( o ){ objects.append( o.dynamicCast<T>() ); }
+        }
+        return objects;
+    }
+    QList< QSharedPointer<GWSObject> > getNearestElements( QSharedPointer<GWSGeometry> geometry , unsigned int amount = 1 );
+
+    template <class T = GWSObject> QSharedPointer<T> getNearestElement( GWSCoordinate coor , unsigned int amount = 1 ){
+        return this->getNearestElement( coor , amount ).dynamicCast<T>();
+    }
     QSharedPointer<GWSObject> getNearestElement( GWSCoordinate coor );
+
+    template <class T = GWSObject> QSharedPointer<T> getNearestElement( QSharedPointer<GWSGeometry> geometry , unsigned int amount = 1 ){
+        return this->getNearestElement( geometry , amount ).dynamicCast<T>();
+    }
     QSharedPointer<GWSObject> getNearestElement( QSharedPointer<GWSGeometry> geometry );
 
     // SETTERS
@@ -54,19 +76,26 @@ public:
     void upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSGeometry> geom );
     void remove( QSharedPointer<GWSObject> object );
 
+
+protected:
+
     // HELPER CLASS
-    class GWSQuadtreeElement : public QObject {
+    class GWSQuadtreeVisitor : public SpatialIndex::IVisitor {
     public:
-        GWSQuadtreeElement( QString id ) : QObject() , referenced_object_id( id ){}
-        const QString referenced_object_id;
+        void visitNode(const INode& n) override {}
+        void visitData(const IData& d) override { this->visited.append( d.getIdentifier() ); }
+        void visitData(std::vector<const IData*>& v) override {}
+        QList< SpatialIndex::id_type > visited;
     };
 
 private:
 
-    //geos::index::quadtree::Quadtree inner_index;
-    QMap< QString , geos::geom::Envelope> id_to_envelopes;
+    SpatialIndex::ISpatialIndex* inner_index = Q_NULLPTR;
+    QMap< QString , SpatialIndex::id_type > inner_index_ids;
+    QMap< QString , SpatialIndex::Region > inner_index_geometries;
+    quint64 inner_index_last_id = 0;
+
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
-    //QMap< QString , GWSQuadtreeElement* > id_to_tree_elements;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
 
 };

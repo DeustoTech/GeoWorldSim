@@ -26,21 +26,19 @@ public:
     QList< QSharedPointer<GWSAgent> > getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
     QList< QSharedPointer<GWSAgent> > getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QString class_name ) const;
+    QList< QSharedPointer<GWSAgent> > getNearestAgents( GWSCoordinate coor, QString class_name , unsigned int amount = 1 ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
     QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QList< QSharedPointer<GWSAgent> > agents ) const;
-    //QSharedPointer<GWSAgent> getAgentByGeometry( QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
 
     // SETTERS
     void setBounds( QSharedPointer<GWSGeometry> geom );
-    //bool updateAgentGeometry( QSharedPointer<GWSAgent> agent , GeoCoordinates new_geom );
-    //bool updateAgentGeometry( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> new_geom );
 
     // SPATIAL OPERATIONS
     void transformMove( QSharedPointer<GWSAgent> agent, const GWSCoordinate &apply_movement );
-    void transformBuffer(  QSharedPointer<GWSAgent> agent, double threshold );
-    void transformUnion(  QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
-    void transformIntersection(  QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
+    void transformBuffer( QSharedPointer<GWSAgent> agent, double threshold );
+    void transformUnion( QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
+    void transformIntersection( QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
 
     // METHODS
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
