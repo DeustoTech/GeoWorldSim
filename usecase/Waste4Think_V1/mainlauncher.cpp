@@ -1,4 +1,4 @@
-#include "../../app/App.h"
+ #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
 #include <QFile>
@@ -124,16 +124,16 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 0 ; i++ ){
+for( int i = 0 ; i < 1 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
                                                                   "\"home_x\" :  %1, \"home_y\" :  %2,  \"color\" : \"Blue\" , "
                                                                   "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
                                                                                        "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"TSP\"] }, "
-                                                                                       "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\",  \"nexts\" : [\"FOLLOW_TSP\"] } , "
+                                                                                       "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\", \"nexts\" : [\"FOLLOW_TSP\"] } , "
                                                                                        "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, \"store_closest_id_as\": \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\", \"nexts\" : [\"MOVE_STAGES\"] } ,"
-                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\",  \"nexts_if_arrived\" : [\"GATHER\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
+                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\", \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"GATHER\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
                                                                                        "{ \"@type\": \"GatherAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"GATHER\", \"gather_property\": \"waste\", \"emitting_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
                                                                                        " ] } ")
                                                    .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )

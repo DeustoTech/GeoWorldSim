@@ -19,6 +19,8 @@ public:
     static QString Y_VALUE;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
+    static QString STORE_MOVED_DISTANCE_AS;
+    static QString STORE_TRAVEL_TIME_AS;
 
 protected slots:
     virtual QStringList behave();

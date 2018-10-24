@@ -13,6 +13,8 @@ QString MoveThroughRouteBehaviour::X_VALUE = "x_value";
 QString MoveThroughRouteBehaviour::Y_VALUE = "y_value";
 QString MoveThroughRouteBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveThroughRouteBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
+QString MoveThroughRouteBehaviour::STORE_MOVED_DISTANCE_AS = "store_total_moved_distance_as";
+QString MoveThroughRouteBehaviour::STORE_TRAVEL_TIME_AS = "store_total_travel_time_as";
 
 MoveThroughRouteBehaviour::MoveThroughRouteBehaviour() : GWSBehaviour(){
 }
@@ -74,17 +76,40 @@ QStringList MoveThroughRouteBehaviour::behave(){
         movethroughroute_skill->changeSpeed( 1 );
     }
 
+    QSharedPointer<GWSGeometry> agent_geom_init = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSCoordinate agent_position_init = agent_geom_init->getCentroid();
+
+
     // Move towards
     movethroughroute_skill->move( duration_of_movement );
 
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    GWSCoordinate agent_position = agent_geom->getCentroid();
+    QSharedPointer<GWSGeometry> agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSCoordinate agent_position_post = agent_geom_post->getCentroid();
 
-    if ( agent_position == destination_coor ){
+    // Calculate moved distance and store in accumulated distance:
+    GWSLengthUnit moved_distance;
+    moved_distance = agent_position_post.getDistance( agent_position_init );
+
+    GWSLengthUnit accumulated_distance;
+    accumulated_distance = moved_distance + agent->getProperty(this->getProperty( STORE_MOVED_DISTANCE_AS ).toString() ).toDouble();
+    agent->setProperty( this->getProperty( STORE_MOVED_DISTANCE_AS ).toString() , accumulated_distance );
+
+    // Calculate travel time and store in accumulated time:
+    GWSTimeUnit travel_time;
+    GWSSpeedUnit speed = movethroughroute_skill->getCurrentSpeed();
+    travel_time = moved_distance / speed.number();
+
+    GWSTimeUnit accumulated_travel_time;
+    accumulated_travel_time = travel_time + agent->getProperty(this->getProperty( STORE_TRAVEL_TIME_AS ).toString() ).toDouble();
+    agent->setProperty( this->getProperty( STORE_TRAVEL_TIME_AS ).toString() , accumulated_travel_time );
+
+
+    // Set NEXTS behaviour
+    if ( agent_position_post == destination_coor ){
         nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
     }
 
-    if ( agent_position != destination_coor ){
+    if ( agent_position_post != destination_coor ){
         nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
     }
 
