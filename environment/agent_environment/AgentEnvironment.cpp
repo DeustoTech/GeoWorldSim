@@ -38,6 +38,9 @@ template <class T> QSharedPointer<T> GWSAgentEnvironment::getRandomByClass( QStr
     return all.at( qrand() % all.size() );
 }
 
+QSharedPointer<GWSAgent> GWSAgentEnvironment::getById(QString id) const{
+    return this->getByClassAndId( GWSAgent::staticMetaObject.className() , id );
+}
 
 QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
     return this->getByClassAndId<GWSAgent>( class_name , id );

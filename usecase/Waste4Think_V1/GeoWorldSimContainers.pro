@@ -98,7 +98,8 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
+    ../../behaviour/property/CopyPropertyBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -170,7 +171,8 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/CopyPropertyBehaviour.cpp
 
 
 
