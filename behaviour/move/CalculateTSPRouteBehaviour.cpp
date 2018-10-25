@@ -77,7 +77,7 @@ QStringList CalculateTSPRouteBehaviour::behave(){
              QStringList route_ids = this->ordered_agents_to_visit_tsp_route_id_array;
              agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , route_ids );
 
-             //routing->deleteLater();
+             routing->deleteLater();
 
         }
 
