@@ -3,15 +3,19 @@
 #include <spatialindex/Region.h>
 
 GWSQuadtree::GWSQuadtree() : QObject(){
-    SpatialIndex::IStorageManager* storage = StorageManager::createNewMemoryStorageManager();
+    std::string filename = QString("%1-%2-index").arg( qrand() ).arg( qrand() ).toStdString();
+    SpatialIndex::IStorageManager* storage = StorageManager::createNewDiskStorageManager( filename , 4096 );
     SpatialIndex::id_type index_identifier;
-    this->inner_index = SpatialIndex::RTree::createNewRTree( *storage , 0.7 , 100 , 100 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
+    this->inner_index = SpatialIndex::RTree::createNewRTree( *storage , 0.7 , 1000 , 1000 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
     if( !this->inner_index->isIndexValid() ){
         qWarning() << "ERROR CREATING INDEX";
     }
 }
 
 GWSQuadtree::~GWSQuadtree(){
+    foreach (QString object_id , this->id_to_objects.keys() ) {
+        this->inner_index->deleteData( this->inner_index_geometries.value( object_id ) , this->inner_index_ids.value( object_id ) );
+    }
     delete this->inner_index;
 }
 
@@ -70,6 +74,7 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getNearestElements(GWSCoordinate
     }
 
     GWSQuadtreeVisitor visitor;
+
     this->inner_index->nearestNeighborQuery( amount , point , visitor );
     foreach (SpatialIndex::id_type v , visitor.visited ) {
         objects.append( this->id_to_objects.value( this->inner_index_ids.key( v ) ) );

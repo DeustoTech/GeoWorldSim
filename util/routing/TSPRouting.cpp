@@ -128,18 +128,23 @@ void GWSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::
 
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
+
+        QList< QList< QSharedPointer <GWSGraphEdge> > > routes = this->dijkstra_routing->dijkstraShortestPaths( visit_coordinates.at(i) , visit_coordinates );
         for(int j = 0; j < visit_coordinates.size(); j++ ){
 
             FullGraph::Node from = distance_matrix->nodeFromId( i );
             FullGraph::Node to = distance_matrix->nodeFromId( j );
             FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QList< QSharedPointer <GWSGraphEdge> > route = this->dijkstra_routing->dijkstraShortestPath( visit_coordinates.at(i) , visit_coordinates.at(j) );
+            QList< QSharedPointer <GWSGraphEdge> > route = routes.at(j);
+
             GWSLengthUnit length = 0;
             foreach( QSharedPointer <GWSGraphEdge> e , route ){
                 length = length + e->getLength();
             }
-            if( length <= GWSLengthUnit( 0 ) ){ length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) ); }
+            if( length <= GWSLengthUnit( 0 ) ){
+                length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) );
+            }
 
             distance_matrix_weights->set( edge , length.number() );
         }

@@ -90,6 +90,7 @@ protected:
 
 private:
 
+    QMutex mutex;
     SpatialIndex::ISpatialIndex* inner_index = Q_NULLPTR;
     QMap< QString , SpatialIndex::id_type > inner_index_ids;
     QMap< QString , SpatialIndex::Region > inner_index_geometries;

@@ -4,7 +4,6 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../util/routing/DijkstraRouting.h"
 
-
 class FindClosestBehaviour : public GWSBehaviour
 {
     Q_OBJECT
@@ -25,10 +24,13 @@ public:
     static QString NEXTS;
 
 protected:
+
     GWSDijkstraRouting* routing_graph = Q_NULLPTR;
     GWSCoordinate closest_coor;
     QPair< GWSCoordinate, QString > closest_coor_id;
+
 protected slots:
+
     virtual QStringList behave();
 
 };

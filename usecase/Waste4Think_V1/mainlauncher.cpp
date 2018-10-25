@@ -127,7 +127,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 7 ; i++ ){
+for( int i = 0 ; i < 50 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "

@@ -2,9 +2,6 @@
 #define MOVEONPARTICULARWASTETSPROUTE_H
 
 #include "../../behaviour/Behaviour.h"
-#include <QtConcurrent/QtConcurrent>
-
-using namespace QtConcurrent;
 
 class CalculateTSPRouteBehaviour : public GWSBehaviour
 {

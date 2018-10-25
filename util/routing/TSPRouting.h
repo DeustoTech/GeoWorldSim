@@ -29,7 +29,6 @@ private:
 
     GWSDijkstraRouting* dijkstra_routing = 0;
 
-
     // Map to relate graph and distance matrix nodes
     QMap<ListDigraph::Node , FullGraph::Node> graph_matrix_nodes;
 

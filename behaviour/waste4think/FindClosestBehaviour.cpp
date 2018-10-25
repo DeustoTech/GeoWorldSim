@@ -37,8 +37,10 @@ QStringList FindClosestBehaviour::behave(){
 
     if ( agent->getProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() ).isNull() ){
 
-        GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
-
+        // Use future to allo multithreading
+        GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
+        QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
+        GWSCoordinate agent_coor = agent_geom->getCentroid();
 
         // Set agent type to search:
         QMap<QString , GWSCoordinate > agents_to_search_id_coord_array;
@@ -47,7 +49,7 @@ QStringList FindClosestBehaviour::behave(){
         QList<QSharedPointer<GWSAgent> > agents_to_search = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() ) ;
         foreach ( QSharedPointer<GWSAgent> a, agents_to_search  ){
 
-             GWSCoordinate agents_to_search_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
+             GWSCoordinate agents_to_search_coord = env->getGeometry( a )->getCentroid();
              QString agents_to_search_id = a->getProperty("@id").toString();
              agents_to_search_coord_array.append( agents_to_search_coord ) ;
              agents_to_search_id_coord_array.insert( agents_to_search_id , agents_to_search_coord );

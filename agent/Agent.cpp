@@ -134,7 +134,9 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );
 
     // GEOMETRY
-    const QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
+    QFuture< QSharedPointer<GWSGeometry> > f_geom = run( GWSPhysicalEnvironment::globalInstance() , &GWSPhysicalEnvironment::getGeometry , (QSharedPointer<GWSAgent>)this->getSharedPointer() );
+    f_geom.waitForFinished();
+    const QSharedPointer<GWSGeometry> geom = f_geom.result();
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
@@ -295,6 +297,9 @@ void GWSAgent::behave(){
     QStringList next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
+        //QFuture< QStringList > f_tick = run( behaviour.data() , &GWSBehaviour::tick , (qint64)behaving_time );
+        //f_tick.waitForFinished();
+        //next_execute_behaviour_ids.append( f_tick.result() );
         next_execute_behaviour_ids.append( behaviour->tick( behaving_time ) );
         max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , behaviour->getProperty( GWSBehaviour::BEHAVIOUR_DURATION ).toDouble() );
     }

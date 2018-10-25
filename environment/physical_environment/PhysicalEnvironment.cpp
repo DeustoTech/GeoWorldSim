@@ -35,33 +35,6 @@ QSharedPointer<GWSGeometry> GWSPhysicalEnvironment::getGeometry( QSharedPointer<
     return this->spatial_index.value( GWSAgent::staticMetaObject.className() )->getGeometry( agent->getId() ).dynamicCast<GWSGeometry>();
 }
 
-QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::orderByDistance(QSharedPointer<GWSAgent> source, QList<QSharedPointer<GWSAgent>> agents) const{
-    QList<QSharedPointer<GWSAgent>> ordered;
-    /*if( !agents.size() ){
-        return ordered;
-    }
-
-     while( agents.size() ){
-        QSharedPointer<GWSAgent> nearest = agents.at( 0 );
-        const QSharedPointer<GWSGeometry> nearest_geom = nearest->getGeometry();
-
-        foreach( QSharedPointer<GWSAgent> agent , agents ){
-            const QSharedPointer<GWSGeometry> agent_geom = agent->getGeometry();
-
-            if( source->getGeometry()->getDistance( agent_geom ) < source->getGeometry()->getDistance( nearest_geom ) ){
-                nearest = agent;
-                nearest_geom = agent_geom;
-            }
-        }
-
-        ordered.append( nearest );
-        agents.removeOne( nearest );
-    }*/
-
-    return ordered;
-}
-
-
 QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
     QList< QSharedPointer<GWSAgent> > agents;
     if( this->spatial_index.keys().contains(class_name) ){
@@ -95,15 +68,6 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList
     return founds;
 }
 
-QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList<QSharedPointer<GWSAgent> > agents) const{
-    QList<GWSCoordinate> coors;
-    coors.append( coor );
-    /*QList<QSharedPointer<GWSAgent>> nearests = this->getNearestAgents( coors , agents );
-    if( !nearests.isEmpty() ){
-        return nearests.at(0);
-    }*/
-    return 0;
-}
 
 /**
  * @brief PhysicalEnvironment::getNearestAgents Given a list of geometries and the class_name of agents in the
@@ -124,41 +88,6 @@ QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(GWSCo
         return this->spatial_index.value(class_name)->getNearestElements<GWSAgent>( coor , amount );
     }
     return QList< QSharedPointer<GWSAgent> >();
-}
-
-/**
- * @brief PhysicalEnvironment::getNearestAgents Given a list of geometries and some agents to search, returns
- * an ordered list of the nearest agent for each geometry.
- * IMPORTANT, if an agent is not snapped it will return a 0 agent to preserve list size and order.
- * @param geometries List of geometries from where to start searching
- * @param agents List of agents from which to get the nearest for each geometry
- * @return
- */
-QList< QSharedPointer<GWSAgent> > GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QList<QSharedPointer<GWSAgent>> agents) const{
-    QList< QSharedPointer<GWSAgent> > founds;
-
-    /*GWSQuadtree* index = new GWSQuadtree();
-    foreach(QSharedPointer<GWSAgent> a , agents){
-        index->upsert( a , this->getGeometry( a ) );
-    }
-
-    foreach(GWSCoordinate coor , coors){
-        QSharedPointer<GWSAgent> found = 0;
-        QList< QSharedPointer<GWSAgent> > agents = index->getElements<GWSAgent>( coor );
-
-        if( !agents.isEmpty() ){
-            found = agents.at( qrand() % agents.size() );
-            foreach( QSharedPointer<GWSAgent> a , agents ){
-                if( a && coor.getDistance( this->getGeometry( a )->getCentroid() ) < coor.getDistance( this->getGeometry( found )->getCentroid() ) ){
-                    found = a;
-                }
-            }
-        }
-        founds.append( found );
-    }
-
-    index->deleteLater();*/
-    return founds;
 }
 
 

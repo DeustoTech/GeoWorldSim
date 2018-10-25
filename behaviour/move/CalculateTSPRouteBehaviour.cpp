@@ -1,5 +1,3 @@
-#include <QFuture>
-
 #include "CalculateTSPRouteBehaviour.h"
 #include "../../skill/move/GenerateOrderedTSPSkill.h"
 
@@ -16,15 +14,17 @@ CalculateTSPRouteBehaviour::CalculateTSPRouteBehaviour() : GWSBehaviour(){
  * Generate Ordered TSP route with Agent Type input
  */
 
-QStringList  CalculateTSPRouteBehaviour::behave(){
+QStringList CalculateTSPRouteBehaviour::behave(){
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
         GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
 
         if ( agent->getProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() ).isNull() ){
 
-             GWSCoordinate agent_position = env->getGeometry( agent )->getCentroid();
-             QString agent_type = this->getProperty( TSP_AGENT_TYPE ).toString();
+            QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
+            GWSCoordinate agent_position = agent_geom->getCentroid();
+
+            QString agent_type = this->getProperty( TSP_AGENT_TYPE ).toString();
 
              // Get agent class to visit depending on user input:
             QList<QSharedPointer<GWSAgent> > agents_to_visit = GWSAgentEnvironment::globalInstance()->getByClass( agent_type ) ;
@@ -35,7 +35,10 @@ QStringList  CalculateTSPRouteBehaviour::behave(){
              QMap< QString , GWSCoordinate > agents_to_visit_coord_id_array;
 
              foreach ( QSharedPointer<GWSAgent> a, agents_to_visit  ){
-                  GWSCoordinate agent_to_visit_coord = env->getGeometry( a )->getCentroid();
+
+                  QSharedPointer<GWSGeometry> a_geom = env->getGeometry( a );
+                  GWSCoordinate agent_to_visit_coord = a_geom->getCentroid();
+
                   QString agent_to_visit_id = a->getProperty("@id").toString();
                   agents_to_visit_coord_array.append( agent_to_visit_coord ) ;
                   agents_to_visit_id_array.append( agent_to_visit_id );
@@ -49,15 +52,14 @@ QStringList  CalculateTSPRouteBehaviour::behave(){
              // Get graph edges:
              QList< QSharedPointer< GWSGraphEdge > > edges = graph->getEdges();
 
-             // Generate TSP algorithm with those edges:
-             GWSTSPRouting* agents_to_visit_route = new GWSTSPRouting( edges );
-             agents_to_visit_route->moveToThread( this->thread() );
+             // Generate TSP algorithm with those edges
+             GWSTSPRouting* routing = new GWSTSPRouting( edges );
 
-             // Get nearest neighbour given start coordinates and containers to visit:
-             QList< GWSCoordinate > agents_to_visit_route_coord_array = agents_to_visit_route->nearestNeighborTsp( agent_position , agents_to_visit_coord_array , agent_position );
+             // Get nearest neighbour given start coordinates and containers to visit
+             QList< GWSCoordinate > agents_to_visit_route_coord_array = routing->nearestNeighborTsp( agent_position , agents_to_visit_coord_array , agent_position );
 
              // Order the nodes to get best route. This is the route to follow.
-             QList< GWSCoordinate > ordered_agents_to_visit_tsp_route_coord_array = agents_to_visit_route->orderCircularTsp( agent_position , agent_position , agents_to_visit_route_coord_array );
+             QList< GWSCoordinate > ordered_agents_to_visit_tsp_route_coord_array = routing->orderCircularTsp( agent_position , agent_position , agents_to_visit_route_coord_array );
 
              // Compare the coordinates of the ordered route and those in the initial QPair QList of coors and IDs to extract
              // the ID of the ordered coors and generate a new QList of QPairs:
@@ -73,10 +75,11 @@ QStringList  CalculateTSPRouteBehaviour::behave(){
              }
 
              QStringList route_ids = this->ordered_agents_to_visit_tsp_route_id_array;
-             agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , route_ids ) ;
+             agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , route_ids );
+
+             //routing->deleteLater();
 
         }
-
 
         QStringList nexts = this->getProperty( NEXTS ).toStringList();
         return nexts;

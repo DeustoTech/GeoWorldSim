@@ -2,6 +2,7 @@
 #define GWSPHYSICALENVIRONMENT_H
 
 #include <QMutex>
+#include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
 #include "../../util/geometry/Geometry.h"
@@ -25,14 +26,11 @@ public:
     QSharedPointer<GWSGeometry> getBounds() const;
     GWSCoordinate getRandomCoordinate() const;
     QSharedPointer<GWSGeometry> getGeometry( QSharedPointer<GWSAgent> agent ) const;
-    QList< QSharedPointer<GWSAgent> > orderByDistance( QSharedPointer<GWSAgent> source , QList< QSharedPointer<GWSAgent> > agents ) const;
     QList< QSharedPointer<GWSAgent> > getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
     QList< QSharedPointer<GWSAgent> > getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     QList< QSharedPointer<GWSAgent> > getNearestAgents( GWSCoordinate coor, QString class_name , unsigned int amount = 1 ) const;
-    QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
-    QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QList< QSharedPointer<GWSAgent> > agents ) const;
 
     // SETTERS
     void setBounds( QSharedPointer<GWSGeometry> geom );

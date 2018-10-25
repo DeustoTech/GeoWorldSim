@@ -72,7 +72,7 @@ QStringList GenerateWasteBehaviour::behave(){
     double waste = GenerateWasteBehaviour::partialModel( rest , uni , paro , urb ) ;
     agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , waste / agent->getProperty( "TOTAL" ).toDouble() );
 
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
+    //emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
     QStringList nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
     return nexts;

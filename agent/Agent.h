@@ -13,15 +13,14 @@
 #include <QMutex>
 #include <QTimer>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
 
 #include "./../object/Object.h"
 #include "./../../util/geometry/Geometry.h"
 //#include "utils/geometry/Coordinate.h"
 
-//#include "utils/conversors/custom_json/CustomJsonConversor.h"
-
 #include "./../util/units/Units.h"
-#include "./../util/geometry/Geometry.h"
 #include "./../util/storage/ObjectStorage.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSEnvironment)
@@ -32,6 +31,8 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 
 // Declare Coordinate to be used as QMETAPROPERTY
 // Q_DECLARE_METATYPE(GWSGeometry)
+
+using namespace QtConcurrent;
 
 class GWSAgent : public GWSObject
 {
