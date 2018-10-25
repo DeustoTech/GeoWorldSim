@@ -65,6 +65,10 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getNearestElements(GWSCoordinate
     double p[2] = {coor.getX() , coor.getY()};
     SpatialIndex::Point point = SpatialIndex::Point( p , 2 );
 
+    if( !this->inner_index->isIndexValid() ){
+        qWarning() << "ERROR CREATING INDEX";
+    }
+
     GWSQuadtreeVisitor visitor;
     this->inner_index->nearestNeighborQuery( amount , point , visitor );
     foreach (SpatialIndex::id_type v , visitor.visited ) {
