@@ -109,8 +109,8 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
         // Balance between threads. Only QObjects without parent can be moved. Children must stay in parents thread
         // CAUTION! Very slow operation
         qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        //agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
-        //if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
+        agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
+        if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
 
         // Run agent
         agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
