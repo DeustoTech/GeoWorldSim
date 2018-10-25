@@ -2,11 +2,14 @@
 #define GWSPHYSICALENVIRONMENT_H
 
 #include <QMutex>
+#include <QtConcurrent/QtConcurrent>
 
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"
+
+using namespace QtConcurrent;
 
 class GWSPhysicalEnvironment : public GWSEnvironment
 {
@@ -53,7 +56,7 @@ private:
     QSharedPointer<GWSGeometry> environment_bounds;
 
     // SPATIAL INDEX
-    QMap<QString , GWSQuadtree* > spatial_index; // Spatial indexes
+    QMap<QString , QSharedPointer< GWSQuadtree > > spatial_index; // Spatial indexes
 
     // Agent geometries
     QStringList agent_ids;

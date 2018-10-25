@@ -1,7 +1,7 @@
+#include <QFuture>
+
 #include "CalculateTSPRouteBehaviour.h"
 #include "../../skill/move/GenerateOrderedTSPSkill.h"
-
-#include "TruckAgent.h"
 
 QString CalculateTSPRouteBehaviour::NEXTS = "nexts";
 QString CalculateTSPRouteBehaviour::TSP_AGENT_TYPE = "tsp_agent_type"; // e.g. Glass Container
@@ -19,10 +19,11 @@ CalculateTSPRouteBehaviour::CalculateTSPRouteBehaviour() : GWSBehaviour(){
 QStringList  CalculateTSPRouteBehaviour::behave(){
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
+        GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
 
         if ( agent->getProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() ).isNull() ){
 
-             GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+             GWSCoordinate agent_position = env->getGeometry( agent )->getCentroid();
              QString agent_type = this->getProperty( TSP_AGENT_TYPE ).toString();
 
              // Get agent class to visit depending on user input:
@@ -34,7 +35,7 @@ QStringList  CalculateTSPRouteBehaviour::behave(){
              QMap< QString , GWSCoordinate > agents_to_visit_coord_id_array;
 
              foreach ( QSharedPointer<GWSAgent> a, agents_to_visit  ){
-                  GWSCoordinate agent_to_visit_coord = GWSPhysicalEnvironment::globalInstance()->getGeometry( a )->getCentroid();
+                  GWSCoordinate agent_to_visit_coord = env->getGeometry( a )->getCentroid();
                   QString agent_to_visit_id = a->getProperty("@id").toString();
                   agents_to_visit_coord_array.append( agent_to_visit_coord ) ;
                   agents_to_visit_id_array.append( agent_to_visit_id );
@@ -50,7 +51,7 @@ QStringList  CalculateTSPRouteBehaviour::behave(){
 
              // Generate TSP algorithm with those edges:
              GWSTSPRouting* agents_to_visit_route = new GWSTSPRouting( edges );
-
+             agents_to_visit_route->moveToThread( this->thread() );
 
              // Get nearest neighbour given start coordinates and containers to visit:
              QList< GWSCoordinate > agents_to_visit_route_coord_array = agents_to_visit_route->nearestNeighborTsp( agent_position , agents_to_visit_coord_array , agent_position );

@@ -196,7 +196,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
     foreach (QString family_class , agent->getInheritanceFamily()) {
         if( !this->spatial_index.keys().contains( family_class ) ){
-            this->spatial_index.insert( family_class , new GWSQuadtree() );
+            this->spatial_index.insert( family_class , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
         }
         this->spatial_index.value( family_class )->upsert( agent , geom );
     }
