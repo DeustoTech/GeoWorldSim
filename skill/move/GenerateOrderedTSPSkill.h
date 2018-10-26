@@ -18,13 +18,12 @@ class GenerateOrderedTSPSkill : public GWSSkill
 public:
     Q_INVOKABLE explicit GenerateOrderedTSPSkill();
 
-    // METHODS
-    QList< QPair< GWSCoordinate , QString > > generateOrderedTSP();
-    //virtual void move(GWSTimeUnit movement_duration);
-
     // PROPERTIES
     static QString VISIT_AGENTS_PROP;
 
+    // METHODS
+    QList< QPair< GWSCoordinate , QString > > generateOrderedTSP();
+    virtual void generateGraph();
 
 protected:
 

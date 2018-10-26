@@ -68,12 +68,11 @@ HEADERS += \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.h \
-    ../../util/routing/DijkstraRouting.h \
-    ../../util/routing/GraphEdgeArcMap.h \
+    ../../util/routing/GraphEdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/GraphEdge.h \
-    ../../util/graph/Graph.h \
+    #../../util/graph/Graph.h \
     #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
@@ -136,9 +135,9 @@ SOURCES += mainlauncher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/Routing.cpp \
-    ../../util/routing/DijkstraRouting.cpp \
-    ../../util/routing/GraphEdgeArcMap.cpp \
+    ../../util/routing/GraphEdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
+            ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
@@ -146,7 +145,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
     ../../util/graph/GraphEdge.cpp \
-    ../../util/graph/Graph.cpp \
+    #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \

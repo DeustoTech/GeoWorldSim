@@ -4,11 +4,16 @@
 #include <QObject>
 #include <QMutex>
 
+#include <lemon/core.h>
+#include <lemon/list_graph.h>
+
 #include "../../environment/Environment.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/graph/Graph.h"
 #include "../../util/graph/GraphEdge.h"
-//#include "../../util/geometry/Quadtree.h"
+#include "../../util/geometry/Quadtree.h"
+#include "../../util/routing/Routing.h"
+
+using namespace lemon;
 
 class GWSNetworkEnvironment : public GWSEnvironment
 {
@@ -25,15 +30,16 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    //const QSharedPointer<GWSGraphNode> getNode( QSharedPointer<GWSAgent> agent ) const;
-    const QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
-    const QSharedPointer<GWSAgent> getAgent( QSharedPointer<GWSGraphEdge> edge ) const;
-    //QSharedPointer<GWSGraphNode> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-    //template <class T> QSharedPointer<T> getNodeFromGraph( GWSCoordinate point , QString class_name ) const;
-    QSharedPointer<GWSGraphEdge> getNearestEdgeFromGraph( GWSCoordinate coor , QString class_name ) const;
-    QSharedPointer<GWSGraphEdge> getEdgeFromGraph( GWSCoordinate from_point , GWSCoordinate to_point , QString class_name ) const;
+    QSharedPointer<GWSGraphEdge> getEdge( QSharedPointer<GWSAgent> agent ) const;
+    QSharedPointer<GWSAgent> getAgent( QSharedPointer<GWSGraphEdge> edge ) const;
+    QSharedPointer<GWSGraphEdge> getEdge( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
+    GWSCoordinate getNearestNode( GWSCoordinate coor , QString class_name ) const;
+    QSharedPointer<GWSGraphEdge> getNearestEdge( GWSCoordinate coor , QString class_name ) const;
 
-    const GWSGraph* getGraph( QString class_name ) const;
+    QList<QSharedPointer<GWSGraphEdge> > getShortestPath( GWSCoordinate from, GWSCoordinate to , QString class_name ) const;
+    QList<QList<QSharedPointer<GWSGraphEdge> > > getShortestPath(QList< GWSCoordinate > ordered_coors , QString class_name ) const;
+    QList<QList<QSharedPointer< GWSGraphEdge> > > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const;
+    QPair< GWSCoordinate , QList<QSharedPointer< GWSGraphEdge> > > getNearestNodeAndPath( GWSCoordinate coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
 
     // SETTERS
 
@@ -46,9 +52,9 @@ private:
     GWSNetworkEnvironment(GWSNetworkEnvironment const&);
     ~GWSNetworkEnvironment();
 
-    GWSQuadtree* edges_index = Q_NULLPTR;
     QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSGraphEdge> > agent_to_edge;
-    QMap<QString, GWSGraph*> network_graphs; // Graphs
+    QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
+    QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 
     // Mutex, for avoiding concurrency
     QMutex mutex;

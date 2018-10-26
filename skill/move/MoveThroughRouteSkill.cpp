@@ -13,9 +13,6 @@ MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
 }
 
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){
-    if( this->routing_graph ){
-        this->routing_graph->deleteLater();
-    }
 }
 
 /**********************************************************************
@@ -23,16 +20,6 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
 **********************************************************************/
 
 // Generate graph, give me all the agents in the network environment, and generate the graph with them
-
-void MoveThroughRouteSkill::generateGraph(){
-    // Generate graph of all GWSAgents in the network environment
-    const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( this->getProperty( MoveThroughRouteSkill::NETWORK_CLASS_PROP ).toString() );
-
-    // Get all the Edges from the graph
-    this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
-}
-
-
 
 GWSCoordinate MoveThroughRouteSkill::getRouteDestination() const{
     if( this->getProperty( ROUTE_DESTINATION_X_PROP ).isNull() || this->getProperty( ROUTE_DESTINATION_Y_PROP ).isNull() ){
@@ -46,10 +33,6 @@ GWSCoordinate MoveThroughRouteSkill::getRouteDestination() const{
 **********************************************************************/
 
 void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
-
-    if( !this->routing_graph ){
-        this->generateGraph();
-    }
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -69,7 +52,8 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
         // Generate pending route
-        this->pending_route = this->routing_graph->dijkstraShortestPath( current_coor , destination_coor);
+        QString graph_type = this->getProperty( MoveThroughRouteSkill::NETWORK_CLASS_PROP ).toString();
+        this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
     }
 
     // Assume we have reached route end OR not found route, free move to destination

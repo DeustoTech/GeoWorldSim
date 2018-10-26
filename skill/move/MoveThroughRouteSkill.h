@@ -2,10 +2,8 @@
 #define MOVETHROUGHROUTESKILL_H
 
 #include <QObject>
+#include "../../util/graph/GraphEdge.h"
 #include "../../skill/move/MoveSkill.h"
-#include "../../util/routing/DijkstraRouting.h"
-#include "../../util/graph/Graph.h"
-
 
 class MoveThroughRouteSkill : public MoveSkill
 {
@@ -24,12 +22,10 @@ public:
     GWSCoordinate getRouteDestination() const;
 
     // METHODS
-    virtual void generateGraph();
     virtual void move(GWSTimeUnit movement_duration);
 
 protected:
 
-    GWSDijkstraRouting* routing_graph = Q_NULLPTR;
     QList< QSharedPointer<GWSGraphEdge> > pending_route;
     QList<GWSCoordinate> pending_edge_coordinates;
 

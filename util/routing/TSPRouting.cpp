@@ -7,33 +7,30 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
-GWSTSPRouting::GWSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges ) : GWSRouting( edges ) {
+#include "../../environment/network_environment/NetworkEnvironment.h"
 
-    // Create dijkstra routing for distances
-    this->dijkstra_routing = new GWSDijkstraRouting( edges );
-
+GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {
+    this->transport_network_type = transport_network_type;
 }
 
 GWSTSPRouting::~GWSTSPRouting(){
-    // Delete created stuff
-    this->dijkstra_routing->deleteLater();
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
-    FullGraph::EdgeMap<double>* distance_matrix_weights = new FullGraph::EdgeMap<double>( *distance_matrix );
+    lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
 
     this->loadDistanceMatrix( distance_matrix , distance_matrix_weights , visit_coordinates );
 
-    NearestNeighborTsp< FullGraph::EdgeMap<double> >* tsp = new NearestNeighborTsp< FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
+    lemon::NearestNeighborTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::NearestNeighborTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
 
     QList<GWSCoordinate> tsp_circular_route_nodes;
@@ -47,14 +44,14 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coord
 QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
-    FullGraph::EdgeMap<double>* distance_matrix_weights = new FullGraph::EdgeMap<double>( *distance_matrix );
+    lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
 
     this->loadDistanceMatrix( distance_matrix , distance_matrix_weights , visit_coordinates );
 
-    GreedyTsp< FullGraph::EdgeMap<double> >* tsp = new GreedyTsp< FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
+    lemon::GreedyTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::GreedyTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
 
     QList<GWSCoordinate> tsp_circular_route_nodes;
@@ -67,14 +64,14 @@ QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QL
 QList<GWSCoordinate> GWSTSPRouting::insertionTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
-    FullGraph::EdgeMap<double>* distance_matrix_weights = new FullGraph::EdgeMap<double>( *distance_matrix );
+    lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
 
     this->loadDistanceMatrix( distance_matrix , distance_matrix_weights , visit_coordinates );
 
-    InsertionTsp< FullGraph::EdgeMap<double> >* tsp = new InsertionTsp< FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
+    lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
     QList<GWSCoordinate> tsp_circular_route_nodes;
     foreach( FullGraph::Node n , tsp->tourNodes() ){
@@ -86,17 +83,17 @@ QList<GWSCoordinate> GWSTSPRouting::insertionTsp(GWSCoordinate start_coordinate,
 QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
-    FullGraph::EdgeMap<double>* distance_matrix_weights = new FullGraph::EdgeMap<double>( *distance_matrix );
+    lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
 
     this->loadDistanceMatrix( distance_matrix , distance_matrix_weights , visit_coordinates );
 
-    InsertionTsp< FullGraph::EdgeMap<double> >* tsp = new InsertionTsp< FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
+    lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
     QList<GWSCoordinate> tsp_circular_route_nodes;
-    foreach( FullGraph::Node n , tsp->tourNodes() ){
+    foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         //tsp_circular_route_nodes.append( this->node_to_original_node.value( this->graph_matrix_nodes.key( n ) ) );
     }
 }
@@ -104,14 +101,14 @@ QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(GWSCoordinate start_coordina
 QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
-    FullGraph::EdgeMap<double>* distance_matrix_weights = new FullGraph::EdgeMap<double>( *distance_matrix );
+    lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
 
     this->loadDistanceMatrix( distance_matrix , distance_matrix_weights , visit_coordinates );
 
-    InsertionTsp< FullGraph::EdgeMap<double> >* tsp = new InsertionTsp< FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
+    lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
     QList<GWSCoordinate> tsp_circular_route_nodes;
     foreach( FullGraph::Node n , tsp->tourNodes() ){
@@ -124,17 +121,21 @@ QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QLis
  PRIVATE
 **********************************************************************/
 
-void GWSTSPRouting::loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_coordinates ){
+void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_coordinates ){
+
+    if( this->transport_network_type.isEmpty() ){
+        return;
+    }
 
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QList< QSharedPointer <GWSGraphEdge> > > routes = this->dijkstra_routing->dijkstraShortestPaths( visit_coordinates.at(i) , visit_coordinates );
+        QList< QList< QSharedPointer <GWSGraphEdge> > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
         for(int j = 0; j < visit_coordinates.size(); j++ ){
 
-            FullGraph::Node from = distance_matrix->nodeFromId( i );
-            FullGraph::Node to = distance_matrix->nodeFromId( j );
-            FullGraph::Edge edge = distance_matrix->edge( from , to );
+            lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
+            lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
+            lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
             QList< QSharedPointer <GWSGraphEdge> > route = routes.at(j);
 

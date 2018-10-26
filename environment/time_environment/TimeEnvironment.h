@@ -53,6 +53,7 @@ private:
     GWSTimeEnvironment(GWSTimeEnvironment const&);
     ~GWSTimeEnvironment();
 
+    quint64 simulating_datetime_msecs;
     quint64 started_datetime_msecs;
 
     // Time speed

@@ -11,14 +11,11 @@ GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
 }
 
 GWSNetworkEnvironment::GWSNetworkEnvironment() : GWSEnvironment(){
-    //this->edges_index = new GWSQuadtree();
     qInfo() << "NetworkEnvironment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSNetworkEnvironment::~GWSNetworkEnvironment(){
-    qDeleteAll( this->network_graphs.values() );
-    this->edges_index->deleteLater();
 }
 
 /**********************************************************************
@@ -46,51 +43,100 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
     return this->agent_to_node.value( agent );
 }*/
 
-const QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdge(QSharedPointer<GWSAgent> agent) const{
+QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdge(QSharedPointer<GWSAgent> agent) const{
     if( agent.isNull() ){
         return Q_NULLPTR;
     }
     return this->agent_to_edge.value( agent );
 }
 
-const QSharedPointer<GWSAgent> GWSNetworkEnvironment::getAgent(QSharedPointer<GWSGraphEdge> edge) const{
+QSharedPointer<GWSAgent> GWSNetworkEnvironment::getAgent(QSharedPointer<GWSGraphEdge> edge) const{
     if( edge.isNull() ){
         return Q_NULLPTR;
     }
     return this->agent_to_edge.key( edge );
 }
 
-/*QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point, QString class_name) const{
-    return this->getNodeFromGraph<GWSGraphNode>( point , class_name );
+QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdge( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
+    QSharedPointer<GWSGraphEdge> edge = this->getNearestEdge( from , class_name );
+    if( edge && edge->getTo() == to ){
+        return edge;
+    }
+    return Q_NULLPTR;
 }
 
-template <class T> QSharedPointer<T> GWSNetworkEnvironment::getNodeFromGraph( GWSCoordinate point , QString class_name ) const{
-    if( !this->network_graphs.keys().contains( class_name ) ){
-        return 0;
+QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getNearestEdge( GWSCoordinate coor , QString class_name) const{
+    if( this->network_edges.keys().contains( class_name ) ){
+        return this->network_edges.value( class_name )->getNearestElement<GWSGraphEdge>( coor );
     }
-    return this->network_graphs.value( class_name )->findNode( point ).dynamicCast<T>();
-}*/
-
-QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getNearestEdgeFromGraph( GWSCoordinate coor, QString class_name) const{
-    if( !this->network_graphs.keys().contains( class_name ) ){
-        return 0;
-    }
-    return this->network_graphs.value( class_name )->findNearestEdge( coor );
+    return Q_NULLPTR;
 }
 
-QSharedPointer<GWSGraphEdge> GWSNetworkEnvironment::getEdgeFromGraph( GWSCoordinate from,  GWSCoordinate to, QString class_name) const{
-    if( !this->network_graphs.keys().contains( class_name ) ){
-        return 0;
+GWSCoordinate GWSNetworkEnvironment::getNearestNode( GWSCoordinate coor , QString class_name) const{
+    QSharedPointer<GWSGraphEdge> edge = this->getNearestEdge( coor , class_name );
+    if( !edge ){
+        return GWSCoordinate();
     }
-    return this->network_graphs.value( class_name )->findEdge( from , to );
+    GWSLengthUnit from_distance = coor.getDistance( edge->getFrom() );
+    GWSLengthUnit to_distance = coor.getDistance( edge->getTo() );
+    return from_distance < to_distance ? edge->getFrom() : edge->getTo();
 }
 
-const GWSGraph* GWSNetworkEnvironment::getGraph( QString class_name ) const{
-    if( !this->network_graphs.keys().contains( class_name ) ){
-        return 0;
+QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > GWSNetworkEnvironment::getNearestNodeAndPath(GWSCoordinate coor, QList<GWSCoordinate> get_nearest, QString class_name) const {
+    QList< QList< QSharedPointer<GWSGraphEdge> > > routes_to_all = this->getShortestPaths( coor , get_nearest , class_name );
+
+    Q_ASSERT( routes_to_all.size() == get_nearest.size() );
+
+    // Check which route is shortest
+    GWSLengthUnit shortest_length = GWSLengthUnit( 9999999999 );
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > nearest_node_and_route;
+    for(int i = 0 ; i < get_nearest.size() ; i++ ){
+
+        QList< QSharedPointer<GWSGraphEdge> > route = routes_to_all.at( i );
+        if( route.isEmpty() ){ continue; }
+
+        GWSLengthUnit l = GWSLengthUnit(0);
+        foreach( QSharedPointer<GWSGraphEdge> e , route ){
+            l = l + e->getLength();
+        }
+        if( l < shortest_length ){
+            shortest_length = l;
+            nearest_node_and_route = QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > >( get_nearest.at( i ) , route );
+        }
     }
-    return this->network_graphs.value( class_name );
+    return nearest_node_and_route;
 }
+
+QList<QSharedPointer<GWSGraphEdge> > GWSNetworkEnvironment::getShortestPath( GWSCoordinate from, GWSCoordinate to , QString class_name ) const{
+    if( this->network_routings.keys().contains( class_name ) ){
+        // Move given coordinates to real graph nodes
+        GWSCoordinate snapped_from_coor = this->getNearestNode( from , class_name );
+        GWSCoordinate snapped_to_coor = this->getNearestNode( to , class_name );
+        return this->network_routings.value( class_name )->getShortestPath( snapped_from_coor , snapped_to_coor );
+    }
+}
+
+QList<QList<QSharedPointer<GWSGraphEdge> > > GWSNetworkEnvironment::getShortestPath(QList< GWSCoordinate > ordered_coors , QString class_name ) const{
+    if( this->network_routings.keys().contains( class_name ) ){
+        QList< GWSCoordinate > snapped_ordered_coors;
+        foreach (GWSCoordinate c, ordered_coors) {
+            snapped_ordered_coors.append( this->getNearestNode( c , class_name ) );
+        }
+        return this->network_routings.value( class_name )->getShortestPath( snapped_ordered_coors );
+    }
+}
+
+QList<QList<QSharedPointer< GWSGraphEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
+    if( this->network_routings.keys().contains( class_name ) ){
+        GWSCoordinate snapped_from_coor = this->getNearestNode( from_one , class_name );
+        QList< GWSCoordinate > snapped_to_many_coors;
+        foreach (GWSCoordinate c, to_many) {
+            snapped_to_many_coors.append( this->getNearestNode( c , class_name ) );
+        }
+        return this->network_routings.value( class_name )->getShortestPaths( snapped_from_coor , snapped_to_many_coors );
+    }
+}
+
 
 /**********************************************************************
  SETTERS
@@ -118,27 +164,26 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
             GWSEnvironment::registerAgent( agent );
             QStringList classes = agent->getInheritanceFamily();
-            QList<QString> keys = this->network_graphs.keys();
+            QList<QString> keys = this->network_edges.keys();
 
-            foreach(QString c , classes){
+            foreach(QString family , classes){
 
                 // Insert new spatial graph with the agents class
-                if( !keys.contains( c ) ){
+                if( !keys.contains( family ) ){
 
                     this->mutex.lock();
-                    this->network_graphs.insert( c , new GWSGraph() );
+                    this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree( family + "-network-env-index" ) ) );
+                    this->network_routings.insert( family , QSharedPointer< GWSRouting >( new GWSRouting() ) );
                     this->mutex.unlock();
                 }
             }
 
-            foreach(QString c , classes){
+            foreach(QString family , classes){
 
                 // Add to spatial graph
-                if( !edge.isNull() ){
-                    this->network_graphs.value( c )->addEdge( edge );
-                    this->agent_to_edge.insert( agent , edge );
-                    //this->edges_index->upsert( edge , edge->getFrom() );
-                }
+                this->network_edges.value( family )->upsert( edge , edge->getFrom() );
+                this->network_routings.value( family )->upsert( edge );
+                this->agent_to_edge.insert( agent , edge );
             }
 
         } catch (std::exception &e){
@@ -156,13 +201,14 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
 
         GWSEnvironment::unregisterAgent( agent );
         QStringList classes = agent->getInheritanceFamily();
-        foreach(QString c , classes){
+
+        foreach(QString family , classes){
 
             // Remove from spatial graph
             QSharedPointer<GWSGraphEdge> edge = this->agent_to_edge.value( agent );
             if( !edge.isNull() ){
-                this->network_graphs.value( c )->removeEdge( edge );
-                //this->edges_index->remove( edge );
+                this->network_edges.value( family )->remove( edge );
+                this->network_routings.value( family )->remove( edge );
                 this->agent_to_edge.remove( agent );
             }
         }

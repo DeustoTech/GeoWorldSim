@@ -21,10 +21,18 @@ class GWSQuadtree : public QObject
     Q_OBJECT
 
 public:
-    GWSQuadtree();
+    GWSQuadtree( QString hash );
     ~GWSQuadtree();
 
     // GETTERS
+    template <class T = GWSObject> QList< QSharedPointer<T> > getElements(){
+        QList< QSharedPointer<T> > objects;
+        foreach( QSharedPointer<GWSObject> o, this->getElements() ) {
+            if( o ){ objects.append( o.dynamicCast<T>() ); }
+        }
+        return objects;
+    }
+    QList< QSharedPointer<GWSObject> > getElements();
     QSharedPointer<GWSGeometry> getGeometry( QString object_id );
 
     template <class T = GWSObject> QList< QSharedPointer<T> > getElements( GWSCoordinate coor ){
@@ -64,7 +72,7 @@ public:
     template <class T = GWSObject> QSharedPointer<T> getNearestElement( GWSCoordinate coor , unsigned int amount = 1 ){
         return this->getNearestElement( coor , amount ).dynamicCast<T>();
     }
-    QSharedPointer<GWSObject> getNearestElement( GWSCoordinate coor );
+    QSharedPointer<GWSObject> getNearestElement( GWSCoordinate coor , unsigned int amount = 1 );
 
     template <class T = GWSObject> QSharedPointer<T> getNearestElement( QSharedPointer<GWSGeometry> geometry , unsigned int amount = 1 ){
         return this->getNearestElement( geometry , amount ).dynamicCast<T>();
@@ -93,7 +101,7 @@ private:
     QMutex mutex;
     SpatialIndex::ISpatialIndex* inner_index = Q_NULLPTR;
     QMap< QString , SpatialIndex::id_type > inner_index_ids;
-    QMap< QString , SpatialIndex::Region* > inner_index_geometries;
+    QMap< QString , SpatialIndex::Region > inner_index_geometries;
     quint64 inner_index_last_id = 0;
 
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;

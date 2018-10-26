@@ -57,16 +57,3 @@ QList< QPair< GWSCoordinate , QString > > GenerateOrderedTSPSkill::generateOrder
         }
         return this->ordered_agents_to_visit_tsp_route_coord_id_array;
 }
-
-
-/**********************************************************************
- METHODS
-**********************************************************************/
-
-/*0void GenerateOrderedTSPSkill::move( GWSTimeUnit movement_duration ){
-
-    if( !this->ordered_agents_to_visit_tsp_route_coord_id_array ){
-        this->generateOrderedTSP();
-    }
-
-}*/

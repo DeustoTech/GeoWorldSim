@@ -37,6 +37,7 @@
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
@@ -111,7 +112,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                         );
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
-AgentGeneratorDatasource* ds = new AgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
 
 
 /* ----------------
@@ -127,7 +128,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 50 ; i++ ){
+for( int i = 0 ; i < 1 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -161,7 +162,7 @@ QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \
                                                                  .toLatin1()
                                                                  );
 
-AgentGeneratorDatasource* ds_container = new AgentGeneratorDatasource( container_json.object() , "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
+GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( container_json.object() , "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
 
 
 
@@ -191,8 +192,8 @@ pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueR
         QJsonObject agent_json;
         agent_json.insert( "geometry" , geo);
         agent_json.insert( "edge" , edge );
-        //QJsonArray family_array; family_array.append( "Road" );
-        //agent_json.insert( "@family" , family_array );
+        QJsonArray family_array; family_array.append( "Road" );
+        agent_json.insert( "@family" , family_array );
         agent_json.insert( "@type" , "GWSAgent" );
 
         QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -218,8 +219,8 @@ pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueR
         QJsonObject agent_json;
         agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
-        //QJsonArray family_array; family_array.append( "Road" );
-        //agent_json.insert( "@family" , family_array );
+        QJsonArray family_array; family_array.append( "Road" );
+        agent_json.insert( "@family" , family_array );
         agent_json.insert( "@type" , "GWSAgent" );
 
         QSharedPointer<GWSAgent> pedestrian = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -284,8 +285,8 @@ other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal 
         QJsonObject agent_json;
         agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
-        //QJsonArray family_array; family_array.append( "Road" );
-        //agent_json.insert( "@family" , family_array );
+        QJsonArray family_array; family_array.append( "Road" );
+        agent_json.insert( "@family" , family_array );
         agent_json.insert( "@type" , "GWSAgent" );
 
         QSharedPointer<GWSAgent> other = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -350,8 +351,8 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSig
         QJsonObject agent_json;
         agent_json.insert( "geometry" , geo );
         agent_json.insert( "edge" , edge );
-        //QJsonArray family_array; family_array.append( "Road" );
-        //agent_json.insert( "@family" , family_array );
+        QJsonArray family_array; family_array.append( "Road" );
+        agent_json.insert( "@family" , family_array );
         agent_json.insert( "@type" , "GWSAgent" );
 
         QSharedPointer<GWSAgent> footway = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
@@ -380,12 +381,26 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinis
 
 
     QTimer::singleShot( 10*1000 , [](){
+
+        GWSTimeEnvironment::globalInstance()->setDatetime( 1000 );
+
         foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
             a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
         }
 
         GWSExecutionEnvironment::globalInstance()->run();
     } );
+
+    GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::tickEndedSignal , [](int executed_tick){
+
+        qint64 dt = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+
+        if( dt > 120 * 1000 ){
+            qDebug() << executed_tick;
+            GWSApp::globalInstance()->exit(1);
+        }
+
+    });
 
 app->exec();
 

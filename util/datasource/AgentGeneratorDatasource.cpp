@@ -9,7 +9,7 @@
 #include "../../app/App.h"
 
 
-AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url)
+GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString url)
 {
 
     GWSDatasourceReader* agentReader = new GWSDatasourceReader( url );
@@ -29,7 +29,7 @@ AgentGeneratorDatasource::AgentGeneratorDatasource(QJsonObject json, QString url
 
 }
 
-QJsonObject AgentGeneratorDatasource::joinJSON(QJsonObject json_template, QJsonObject json_data){
+QJsonObject GWSAgentGeneratorDatasource::joinJSON(QJsonObject json_template, QJsonObject json_data){
 
     foreach ( QString key , json_data.keys() ) {
 

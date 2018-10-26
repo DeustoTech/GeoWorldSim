@@ -21,16 +21,6 @@ FindClosestBehaviour::FindClosestBehaviour() : GWSBehaviour(){
 
 }
 
-
-void FindClosestBehaviour::generateGraph(){
-
-    // Generate graph of all GWSAgents in the network environment
-    const GWSGraph* graph = GWSNetworkEnvironment::globalInstance()->getGraph( "GWSAgent" );
-
-    // Get all the Edges from the graph
-    this->routing_graph = new GWSDijkstraRouting( graph->getEdges() );
-}
-
 QStringList FindClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -42,38 +32,29 @@ QStringList FindClosestBehaviour::behave(){
         QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
         GWSCoordinate agent_coor = agent_geom->getCentroid();
 
-        // Set agent type to search:
-        QMap<QString , GWSCoordinate > agents_to_search_id_coord_array;
-        QList < GWSCoordinate > agents_to_search_coord_array;
+        // Set agent type to search
+        QList< QSharedPointer<GWSAgent> > all_agents_of_type = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() ) ;
+        QMap< GWSCoordinate , QSharedPointer<GWSAgent> > coor_to_agent;
 
-        QList<QSharedPointer<GWSAgent> > agents_to_search = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() ) ;
-        foreach ( QSharedPointer<GWSAgent> a, agents_to_search  ){
-
-             GWSCoordinate agents_to_search_coord = env->getGeometry( a )->getCentroid();
-             QString agents_to_search_id = a->getProperty("@id").toString();
-             agents_to_search_coord_array.append( agents_to_search_coord ) ;
-             agents_to_search_id_coord_array.insert( agents_to_search_id , agents_to_search_coord );
-
-         }
-
-        // Generate graph if non-existing:
-        if( !this->routing_graph ){
-            this->generateGraph();
+        foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
+             GWSCoordinate c = env->getGeometry( a )->getCentroid();
+             coor_to_agent.insert( c , a );
         }
 
-        // Obtain closest agent coordinates:
-        this->closest_coor = this->routing_graph->dijkstraNearestNode( agent_coor , agents_to_search_coord_array );
+        // Obtain routes to all agent coordinates
+        QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
+        QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
         // Extract and store its ID:
-        QString closest_id = agents_to_search_id_coord_array.key( this->closest_coor );
+        QSharedPointer<GWSAgent> closest_agent = coor_to_agent.value( closest_coor_and_route.first );
+
         QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString();
         if( save_closest_id_as.isEmpty() ){ save_closest_id_as = "closest_agent_id"; }
-        agent->setProperty( save_closest_id_as , closest_id );
+        agent->setProperty( save_closest_id_as , closest_agent->getId() );
 
 
         // Extract and store the route to it:
-        QList< QSharedPointer<GWSGraphEdge> > closest_route = this->routing_graph->dijkstraShortestPath( agent_coor , this->closest_coor );
-        //agent->setProperty(STORE_CLOSEST_ROUTE_AS , closest_route );
+        QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
 
         // Extract and store the distance of the route:
         GWSLengthUnit closest_route_distance = 0;

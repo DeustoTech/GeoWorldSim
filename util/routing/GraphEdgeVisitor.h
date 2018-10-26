@@ -1,5 +1,5 @@
-#ifndef GWSGRAPHEDGEARCMAP_H
-#define GWSGRAPHEDGEARCMAP_H
+#ifndef GWSGRAPHEDGEVISITOR_H
+#define GWSGRAPHEDGEVISITOR_H
 
 #include <QObject>
 #include <QDebug>
@@ -10,18 +10,15 @@
 #include <lemon/maps.h>
 
 #include "../../util/graph/GraphEdge.h"
-#include "../../util/routing/Routing.h"
 
 QT_FORWARD_DECLARE_CLASS(GWSRouting)
 
-using namespace lemon;
-
-class GWSGraphEdgeArcMap : public ListDigraph::ArcMap<double>
+class GWSGraphEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
 public:
 
-    GWSGraphEdgeArcMap( GWSRouting* parent );
+    GWSGraphEdgeVisitor( lemon::ListDigraph* routing_graph , GWSRouting* parent );
 
     // GETTERS
 
@@ -36,4 +33,4 @@ private:
 
 };
 
-#endif // GWSGRAPHEDGEARCMAP_H
+#endif // GWSGRAPHEDGEVISITOR_H

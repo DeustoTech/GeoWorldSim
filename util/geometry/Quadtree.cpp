@@ -2,26 +2,24 @@
 
 #include <spatialindex/Region.h>
 
-GWSQuadtree::GWSQuadtree() : QObject(){
-    std::string filename = QString("%1-%2-index").arg( qrand() ).arg( qrand() ).toStdString();
+GWSQuadtree::GWSQuadtree( QString hash ) : QObject(){
+    std::string filename = hash.toStdString();
     SpatialIndex::IStorageManager* storage = StorageManager::createNewDiskStorageManager( filename , 4096 );
     //SpatialIndex::IStorageManager* storage = StorageManager::createNewMemoryStorageManager();
     SpatialIndex::id_type index_identifier;
-    this->inner_index = SpatialIndex::RTree::createNewRTree( *storage , 0.7 , 1000 , 1000 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
+    this->inner_index = SpatialIndex::RTree::createNewRTree( *storage , 0.7 , 100 , 100 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
     if( !this->inner_index->isIndexValid() ){
         qWarning() << "ERROR CREATING INDEX";
     }
 }
 
 GWSQuadtree::~GWSQuadtree(){
-    IStatistics* stat;
-    this->inner_index->getStatistics( &stat );
-    foreach (QString object_id , this->id_to_objects.keys() ) {
-        SpatialIndex::Region* region = this->inner_index_geometries.value( object_id );
-        this->inner_index->deleteData( *region , this->inner_index_ids.value( object_id ) );
-        delete region;
-    }
+    this->inner_index_geometries.clear();
+    this->inner_index_ids.clear();
+    this->id_to_objects.clear();
+    this->id_to_geometries.clear();
 
+    delete this->inner_index;
 }
 
 /*QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements( GWSCoordinate coor ) {
@@ -48,6 +46,10 @@ template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements(double mi
 
 }*/
 
+QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(){
+    return this->id_to_objects.values();
+}
+
 QSharedPointer<GWSGeometry> GWSQuadtree::getGeometry( QString object_id ){
     return this->id_to_geometries.value( object_id , Q_NULLPTR );
 }
@@ -57,14 +59,13 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double 
 
     double min_point[2] = {minX , minY};
     double max_point[2] = {maxX , maxY};
-    SpatialIndex::Region *region = new SpatialIndex::Region( min_point , max_point , 2 );
+    SpatialIndex::Region region = SpatialIndex::Region( min_point , max_point , 2 );
 
     GWSQuadtreeVisitor visitor;
-    this->inner_index->intersectsWithQuery( *region , visitor );
+    this->inner_index->intersectsWithQuery( region , visitor );
     foreach (SpatialIndex::id_type v , visitor.visited ) {
         objects.append( this->id_to_objects.value( this->inner_index_ids.key( v ) ) );
     }
-    delete region;
     return objects;
 }
 
@@ -88,8 +89,8 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getNearestElements(GWSCoordinate
     return objects;
 }
 
-QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor){
-    QList< QSharedPointer<GWSObject> > objects = this->getNearestElements( coor , 1 );
+QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor , unsigned int amount ){
+    QList< QSharedPointer<GWSObject> > objects = this->getNearestElements( coor , amount );
     return ( objects.isEmpty() ? Q_NULLPTR : objects.at(0) );
 }
 
@@ -134,11 +135,10 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
         // Check if already here
         SpatialIndex::id_type id = this->inner_index_ids.value( object_id , -1 );
-        SpatialIndex::Region *region;
+        SpatialIndex::Region region;
         if( id >= 0 ){
             region = this->inner_index_geometries.value( object_id );
-            this->inner_index->deleteData( *region , id );
-            delete region;
+            this->inner_index->deleteData( region , id );
         } else {
             // Create libspatialindex id
             id = ++this->inner_index_last_id;
@@ -147,10 +147,10 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
         // Create libspatialindex geometry
         double min_point[2] = {geom->getGeometryMinX() , geom->getGeometryMinY()};
         double max_point[2] = {geom->getGeometryMaxX() , geom->getGeometryMaxY()};
-        region = new SpatialIndex::Region( min_point , max_point , 2 );
+        region = SpatialIndex::Region( min_point , max_point , 2 );
 
         // Insert
-        this->inner_index->insertData( 0 , 0 , *region , id );
+        this->inner_index->insertData( 0 , 0 , region , id );
         this->inner_index_ids.insert( object_id , id );
         this->inner_index_geometries.insert( object_id , region );
 
@@ -174,12 +174,11 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
     }
 
     // Remove from libspatialindex
-    SpatialIndex::Region *region = this->inner_index_geometries.value( object_id );
+    SpatialIndex::Region region = this->inner_index_geometries.value( object_id );
     SpatialIndex::id_type id = this->inner_index_ids.value( object_id );
-    this->inner_index->deleteData( *region , id );
+    this->inner_index->deleteData( region , id );
     this->inner_index_ids.remove( object_id );
     this->inner_index_geometries.remove( object_id );
-    delete region;
 
     this->id_to_objects.remove( object_id );
     this->id_to_geometries.remove( object_id );

@@ -1,39 +1,41 @@
-#ifndef GSSTSPROUTING_H
-#define GSSTSPROUTING_H
+#ifndef GWSTSPROUTING_H
+#define GWSTSPROUTING_H
 
-#include "../../util/routing/Routing.h"
-#include "../../util/routing/DijkstraRouting.h"
+#include <QObject>
 
 #include <lemon/core.h>
 #include <lemon/list_graph.h>
 #include <lemon/full_graph.h>
 
-class GWSTSPRouting : public GWSRouting
+#include "../../util/graph/GraphEdge.h"
+#include "../../util/geometry/Coordinate.h"
+
+class GWSTSPRouting : public QObject
 {
     Q_OBJECT
 
 public:
 
-    GWSTSPRouting( QList< QSharedPointer<GWSGraphEdge> > edges );
+    GWSTSPRouting( QString transport_network_type );
     ~GWSTSPRouting();
 
     // METHODS
-    QList<GWSCoordinate> nearestNeighborTsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);
-    QList<GWSCoordinate> greedyTsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);
-    QList<GWSCoordinate> insertionTsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);
-    QList<GWSCoordinate> christofidesTsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);
-    QList<GWSCoordinate> opt2Tsp(GWSCoordinate start_node, QList<GWSCoordinate> visit_nodes, GWSCoordinate end_node);
-    QList<GWSCoordinate> orderCircularTsp(GWSCoordinate start_node, GWSCoordinate end_node, QList<GWSCoordinate> tsp_circular_nodes);
+    QList<GWSCoordinate> nearestNeighborTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
+    QList<GWSCoordinate> greedyTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
+    QList<GWSCoordinate> insertionTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
+    QList<GWSCoordinate> christofidesTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
+    QList<GWSCoordinate> opt2Tsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
+    QList<GWSCoordinate> orderCircularTsp(GWSCoordinate start, GWSCoordinate end, QList<GWSCoordinate> tsp_circular_nodes);
 
 private:
 
-    GWSDijkstraRouting* dijkstra_routing = 0;
+    QString transport_network_type;
 
     // Map to relate graph and distance matrix nodes
-    QMap<ListDigraph::Node , FullGraph::Node> graph_matrix_nodes;
+    QMap<lemon::ListDigraph::Node , lemon::FullGraph::Node> graph_matrix_nodes;
 
-    void loadDistanceMatrix( FullGraph* distance_matrix , FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_nodes );
+    void loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_nodes );
 
 };
 
-#endif // GSSTSPROUTING_H
+#endif // GWSTSPROUTING_H

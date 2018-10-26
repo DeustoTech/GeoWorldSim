@@ -12,7 +12,6 @@ public:
     Q_INVOKABLE explicit MoveThroughRouteBehaviour();
     ~MoveThroughRouteBehaviour();
 
-
     // PROPERTIES
     static QString MAX_SPEED_PROP;
     static QString X_VALUE;

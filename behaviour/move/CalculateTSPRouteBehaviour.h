@@ -25,8 +25,6 @@ public:
 protected slots:
     virtual QStringList behave();
 
-
-
 };
 
 #endif // MOVEONPARTICULARWASTETSPROUTE_H

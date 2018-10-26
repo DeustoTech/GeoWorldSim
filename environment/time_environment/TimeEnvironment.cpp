@@ -12,7 +12,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , started_datetime_msecs( QDateTime::currentDateTime().toMSecsSinceEpoch() ) {
+GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
     qInfo() << "TimeEnvironment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
@@ -48,7 +48,7 @@ QJsonObject GWSTimeEnvironment::serialize(){
 qint64 GWSTimeEnvironment::getCurrentDateTime() const{
     // Get elapsed time difference
     quint64 elapsed_msecs = ( QDateTime::currentMSecsSinceEpoch() - this->started_datetime_msecs ) * this->time_speed;
-    return this->started_datetime_msecs + elapsed_msecs;
+    return this->simulating_datetime_msecs + elapsed_msecs;
 }
 
 double GWSTimeEnvironment::getTimeSpeed() const{
@@ -65,7 +65,7 @@ qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent 
 
 void GWSTimeEnvironment::setDatetime(quint64 datetime){
     if( datetime >= 0 ){
-        this->started_datetime_msecs = datetime;
+        this->simulating_datetime_msecs = datetime;
     } else {
         qWarning() << QString("Invalid datetime : %1").arg( datetime );
     }

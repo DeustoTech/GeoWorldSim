@@ -11,8 +11,6 @@ class FindClosestBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit FindClosestBehaviour();
 
-    virtual void generateGraph();
-
     // PROPERTIES
     static QString CLOSEST_AGENT_TYPE;
     static QString TRANSPORT_NETWORK_TYPE;
@@ -25,8 +23,7 @@ public:
 
 protected:
 
-    GWSDijkstraRouting* routing_graph = Q_NULLPTR;
-    GWSCoordinate closest_coor;
+    GWSCoordinate closest_coor_and_route;
     QPair< GWSCoordinate, QString > closest_coor_id;
 
 protected slots:

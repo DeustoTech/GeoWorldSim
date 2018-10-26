@@ -1,8 +1,8 @@
-#include "GraphEdgeArcMap.h"
+#include "GraphEdgeVisitor.h"
 
 #include "../../util/routing/Routing.h"
 
-GWSGraphEdgeArcMap::GWSGraphEdgeArcMap(GWSRouting *parent) : ListDigraph::ArcMap<double>( *parent->routing_graph ){
+GWSGraphEdgeVisitor::GWSGraphEdgeVisitor( lemon::ListDigraph* routing_graph , GWSRouting *parent) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){
     this->parent = parent;
 }
 
@@ -18,7 +18,7 @@ GWSGraphEdgeArcMap::GWSGraphEdgeArcMap(GWSRouting *parent) : ListDigraph::ArcMap
  OPERATORS
 **********************************************************************/
 
-double GWSGraphEdgeArcMap::operator [](Key arc) const{
+double GWSGraphEdgeVisitor::operator [](Key arc) const {
 
     QSharedPointer<GWSGraphEdge> edge = this->parent->arc_to_edges.value( arc );
     if( !edge ){ return Q_INFINITY; }
