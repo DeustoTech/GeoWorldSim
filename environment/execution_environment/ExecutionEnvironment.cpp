@@ -109,8 +109,8 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
         // Balance between threads. Only QObjects without parent can be moved. Children must stay in parents thread
         // CAUTION! Very slow operation
         qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        //agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
-        //if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
+        agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
+        if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
 
         // Run agent
         agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
@@ -212,8 +212,8 @@ void GWSExecutionEnvironment::behave(){
 
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->incrementBusy(); // Increment here, Decrement after agent Tick()
-                //agent->timer->singleShot( 10 + (qrand() % 100) , Qt::VeryCoarseTimer , agent.data() , &GWSAgent::tick );
-                agent->tick();
+                agent->timer->singleShot( 10 + (qrand() % 100) , Qt::VeryCoarseTimer , agent.data() , &GWSAgent::tick );
+                //agent->tick();
 
                 ticked_agents++;
             }

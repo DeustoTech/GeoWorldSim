@@ -4,10 +4,11 @@
 
 GWSQuadtree::GWSQuadtree( QString hash ) : QObject(){
     std::string filename = hash.toStdString();
-    SpatialIndex::IStorageManager* storage = StorageManager::createNewDiskStorageManager( filename , 4096 );
+    SpatialIndex::IStorageManager* storage = StorageManager::createNewDiskStorageManager( filename , 40960 );
+    StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*storage, 10, false);
     //SpatialIndex::IStorageManager* storage = StorageManager::createNewMemoryStorageManager();
     SpatialIndex::id_type index_identifier;
-    this->inner_index = SpatialIndex::RTree::createNewRTree( *storage , 0.7 , 100 , 100 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
+    this->inner_index = SpatialIndex::RTree::createNewRTree( *file , 0.5 , 100 , 100 , 2 , SpatialIndex::RTree::RV_RSTAR, index_identifier );
     if( !this->inner_index->isIndexValid() ){
         qWarning() << "ERROR CREATING INDEX";
     }
@@ -22,29 +23,7 @@ GWSQuadtree::~GWSQuadtree(){
     delete this->inner_index;
 }
 
-/*QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements( GWSCoordinate coor ) {
-    return this->getElements<GWSObject>( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
-}
 
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( GWSCoordinate coor ) {
-
-}
-
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements( QSharedPointer<GWSGeometry> geom ) {
-    QList< QSharedPointer<T> > intersecting_agents;
-    foreach( QSharedPointer<GWSObject> o , this->getElements<GWSObject>( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() ) ){
-        QSharedPointer<GWSGeometry> o_geom = this->id_to_geometries.value( o->getId() );
-        if( geom->intersects( o_geom ) ){
-            intersecting_agents.append( o.dynamicCast<T>() );
-        }
-    }
-    return intersecting_agents;
-}
-
-
-template <class T> QList< QSharedPointer<T> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
-
-}*/
 
 QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(){
     return this->id_to_objects.values();
@@ -61,11 +40,16 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double 
     double max_point[2] = {maxX , maxY};
     SpatialIndex::Region region = SpatialIndex::Region( min_point , max_point , 2 );
 
+    this->mutex.lock();
+
     GWSQuadtreeVisitor visitor;
     this->inner_index->intersectsWithQuery( region , visitor );
     foreach (SpatialIndex::id_type v , visitor.visited ) {
         objects.append( this->id_to_objects.value( this->inner_index_ids.key( v ) ) );
     }
+
+    this->mutex.unlock();
+
     return objects;
 }
 
@@ -75,9 +59,7 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getNearestElements(GWSCoordinate
     double p[2] = {coor.getX() , coor.getY()};
     SpatialIndex::Point point = SpatialIndex::Point( p , 2 );
 
-    if( !this->inner_index->isIndexValid() ){
-        qWarning() << "ERROR CREATING INDEX";
-    }
+    this->mutex.lock();
 
     GWSQuadtreeVisitor visitor;
 
@@ -85,6 +67,8 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getNearestElements(GWSCoordinate
     foreach (SpatialIndex::id_type v , visitor.visited ) {
         objects.append( this->id_to_objects.value( this->inner_index_ids.key( v ) ) );
     }
+
+    this->mutex.unlock();
 
     return objects;
 }

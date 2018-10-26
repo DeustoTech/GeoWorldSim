@@ -106,11 +106,7 @@ QList<QList<QSharedPointer< GWSGraphEdge> > > GWSRouting::getShortestPaths( GWSC
             continue;
         }
 
-        if( !this->dijkstra_algorithm->run( start , end ) ){
-            qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_one.toString() ).arg( to_coor.toString() );
-            result_routes.append( route );
-            continue;
-        }
+        this->mutex.lock();
 
         // Get route
         lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
@@ -118,6 +114,8 @@ QList<QList<QSharedPointer< GWSGraphEdge> > > GWSRouting::getShortestPaths( GWSC
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
             route.append( this->arc_to_edges.value( arc ) );
         }
+
+        this->mutex.unlock();
 
         result_routes.append( route );
     }

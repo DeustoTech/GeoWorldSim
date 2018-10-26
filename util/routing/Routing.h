@@ -1,6 +1,8 @@
 #ifndef GWSROUTING_H
 #define GWSROUTING_H
 
+#include <QMutex>
+
 #include <lemon/core.h>
 #include <lemon/list_graph.h>
 #include <lemon/dijkstra.h>
@@ -27,6 +29,8 @@ public:
     void remove( QSharedPointer<GWSGraphEdge> edge );
 
 protected:
+
+    QMutex mutex;
 
     // Used to create nodes and arcs
     lemon::ListDigraph* routing_graph = Q_NULLPTR;

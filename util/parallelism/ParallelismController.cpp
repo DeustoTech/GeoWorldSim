@@ -33,6 +33,9 @@ GWSParallelismController::GWSParallelismController() : QObject(){
 }
 
 GWSParallelismController::~GWSParallelismController(){
+    foreach (QThread* t , this->available_threads) {
+        t->exit();
+    }
     qDeleteAll( this->available_threads );
 }
 
