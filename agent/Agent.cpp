@@ -134,9 +134,7 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );
 
     // GEOMETRY
-    QFuture< QSharedPointer<GWSGeometry> > f_geom = run( GWSPhysicalEnvironment::globalInstance() , &GWSPhysicalEnvironment::getGeometry , (QSharedPointer<GWSAgent>)this->getSharedPointer() );
-    f_geom.waitForFinished();
-    const QSharedPointer<GWSGeometry> geom = f_geom.result();
+    QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
