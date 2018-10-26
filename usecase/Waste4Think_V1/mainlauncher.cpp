@@ -49,8 +49,6 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
-#include "../../util/routing/TSPRouting.h"
-//#include "../../util/grid/Grid.h"
 
 #include <time.h>
 #include <iostream>
