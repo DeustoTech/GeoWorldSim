@@ -72,11 +72,8 @@ HEADERS += \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/GraphEdge.h \
-    #../../util/graph/Graph.h \
-    #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
-    #../../util/grid/NumberGrid.h \
     ../../util/grid/AgentGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
@@ -86,8 +83,6 @@ HEADERS += \
     ../../environment/EnvironmentsGroup.h \
     ../../environment/agent_environment/AgentEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
-    #../../environment/social_environment/SocialEnvironment.h \
-    #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \

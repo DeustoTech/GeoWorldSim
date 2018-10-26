@@ -1,5 +1,4 @@
 #include "FindClosestBehaviour.h"
-#include "../../util/routing/DijkstraRouting.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"

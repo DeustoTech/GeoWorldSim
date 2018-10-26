@@ -2,7 +2,6 @@
 #define FINDCLOSESTBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
-#include "../../util/routing/DijkstraRouting.h"
 
 class FindClosestBehaviour : public GWSBehaviour
 {

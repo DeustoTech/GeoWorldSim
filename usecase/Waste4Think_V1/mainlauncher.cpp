@@ -48,8 +48,6 @@
 #include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
-#include "../../util/graph/Graph.h"
-#include "../../util/routing/DijkstraRouting.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/routing/TSPRouting.h"
 //#include "../../util/grid/Grid.h"
