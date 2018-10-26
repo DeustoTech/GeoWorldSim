@@ -99,13 +99,14 @@ protected:
 private:
 
     QMutex mutex;
-    SpatialIndex::ISpatialIndex* inner_index = Q_NULLPTR;
-    QMap< QString , SpatialIndex::id_type > inner_index_ids;
-    QMap< QString , SpatialIndex::Region > inner_index_geometries;
-    quint64 inner_index_last_id = 0;
+    //SpatialIndex::ISpatialIndex* inner_index = Q_NULLPTR;
+    //QMap< QString , SpatialIndex::id_type > inner_index_ids;
+    //QMap< QString , SpatialIndex::Region > inner_index_geometries;
+    //quint64 inner_index_last_id = 0;
 
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
-    QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
+    QMap< QString , GWSCoordinate > id_to_coordinates;
+    QMap< QString , QMap< QString, QStringList > > geom_index;
 
 };
 
