@@ -38,21 +38,29 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
         y_value = agent->getProperty( y_property_name );
     }
 
-    // Set the geometry of the agent through the TransferMove method within the physical environment:
-    GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate  destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
+    GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
 
-    // Displacement
-    double x_distance = destination_coor.getX() - current_coor.getX() ;
-    double y_distance = destination_coor.getY() - current_coor.getY() ;
+    if( agent_geom.isNull() ){
 
-    // Set the agents position
-    GWSCoordinate apply_movement = GWSCoordinate( x_distance , y_distance );
-    GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+        GWSPhysicalEnvironment::globalInstance()->transformMove( agent , destination_coor );
 
-    QSharedPointer<GWSGeometry> new_agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    } else {
 
-    //qDebug() << new_agent_geom->getCentroid().toString();
+        // Set the geometry of the agent through the TransferMove method within the physical environment:
+        GWSCoordinate current_coor = agent_geom->getCentroid();
+
+
+        // Displacement
+        double x_distance = destination_coor.getX() - current_coor.getX() ;
+        double y_distance = destination_coor.getY() - current_coor.getY() ;
+
+        // Set the agents position
+        GWSCoordinate apply_movement = GWSCoordinate( x_distance , y_distance );
+        GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+
+        //qDebug() << new_agent_geom->getCentroid().toString();
+
+    }
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 

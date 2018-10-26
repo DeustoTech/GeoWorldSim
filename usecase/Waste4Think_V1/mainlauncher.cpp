@@ -124,7 +124,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 10 ; i++ ){
+for( int i = 0 ; i < 1 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -391,7 +391,7 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinis
 
         qint64 dt = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
 
-        if( dt > 120 * 1000 ){
+        if( dt > 300 * 1000 ){
             qDebug() << executed_tick;
             GWSApp::globalInstance()->exit(1);
         }

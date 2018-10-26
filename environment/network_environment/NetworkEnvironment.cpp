@@ -172,7 +172,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
                 if( !keys.contains( family ) ){
 
                     this->mutex.lock();
-                    this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree( family + "-network-env-index" ) ) );
+                    this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree() ) );
                     this->network_routings.insert( family , QSharedPointer< GWSRouting >( new GWSRouting() ) );
                     this->mutex.unlock();
                 }
