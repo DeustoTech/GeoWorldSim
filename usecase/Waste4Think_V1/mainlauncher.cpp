@@ -13,6 +13,7 @@
 #include "ContainerAgent.h"
 #include "HumanAgent.h"
 #include "TruckAgent.h"
+#include "RecyclingPlantAgent.h"
 
 
 // Skills
@@ -33,6 +34,7 @@
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
+#include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -71,6 +73,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( RecyclingPlantAgent::staticMetaObject);
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
@@ -84,6 +87,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GatherAgentPropertyBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
 
 
     // Init random numbers
@@ -99,9 +103,9 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                         "\"@behaviours\": [ { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
                                                                             "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"WASTE\"] }, "
                                                                             "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": %1, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
-                                                                            "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": %1,  \"nexts\" : [\"FIND\"] }, "
+                                                                            "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": 1,  \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
-                                                                            "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] }, "
+                                                                            "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"HISTORY\"] } "
                                                         "] } ").arg( 60 + qrand() % 60 )
                                                         .toLatin1()
@@ -124,7 +128,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 2 ; i++ ){
+for( int i = 0 ; i < 1 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -133,12 +137,15 @@ for( int i = 0 ; i < 2 ; i++ ){
                                                                                        "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"TSP\"] }, "
                                                                                        "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\", \"nexts\" : [\"FOLLOW_TSP\"] } , "
                                                                                        "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, \"store_closest_id_as\": \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\", \"nexts\" : [\"MOVE_STAGES\"] } ,"
-                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\", \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
+                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 70 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\", \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
                                                                                        "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"GATHER\" ] }, "
-                                                                                       "{ \"@type\": \"GatherAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"GATHER\", \"gather_property\": \"waste\", \"emitting_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
+                                                                                       "{ \"@type\": \"GatherAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"GATHER\", \"gather_property\": \"waste\", \"emitting_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"CHECK_WASTE\"] } ,"
+                                                                                       "{ \"@type\": \"CheckPropertyValueBehaviour\", \"duration\": 1, \"@id\": \"CHECK_WASTE\", \"property_to_compare\": \"<waste>\", \"threshold_value\": \"10000\" , \"nexts_if_true\" : [\"MOVE_PLANT\"] , \"nexts_if_false\" : [\"FOLLOW_TSP\"] } ,"
+                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_PLANT\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": %1, \"y_value\": %2 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"TRANSFER_PLANT\"] , \"nexts_if_not_arrived\" : [\"MOVE_PLANT\"] } , "
+                                                                                       "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_PLANT\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"RecyclingPlant\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
                                                                                        " ] } ")
-                                                   .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
-                                                   .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
+                                                   .arg( -2.8638 )
+                                                   .arg( 43.2871 )
                                                    .toLatin1()
                                                     );
 
@@ -146,6 +153,23 @@ for( int i = 0 ; i < 2 ; i++ ){
 
 
 }
+
+/* ----------------------
+ * RecyclingPlant Agents
+ * ----------------------*/
+
+QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Black\" ,  "
+                                                                 "\"geometry\" : { \"@type\" : \"GWSGeometry\" ,  \"type\" :  \"Point\" , \"coordinates\" : [ %1 , %2 , 0 ] }  , "
+                                                                 "\"@family\": [ \"GWSAgent\" ]  } ")
+                                                               .arg( -2.8638 )
+                                                               .arg( 43.2871 )
+                                                               .toLatin1()
+                                                                 );
+QSharedPointer<GWSAgent> plant = GWSObjectFactory::globalInstance()->fromJSON( jsonPlant.object() ).dynamicCast<GWSAgent>();
+qDebug() << GWSPhysicalEnvironment::globalInstance()->getGeometry( plant )->getCentroid().toString();
+
+emit GWSApp::globalInstance()->sendAgentToSocketSignal( plant->serialize() );
+
 /* ----------------
  * Container Agents
  * ----------------*/
@@ -391,10 +415,10 @@ footway_reader->connect( footway_reader , &GWSDatasourceReader::dataReadingFinis
 
         qint64 dt = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
 
-        if( dt > 300 * 1000 ){
+       /* if( dt > 300 * 1000 ){
             qDebug() << executed_tick;
             GWSApp::globalInstance()->exit(1);
-        }
+        }*/
 
     });
 

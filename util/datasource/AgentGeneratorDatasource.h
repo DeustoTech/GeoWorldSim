@@ -8,7 +8,7 @@ class GWSAgentGeneratorDatasource : public QObject
 {
 
 public:
-    GWSAgentGeneratorDatasource( QJsonObject json, QString url , int amount = 999999999999999 );
+    GWSAgentGeneratorDatasource( QJsonObject json, QString url , int amount = 999 );
 
 private:
     QJsonObject joinJSON( QJsonObject json_template , QJsonObject json_data );
