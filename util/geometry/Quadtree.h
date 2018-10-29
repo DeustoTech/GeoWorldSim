@@ -67,7 +67,7 @@ public:
 
 protected:
 
-    QString createHash( double value , int decimal_amount );
+    int createHash( double value , int decimal_amount );
 
 private:
 
@@ -75,8 +75,9 @@ private:
 
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
-    QMap< unsigned int , QMap< QString , QMap< QString, QStringList* >* >* > geom_index_layers;
-    unsigned int layer_amount = 7;
+    QMap< unsigned int , QMap< int , QMap< int , QStringList* >* >* > geom_index_layers;
+    unsigned int layer_amount = 5;
+    QList< GWSCoordinate > fast_compare_if_layers_created;
 
 };
 

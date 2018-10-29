@@ -24,46 +24,42 @@ QStringList FindClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    if ( agent->getProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() ).isNull() ){
+    // Use future to allo multithreading
+    GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
+    QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
+    GWSCoordinate agent_coor = agent_geom->getCentroid();
 
-        // Use future to allo multithreading
-        GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
-        QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
-        GWSCoordinate agent_coor = agent_geom->getCentroid();
+    // Set agent type to search
+    QList< QSharedPointer<GWSAgent> > all_agents_of_type = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() );
+    QMap< GWSCoordinate , QString > coor_to_agent;
 
-        // Set agent type to search
-        QList< QSharedPointer<GWSAgent> > all_agents_of_type = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( CLOSEST_AGENT_TYPE ).toString() ) ;
-        QMap< GWSCoordinate , QSharedPointer<GWSAgent> > coor_to_agent;
-
-        foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
-             GWSCoordinate c = env->getGeometry( a )->getCentroid();
-             coor_to_agent.insert( c , a );
-        }
-
-        // Obtain routes to all agent coordinates
-        QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-        QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
-
-        // Extract and store its ID:
-        QSharedPointer<GWSAgent> closest_agent = coor_to_agent.value( closest_coor_and_route.first );
-
-        QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString();
-        if( save_closest_id_as.isEmpty() ){ save_closest_id_as = "closest_agent_id"; }
-        agent->setProperty( save_closest_id_as , closest_agent->getId() );
-
-
-        // Extract and store the route to it:
-        QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
-
-        // Extract and store the distance of the route:
-        GWSLengthUnit closest_route_distance = 0;
-        foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
-            closest_route_distance = closest_route_distance + edge->getLength();
-        }
-        agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
-
-
+    foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
+         QSharedPointer<GWSGeometry> geom = env->getGeometry( a );
+         if( geom ){
+            coor_to_agent.insert( geom->getCentroid() , a->getId() );
+         }
     }
+
+    // Obtain routes to all agent coordinates
+    QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
+
+    // Extract and store its ID:
+    QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
+
+    QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString();
+    if( save_closest_id_as.isEmpty() ){ save_closest_id_as = "closest_agent_id"; }
+    agent->setProperty( save_closest_id_as , closest_agent_id );
+
+    // Extract and store the route to it:
+    QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
+
+    // Extract and store the distance of the route:
+    GWSLengthUnit closest_route_distance = 0;
+    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
+        closest_route_distance = closest_route_distance + edge->getLength();
+    }
+    agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
 
     // Set next behaviours:
     QStringList nexts = this->getProperty( NEXTS ).toStringList();

@@ -11,14 +11,11 @@
 #include <QPointer>
 #include <QImage>
 #include <QMutex>
-#include <QTimer>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QFuture>
 
 #include "./../object/Object.h"
-#include "./../../util/geometry/Geometry.h"
-//#include "utils/geometry/Coordinate.h"
 
 #include "./../util/units/Units.h"
 #include "./../util/storage/ObjectStorage.h"
@@ -121,13 +118,6 @@ protected:
     mutable QMutex mutex;
 
 private:
-
-    /**
-     * @brief timer
-     * Each running agent MUST have its timer, to schedule its slots.
-     * It is not good to singleshot many slots in one timer, so each agent will have its own
-     */
-    QTimer* timer = Q_NULLPTR;
 
     int busy_counter = 0;
 };

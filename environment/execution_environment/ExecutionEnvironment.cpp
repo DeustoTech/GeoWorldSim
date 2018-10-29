@@ -81,44 +81,18 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
         return;
     }
 
-    agent->incrementBusy();
-
-    // Create agent's own timer to schedule its slots
-    if( agent->timer ){ agent->timer->deleteLater(); }
-    agent->timer = new QTimer( agent.data() ); // Set its parent to the agent, Really improves speed
-    agent->timer->setSingleShot( true ); // Set single shot, really improves speed
-
     if( !agent || agent->deleted ){ return; }
+
+    agent->incrementBusy();
 
     // Store as running
     GWSEnvironment::registerAgent( agent );
     this->running_agents->add( agent );
 
-    // Calculate when to start the agent according to its next_tick_datetime
-    qint64 msecs = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) - GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
-    if( msecs < 0 ){
-        msecs = 0;
-    }
-
-    // Balance agents between threads
-    // Non blocking method (if next_tick_datetime is invalid, msecs will be 1000 and it will be run instantly)
-    agent->timer->singleShot( msecs / GWSTimeEnvironment::globalInstance()->getTimeSpeed() , Qt::CoarseTimer , [this , agent](){
-
-        if( !agent || agent->deleted ){ return; }
-
-        // Balance between threads. Only QObjects without parent can be moved. Children must stay in parents thread
-        // CAUTION! Very slow operation
-        qDebug() << QString("Moving agent %1 %2 to a parallel thread").arg( agent->metaObject()->className() ).arg( agent->getId() );
-        agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
-        if( agent->timer ){ agent->timer->moveToThread( agent->thread() ); }
-
-        // Run agent
-        agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
-        agent->decrementBusy();
-        emit agent->agentStartedSignal();
-
-        qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
-    });
+    agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
+    agent->decrementBusy();
+    emit agent->agentStartedSignal();
+    qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
 
 void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
@@ -136,12 +110,6 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
 
     // Stop agent
     qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
-
-    // Delete its timer to schedule slots
-    if( agent->timer ){
-        agent->timer->deleteLater();
-        agent->timer = Q_NULLPTR;
-    }
 
     agent->decrementBusy();
     emit agent->agentEndedSignal();
@@ -199,6 +167,7 @@ void GWSExecutionEnvironment::behave(){
     if( agents_to_tick ){
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
+        QList< QFuture<void> > async_ticks;
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
 
             qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
@@ -212,7 +181,7 @@ void GWSExecutionEnvironment::behave(){
 
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->incrementBusy(); // Increment here, Decrement after agent Tick()
-                agent->timer->singleShot( 10 + (qrand() % 100) , Qt::VeryCoarseTimer , agent.data() , &GWSAgent::tick );
+                QtConcurrent::run( agent.data() , &GWSAgent::tick );
                 //agent->tick();
 
                 ticked_agents++;

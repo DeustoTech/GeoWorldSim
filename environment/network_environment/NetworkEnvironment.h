@@ -57,7 +57,7 @@ private:
     QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 
     // Mutex, for avoiding concurrency
-    QMutex mutex;
+    mutable QMutex mutex;
 
 };
 

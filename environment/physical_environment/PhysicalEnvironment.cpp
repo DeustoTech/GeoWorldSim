@@ -11,6 +11,7 @@ GWSPhysicalEnvironment* GWSPhysicalEnvironment::globalInstance(){
 GWSPhysicalEnvironment::GWSPhysicalEnvironment() : GWSEnvironment(){
     qInfo() << "PhysicalEnvironment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    this->environment_agent_indexes.insert( GWSAgent::staticMetaObject.className() , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
 }
 
 GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
@@ -143,10 +144,13 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 
 void GWSPhysicalEnvironment::registerAgentToIndex(QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> geom){
     foreach (QString family , agent->getInheritanceFamily() ) {
+        this->mutex.lock();
         if( !this->environment_agent_indexes.keys().contains( family ) ){
             this->environment_agent_indexes.insert( family , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
         }
+        this->mutex.unlock();
         this->environment_agent_indexes.value( family )->upsert( agent , geom );
+
     }
 }
 

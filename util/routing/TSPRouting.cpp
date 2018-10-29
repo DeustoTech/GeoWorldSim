@@ -22,6 +22,8 @@ GWSTSPRouting::~GWSTSPRouting(){
 
 QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coor){
 
+    this->mutex.lock();
+
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
@@ -37,6 +39,8 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor,
     foreach( FullGraph::Node n , tsp->tourNodes() ){
         tsp_circular_route_nodes.append( visit_coordinates.at( distance_matrix->id( n ) ) );
     }
+
+    this->mutex.unlock();
 
     return tsp_circular_route_nodes;// this->orderCircularTsp(start_coordinate , end_coordinate , tsp_circular_route_nodes);
 }

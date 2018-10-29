@@ -16,10 +16,6 @@ public:
     static QString X_VALUE;
     static QString Y_VALUE;
 
-
-protected:
-    geos::geom::Geometry* inner_geometry = Q_NULLPTR;
-
 protected slots:
     virtual QStringList behave();
 };

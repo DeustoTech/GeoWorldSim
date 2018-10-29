@@ -2,6 +2,7 @@
 #define GWSTSPROUTING_H
 
 #include <QObject>
+#include <QMutex>
 
 #include <lemon/core.h>
 #include <lemon/list_graph.h>
@@ -29,6 +30,7 @@ public:
 
 private:
 
+    QMutex mutex;
     QString transport_network_type;
 
     // Map to relate graph and distance matrix nodes

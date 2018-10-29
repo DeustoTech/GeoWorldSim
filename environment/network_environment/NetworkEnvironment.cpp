@@ -124,17 +124,25 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSNetworkEnvironment::getShortestP
         }
         return this->network_routings.value( class_name )->getShortestPath( snapped_ordered_coors );
     }
+    qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
+    return QList<QList<QSharedPointer<GWSGraphEdge> > >();
 }
 
-QList<QList<QSharedPointer< GWSGraphEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
+QList< QList<QSharedPointer< GWSGraphEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
     if( this->network_routings.keys().contains( class_name ) ){
+
+        this->mutex.lock();
         GWSCoordinate snapped_from_coor = this->getNearestNode( from_one , class_name );
-        QList< GWSCoordinate > snapped_to_many_coors;
-        foreach (GWSCoordinate c, to_many) {
+        QList< GWSCoordinate > snapped_to_many_coors = QList< GWSCoordinate >();
+        foreach( GWSCoordinate c, to_many ) {
             snapped_to_many_coors.append( this->getNearestNode( c , class_name ) );
         }
+        this->mutex.unlock();
+
         return this->network_routings.value( class_name )->getShortestPaths( snapped_from_coor , snapped_to_many_coors );
     }
+    qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
+    return QList< QList<QSharedPointer< GWSGraphEdge> > >();
 }
 
 

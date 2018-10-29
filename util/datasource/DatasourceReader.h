@@ -11,7 +11,7 @@ class GWSDatasourceReader : public QObject
     Q_OBJECT
 
 public:
-    explicit GWSDatasourceReader( QString datasource_url );
+    explicit GWSDatasourceReader( QString datasource_url , int limit = 999999999999999 );
 
     // METHODS
     void startReading();
@@ -31,7 +31,7 @@ private:
     unsigned int page_size = 100;
 
     unsigned int downloaded_total = 0;
-    unsigned int download_limit = 999999;
+    unsigned int download_limit;
 
 };
 

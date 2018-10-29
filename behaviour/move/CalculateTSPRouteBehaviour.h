@@ -3,6 +3,8 @@
 
 #include "../../behaviour/Behaviour.h"
 
+#include "../../util/geometry/Coordinate.h"
+
 class CalculateTSPRouteBehaviour : public GWSBehaviour
 {
     Q_OBJECT

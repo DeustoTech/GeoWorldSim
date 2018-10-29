@@ -38,10 +38,10 @@ protected:
     GWSGraphEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
-    QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSGraphEdge> > arc_to_edges;
+    QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSGraphEdge> >* arc_to_edges;
 
     // To link nodes with its original GSSGraphNode
-    QMap< GWSCoordinate , lemon::ListDigraph::Node > coors_to_node;
+    QMap< GWSCoordinate , lemon::ListDigraph::Node >* coors_to_node;
 
 };
 

@@ -64,8 +64,6 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
-
-
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
 

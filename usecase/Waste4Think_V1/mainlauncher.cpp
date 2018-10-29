@@ -103,7 +103,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
                                                                             "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] }, "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_to_transfer\": \"waste\", \"receiving_agent_id\": \"<closest_container_id>\" , \"nexts\" : [\"HISTORY\"] } "
-                                                        "] } ").arg( qrand() % 100 )
+                                                        "] } ").arg( 60 + qrand() % 60 )
                                                         .toLatin1()
                                                         );
 
@@ -124,7 +124,7 @@ double lat_min = 43.280961278501344;
 double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
-for( int i = 0 ; i < 1 ; i++ ){
+for( int i = 0 ; i < 2 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
@@ -169,7 +169,7 @@ GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( con
 
 
 // Read PEDESTRIAN ROAD data from datasource url:
-GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" );
+GWSDatasourceReader* pedestrian_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" );
 
 pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
@@ -235,7 +235,7 @@ pedestrian_reader->connect( pedestrian_reader , &GWSDatasourceReader::dataValueR
 });
 
 // Read MISSING ROAD data from datasource url:
-GWSDatasourceReader* other_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" );
+GWSDatasourceReader* other_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" );
 
 other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 
@@ -301,7 +301,7 @@ other_reader->connect( other_reader , &GWSDatasourceReader::dataValueReadSignal 
 
 
 // Read FOOTWAY ROAD data from datasource url:
-GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://laika.energia.deusto.es:8050/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" );
+GWSDatasourceReader* footway_reader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" );
 
 footway_reader->connect( footway_reader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
 

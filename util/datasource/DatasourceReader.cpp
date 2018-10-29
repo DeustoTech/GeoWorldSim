@@ -8,8 +8,9 @@
 #include "../../agent/Agent.h"
 #include "../../environment/Environment.h"
 
-GWSDatasourceReader::GWSDatasourceReader(QString datasource_url) : QObject(){
+GWSDatasourceReader::GWSDatasourceReader(QString datasource_url , int limit ) : QObject(){
     this->datasource_url = datasource_url;
+    this->download_limit = limit;
 }
 
 void GWSDatasourceReader::startReading(){

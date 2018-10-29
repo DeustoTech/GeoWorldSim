@@ -1,6 +1,7 @@
 #ifndef FINDCLOSESTBEHAVIOUR_H
 #define FINDCLOSESTBEHAVIOUR_H
 
+#include "../../util/geometry/Coordinate.h"
 #include "../../behaviour/Behaviour.h"
 
 class FindClosestBehaviour : public GWSBehaviour
