@@ -7,6 +7,7 @@
 QString MoveThroughRouteSkill::NETWORK_CLASS_PROP = "network_type";
 QString MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP = "route_destination_x";
 QString MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP = "route_destination_y";
+QString MoveThroughRouteSkill::AGENT_INSIDE_EDGE_PROP = "agent_ids_inside_edge";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
     this->setProperty( NETWORK_CLASS_PROP , "GWSAgent" );
@@ -72,6 +73,9 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( current_edge_agent );
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
         this->pending_route.removeAt( 0 );
+        QStringList list = current_edge_agent->getProperty( AGENT_INSIDE_EDGE_PROP ).toStringList();
+        list.removeAll( agent->getId() );
+        current_edge_agent->setProperty( AGENT_INSIDE_EDGE_PROP , list );
 
     }
 
@@ -91,7 +95,16 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->setProperty( MoveSkill::DESTINATION_X_PROP , move_to.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , move_to.getY() );
 
+        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
+        QSharedPointer<GWSAgent> current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( current_edge );
+        QStringList list = current_edge_agent->getProperty( AGENT_INSIDE_EDGE_PROP ).toStringList();
+        if( !list.contains( agent->getId() ) ){
+            list.append( agent->getId() );
+            current_edge_agent->setProperty( AGENT_INSIDE_EDGE_PROP , list );
+        }
     }
+
+
 
     MoveSkill::move( movement_duration );
 

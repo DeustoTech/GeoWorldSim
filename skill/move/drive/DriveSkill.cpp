@@ -3,7 +3,7 @@
 QString DriveSkill::SPEED_FACTOR_PROP = "speed_factor";
 QString DriveSkill::STOP_DISTANCE_PROP = "stop_distance";
 
-DriveSkill::DriveSkill(GWSAgent *parent) : GWSSkill(parent){
+DriveSkill::DriveSkill( ) : GWSSkill( ){
     // Driver
     this->setProperty( DriveSkill::SPEED_FACTOR_PROP , 1 );  // It will go to the 100% of the speed
     this->setProperty( DriveSkill::STOP_DISTANCE_PROP , GWSLengthUnit( 50 ) ); // Likes to start stopping 50 meters ahead
@@ -14,12 +14,15 @@ DriveSkill::DriveSkill(GWSAgent *parent) : GWSSkill(parent){
 **********************************************************************/
 
 double DriveSkill::getSpeedFactor() const{
-    return this->property( DriveSkill::SPEED_FACTOR_PROP ).toDouble();
+    return this->getProperty( DriveSkill::SPEED_FACTOR_PROP ).toDouble();
 }
 
 GWSLengthUnit DriveSkill::getStopDistanceFactor() const{
-    return this->property( DriveSkill::STOP_DISTANCE_PROP ).value<GWSUnit>();
+    return this->getProperty( DriveSkill::STOP_DISTANCE_PROP ).toDouble();
 }
+
+
+
 
 /**********************************************************************
  SETTERS
@@ -48,7 +51,7 @@ double DriveSkill::calculateAccelerateForce(GWSSpeedUnit vehicle_speed, GWSSpeed
         return -1;
     }
 
-    // Accellerate
+    // Accelerate
     if( vehicle_speed < should_go_speed ){
         double acceleration_force = (should_go_speed - vehicle_speed).number() / should_go_speed.number();
         return qMin( acceleration_force , 1.0 );

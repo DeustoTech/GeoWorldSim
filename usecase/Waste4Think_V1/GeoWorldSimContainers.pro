@@ -55,6 +55,9 @@ HEADERS += \
     ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/waste4think/FollowTSPRouteBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
+    ../../behaviour/property/CopyPropertyBehaviour.h \
+    ../../behaviour/waste4think/CheckPropertyValueBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -92,8 +95,7 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
-    ../../behaviour/property/CopyPropertyBehaviour.h
+    RecyclingPlantAgent.h
             ## TRANSPORT LINES
 
 
@@ -122,6 +124,9 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/waste4think/FollowTSPRouteBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/CopyPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/CheckPropertyValueBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -165,9 +170,7 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
-    ../../behaviour/property/CopyPropertyBehaviour.cpp
-
+    RecyclingPlantAgent.cpp
 
 
 #INCLUDE LEMON COMPILED LIBRARY

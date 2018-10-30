@@ -17,6 +17,7 @@ public:
     static QString NETWORK_CLASS_PROP;
     static QString ROUTE_DESTINATION_X_PROP;
     static QString ROUTE_DESTINATION_Y_PROP;
+    static QString AGENT_INSIDE_EDGE_PROP;
 
     // GETTERS
     GWSCoordinate getRouteDestination() const;
