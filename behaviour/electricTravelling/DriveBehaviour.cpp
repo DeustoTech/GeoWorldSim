@@ -23,4 +23,8 @@ QStringList DriveBehaviour::behave(){
         agent->addSkill( drive_skill );
     }
     drive_skill->setProperty( DriveSkill::SPEED_FACTOR_PROP , this->getProperty( DriveBehaviour::SPEED_FACTOR_PROP ) );
+
+
+
+
 }
