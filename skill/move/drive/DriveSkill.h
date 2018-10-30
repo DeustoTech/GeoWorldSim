@@ -1,14 +1,15 @@
 #ifndef DRIVESKILL_H
 #define DRIVESKILL_H
 
-#include "skills/Skill.h"
+#include "../../skill/Skill.h"
+#include "../../util/units/Units.h"
 
 class DriveSkill : public GWSSkill
 {
     Q_OBJECT
 
 public:
-    DriveSkill(GWSAgent* parent);
+    DriveSkill();
 
     // PROPERTIES
     static QString SPEED_FACTOR_PROP;
