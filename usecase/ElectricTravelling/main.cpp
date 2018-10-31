@@ -73,31 +73,23 @@ int main(int argc, char* argv[])
  *  Agents
  *---------------*/
 
-/* Returns a random double between min and max
- Zamudio latitude = 43.2803457
- Zamudio longitude = -2.8621286 */
-double lat_max = 43.2685;
-double lat_min = 43.2567;
-double lon_max = -2.9158;
-double lon_min = -2.9503;
-
-for( int i = 0 ; i < 1 ; i++ ){
-
-    QJsonDocument jsonAgent = QJsonDocument::fromJson( QString("{ \"@type\" : \"GWSAgent\" , \"running\" : true, "
-                                                                  "\"home_x\" :  %1, \"home_y\" :  %2,  \"color\" : \"Blue\" , "
-                                                                  "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
-                                                                                       "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"MOVE\"] }, "
-                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 150 , \"x_value\": -2.9314 , \"y_value\": 43.2644 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"HISTORY\"] , \"nexts_if_not_arrived\" : [\"MOVE\"] }  "
-                                                                                       " ] } ")
-                                                   .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
-                                                   .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
-                                                   .toLatin1()
-                                                    );
-
-    QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( jsonAgent.object() ).dynamicCast<GWSAgent>();
 
 
-}
+QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\",  "
+                                                        "\"running\" : true, \"color\" : \"Green\" , "
+                                                        "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
+                                                                                  "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
+                                                                                  "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<to_x>\" , \"y_value\": \"<to_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"HISTORY\"] , \"nexts_if_not_arrived\" : [\"MOVE\"] }  "
+                                                                                  " ] } ").arg( 60 + qrand() % 60 )
+                                                        .toLatin1()
+                                                        );
+
+QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 20);
+
+
+
+
 
 /* ----------------
  * Bilbao roads
@@ -647,25 +639,25 @@ residentialHighwayReader->connect( residentialHighwayReader , &GWSDatasourceRead
 
 
 
-QTimer::singleShot( 100 , [primaryHighwayReader](){
+//QTimer::singleShot( 100 , [primaryHighwayReader](){
     primaryHighwayReader->startReading();
-});
+//});
 
-QTimer::singleShot( 100 , [secondaryHighwayReader](){
+//QTimer::singleShot( 100 , [secondaryHighwayReader](){
     secondaryHighwayReader->startReading();
-});
+//});
 
-QTimer::singleShot( 100 , [tertiaryHighwayReader](){
+//QTimer::singleShot( 100 , [tertiaryHighwayReader](){
     tertiaryHighwayReader->startReading();
-});
+//});
 
-QTimer::singleShot( 100 , [trunkHighwayReader](){
+//QTimer::singleShot( 100 , [trunkHighwayReader](){
     trunkHighwayReader->startReading();
-});
+//});
 
-QTimer::singleShot( 10000 , [residentialHighwayReader](){
+//QTimer::singleShot( 10000 , [residentialHighwayReader](){
     residentialHighwayReader->startReading();
-});
+//});
 
 
 

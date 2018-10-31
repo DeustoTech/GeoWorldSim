@@ -73,10 +73,11 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( current_edge_agent );
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
         this->pending_route.removeAt( 0 );
+        qDebug() << current_edge;
         QStringList list = current_edge_agent->getProperty( AGENT_INSIDE_EDGE_PROP ).toStringList();
         list.removeAll( agent->getId() );
         current_edge_agent->setProperty( AGENT_INSIDE_EDGE_PROP , list );
-
+        qDebug() << list;
     }
 
     if ( !this->pending_edge_coordinates.isEmpty() ) {
