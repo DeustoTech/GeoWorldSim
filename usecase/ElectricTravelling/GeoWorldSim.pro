@@ -45,6 +45,9 @@ HEADERS += \
     ../../skill/move/drive/DriveSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -98,6 +101,9 @@ SOURCES += main.cpp \
     ../../skill/move/drive/DriveSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -140,22 +146,8 @@ SOURCES += main.cpp \
         # AGENTS
 
 
-#INCLUDE LEMON COMPILED LIBRARY
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/release/ -lemon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/debug/ -lemon
-else:unix: LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/ -lemon
-
-INCLUDEPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-DEPENDPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/libemon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/libemon.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/emon.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/emon.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/libemon.a
-
-#INCLUDE LEMON SYSTEM LIBRARY
-unix|win32: LIBS += -lemon
+#INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
+unix|win32: LIBS += -llemon
 
 #INCLUDE LIBPQ SYSTEM LIBRARY (sudo apt-get install libpq-dev)
 unix|win32: LIBS += -lpq
