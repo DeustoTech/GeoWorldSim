@@ -51,10 +51,11 @@ public:
 
     bool deleted = true; // IMPORTANT
 
+protected:
+    void deserializeProperty( QString property_name , QJsonValue property_value );
+
 private:
 
-    // PARENT
-    //QSharedPointer<GWSObject> parent;
     QSharedPointer<GWSObject> self_shared_pointer;
 
     // AUTOINCREMENTAL FOR IDS

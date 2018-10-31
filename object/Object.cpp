@@ -120,50 +120,75 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     // Set properties
     foreach( QString property_name , json.keys() ){
 
+        // Avoid @ starting keywords
         if( property_name.contains('@') ){ continue; }
 
         QJsonValue property_value = json.value( property_name );
+        this->deserializeProperty( property_name , property_value );
 
-        switch ( property_value.type() ) {
-        case QJsonValue::String: {
-                this->setProperty( property_name , property_value.toString() ); break; }
-        case QJsonValue::Double: {
-                this->setProperty( property_name , property_value.toDouble() ); break; }
-        case QJsonValue::Bool: {
-                this->setProperty( property_name , property_value.toBool() ); break; }
-        case QJsonValue::Array: {
-                QVariantList list;
-                foreach (QJsonValue v , property_value.toArray() ) {
-                    list.append( v.toVariant() );
-                }
-                this->setProperty( property_name , list );
-                break; }
-        case QJsonValue::Object: {
+    }
+}
 
-                QJsonObject json_object = property_value.toObject();
+void GWSObject::deserializeProperty( QString property_name, QJsonValue property_value ){
+
+    switch ( property_value.type() ) {
+    case QJsonValue::String: {
+            this->setProperty( property_name , property_value.toString() ); break; }
+    case QJsonValue::Double: {
+            this->setProperty( property_name , property_value.toDouble() ); break; }
+    case QJsonValue::Bool: {
+            this->setProperty( property_name , property_value.toBool() ); break; }
+    case QJsonValue::Array: {
+            QVariantList list;
+            foreach (QJsonValue v , property_value.toArray() ) {
+                list.append( v.toVariant() );
+            }
+            this->setProperty( property_name , list );
+            break; }
+    case QJsonValue::Object: {
+
+            QJsonObject property_value_object = property_value.toObject();
+            QString subelement_type = property_value_object.value( GWS_TYPE_PROP ).toString();
+
+            // It refers to a GWSObject (has @type and @id)
+            if( !subelement_type.isEmpty() ){
+
+                QString subelement_id = property_value_object.value( GWS_ID_PROP ).toString();
                 QSharedPointer<GWSObject> obj;
 
-                // If it makes reference to an existing agent
-                if( json_object.keys().contains( GWS_TYPE_PROP ) && json_object.keys().contains( GWS_ID_PROP ) ){
-                    obj = GWSAgentEnvironment::globalInstance()->getByClassAndId( json_object.value( GWS_TYPE_PROP ).toString() , json_object.value( GWS_ID_PROP ).toString() );
+                if( !subelement_id.isEmpty() ){
+                    obj = GWSAgentEnvironment::globalInstance()->getByClassAndId( subelement_type , subelement_id );
                 }
 
-                if( !obj && json_object.keys().contains( GWS_TYPE_PROP ) ){
-                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value.toObject() );
+                if( obj.isNull() ){
+                    obj = GWSObjectFactory::globalInstance()->fromJSON( property_value_object );
                 }
 
-                if( !obj ){ break; }
+                // Set object as the property
+                if( obj ){
+                    QVariant obj_variant = QVariant::fromValue< QSharedPointer<GWSObject> >( obj );
+                    this->setProperty( property_name , obj_variant );
+                }
 
-                QVariant obj_variant = QVariant::fromValue< QSharedPointer<GWSObject> >( obj );
-                this->setProperty( property_name , obj_variant ); break;
+            } else {
 
-        }
-        default: {
+                // Concat name with value keys
+                foreach( QString subproperty_name , property_value_object.keys() ){
 
-                qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
-                this->setProperty( property_name , property_value.toVariant() ); break; }
-        }
+                    // Avoid @ starting keywords
+                    if( subproperty_name.contains('@') ){ continue; }
+
+                    QJsonValue property_value = property_value_object.value( subproperty_name );
+                    this->deserializeProperty( property_name + ":" + subproperty_name , property_value );
+                }
+            }
     }
+    default: {
+
+            qDebug() << QString("Trying to deserialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.type() );
+            this->setProperty( property_name , property_value.toVariant() ); break; }
+    }
+
 }
 
 
