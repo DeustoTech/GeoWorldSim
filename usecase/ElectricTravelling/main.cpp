@@ -19,6 +19,9 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
+#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
+#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
+#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -57,7 +60,9 @@ int main(int argc, char* argv[])
 
 
     // Behaviours
-    //GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -81,8 +86,8 @@ for( int i = 0 ; i < 1 ; i++ ){
     QJsonDocument jsonAgent = QJsonDocument::fromJson( QString("{ \"@type\" : \"GWSAgent\" , \"running\" : true, "
                                                                   "\"home_x\" :  %1, \"home_y\" :  %2,  \"color\" : \"Blue\" , "
                                                                   "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
-                                                                                       "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"TSP\"] }, "
-                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 150 , \"x_value\": -2.9314 , \"y_value\": 43.2644 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"MOVE_STAGES\"] } , "
+                                                                                       "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"MOVE\"] }, "
+                                                                                       "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 150 , \"x_value\": -2.9314 , \"y_value\": 43.2644 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"HISTORY\"] , \"nexts_if_not_arrived\" : [\"MOVE\"] }  "
                                                                                        " ] } ")
                                                    .arg( (lon_max - lon_min) * UniformDistribution::uniformDistribution()  + lon_min )
                                                    .arg( (lat_max - lat_min) * UniformDistribution::uniformDistribution() + lat_min )
@@ -642,25 +647,39 @@ residentialHighwayReader->connect( residentialHighwayReader , &GWSDatasourceRead
 
 
 
-QTimer::singleShot( 10000 , [primaryHighwayReader](){
+QTimer::singleShot( 100 , [primaryHighwayReader](){
     primaryHighwayReader->startReading();
 });
 
-QTimer::singleShot( 10000 , [secondaryHighwayReader](){
+QTimer::singleShot( 100 , [secondaryHighwayReader](){
     secondaryHighwayReader->startReading();
 });
 
-QTimer::singleShot( 10000 , [tertiaryHighwayReader](){
+QTimer::singleShot( 100 , [tertiaryHighwayReader](){
     tertiaryHighwayReader->startReading();
 });
 
-QTimer::singleShot( 10000 , [trunkHighwayReader](){
+QTimer::singleShot( 100 , [trunkHighwayReader](){
     trunkHighwayReader->startReading();
 });
 
 QTimer::singleShot( 10000 , [residentialHighwayReader](){
     residentialHighwayReader->startReading();
 });
+
+
+
+QTimer::singleShot( 10*1000 , [](){
+
+    GWSTimeEnvironment::globalInstance()->setDatetime( 1000 );
+
+   /* foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
+        a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
+    }*/
+
+    GWSExecutionEnvironment::globalInstance()->run();
+} );
+
 
 app->exec();
 
