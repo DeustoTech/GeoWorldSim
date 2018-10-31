@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 
 
 
-QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\",  "
+QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"] , \"matrix\" : { \"k1\" : { \"k11\" : 2 , \"k12\" : 23  } , \"k2\" : { \"k21\" : 12 } }, "
                                                         "\"running\" : true, \"color\" : \"Green\" , "
                                                         "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
                                                                                   "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
@@ -85,9 +85,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         );
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 20);
-
-
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1000 );
 
 
 
@@ -664,11 +662,6 @@ residentialHighwayReader->connect( residentialHighwayReader , &GWSDatasourceRead
 QTimer::singleShot( 10*1000 , [](){
 
     GWSTimeEnvironment::globalInstance()->setDatetime( 1000 );
-
-   /* foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
-        a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
-    }*/
-
     GWSExecutionEnvironment::globalInstance()->run();
 } );
 

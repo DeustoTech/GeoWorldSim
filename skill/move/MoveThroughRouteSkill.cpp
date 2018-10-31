@@ -10,7 +10,7 @@ QString MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP = "route_destination_y";
 QString MoveThroughRouteSkill::AGENT_INSIDE_EDGE_PROP = "agent_ids_inside_edge";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
-    this->setProperty( NETWORK_CLASS_PROP , "GWSAgent" );
+    this->setProperty( NETWORK_CLASS_PROP , "Road" );
 }
 
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){
@@ -58,54 +58,42 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     }
 
     // Assume we have reached route end OR not found route, free move to destination
-    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
+    if( this->pending_route.isEmpty() ){
         this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
+        MoveSkill::move( movement_duration );
+        return;
     }
 
-    if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
-
-        // We have reached current_edge's geometry last real coordinate (which should be equal to the edge's "getTo" coordinate)
-
-        // Get next pending_route edge, to get its coordinates and move along them
-        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
-        QSharedPointer<GWSAgent> current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( current_edge );
-        QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( current_edge_agent );
-        this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
-        this->pending_route.removeAt( 0 );
-        qDebug() << current_edge;
-        QStringList list = current_edge_agent->getProperty( AGENT_INSIDE_EDGE_PROP ).toStringList();
-        list.removeAll( agent->getId() );
-        current_edge_agent->setProperty( AGENT_INSIDE_EDGE_PROP , list );
-        qDebug() << list;
-    }
-
-    if ( !this->pending_edge_coordinates.isEmpty() ) {
+    // Continue following coordinates
+    if ( !this->pending_edge_coordinates.isEmpty() ){
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
-        GWSCoordinate check_if_arrived = this->pending_edge_coordinates.at( 0 );
-        if( current_coor == check_if_arrived ){
+        GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );
+        if( current_coor == next_coordinate ){
             this->pending_edge_coordinates.removeAt( 0 );
         }
+
         GWSCoordinate move_to;
         if( this->pending_edge_coordinates.isEmpty() ){
+            this->pending_route.removeAt( 0 ); // Have completed the edge coordinates, so remove the edge too
             move_to = current_coor;
         } else {
             move_to = this->pending_edge_coordinates.at( 0 );
         }
+
         this->setProperty( MoveSkill::DESTINATION_X_PROP , move_to.getX() );
         this->setProperty( MoveSkill::DESTINATION_Y_PROP , move_to.getY() );
-
-        QSharedPointer<GWSGraphEdge> current_edge = this->pending_route.at(0);
-        QSharedPointer<GWSAgent> current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( current_edge );
-        QStringList list = current_edge_agent->getProperty( AGENT_INSIDE_EDGE_PROP ).toStringList();
-        if( !list.contains( agent->getId() ) ){
-            list.append( agent->getId() );
-            current_edge_agent->setProperty( AGENT_INSIDE_EDGE_PROP , list );
-        }
     }
 
+    if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
+        // We are going to start iterating the coordinates of edge located at pending_route[0]
+        QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
+        QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
+        QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
+        this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
+    }
 
     MoveSkill::move( movement_duration );
 

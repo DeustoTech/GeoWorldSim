@@ -182,6 +182,7 @@ void GWSObject::deserializeProperty( QString property_name, QJsonValue property_
                     this->deserializeProperty( property_name + ":" + subproperty_name , property_value );
                 }
             }
+            break;
     }
     default: {
 

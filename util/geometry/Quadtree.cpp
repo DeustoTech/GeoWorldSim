@@ -60,10 +60,12 @@ QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) {
         foreach (QString object_id, *y_layer) {
 
             QSharedPointer<GWSGeometry> geom = this->id_to_geometries.value( object_id );
-            GWSLengthUnit l = geom->getCentroid().getDistance( coor );
-            if( l < shortest_distance ){
-                shortest_distance = l;
-                nearest_object_id = object_id;
+            if( geom ){
+                GWSLengthUnit l = geom->getCentroid().getDistance( coor );
+                if( l < shortest_distance ){
+                    shortest_distance = l;
+                    nearest_object_id = object_id;
+                }
             }
         }
 
