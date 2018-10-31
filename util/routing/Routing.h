@@ -43,6 +43,10 @@ protected:
     // To link nodes with its original GSSGraphNode
     QMap< GWSCoordinate , lemon::ListDigraph::Node >* coors_to_node;
 
+    // Routes cache
+    void cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSGraphEdge> > route = QList<QSharedPointer<GWSGraphEdge> >() );
+    QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QList<QSharedPointer<GWSGraphEdge> > > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >
+
 };
 
 #endif // GWSROUTING_H

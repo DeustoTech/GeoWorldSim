@@ -294,9 +294,6 @@ void GWSAgent::behave(){
     QStringList next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
-        //QFuture< QStringList > f_tick = run( behaviour.data() , &GWSBehaviour::tick , (qint64)behaving_time );
-        //f_tick.waitForFinished();
-        //next_execute_behaviour_ids.append( f_tick.result() );
         next_execute_behaviour_ids.append( behaviour->tick( behaving_time ) );
         max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , behaviour->getProperty( GWSBehaviour::BEHAVIOUR_DURATION ).toDouble() );
     }

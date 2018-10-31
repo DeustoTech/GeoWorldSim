@@ -37,7 +37,7 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
         y_property_name = y_property_name.remove( y_property_name.length() - 1 , 1 );
         y_value = agent->getProperty( y_property_name );
     }
-    qDebug() << x_value << y_value;
+
     GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
 
     if( agent_geom.isNull() ){

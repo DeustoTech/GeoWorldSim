@@ -79,7 +79,6 @@ QStringList MoveThroughRouteBehaviour::behave(){
     QSharedPointer<GWSGeometry> agent_geom_init = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     GWSCoordinate agent_position_init = agent_geom_init->getCentroid();
 
-
     // Move towards
     movethroughroute_skill->move( duration_of_movement );
 
