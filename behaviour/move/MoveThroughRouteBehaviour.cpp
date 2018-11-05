@@ -2,6 +2,7 @@
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/network_environment/NetworkEnvironment.h"
 
 #include "../../app/App.h"
 #include "../../agent/Agent.h"
@@ -15,6 +16,8 @@ QString MoveThroughRouteBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveThroughRouteBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 QString MoveThroughRouteBehaviour::STORE_MOVED_DISTANCE_AS = "store_total_moved_distance_as";
 QString MoveThroughRouteBehaviour::STORE_TRAVEL_TIME_AS = "store_total_travel_time_as";
+QString MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS =  "store_current_road_type_as";
+QString MoveThroughRouteBehaviour::STORE_CURRENT_SPEED_AS = "store_current_speed_as";
 
 MoveThroughRouteBehaviour::MoveThroughRouteBehaviour() : GWSBehaviour(){
 }
@@ -90,13 +93,16 @@ QStringList MoveThroughRouteBehaviour::behave(){
     moved_distance = agent_position_post.getDistance( agent_position_init );
 
     GWSLengthUnit accumulated_distance;
-    accumulated_distance = moved_distance + agent->getProperty(this->getProperty( STORE_MOVED_DISTANCE_AS ).toString() ).toDouble();
+    accumulated_distance = moved_distance + agent->getProperty( this->getProperty( STORE_MOVED_DISTANCE_AS ).toString() ).toDouble();
     agent->setProperty( this->getProperty( STORE_MOVED_DISTANCE_AS ).toString() , accumulated_distance );
+
+    // Calculate speed:
+    GWSSpeedUnit current_speed = movethroughroute_skill->getCurrentSpeed();
+    agent->setProperty( this->getProperty( STORE_CURRENT_SPEED_AS ).toString() , current_speed.number() );
 
     // Calculate travel time and store in accumulated time:
     GWSTimeUnit travel_time;
-    GWSSpeedUnit speed = movethroughroute_skill->getCurrentSpeed();
-    travel_time = moved_distance / speed.number();
+    travel_time = moved_distance / current_speed.number();
 
     GWSTimeUnit accumulated_travel_time;
     accumulated_travel_time = travel_time + agent->getProperty(this->getProperty( STORE_TRAVEL_TIME_AS ).toString() ).toDouble();
@@ -113,5 +119,6 @@ QStringList MoveThroughRouteBehaviour::behave(){
     }
 
    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent ->serialize() );
+   qDebug() << agent->getProperty( "store_current_road_type_as" ).toString();
    return nexts;
 }

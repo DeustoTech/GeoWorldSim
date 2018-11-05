@@ -20,6 +20,8 @@ public:
     static QString NEXTS_IF_NOT_ARRIVED;
     static QString STORE_MOVED_DISTANCE_AS;
     static QString STORE_TRAVEL_TIME_AS;
+    static QString STORE_CURRENT_ROAD_TYPE_AS;
+    static QString STORE_CURRENT_SPEED_AS;
 
 protected slots:
     virtual QStringList behave();
