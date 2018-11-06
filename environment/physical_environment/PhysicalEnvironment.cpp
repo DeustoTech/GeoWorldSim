@@ -87,6 +87,27 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
     return Q_NULLPTR;
 }
 
+QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const{
+    QSharedPointer<GWSAgent> nearest = Q_NULLPTR;
+    GWSLengthUnit nearest_distance = -1;
+    foreach (QSharedPointer<GWSAgent> agent , agents) {
+        QSharedPointer<GWSGeometry> geom = this->getGeometry( agent );
+        if( geom.isNull() ){
+            continue;
+        }
+        GWSCoordinate centroid = geom->getCentroid();
+        if( nearest.isNull() ){
+            nearest = agent;
+            nearest_distance = centroid.getDistance( coor );
+        }
+        if( centroid.getDistance( coor ) < nearest_distance ){
+            nearest = agent;
+            nearest_distance = centroid.getDistance( coor );
+        }
+    }
+    return nearest;
+}
+
 /**********************************************************************
  SETTERS
 **********************************************************************/

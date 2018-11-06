@@ -30,8 +30,8 @@ public:
     QList< QSharedPointer<GWSAgent> > getByClass( QString class_name ) const; // Get all agents for a given type
     template <class T> QList<QSharedPointer<T>> getByClass( QString class_name ) const;  // Get all agents for a given type
 
-
     QSharedPointer<GWSAgent> getById( QString id ) const;
+    QList< QSharedPointer<GWSAgent> > getByIds( QStringList ids ) const;
 
     QSharedPointer<GWSAgent> getByName(QString name) const; // Get one agent by its name
     template <class T> QSharedPointer<T> getByName(QString name) const; // Get one agent by its name

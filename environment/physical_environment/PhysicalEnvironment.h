@@ -29,6 +29,7 @@ public:
     QList< QSharedPointer<GWSAgent> > getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
     QList< QSharedPointer<GWSAgent> > getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QString class_name ) const;
+    QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // SETTERS

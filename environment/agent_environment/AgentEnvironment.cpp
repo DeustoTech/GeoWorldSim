@@ -42,6 +42,14 @@ QSharedPointer<GWSAgent> GWSAgentEnvironment::getById(QString id) const{
     return this->getByClassAndId( GWSAgent::staticMetaObject.className() , id );
 }
 
+QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByIds(QStringList ids) const{
+    QList< QSharedPointer<GWSAgent> > agents;
+    foreach (QString id , ids) {
+        agents.append( this->getById( id ) );
+    }
+    return agents;
+}
+
 QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
     return this->getByClassAndId<GWSAgent>( class_name , id );
 }
