@@ -22,6 +22,7 @@
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -63,6 +64,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ChangeColorRangeBehaviour::staticMetaObject );
 
 
     // Init random numbers
@@ -75,18 +77,18 @@ int main(int argc, char* argv[])
 
 
 
-QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"] , \"matrix\" : { \"k1\" : { \"k11\" : 2 , \"k12\" : 23  } , \"k2\" : { \"k21\" : 12 } }, "
+QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"] , \"current_speed\" : 4 , "
                                                         "\"running\" : true, \"color\" : \"Green\" , "
-                                                        "\"@behaviours\" : [  { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
-                                                                                  "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
-                                                                                  "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<to_x>\" , \"y_value\": \"<to_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"nexts_if_arrived\" : [\"MOVE_BACK\"] , \"nexts_if_not_arrived\" : [\"MOVE\"] } , "
-                                                                                  "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_BACK\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<from_x>\" , \"y_value\": \"<from_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"HISTORY\"] , \"nexts_if_not_arrived\" : [\"MOVE_BACK\"] }  "
+                                                        "\"@behaviours\" : [  { \"start\": true, \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
+                                                                                  "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<to_x>\" , \"y_value\": \"<to_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"MOVE_BACK\"] , \"nexts_if_not_arrived\" : [\"DISPLAY\"] } , "
+                                                                                  "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE\"] } ,"
+                                                                                  "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_BACK\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<from_x>\" , \"y_value\": \"<from_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"HISTORY\"] , \"nexts_if_not_arrived\" : [\"MOVE_BACK\"] }  "
                                                                                   " ] } ").arg( 60 + qrand() % 60 )
                                                         .toLatin1()
                                                         );
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 10000 );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1000  );
 
 
 
@@ -96,7 +98,12 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
 
 // Read Primary Road data from datasource url:
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" } ")
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"running\" : true, \"color\" : \"Blue\" , \"weight\" : 5 , "
+                                                            "\"@behaviours\" : [ "
+                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
+                                                            "{ \"@type\": \"ChangeColorRangeBehaviour\" ,   \"@id\": \"CHANGE_COLOR\" , \"min_capacity\" : 0 , \"max_capacity\" : 10 , \"duration\": 1 ,  \"nexts\" : [\"DISPLAY\"] }"
+                                                            " ]"
+                                                            " } ")
                                                         .toLatin1()
                                                         );
 

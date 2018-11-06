@@ -3,15 +3,15 @@
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 
-QString MoveThroughRouteSkill::NETWORK_CLASS_PROP = "network_type";
-QString MoveThroughRouteSkill::ROUTE_DESTINATION_X_PROP = "route_destination_x";
-QString MoveThroughRouteSkill::ROUTE_DESTINATION_Y_PROP = "route_destination_y";
-QString MoveThroughRouteSkill::AGENT_INSIDE_EDGE_PROP = "agent_ids_inside_edge";
+QString MoveThroughRouteSkill::SKILL_NETWORK_TYPE_PROP = "network_type";
+QString MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP = "route_destination_x";
+QString MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_Y_PROP = "route_destination_y";
+QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_ID_PROP = "current_road_id";
+QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_TYPE_PROP = "current_road_type";
+QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_MAXSPEED_PROP = "current_road_maxspeed";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
-    this->setProperty( NETWORK_CLASS_PROP , "GWSAgent" );
 }
 
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){
@@ -21,13 +21,12 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
  GETTERS
 **********************************************************************/
 
-// Generate graph, give me all the agents in the network environment, and generate the graph with them
-
-GWSCoordinate MoveThroughRouteSkill::getRouteDestination() const{
-    if( this->getProperty( ROUTE_DESTINATION_X_PROP ).isNull() || this->getProperty( ROUTE_DESTINATION_Y_PROP ).isNull() ){
-        return GWSCoordinate( Q_INFINITY , Q_INFINITY , Q_INFINITY );
+GWSCoordinate MoveThroughRouteSkill::getRouteDestination() {
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+    if( this->getProperty( SKILL_ROUTE_DESTINATION_X_PROP ).isNull() || this->getProperty( SKILL_ROUTE_DESTINATION_Y_PROP ).isNull() ){
+        return GWSCoordinate( NAN , NAN , NAN );
     }
-    return GWSCoordinate( this->getProperty( ROUTE_DESTINATION_X_PROP ) .toDouble( ) , this->getProperty( ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
+    return GWSCoordinate( this->getProperty( SKILL_ROUTE_DESTINATION_X_PROP ).toDouble( ) , this->getProperty( SKILL_ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
 }
 
 /**********************************************************************
@@ -54,14 +53,15 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
         // Generate pending route
-        QString graph_type = this->getProperty( MoveThroughRouteSkill::NETWORK_CLASS_PROP ).toString();
+        QString graph_type = this->getProperty( SKILL_NETWORK_TYPE_PROP ).toString();
+        if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
     }
 
     // Assume we have reached route end OR not found route, free move to destination
     if( this->pending_route.isEmpty() ){
-        this->setProperty( MoveSkill::DESTINATION_X_PROP , destination_coor.getX() );
-        this->setProperty( MoveSkill::DESTINATION_Y_PROP , destination_coor.getY() );
+        this->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_X_PROP , destination_coor.getX() );
+        this->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP , destination_coor.getY() );
         MoveSkill::move( movement_duration );
         return;
     }
@@ -71,7 +71,8 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
         QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
-        agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS , starting_current_edge_agent->getProperty( "highway" ) );
+        //agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS , starting_current_edge_agent->getProperty( "highway" ) );
+        //agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_MAXSPEED_AS , starting_current_edge_agent->getProperty( "maxspeed") );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );
@@ -84,17 +85,25 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
             QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
             QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
-            agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS , starting_current_edge_agent->getProperty( "highway" ) );
+
+            // Remove road information from agent
+            agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , QVariant() );
+            agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , QVariant() );
+            agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , QVariant() );
+
+            // Remove agent from road
+            QStringList inside_agent_ids = starting_current_edge_agent->getProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP ).toStringList();
+            inside_agent_ids.removeAll( agent->getId() );
+            starting_current_edge_agent->setProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP , inside_agent_ids );
 
             this->pending_route.removeAt( 0 ); // Have completed the edge coordinates, so remove the edge too
             move_to = current_coor;
         } else {
             move_to = this->pending_edge_coordinates.at( 0 );
-
         }
 
-        this->setProperty( MoveSkill::DESTINATION_X_PROP , move_to.getX() );
-        this->setProperty( MoveSkill::DESTINATION_Y_PROP , move_to.getY() );
+        this->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_X_PROP , move_to.getX() );
+        this->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP , move_to.getY() );
     }
 
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
@@ -102,12 +111,20 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         // We are going to start iterating the coordinates of edge located at pending_route[0]
         QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
-        agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS , starting_current_edge_agent->getProperty( "highway") );
+
+        // Store road information in agent
+        agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , starting_current_edge_agent->getId() );
+        agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , starting_current_edge_agent->getProperty( "highway") );
+        agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , starting_current_edge_agent->getProperty( "maxspeed") );
+
+        // Add agent to road
+        QStringList inside_agent_ids = starting_current_edge_agent->getProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP ).toStringList();
+        inside_agent_ids.append( agent->getId() );
+        starting_current_edge_agent->setProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP , inside_agent_ids );
 
         QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
     }
 
     MoveSkill::move( movement_duration );
-    agent->serialize();
 }

@@ -14,13 +14,15 @@ public:
     ~MoveThroughRouteSkill();
 
     //- PROPERTIES
-    static QString NETWORK_CLASS_PROP;
-    static QString ROUTE_DESTINATION_X_PROP;
-    static QString ROUTE_DESTINATION_Y_PROP;
-    static QString AGENT_INSIDE_EDGE_PROP;
+    static QString SKILL_NETWORK_TYPE_PROP;
+    static QString SKILL_ROUTE_DESTINATION_X_PROP;
+    static QString SKILL_ROUTE_DESTINATION_Y_PROP;
+    static QString AGENT_CURRENT_ROAD_ID_PROP;
+    static QString AGENT_CURRENT_ROAD_TYPE_PROP;
+    static QString AGENT_CURRENT_ROAD_MAXSPEED_PROP;
 
     // GETTERS
-    GWSCoordinate getRouteDestination() const;
+    GWSCoordinate getRouteDestination();
 
     // METHODS
     virtual void move(GWSTimeUnit movement_duration);

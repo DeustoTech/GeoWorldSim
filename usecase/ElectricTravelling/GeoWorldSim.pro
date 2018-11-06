@@ -80,7 +80,8 @@ HEADERS += \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-    ../../behaviour/electricTravelling/DriveBehaviour.h
+    ../../behaviour/electricTravelling/DriveBehaviour.h \
+    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h
         # AGENTS
             ## TRANSPORT LINES
 
@@ -142,7 +143,8 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
-    ../../behaviour/electricTravelling/DriveBehaviour.cpp
+    ../../behaviour/electricTravelling/DriveBehaviour.cpp \
+    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp
         # AGENTS
 
 

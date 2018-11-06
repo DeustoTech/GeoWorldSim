@@ -12,7 +12,7 @@ public:
     DriveSkill();
 
     // PROPERTIES
-    static QString SPEED_FACTOR_PROP;
+    static QString ADJUST_TO_SPEED_LIMITS_PROP;
     static QString STOP_DISTANCE_PROP;
 
     // GETTERS

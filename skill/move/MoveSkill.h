@@ -14,26 +14,22 @@ public:
     ~MoveSkill();
 
     // PROPERTIES
-    static QString MAX_SPEED_PROP;
-    static QString CURRENT_SPEED_PROP;
-    static QString ACCUMULATED_DISTANCE_PROP;
-    static QString ACCUMULATED_TIME_PROP;
-    static QString DESTINATION_X_PROP;
-    static QString DESTINATION_Y_PROP;
+    static QString AGENT_MAX_SPEED_PROP;
+    static QString AGENT_CURRENT_SPEED_PROP;
+    static QString SKILL_MOVING_TOWARDS_X_PROP;
+    static QString SKILL_MOVING_TOWARDS_Y_PROP;
+    static QString AGENT_ACCUMULATED_DISTANCE_PROP;
+    static QString AGENT_ACCUMULATED_TIME_PROP;
 
     // GETTERS
-    GWSSpeedUnit getMaxSpeed() const;
-    GWSSpeedUnit getCurrentSpeed() const;
-    GWSLengthUnit getAccDistance() const;
-    GWSTimeUnit getAccTime() const;
-    GWSCoordinate getCurrentDestination() const;
+    GWSSpeedUnit getCurrentSpeed();
+    GWSCoordinate getMovingTowardsCoordinate();
 
     // SETTERS
     void setMaxSpeed( GWSSpeedUnit max_speed ); // In m/s
 
     // METHODS
     virtual GWSSpeedUnit changeSpeed( double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
-    virtual GWSSpeedUnit brakeToStop();
     virtual void move( GWSTimeUnit movement_duration );
 
 signals:

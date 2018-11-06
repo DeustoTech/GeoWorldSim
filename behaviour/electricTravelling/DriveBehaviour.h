@@ -1,9 +1,9 @@
 #ifndef DRIVEBEHAVIOUR_H
 #define DRIVEBEHAVIOUR_H
 
-#include "../../behaviour/Behaviour.h"
+#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 
-class DriveBehaviour : public GWSBehaviour
+class DriveBehaviour : public MoveThroughRouteBehaviour
 {
     Q_OBJECT
 
@@ -18,12 +18,12 @@ public:
     static QString VEHICLE_LOAD;
     static QString CURRENT_SPEED;
     static QString CURRENT_ROAD;
+    static QString CURRENT_ROAD_MAXSPEED;
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
 
 
 protected slots:
-
     virtual QStringList behave();
 };
 

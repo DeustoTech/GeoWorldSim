@@ -1,11 +1,11 @@
 #include "DriveSkill.h"
 
-QString DriveSkill::SPEED_FACTOR_PROP = "speed_factor";
+QString DriveSkill::ADJUST_TO_SPEED_LIMITS_PROP = "adjust_to_speed_limits";
 QString DriveSkill::STOP_DISTANCE_PROP = "stop_distance";
 
 DriveSkill::DriveSkill( ) : GWSSkill( ){
     // Driver
-    this->setProperty( DriveSkill::SPEED_FACTOR_PROP , 1 );  // It will go to the 100% of the speed
+    this->setProperty( DriveSkill::ADJUST_TO_SPEED_LIMITS_PROP , 1 );  // It will go to the 100% of the speed
     this->setProperty( DriveSkill::STOP_DISTANCE_PROP , GWSLengthUnit( 50 ) ); // Likes to start stopping 50 meters ahead
 }
 
@@ -14,7 +14,7 @@ DriveSkill::DriveSkill( ) : GWSSkill( ){
 **********************************************************************/
 
 double DriveSkill::getSpeedFactor() const{
-    return this->getProperty( DriveSkill::SPEED_FACTOR_PROP ).toDouble();
+    return this->getProperty( DriveSkill::ADJUST_TO_SPEED_LIMITS_PROP ).toDouble();
 }
 
 GWSLengthUnit DriveSkill::getStopDistanceFactor() const{
@@ -29,7 +29,7 @@ GWSLengthUnit DriveSkill::getStopDistanceFactor() const{
 **********************************************************************/
 
 void DriveSkill::setSpeedFactor(double factor){
-    this->setProperty( DriveSkill::SPEED_FACTOR_PROP , factor );
+    this->setProperty( DriveSkill::ADJUST_TO_SPEED_LIMITS_PROP , factor );
 }
 
 void DriveSkill::setStopDistance(GWSLengthUnit distance){

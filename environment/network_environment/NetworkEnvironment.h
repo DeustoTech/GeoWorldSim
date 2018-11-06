@@ -24,6 +24,7 @@ public:
 
     // PROPERTIES
     static QString EDGE_PROP;
+    static QString INSIDE_AGENT_IDS_PROP;
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

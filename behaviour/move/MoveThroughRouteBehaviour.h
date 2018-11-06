@@ -13,15 +13,10 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // PROPERTIES
-    static QString MAX_SPEED_PROP;
-    static QString X_VALUE;
-    static QString Y_VALUE;
-    static QString NEXTS_IF_ARRIVED;
-    static QString NEXTS_IF_NOT_ARRIVED;
-    static QString STORE_MOVED_DISTANCE_AS;
-    static QString STORE_TRAVEL_TIME_AS;
-    static QString STORE_CURRENT_ROAD_TYPE_AS;
-    static QString STORE_CURRENT_SPEED_AS;
+    static QString BEHAVIOUR_DESTINATION_X_VALUE;
+    static QString BEHAVIOUR_DESTIONATION_Y_VALUE;
+    static QString BEHAVIOUR_NEXTS_IF_ARRIVED;
+    static QString BEHAVIOUR_NEXTS_IF_NOT_ARRIVED;
 
 protected slots:
     virtual QStringList behave();

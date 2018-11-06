@@ -63,7 +63,6 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
     }
 
     QString new_agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
 
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
