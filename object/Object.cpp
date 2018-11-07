@@ -224,6 +224,14 @@ QStringList GWSObject::getInheritanceFamily() const{
 }
 
 const QVariant GWSObject::getProperty( QString name ) const{
+
+    // If it comes between <>, it is not the property name, but a key where to get the property name from
+    if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
+        QString property_name = name.remove( 0 , 1 );
+        property_name = property_name.remove( property_name.length() - 1 , 1 );
+        name = this->getProperty( property_name ).toString();
+    }
+
     return QObject::property( name.toLatin1() );
 }
 

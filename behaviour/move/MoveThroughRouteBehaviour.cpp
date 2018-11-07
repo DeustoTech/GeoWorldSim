@@ -10,7 +10,7 @@
 
 
 QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_X_VALUE = "x_value";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTIONATION_Y_VALUE = "y_value";
+QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_Y_VALUE = "y_value";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
@@ -41,7 +41,7 @@ QStringList MoveThroughRouteBehaviour::behave(){
     }
 
     QVariant x_destination = this->getProperty( BEHAVIOUR_DESTINATION_X_VALUE );
-    QVariant y_destination = this->getProperty( BEHAVIOUR_DESTIONATION_Y_VALUE );
+    QVariant y_destination = this->getProperty( BEHAVIOUR_DESTINATION_Y_VALUE );
 
     bool x_is_property = x_destination.toString().startsWith( "<" ) && x_destination.toString().endsWith( ">" );
     bool y_is_property = y_destination.toString().startsWith( "<" ) && y_destination.toString().endsWith( ">" );

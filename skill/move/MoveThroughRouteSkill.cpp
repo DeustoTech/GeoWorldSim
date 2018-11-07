@@ -71,8 +71,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
         QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
-        //agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_TYPE_AS , starting_current_edge_agent->getProperty( "highway" ) );
-        //agent->setProperty( MoveThroughRouteBehaviour::STORE_CURRENT_ROAD_MAXSPEED_AS , starting_current_edge_agent->getProperty( "maxspeed") );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );

@@ -52,7 +52,13 @@ GWSSpeedUnit MoveSkill::changeSpeed(double force){
     new_speed = qMax( GWSSpeedUnit( 0 ) , new_speed );
     new_speed = qMin( max_speed , new_speed );
 
-    agent->setProperty( AGENT_CURRENT_SPEED_PROP , new_speed );
+
+    if ( force < 0 ){
+        agent->setProperty( "color" , "Red" );
+    }
+    else {
+        agent->setProperty( "color" , "Blue" );
+    }
     //this->skilled_agent->getStyle()->color = this->skilled_agent->getStyle()->border_color = QColor( 255 * (  ) , 255 , 128 );
 
     emit this->speedChangedSignal( new_speed );

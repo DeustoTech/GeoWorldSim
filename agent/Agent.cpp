@@ -172,11 +172,11 @@ bool GWSAgent::hasSkill( QString class_name ) const{
 }
 
 QSharedPointer<GWSSkill> GWSAgent::getSkill( QString class_name ) const{
-    if( !this->skills ){ return 0; }
+      if( !this->skills ){ return Q_NULLPTR; }
     const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
         qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( class_name );
-        return 0;
+        return Q_NULLPTR;
     }
     return objs.at(0).dynamicCast<GWSSkill>();
 }
