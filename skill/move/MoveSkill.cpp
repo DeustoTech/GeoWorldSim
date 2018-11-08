@@ -66,18 +66,19 @@ GWSSpeedUnit MoveSkill::changeSpeed(double force){
 }
 
 
-void MoveSkill::move( GWSTimeUnit movement_duration ){
+void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards ){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    agent->setProperty( AGENT_CURRENT_SPEED_PROP , movement_speed );
+    this->setProperty( SKILL_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
+    this->setProperty( SKILL_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
 
-    GWSSpeedUnit speed = GWSSpeedUnit( agent->getProperty( AGENT_CURRENT_SPEED_PROP ).toDouble() );
-
-    if( speed == 0 ){
-        qDebug() << "Asked to move with 0 current_speed. Initialize it before";
+    if( movement_duration == 0 ){
+        // Not move operation
         return;
     }
 
-    double meters = speed.number() // meters moved in 1 second
+    double meters = movement_speed.number() // meters moved in 1 second
             * movement_duration.number();
 
     // Current position
@@ -86,19 +87,18 @@ void MoveSkill::move( GWSTimeUnit movement_duration ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
     }
     GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate destination_coor = this->getMovingTowardsCoordinate();
 
     // Distance
-    double meter_distance = current_coor.getDistance( this->getMovingTowardsCoordinate() ).number();
+    double meter_distance = current_coor.getDistance( movement_towards ).number();
     double distance_percentage = ( meters / meter_distance );
 
     distance_percentage = qMin( distance_percentage , 1.0 );
 
     // Displacement
-    double x_distance = qAbs( destination_coor.getX() - current_coor.getX() );
-    double y_distance = qAbs( destination_coor.getY() - current_coor.getY() );
-    double x_move = x_distance * distance_percentage * ( destination_coor.getX() > current_coor.getX() ? 1 : -1 );
-    double y_move = y_distance * distance_percentage * ( destination_coor.getY() > current_coor.getY() ? 1 : -1 );
+    double x_distance = qAbs( movement_towards.getX() - current_coor.getX() );
+    double y_distance = qAbs( movement_towards.getY() - current_coor.getY() );
+    double x_move = x_distance * distance_percentage * ( movement_towards.getX() > current_coor.getX() ? 1 : -1 );
+    double y_move = y_distance * distance_percentage * ( movement_towards.getY() > current_coor.getY() ? 1 : -1 );
 
     // Set the agents position
     GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );

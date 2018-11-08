@@ -4,7 +4,8 @@
 #include "../../app/App.h"
 
 QString GWSNetworkEnvironment::EDGE_PROP = "edge";
-QString GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
+QString GWSNetworkEnvironment::EDGE_CAPACITY_PROP = "edge_capacity";
+QString GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
 
 GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
     static GWSNetworkEnvironment instance;
@@ -172,7 +173,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
         try {
 
             GWSEnvironment::registerAgent( agent );
-            agent->setProperty( INSIDE_AGENT_IDS_PROP , QStringList() );
+            edge->setProperty( EDGE_INSIDE_AGENT_IDS_PROP , QStringList() );
             QStringList classes = agent->getInheritanceFamily();
             QList<QString> keys = this->network_edges.keys();
 

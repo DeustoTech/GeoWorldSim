@@ -82,17 +82,16 @@ int main(int argc, char* argv[])
 
 QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"]  , "
                                                         "\"running\" : true, \"color\" : \"Green\" , "
-                                                        "\"@behaviours\" : [  { \"start\": true, \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"DRIVE\"] }, "
-                                                                                  "{ \"@type\": \"DriveBehaviour\" ,   \"@id\" : \"DRIVE\" , \"duration\" : 0.5 , \"security_distance\" : 10 , \"current_road_id\" : \"<current_road_id>\" , \"current_road_type\" : \"<current_road_type>\" , \"current_road_maxspeed\" : \"<current_road_maxspeed>\", \"current_speed\" : \"<current_speed>\" , \"nexts_if_move\" : [\"MOVE\"] , \"nexts_if_stop\" : [\"DISPLAY\"]  } , "
+                                                        "\"@behaviours\" : [  { \"start\": true, \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
                                                                                   "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<to_x>\" , \"y_value\": \"<to_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"STOP\"] , \"nexts_if_not_arrived\" : [\"DISPLAY\"] } , "
-                                                                                  "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"DRIVE\"] } ,"
+                                                                                  "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE\"] } ,"
                                                                                   "{ \"@type\": \"StopAgentBehaviour\" ,   \"@id\" : \"STOP\" , \"duration\" : 1 }  "
                                                                                   " ] } ")
                                                         .toLatin1()
                                                         );
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 10  );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1000  );
 
 
 
@@ -103,6 +102,7 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
 // Read Primary Road data from datasource url:
 
 QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 40 , "
+                                                            "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"edge_capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
                                                             "{ \"@type\": \"ChangeColorRangeBehaviour\" ,   \"@id\": \"CHANGE_COLOR\" , \"min_capacity\" : 0 , \"max_capacity\" : 10 , \"duration\": 1 ,  \"nexts\" : [\"DISPLAY\"] }"

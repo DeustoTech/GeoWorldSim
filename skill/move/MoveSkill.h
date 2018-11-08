@@ -30,7 +30,7 @@ public:
 
     // METHODS
     virtual GWSSpeedUnit changeSpeed( double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
-    virtual void move( GWSTimeUnit movement_duration );
+    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards );
 
 signals:
     void speedChangedSignal( GWSSpeedUnit current_speed );

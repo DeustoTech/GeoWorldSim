@@ -80,7 +80,7 @@ QStringList DriveBehaviour::behave(){
 
     // Get agent from road ID:
     QSharedPointer<GWSAgent> current_edge_agent = GWSAgentEnvironment::globalInstance()->getById( current_road_id );
-    QStringList agents_id_inside_current_edge = current_edge_agent->getProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP ).toStringList();
+    QStringList agents_id_inside_current_edge = current_edge_agent->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList();
     QList< QSharedPointer<GWSAgent> > agents_inside_current_edge = GWSAgentEnvironment::globalInstance()->getByIds( agents_id_inside_current_edge );
     QSharedPointer<GWSAgent> agent_in_front_of_me = Q_NULLPTR;
     GWSLengthUnit agent_in_fron_of_me_distance;

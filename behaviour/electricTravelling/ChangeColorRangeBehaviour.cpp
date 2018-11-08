@@ -59,7 +59,7 @@ QStringList ChangeColorRangeBehaviour::behave(){
     // Change edge color according to edge occupation
     // -----------------------------------------------
 
-    QStringList inside_agent_ids = agent->getProperty( GWSNetworkEnvironment::INSIDE_AGENT_IDS_PROP ).toStringList();
+    QStringList inside_agent_ids = agent->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList();
     int edge_occupation = inside_agent_ids.size();
 
     double color_factor = ( edge_occupation - min_capacity ) / ( max_capacity - min_capacity);
