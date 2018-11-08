@@ -1,26 +1,26 @@
 #ifndef DRIVEBEHAVIOUR_H
 #define DRIVEBEHAVIOUR_H
 
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/Behaviour.h"
 
-class DriveBehaviour : public MoveThroughRouteBehaviour
+class DriveBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
 
     Q_INVOKABLE explicit DriveBehaviour();
+    ~DriveBehaviour();
+
 
     // PROPERTIES
     static QString SPEED_FACTOR_PROP;
+    static QString SECURITY_DISTANCE;
     static QString VEHICLE_TYPE;
     static QString VEHICLE_SUBTYPE;
     static QString VEHICLE_LOAD;
-    static QString CURRENT_SPEED;
-    static QString CURRENT_ROAD;
-    static QString CURRENT_ROAD_MAXSPEED;
-    static QString NEXTS_IF_TRUE;
-    static QString NEXTS_IF_FALSE;
+    static QString NEXTS_IF_MOVE;
+    static QString NEXTS_IF_STOP;
 
 
 protected slots:

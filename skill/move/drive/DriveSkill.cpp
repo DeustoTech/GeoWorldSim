@@ -2,6 +2,7 @@
 
 QString DriveSkill::ADJUST_TO_SPEED_LIMITS_PROP = "adjust_to_speed_limits";
 QString DriveSkill::STOP_DISTANCE_PROP = "stop_distance";
+QString DriveSkill::AGENT_CURRENT_SPEED_PROP = "agent_current_speed";
 
 DriveSkill::DriveSkill( ) : GWSSkill( ){
     // Driver
@@ -63,10 +64,9 @@ double DriveSkill::calculateAccelerateForce(GWSSpeedUnit vehicle_speed, GWSSpeed
         return qMax( brake_force , -1.0 );
     }
 
-    return 0;
-
-
     // TODO FIX
     GWSSpeedUnit adjusted_road_max_speed = road_max_speed * this->getSpeedFactor();
     return qMax( -1.0 , (adjusted_road_max_speed - vehicle_speed).number() / adjusted_road_max_speed.number() );
 }
+
+

@@ -14,6 +14,7 @@ public:
     // PROPERTIES
     static QString ADJUST_TO_SPEED_LIMITS_PROP;
     static QString STOP_DISTANCE_PROP;
+    static QString AGENT_CURRENT_SPEED_PROP;
 
     // GETTERS
     double getSpeedFactor() const;

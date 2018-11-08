@@ -16,7 +16,7 @@ public:
     static QString AGENT_TYPE_FIND_PROP;
 
     // GETTERS
-    QList< QSharedPointer<GWSAgent> > getViewingAgents();
+    QList< QSharedPointer<GWSAgent> > getViewingAgents( QString agent_type = GWSAgent::staticMetaObject.className() );
 
 };
 
