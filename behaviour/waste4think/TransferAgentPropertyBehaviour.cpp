@@ -17,11 +17,28 @@ TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(
 QStringList TransferAgentPropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
+
+    QVariant waste_to_transfer = this->getProperty( PROPERTY_TO_TRANSFER );
+
+    bool waste_is_property = waste_to_transfer.toString().startsWith( "<" ) && waste_to_transfer.toString().endsWith( ">" );
+
+    QString waste_name;
+    if ( waste_is_property ){
+        QString property_name = waste_to_transfer.toString().remove( 0 , 1);
+        property_name = property_name.remove( property_name.length() - 1 , 1 );
+        waste_to_transfer = agent->getProperty( property_name );
+        waste_name = property_name;
+    }
+
+    double waste = waste_to_transfer.toDouble();
+
+
+
     QVariant closest_agent_id = this->getProperty( RECEIVING_AGENT_ID );
 
     bool is_property = closest_agent_id.toString().startsWith( "<" ) && closest_agent_id.toString().endsWith( ">" );
 
-    if (is_property ){
+    if ( is_property ){
         QString property_name = closest_agent_id.toString().remove( 0 , 1);
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         closest_agent_id = agent->getProperty( property_name );
@@ -29,9 +46,9 @@ QStringList TransferAgentPropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id.toString() );
 
-    double new_waste = closest_agent->getProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() ).toDouble() + agent->getProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() ).toDouble();
-    closest_agent->setProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() , new_waste );
-    agent->setProperty( this->getProperty( PROPERTY_TO_TRANSFER ).toString() , 0.);
+    double new_waste = closest_agent->getProperty( waste_name ).toDouble() + waste;
+    closest_agent->setProperty( waste_name , new_waste );
+    agent->setProperty( waste_name , 0.);
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( closest_agent->serialize() );
