@@ -120,7 +120,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             int edge_inside_agents_amount = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList().size();
             if( edge_capacity <= edge_inside_agents_amount ){
                 // Wait for edge to liberate, that is, do not move
-                qDebug() << "Edge full, not moving";
                 agent->setProperty( "color" , "Red" );
                 MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , destination_coor );
                 return;

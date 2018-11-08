@@ -49,6 +49,8 @@
 
 int main(int argc, char* argv[])
 {
+    QDateTime start = QDateTime::currentDateTime();
+    qDebug() << start;
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
@@ -90,18 +92,18 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         .toLatin1()
                                                         );
 
-QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1000  );
+QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/79cbe753-78bd-4c15-aa41-89d459ffb061/read";
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1  );
 
 
 
 /* ----------------
- * Bilbao roads
+ * Zamudio roads
  * ----------------*/
 
-// Read Primary Road data from datasource url:
+// Read Footway data from datasource url:
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 40 , "
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , "
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
@@ -111,31 +113,27 @@ QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSA
                                                         .toLatin1()
                                                         );
 
-QString primary_road = "http://datasources.geoworldsim.com/api/datasource/92afa3e7-62fa-4ec3-803b-c60e93e63dcd/read" ;
+QString primary_road = "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" ;
 GWSAgentGeneratorDatasource* ds1 = new GWSAgentGeneratorDatasource( road_json.object() , primary_road );
 
 
-// Read Secondary Road data from datasource url:
-QJsonDocument secondary_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" } ")
-                                                        .toLatin1()
-                                                        );
-
-QString secondary_road = "http://datasources.geoworldsim.com/api/datasource/a1c2a08b-9e16-4fdf-86d2-84c611c325fc/read" ;
+// Read Pedestrian data from datasource url:
+QString secondary_road = "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" ;
 GWSAgentGeneratorDatasource* ds2 = new GWSAgentGeneratorDatasource( road_json.object() , secondary_road );
 
 
-// Read Tertiary Road data from datasource url:
-QString tertiary_road = "http://datasources.geoworldsim.com/api/datasource/f2e32381-f035-49d9-8836-195ed020a26d/read";
+// Read Residential data from datasource url:
+QString tertiary_road = "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read";
 GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.object() , tertiary_road );
 
 
 // Read Trunk Road data from datasource url:
-QString trunk_road = "http://datasources.geoworldsim.com/api/datasource/a0d53dac-d0da-496e-9231-2cf526992429/read";
-GWSAgentGeneratorDatasource* ds4 = new GWSAgentGeneratorDatasource( road_json.object() , trunk_road );
+//QString trunk_road = "http://datasources.geoworldsim.com/api/datasource/a0d53dac-d0da-496e-9231-2cf526992429/read";
+//GWSAgentGeneratorDatasource* ds4 = new GWSAgentGeneratorDatasource( road_json.object() , trunk_road );
 
 // Read Residential Road data from datasource url:
-QString residential_road = "http://datasources.geoworldsim.com/api/datasource/ecd490dd-a01d-4eb7-b471-01c90a281cb7/read";
-GWSAgentGeneratorDatasource* ds5 = new GWSAgentGeneratorDatasource( road_json.object() , residential_road );
+//QString residential_road = "http://datasources.geoworldsim.com/api/datasource/ecd490dd-a01d-4eb7-b471-01c90a281cb7/read";
+//GWSAgentGeneratorDatasource* ds5 = new GWSAgentGeneratorDatasource( road_json.object() , residential_road );
 
 /*GWSDatasourceReader* secondaryHighwayReader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/a1c2a08b-9e16-4fdf-86d2-84c611c325fc/read" );
 
@@ -252,7 +250,12 @@ QTimer::singleShot( 10*1000 , [](){
     GWSExecutionEnvironment::globalInstance()->run();
 } );
 
-
+GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
+    QDateTime current_time = QDateTime::currentDateTime();
+    qint64 secondsDiff = start.secsTo( current_time );
+    qDebug() << "Elapsed time" << secondsDiff;
+});
 app->exec();
+
 
 }
