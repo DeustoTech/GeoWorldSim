@@ -92,7 +92,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         );
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/4ac4c9d1-f1d6-40e6-a286-2f1c7e8ed34a/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 100  );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 10  );
 
 
 
@@ -102,7 +102,7 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
 
 // Read Primary Road data from datasource url:
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 ,  "
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 40 , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
                                                             "{ \"@type\": \"ChangeColorRangeBehaviour\" ,   \"@id\": \"CHANGE_COLOR\" , \"min_capacity\" : 0 , \"max_capacity\" : 10 , \"duration\": 1 ,  \"nexts\" : [\"DISPLAY\"] }"

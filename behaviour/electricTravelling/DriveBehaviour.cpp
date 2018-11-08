@@ -111,7 +111,7 @@ QStringList DriveBehaviour::behave(){
         }
     }
 
-    if ( !agent_in_front_of_me ){ // No other agent apart from the agent itself
+  if ( !agent_in_front_of_me ){ // No other agent apart from the agent itself
 
          agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , road_maxSpeed );
          agent->setProperty( "color" , "Blue" );
