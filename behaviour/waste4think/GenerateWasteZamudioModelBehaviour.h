@@ -1,17 +1,21 @@
 #ifndef GENERATEWASTEBEHAVIOUR_H
 #define GENERATEWASTEBEHAVIOUR_H
 
+#include <QJsonObject>
 #include "../../behaviour/Behaviour.h"
 
-class GenerateWasteBehaviour : public GWSBehaviour
+class GenerateWasteZamudioModelBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GenerateWasteBehaviour();
+    Q_INVOKABLE explicit GenerateWasteZamudioModelBehaviour();
 
     // PROPERTIES
-    static QString WASTE_TYPE;
+    static QString WASTE_TYPE1;
+    static QString WASTE_TYPE2;
+    static QString WASTE_TYPE3;
+    static QString WASTE_TYPE4;
     static QString GENERATED_WASTE_AMOUNT;
     static QString SAVE_GENERATED_WASTE_AS;
     static QString FAMILY_MEMBERS;
@@ -19,6 +23,12 @@ public:
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
     static QString STORE_GENERATED_WASTE_AS;
+    static QString STORE_WASTE_TYPE1_AS;
+    static QString STORE_WASTE_TYPE2_AS;
+    static QString STORE_WASTE_TYPE3_AS;
+    static QString STORE_WASTE_TYPE4_AS;
+
+
 
     // METHODS:
     double partialModel( double rest, double uni, double tasParo , double urb );

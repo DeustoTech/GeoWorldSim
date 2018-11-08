@@ -34,7 +34,7 @@ QStringList MoveBehaviour::behave(){
         move_skill = QSharedPointer<MoveSkill>( new MoveSkill() );
         agent->addSkill( move_skill );
     }
-    move_skill->setProperty( MoveSkill::MAX_SPEED_PROP , this->getProperty( MoveBehaviour::MAX_SPEED_PROP ) );
+    //move_skill->setProperty( MoveSkill::MAX_SPEED_PROP , this->getProperty( MoveBehaviour::MAX_SPEED_PROP ) );
 
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
@@ -57,12 +57,10 @@ QStringList MoveBehaviour::behave(){
 
     }
 
-    move_skill->setProperty( MoveSkill::DESTINATION_X_PROP , x_destination.toDouble() );
-    move_skill->setProperty( MoveSkill::DESTINATION_Y_PROP , y_destination.toDouble() );
 
     QStringList nexts;
 
-    GWSCoordinate destination_coor = move_skill->getCurrentDestination();
+    GWSCoordinate destination_coor = move_skill->getMovingTowardsCoordinate();
     if( !destination_coor.isValid() ){
         nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
     }
@@ -75,7 +73,7 @@ QStringList MoveBehaviour::behave(){
     }
 
     // Move towards
-    move_skill->move( duration_of_movement );
+    move_skill->move( duration_of_movement , 4 , destination_coor );
 
     if ( agent_position == destination_coor ){
         nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();

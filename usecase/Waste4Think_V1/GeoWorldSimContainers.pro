@@ -44,7 +44,6 @@ HEADERS += \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/waste4think/GenerateWasteBehaviour.h \
     ../../behaviour/waste4think/TransferAgentPropertyBehaviour.h \
     ../../behaviour/waste4think/FindClosestBehaviour.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
@@ -95,7 +94,8 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    RecyclingPlantAgent.h
+    RecyclingPlantAgent.h \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -114,7 +114,6 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/waste4think/GenerateWasteBehaviour.cpp \
     ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
     ../../behaviour/waste4think/FindClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
@@ -170,25 +169,12 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    RecyclingPlantAgent.cpp
+    RecyclingPlantAgent.cpp \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp
 
 
-#INCLUDE LEMON COMPILED LIBRARY
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/release/ -lemon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/debug/ -lemon
-else:unix: LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/ -lemon
-
-INCLUDEPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-DEPENDPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/libemon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/libemon.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/emon.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/emon.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/libemon.a
-
-#INCLUDE LEMON SYSTEM LIBRARY
-unix|win32: LIBS += -lemon
+#INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
+unix|win32: LIBS += -llemon
 
 #INCLUDE LIBPQ SYSTEM LIBRARY (sudo apt-get install libpq-dev)
 unix|win32: LIBS += -lpq

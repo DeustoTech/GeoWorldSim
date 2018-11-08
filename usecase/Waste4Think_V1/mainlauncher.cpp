@@ -25,7 +25,7 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/waste4think/DelayBehaviour.h"
-#include "../../behaviour/waste4think/GenerateWasteBehaviour.h"
+#include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
 #include "../../behaviour/waste4think/FollowTSPRouteBehaviour.h"
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( DelayBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
@@ -102,7 +102,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                         "\"home_x\": -2, \"home_y\": 43, \"running\" : true, \"color\" : \"Green\" , "
                                                         "\"@behaviours\": [ { \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"HISTORY\" , \"duration\": 1 , \"start\": true, \"nexts\" : [\"GEOM\"] } ,"
                                                                             "{ \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"WASTE\"] }, "
-                                                                            "{ \"@type\": \"GenerateWasteBehaviour\", \"@id\": \"WASTE\", \"duration\": 10, \"store_generated_waste_as\": \"waste\", \"nexts_if_true\" : [\"WAIT\"] }, "
+                                                                            "{ \"@type\": \"GenerateWasteZamudioModelBehaviour\", \"@id\": \"WASTE\", \"duration\": 10, \"waste_type1\" : \"despilfarro_alimento\" , \"store_waste_type1_as\": \"despilfarro_alimento\", \"nexts_if_true\" : [\"WAIT\"] }, "
                                                                             "{ \"@type\": \"DelayBehaviour\", \"@id\": \"WAIT\", \"duration\": 1,  \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_container_id\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
                                                                             "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
@@ -111,8 +111,8 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                         .toLatin1()
                                                         );
 
-QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
+QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/5742d86c-f3a6-4f92-8a8a-52c77d2cef3a/read";
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1 );
 
 
 /* ----------------
@@ -129,7 +129,7 @@ double lon_max = -2.859949952301804 ;
 double lon_min = -2.8665803729866184;
 
 
-for( int i = 0 ; i < 8 ; i++ ){
+for( int i = 0 ; i < 0 ; i++ ){
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], \"running\" : true, "
