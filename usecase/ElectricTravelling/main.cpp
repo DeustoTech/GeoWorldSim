@@ -102,7 +102,7 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
 // Read Primary Road data from datasource url:
 
 QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 40 , "
-                                                            "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"edge_capacity\" : 3 } , "
+                                                            "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
                                                             "{ \"@type\": \"ChangeColorRangeBehaviour\" ,   \"@id\": \"CHANGE_COLOR\" , \"min_capacity\" : 0 , \"max_capacity\" : 10 , \"duration\": 1 ,  \"nexts\" : [\"DISPLAY\"] }"
@@ -154,10 +154,10 @@ secondaryHighwayReader->connect( secondaryHighwayReader , &GWSDatasourceReader::
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geometry" , geo);
@@ -181,10 +181,10 @@ secondaryHighwayReader->connect( secondaryHighwayReader , &GWSDatasourceReader::
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geometry" , geo );
@@ -217,10 +217,10 @@ secondaryHighwayReader->connect( secondaryHighwayReader , &GWSDatasourceReader::
 
             QJsonObject edge;
             edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "edge_from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "edge_from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "edge_to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "edge_to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
+            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
+            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
+            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
+            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
 
             QJsonObject agent_json;
             agent_json.insert( "geometry" , geo);

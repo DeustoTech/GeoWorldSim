@@ -3,12 +3,12 @@
 #include <QDebug>
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
-QString GWSGraphEdge::EDGE_FROM_X_PROP = "edge_from_x";
-QString GWSGraphEdge::EDGE_FROM_Y_PROP = "edge_from_y";
-QString GWSGraphEdge::EDGE_FROM_Z_PROP = "edge_from_z";
-QString GWSGraphEdge::EDGE_TO_X_PROP = "edge_to_x";
-QString GWSGraphEdge::EDGE_TO_Y_PROP = "edge_to_y";
-QString GWSGraphEdge::EDGE_TO_Z_PROP = "edge_to_z";
+QString GWSGraphEdge::EDGE_FROM_X_PROP = "from_x";
+QString GWSGraphEdge::EDGE_FROM_Y_PROP = "from_y";
+QString GWSGraphEdge::EDGE_FROM_Z_PROP = "from_z";
+QString GWSGraphEdge::EDGE_TO_X_PROP = "to_x";
+QString GWSGraphEdge::EDGE_TO_Y_PROP = "to_y";
+QString GWSGraphEdge::EDGE_TO_Z_PROP = "to_z";
 
 GWSGraphEdge::GWSGraphEdge() : GWSObject() {
 }
