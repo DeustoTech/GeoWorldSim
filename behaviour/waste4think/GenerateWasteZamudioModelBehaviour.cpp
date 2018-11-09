@@ -51,9 +51,11 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                         "}"
                                         "}";
 
+    QJsonDocument jsonCharac = QJsonDocument::fromJson( characterization.toUtf8() );
+    QJsonObject characObject = jsonCharac.object();
 
 
-    this->setProperty( "characterization" , characterization );
+    this->setProperty( "characterization" , characObject );
 }
 
 /************************************************************
@@ -83,14 +85,14 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    QString charac_str = this->getProperty( "characterization" ).toString();
+    QJsonObject characObject = this->getProperty( "characterization" ).toJsonObject();
     //qDebug() << charac_str;
-    QJsonDocument jsonCharac = QJsonDocument::fromJson( charac_str.toUtf8() );
+    //QJsonDocument jsonCharac = QJsonDocument::fromJson( charac_str.toUtf8() );
     //qDebug() << jsonCharac;
-    QJsonObject characObject = jsonCharac.object();
+    //QJsonObject characObject = jsonCharac.object();
     //qDebug() << characObject;
     QJsonValue restoObject = characObject["resto"];
-    //qDebug() << restoObject;
+    qDebug() << restoObject;
 
     QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString();
     //QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
