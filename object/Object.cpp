@@ -89,6 +89,11 @@ QJsonObject GWSObject::serialize() const{
                     if( obj ){ json.insert( property_name , obj->serialize() ); }
                 }
 
+                // case JSONObject
+                else if( QString( property_value.typeName() ) == "QJsonObject" ){
+                    json.insert( property_name , property_value.toJsonValue() );
+                }
+
                 else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
@@ -110,11 +115,11 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_TYPE_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){
-        QStringList family;
+        QStringList family_array;
         foreach(QJsonValue v , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() ){
-            family.append( v.toString() );
+            family_array.append( v.toString() );
         }
-        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , family );
+        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , family_array );
     }
 
     // Set properties
@@ -172,15 +177,8 @@ void GWSObject::deserializeProperty( QString property_name, QJsonValue property_
 
             } else {
 
-                // Concat name with value keys
-                foreach( QString subproperty_name , property_value_object.keys() ){
-
-                    // Avoid @ starting keywords
-                    if( subproperty_name.contains('@') ){ continue; }
-
-                    QJsonValue property_value = property_value_object.value( subproperty_name );
-                    this->deserializeProperty( property_name + ":" + subproperty_name , property_value );
-                }
+                // It is a plain JSON Object
+                this->setProperty( property_name , property_value_object );
             }
             break;
     }
@@ -225,14 +223,17 @@ QStringList GWSObject::getInheritanceFamily() const{
 
 const QVariant GWSObject::getProperty( QString name ) const{
 
-    // If it comes between <>, it is not the property name, but a key where to get the property name from
+    // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
         QString property_name = name.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         name = this->getProperty( property_name ).toString();
     }
 
-    return QObject::property( name.toLatin1() );
+    this->mutex.lock();
+    const QVariant value = QObject::property( name.toLatin1() );
+    this->mutex.unlock();
+    return value;
 }
 
 const QVariant GWSObject::operator []( QString name ) const{
@@ -248,7 +249,10 @@ bool GWSObject::setProperty(const QString name, const GWSUnit &value){
 }
 
 bool GWSObject::setProperty(const QString name, const QVariant &value){
-    return QObject::setProperty( name.toLatin1() , value );
+    this->mutex.lock();
+    bool ok = QObject::setProperty( name.toLatin1() , value );
+    this->mutex.unlock();
+    return ok;
 }
 
 bool GWSObject::setProperty(const QString name, QSharedPointer<GWSObject> value){

@@ -82,9 +82,9 @@ int main(int argc, char* argv[])
 
 
 
-QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"]  , "
-                                                        "\"running\" : true, \"color\" : \"Green\" , "
-                                                        "\"@behaviours\" : [  { \"start\": true, \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_x>\", \"y_value\": \"<from_y>\", \"nexts\" : [\"MOVE\"] }, "
+QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", \"@family\" : [\"Person\"]  , \"from_changed_x\" : -2.8631781 , \"from_changed_y\" : 43.2830898 , "
+                                                        "\"running\" : true, \"color\" : \"Blue\" , "
+                                                        "\"@behaviours\" : [  { \"start\": true, \"@type\": \"GenerateAgentGeometryBehaviour\", \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": \"<from_changed_x>\", \"y_value\": \"<from_changed_y>\", \"nexts\" : [\"MOVE\"] }, "
                                                                                   "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<to_x>\" , \"y_value\": \"<to_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"STOP\"] , \"nexts_if_not_arrived\" : [\"DISPLAY\"] } , "
                                                                                   "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE\"] } ,"
                                                                                   "{ \"@type\": \"StopAgentBehaviour\" ,   \"@id\" : \"STOP\" , \"duration\" : 1 }  "
@@ -92,8 +92,8 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWS
                                                         .toLatin1()
                                                         );
 
-QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/79cbe753-78bd-4c15-aa41-89d459ffb061/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 1  );
+QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/5742d86c-f3a6-4f92-8a8a-52c77d2cef3a/read";
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
 
 
 
@@ -103,7 +103,7 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
 
 // Read Footway data from datasource url:
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , "
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Red\" , \"weight\" : 5 , \"maxspeed\" : 4 , "
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"CHANGE_COLOR\"] } , "
@@ -123,126 +123,8 @@ GWSAgentGeneratorDatasource* ds2 = new GWSAgentGeneratorDatasource( road_json.ob
 
 
 // Read Residential data from datasource url:
-QString tertiary_road = "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read";
-GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.object() , tertiary_road );
-
-
-// Read Trunk Road data from datasource url:
-//QString trunk_road = "http://datasources.geoworldsim.com/api/datasource/a0d53dac-d0da-496e-9231-2cf526992429/read";
-//GWSAgentGeneratorDatasource* ds4 = new GWSAgentGeneratorDatasource( road_json.object() , trunk_road );
-
-// Read Residential Road data from datasource url:
-//QString residential_road = "http://datasources.geoworldsim.com/api/datasource/ecd490dd-a01d-4eb7-b471-01c90a281cb7/read";
-//GWSAgentGeneratorDatasource* ds5 = new GWSAgentGeneratorDatasource( road_json.object() , residential_road );
-
-/*GWSDatasourceReader* secondaryHighwayReader = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/a1c2a08b-9e16-4fdf-86d2-84c611c325fc/read" );
-
-
-secondaryHighwayReader->connect( secondaryHighwayReader , &GWSDatasourceReader::dataValueReadSignal , []( QJsonObject data ){
-
-    // If data.value( "oneway" ).toString() = "no" or data.value( "oneway" ).toString().isNull(), we need to generate the edges in two directions,
-    // the same as we do for W4T roads
-
-    if ( data.value( "oneway" ).toString() == "no" || data.value( "oneway" ).toString().isNull() ){
-
-        try {
-        {
-            QJsonObject geo = data.value( "geometry").toObject();
-            geo.insert( "@type" ,  "GWSGeometry");
-
-            QJsonObject edge;
-            edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
-
-            QJsonObject agent_json;
-            agent_json.insert( "geometry" , geo);
-            agent_json.insert( "edge" , edge );
-            QJsonArray family_array; family_array.append( "secondary" );
-            agent_json.insert( "@family" , family_array );
-            agent_json.insert( "@type" , "GWSAgent" );
-
-            QSharedPointer<GWSAgent> secondary = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-
-            emit GWSApp::globalInstance()->sendAgentToSocketSignal( secondary->serialize() );
-        }
-        {
-            QJsonObject geo = data.value( "geometry").toObject();
-            geo.insert( "@type" ,  "GWSGeometry");
-            QJsonArray reversed_coordinates;
-            for(int i = geo.value( "coordinates" ).toArray().size()-1 ; i >= 0 ; i-- ){
-                reversed_coordinates.append( geo.value( "coordinates" ).toArray().at(i) );
-            }
-            geo.insert( "coordinates" , reversed_coordinates );
-
-            QJsonObject edge;
-            edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
-
-            QJsonObject agent_json;
-            agent_json.insert( "geometry" , geo );
-            agent_json.insert( "edge" , edge );
-            QJsonArray family_array; family_array.append( "secondary" );
-            agent_json.insert( "@family" , family_array );
-            agent_json.insert( "@type" , "GWSAgent" );
-
-            QSharedPointer<GWSAgent> secondary = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-
-            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
-            env->getId();
-
-            emit GWSApp::globalInstance()->sendAgentToSocketSignal( secondary->serialize() );
-        }
-
-        }
-        catch (std::exception &e){
-        }
-
-    }
-
-
-    else {
-
-        try {
-        {
-            QJsonObject geo = data.value( "geometry").toObject();
-            geo.insert( "@type" ,  "GWSGeometry");
-
-            QJsonObject edge;
-            edge.insert( "@type" , "GWSGraphEdge" );
-            edge.insert( "from_x" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 0 ) );
-            edge.insert( "from_y" , geo.value( "coordinates" ).toArray().at( 0 ).toArray().at( 1 ) );
-            edge.insert( "to_x" , geo.value( "coordinates" ).toArray().last().toArray().at( 0 ) );
-            edge.insert( "to_y" , geo.value( "coordinates" ).toArray().last().toArray().at( 1 ) );
-
-            QJsonObject agent_json;
-            agent_json.insert( "geometry" , geo);
-            agent_json.insert( "edge" , edge );
-            QJsonArray family_array; family_array.append( "secondary" );
-            agent_json.insert( "@family" , family_array );
-            agent_json.insert( "@type" , "GWSAgent" );
-
-            QSharedPointer<GWSAgent> secondary = GWSObjectFactory::globalInstance()->fromJSON( agent_json ).dynamicCast<GWSAgent>();
-
-            emit GWSApp::globalInstance()->sendAgentToSocketSignal( secondary->serialize() );
-
-            GWSNetworkEnvironment* env = GWSNetworkEnvironment::globalInstance();
-            env->getId();
-        }
-        }
-        catch (std::exception &e){
-        }
-
-    }
-
-});*/
-
-
+//QString tertiary_road = "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read";
+//GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.object() , tertiary_road );
 
 QTimer::singleShot( 10*1000 , [](){
 
@@ -253,8 +135,12 @@ QTimer::singleShot( 10*1000 , [](){
 GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
     QDateTime current_time = QDateTime::currentDateTime();
     qint64 secondsDiff = start.secsTo( current_time );
-    qDebug() << "Elapsed time" << secondsDiff;
+    qDebug() << QString("Simulation took %1 seconds, for %2 agents, at %3x speed")
+                .arg( secondsDiff )
+                .arg( GWSAgentEnvironment::globalInstance()->getAmount() )
+                .arg( GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
 });
+
 app->exec();
 
 

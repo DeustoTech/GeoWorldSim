@@ -15,6 +15,7 @@
 #include "../../environment/Environment.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
@@ -136,6 +137,12 @@ QJsonObject GWSAgent::serialize() const{
     QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
     if( geom ){
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
+    }
+
+    // EDGE
+    QSharedPointer<GWSGraphEdge> edge = GWSNetworkEnvironment::globalInstance()->getEdge( this->getSharedPointer() );
+    if( edge ){
+        json.insert( GWSNetworkEnvironment::EDGE_PROP , edge->serialize() );
     }
 
     return json;
