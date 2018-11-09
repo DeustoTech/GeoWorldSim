@@ -84,13 +84,13 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     QString charac_str = this->getProperty( "characterization" ).toString();
-    qDebug() << charac_str;
+    //qDebug() << charac_str;
     QJsonDocument jsonCharac = QJsonDocument::fromJson( charac_str.toUtf8() );
-    qDebug() << jsonCharac;
+    //qDebug() << jsonCharac;
     QJsonObject characObject = jsonCharac.object();
-    qDebug() << characObject;
+    //qDebug() << characObject;
     QJsonValue restoObject = characObject["resto"];
-    qDebug() << restoObject;
+    //qDebug() << restoObject;
 
     QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString();
     //QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
