@@ -28,9 +28,11 @@ QStringList TransferAgentPropertyBehaviour::behave(){
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         waste_to_transfer = agent->getProperty( property_name );
         waste_name = property_name;
+        qDebug() << property_name;
+        qDebug() << waste_to_transfer;
     }
-
-    double waste = waste_to_transfer.toDouble();
+    qDebug() << agent->serialize();
+    qDebug() << waste_to_transfer.toJsonValue();
 
 
 
@@ -46,8 +48,8 @@ QStringList TransferAgentPropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id.toString() );
 
-    double new_waste = closest_agent->getProperty( waste_name ).toDouble() + waste;
-    closest_agent->setProperty( waste_name , new_waste );
+    //closest_agent->getProperty( waste_name ) + waste_to_transfer;
+    closest_agent->setProperty( waste_name , closest_agent->getProperty( waste_name ) + waste_to_transfer );
     agent->setProperty( waste_name , 0.);
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );

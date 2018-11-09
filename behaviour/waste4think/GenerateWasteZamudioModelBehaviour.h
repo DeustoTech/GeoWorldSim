@@ -20,8 +20,7 @@ public:
     static QString SAVE_GENERATED_WASTE_AS;
     static QString FAMILY_MEMBERS;
     static QString MAX_VALUE;
-    static QString NEXTS_IF_TRUE;
-    static QString NEXTS_IF_FALSE;
+    static QString NEXTS;
     static QString STORE_GENERATED_WASTE_AS;
     static QString STORE_WASTE_TYPE1_AS;
     static QString STORE_WASTE_TYPE2_AS;

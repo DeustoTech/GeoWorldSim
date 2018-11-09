@@ -11,8 +11,7 @@ QString GenerateWasteZamudioModelBehaviour::WASTE_TYPE4 = "waste_type4";
 
 QString GenerateWasteZamudioModelBehaviour::FAMILY_MEMBERS = "family_members";
 QString GenerateWasteZamudioModelBehaviour::MAX_VALUE = "max_waste";
-QString GenerateWasteZamudioModelBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
-QString GenerateWasteZamudioModelBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
+QString GenerateWasteZamudioModelBehaviour::NEXTS = "nexts";
 QString GenerateWasteZamudioModelBehaviour::STORE_GENERATED_WASTE_AS = "store_generated_waste_as";
 QString GenerateWasteZamudioModelBehaviour::STORE_WASTE_TYPE1_AS = "store_waste_type1_as";
 QString GenerateWasteZamudioModelBehaviour::STORE_WASTE_TYPE2_AS = "store_waste_type2_as";
@@ -85,72 +84,33 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    QJsonObject characObject = this->getProperty( "characterization" ).toJsonObject();
-    //qDebug() << charac_str;
-    //QJsonDocument jsonCharac = QJsonDocument::fromJson( charac_str.toUtf8() );
-    //qDebug() << jsonCharac;
-    //QJsonObject characObject = jsonCharac.object();
-    //qDebug() << characObject;
-    QJsonValue restoObject = characObject["resto"];
-    qDebug() << restoObject;
 
-    QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString();
+
+    QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString(); // e.g. fraccion resto
     //QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
     //QString waste_type3 = this->getProperty( WASTE_TYPE3 ).toString();
     //QString waste_type4 = this->getProperty( WASTE_TYPE4 ).toString();
 
-    double despilfarro_alimento = restoObject[ waste_type1 ].toDouble();
-    //double no_despilfarro_alimento = restoObject[ waste_type2 ].toDouble();
-    //double jardineria = restoObject[ waste_type3 ].toDouble();
-    //double carton_envase = restoObject[ waste_type4 ].toDouble();
-    //qDebug() << no_despilfarro_alimento;
-    qDebug() << despilfarro_alimento;
-    //qDebug() << jardineria;
-    //qDebug() << carton_envase;
+    QJsonObject characObject = this->getProperty( "characterization" ).toJsonObject();
+    QJsonValue restoObject = characObject[ waste_type1 ];
+    qDebug() << restoObject;
 
-
-    // charac_string = this->getProperty( "characterization" );
-
-    //agent->setProperty( "characterization" , characterization );
-    //agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , daily_waste_amount  );
-
-    /*QVariant max_value = this->getProperty( MAX_VALUE);
-
-    // Keep incrementing
-    if ( agent_waste_amount < max_value ){
-
-        QVariant waste_incremented = agent_waste_amount.toDouble() + this->getProperty( FAMILY_MEMBERS ).toDouble();
-        if( max_value.isValid() ){ waste_incremented = qMin( max_value , waste_incremented ); }
-
-        // agent->setProperty( waste_type , waste_incremented );
-        agent->setProperty( STORE_GENERATED_WASTE_AS , waste_incremented );
-        QStringList next = this->getProperty( NEXTS_IF_FALSE ).toStringList();
-
-        emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-        return next;
-    }
+   //double total_amount_waste1 = restoObject[ waste_type1 ].toDouble() + agent->getProperty( waste_type1 ).toDouble();
+    agent->setProperty( waste_type1 , restoObject .toObject() );
+    qDebug() << agent->getProperty( waste_type1 );
     // Your are full, go to next behaviour
-    if ( agent_waste_amount >= max_value  ){
-        QStringList next = this->getProperty( NEXTS_IF_TRUE ).toStringList();
-        return next;
+    /*QStringList nexts;
+    if ( total_amount_waste1 >= this->getProperty( MAX_VALUE ).toDouble()  ){
+        nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
+    }
+    else {
+        nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
     }*/
 
-    // Set waste generation by means of partial model:
-    // 2016 data:
-    double rest = 9.56 ;
-    double uni = 20.16 ;
-    double paro =  7.65;
-    double urb = 12.48 ;
-    double waste = GenerateWasteZamudioModelBehaviour::partialModel( rest , uni , paro , urb ) ;
-
-    agent->setProperty( this->getProperty( STORE_WASTE_TYPE1_AS ).toString() , despilfarro_alimento  );
-
-    //agent->setProperty( this->getProperty( STORE_GENERATED_WASTE_AS ).toString() , waste / agent->getProperty( "TOTAL" ).toDouble() );
-
+    QStringList nexts = this->getProperty( NEXTS ).toStringList();
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-
-    QStringList nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
     return nexts;
+
 
 }
 
