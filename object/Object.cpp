@@ -89,6 +89,11 @@ QJsonObject GWSObject::serialize() const{
                     if( obj ){ json.insert( property_name , obj->serialize() ); }
                 }
 
+                // case JSONObject
+                else if( QString( property_value.typeName() ) == "QJsonObject" ){
+                    json.insert( property_name , property_value.toJsonValue() );
+                }
+
                 else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
@@ -218,12 +223,13 @@ QStringList GWSObject::getInheritanceFamily() const{
 
 const QVariant GWSObject::getProperty( QString name ) const{
 
-    // If it comes between <>, it is not the property name, but a key where to get the property name from
+    // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
         QString property_name = name.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         name = this->getProperty( property_name ).toString();
     }
+
     this->mutex.lock();
     const QVariant value = QObject::property( name.toLatin1() );
     this->mutex.unlock();
