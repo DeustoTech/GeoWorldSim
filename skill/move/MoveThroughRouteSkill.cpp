@@ -143,6 +143,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
     }
 
-    agent->setProperty( "color" , "Green" );
+    agent->setProperty( "color" , "Blue" );
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
 }

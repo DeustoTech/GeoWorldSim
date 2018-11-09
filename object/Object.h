@@ -2,6 +2,7 @@
 #define GWSOBJECT_H
 
 #include <QObject>
+#include <QMutex>
 #include <QSharedPointer>
 #include <QMetaProperty>
 #include <QJsonObject>
@@ -57,6 +58,9 @@ protected:
 private:
 
     QSharedPointer<GWSObject> self_shared_pointer;
+
+    // MUTEX
+    mutable QMutex mutex;
 
     // AUTOINCREMENTAL FOR IDS
     static quint64 counter;
