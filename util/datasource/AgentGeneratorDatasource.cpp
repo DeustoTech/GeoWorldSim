@@ -9,10 +9,18 @@
 #include "../../app/App.h"
 
 
-GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString url , int amount )
+GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString url , int amount ) : QObject ()
 {
 
+    if( json.isEmpty() ){
+        qCritical() << "Empty JSON template to join with the datasource";
+        return;
+    }
+
     GWSDatasourceReader* agentReader = new GWSDatasourceReader( url , amount );
+    agentReader->connect( agentReader , &GWSDatasourceReader::dataReadingFinishedSignal , [this](){
+        emit this->dataReadingFinishedSignal();
+    });
     agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
 
         QJsonObject template_to_be_constructed = this->joinJSON( json , data );
@@ -22,7 +30,6 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         }
 
     });
-
 
     agentReader->startReading();
 

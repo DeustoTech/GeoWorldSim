@@ -18,6 +18,9 @@ public:
 
 protected slots:
     virtual QStringList behave();
+
+private:
+    QJsonValue incrementQJsonValue( QJsonValue existing_value , QJsonValue increment );
 };
 
 #endif // TRANSFERAGENTPROPERTYBEHAVIOUR_H

@@ -65,20 +65,21 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
 
     if( json.isEmpty() ){
         qDebug() << QString("Object Factory received empty JSON");
-        return 0;
+        return Q_NULLPTR;
     }
 
     QString type = json.value( GWSObject::GWS_TYPE_PROP ).toString();
 
     if( !this->constructors.keys().contains( type ) ){
         qWarning() << QString("Object type %1 not registered in the ObjectFactory.").arg( type );
-        return 0;
+        qDebug() << json << json.value( GWSObject::GWS_TYPE_PROP ).toString();
+        return Q_NULLPTR;
     }
 
     // Create object
     GWSObject* obj_raw = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
     if( !obj_raw ){
-        return 0;
+        return Q_NULLPTR;
     }
 
     // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD

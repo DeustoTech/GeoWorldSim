@@ -1,5 +1,8 @@
 #include "TransferAgentPropertyBehaviour.h"
 
+#include <QVariant>
+#include <QJsonObject>
+
 #include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
@@ -17,45 +20,76 @@ TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(
 QStringList TransferAgentPropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
+    QVariant value_to_be_transferred = this->getProperty( PROPERTY_TO_TRANSFER );
+    QString closest_agent_id = agent->getProperty( this->getProperty( RECEIVING_AGENT_ID ).toString() ).toString();
+    QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id );
+    QVariant existing_value = closest_agent->getProperty( PROPERTY_TO_TRANSFER );
+    QVariant values_sum;
 
-    QVariant waste_to_transfer = this->getProperty( PROPERTY_TO_TRANSFER );
-
-    bool waste_is_property = waste_to_transfer.toString().startsWith( "<" ) && waste_to_transfer.toString().endsWith( ">" );
-
-    QString waste_name;
-    if ( waste_is_property ){
-        QString property_name = waste_to_transfer.toString().remove( 0 , 1);
-        property_name = property_name.remove( property_name.length() - 1 , 1 );
-        waste_to_transfer = agent->getProperty( property_name );
-        waste_name = property_name;
-        qDebug() << property_name;
-        qDebug() << waste_to_transfer;
+    switch ( value_to_be_transferred.type() ) {
+    case QVariant::Int :
+    case QVariant::UInt :
+    case QVariant::Double :
+    case QVariant::LongLong :
+    case QVariant::ULongLong : {
+        values_sum = value_to_be_transferred.toLongLong() + existing_value.toLongLong();
+        break;
     }
-    qDebug() << agent->serialize();
-    qDebug() << waste_to_transfer.toJsonValue();
+    case QVariant::String : {
+        values_sum = value_to_be_transferred.toString() + value_to_be_transferred.toString();
+        break;
+    }
+    default: {
+        if( value_to_be_transferred.typeName() == QString("QJsonObject") ){
 
+            QJsonObject existing_object = existing_value.toJsonObject();
+            QJsonObject delta = value_to_be_transferred.toJsonObject();
 
+            foreach( QString key , delta.keys() ){
+                existing_object.insert( key , this->incrementQJsonValue( existing_object[key] , delta[key] ) );
+            }
 
-    QVariant closest_agent_id = this->getProperty( RECEIVING_AGENT_ID );
-
-    bool is_property = closest_agent_id.toString().startsWith( "<" ) && closest_agent_id.toString().endsWith( ">" );
-
-    if ( is_property ){
-        QString property_name = closest_agent_id.toString().remove( 0 , 1);
-        property_name = property_name.remove( property_name.length() - 1 , 1 );
-        closest_agent_id = agent->getProperty( property_name );
+            values_sum = existing_object;
+        }
+    }
     }
 
-    QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id.toString() );
-
-    //closest_agent->getProperty( waste_name ) + waste_to_transfer;
-    closest_agent->setProperty( waste_name , closest_agent->getProperty( waste_name ) + waste_to_transfer );
-    agent->setProperty( waste_name , 0.);
-
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( closest_agent->serialize() );
+    closest_agent->setProperty( PROPERTY_TO_TRANSFER , values_sum );
+    agent->setProperty( PROPERTY_TO_TRANSFER , QVariant());
 
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
 
+}
+
+
+QJsonValue TransferAgentPropertyBehaviour::incrementQJsonValue( QJsonValue existing_value , QJsonValue increment ){
+
+    if( existing_value.isNull() ){
+        return increment;
+    }
+
+    if( increment.isNull() ){
+        return existing_value;
+    }
+
+    // Unitary elements (int, double, string, bool)
+
+    // Complext elements (object)
+
+    QJsonObject result;
+
+    if( existing_value.isObject() ){
+        foreach( QString key , existing_value.toObject().keys() ){
+            result.insert( key , this->incrementQJsonValue( existing_value[key] , increment[ key ] ) );
+        }
+    }
+
+    if( increment.isObject() ){
+        foreach( QString key , increment.toObject().keys() ){
+            result.insert( key , this->incrementQJsonValue( existing_value[key] , increment[ key ] ) );
+        }
+    }
+
+    return result;
 }

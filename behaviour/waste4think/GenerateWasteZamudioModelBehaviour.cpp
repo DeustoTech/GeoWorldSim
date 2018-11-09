@@ -93,11 +93,11 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
 
     QJsonObject characObject = this->getProperty( "characterization" ).toJsonObject();
     QJsonValue restoObject = characObject[ waste_type1 ];
-    qDebug() << restoObject;
+    //qDebug() << restoObject;
 
    //double total_amount_waste1 = restoObject[ waste_type1 ].toDouble() + agent->getProperty( waste_type1 ).toDouble();
     agent->setProperty( waste_type1 , restoObject .toObject() );
-    qDebug() << agent->getProperty( waste_type1 );
+    //qDebug() << agent->getProperty( waste_type1 );
     // Your are full, go to next behaviour
     /*QStringList nexts;
     if ( total_amount_waste1 >= this->getProperty( MAX_VALUE ).toDouble()  ){
