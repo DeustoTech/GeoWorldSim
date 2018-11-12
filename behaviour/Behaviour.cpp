@@ -65,12 +65,27 @@ QJsonObject GWSBehaviour::serialize() const{
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSAgent> GWSBehaviour::getAgent(){
+QSharedPointer<GWSAgent> GWSBehaviour::getAgent() const{
     return this->behaving_agent;
 }
 
-QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs(){
+QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
     return this->sub_behaviours;
+}
+
+const QVariant GWSBehaviour::getProperty( QString name ) const{
+    QVariant property_value = GWSObject::getProperty( name );
+    QString property_value_as_string = property_value.toString();
+
+    // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent
+    if( property_value_as_string.startsWith("<") && property_value_as_string.endsWith(">") ){
+        QSharedPointer<GWSAgent> agent = this->getAgent();
+        QString property_name = property_value_as_string.remove( 0 , 1 );
+        property_name = property_name.remove( property_name.length() - 1 , 1 );
+        return agent->getProperty( property_name );
+    } else {
+        return property_value;
+    }
 }
 
 /*QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNexts(){

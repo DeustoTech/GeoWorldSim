@@ -7,7 +7,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 
-QString TransferAgentPropertyBehaviour::PROPERTY_TO_TRANSFER = "property_to_transfer";
+QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
 
@@ -20,10 +20,10 @@ TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(
 QStringList TransferAgentPropertyBehaviour::behave(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
-    QVariant value_to_be_transferred = this->getProperty( PROPERTY_TO_TRANSFER );
-    QString closest_agent_id = agent->getProperty( this->getProperty( RECEIVING_AGENT_ID ).toString() ).toString();
+    QVariant value_to_be_transferred = agent->getProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() );
+    QString closest_agent_id = this->getProperty( RECEIVING_AGENT_ID ).toString();
     QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id );
-    QVariant existing_value = closest_agent->getProperty( PROPERTY_TO_TRANSFER );
+    QVariant existing_value = closest_agent->getProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() );
     QVariant values_sum;
 
     switch ( value_to_be_transferred.type() ) {
@@ -54,8 +54,8 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     }
     }
 
-    closest_agent->setProperty( PROPERTY_TO_TRANSFER , values_sum );
-    agent->setProperty( PROPERTY_TO_TRANSFER , QVariant());
+    closest_agent->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , values_sum );
+    agent->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QVariant());
 
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
@@ -74,6 +74,18 @@ QJsonValue TransferAgentPropertyBehaviour::incrementQJsonValue( QJsonValue exist
     }
 
     // Unitary elements (int, double, string, bool)
+
+    if( existing_value.isDouble() ){
+        return existing_value.toDouble() + increment.toDouble();
+    }
+
+    if( existing_value.isString() ){
+        return existing_value.isString() + increment.isString();
+    }
+
+    if( existing_value.isBool() ){
+        return existing_value.toBool() + increment.toBool();
+    }
 
     // Complext elements (object)
 

@@ -12,7 +12,7 @@ public:
     Q_INVOKABLE explicit TransferAgentPropertyBehaviour();
 
     // PROPERTIES
-    static QString PROPERTY_TO_TRANSFER;
+    static QString PROPERTY_NAME_TO_TRANSFER;
     static QString RECEIVING_AGENT_ID;
     static QString NEXTS;
 

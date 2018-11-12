@@ -40,7 +40,7 @@ public:
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QStringList getInheritanceFamily() const;
-    const QVariant getProperty( QString name ) const;
+    virtual const QVariant getProperty( QString name ) const;
     const QVariant operator[]( QString name ) const;
 
     // SETTERS

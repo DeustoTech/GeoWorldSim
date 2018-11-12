@@ -21,7 +21,8 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    QSharedPointer<GWSAgent> getAgent();
+    QSharedPointer<GWSAgent> getAgent() const;
+    virtual const QVariant getProperty( QString name ) const;
 
 private:
     QSharedPointer<GWSAgent> skilled_agent;

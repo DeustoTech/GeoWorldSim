@@ -27,8 +27,9 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    QSharedPointer<GWSAgent> getAgent();
-    QList< QSharedPointer<GWSBehaviour> > getSubs();
+    QSharedPointer<GWSAgent> getAgent() const;
+    QList< QSharedPointer<GWSBehaviour> > getSubs() const;
+    virtual const QVariant getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
     //QList< QSharedPointer<GWSBehaviour> > getNexts();
 
     // SETTERS
