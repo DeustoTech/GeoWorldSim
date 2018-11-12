@@ -23,20 +23,7 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
     QVariant x_value = this->getProperty( X_VALUE );
     QVariant y_value = this->getProperty( Y_VALUE );
 
-    bool x_is_property = x_value.toString().startsWith( "<" ) && x_value.toString().endsWith( ">" );
-    bool y_is_property = y_value.toString().startsWith( "<" ) && y_value.toString().endsWith( ">" );
 
-
-    if ( x_is_property && y_is_property ){
-
-        QString x_property_name = x_value.toString().remove( 0 , 1 );
-        x_property_name = x_property_name.remove( x_property_name.length() - 1 , 1 );
-        x_value = agent->getProperty( x_property_name );
-
-        QString y_property_name = y_value.toString().remove( 0 , 1 );
-        y_property_name = y_property_name.remove( y_property_name.length() - 1 , 1 );
-        y_value = agent->getProperty( y_property_name );
-    }
 
     GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
 

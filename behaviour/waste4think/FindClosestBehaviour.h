@@ -17,8 +17,8 @@ public:
     static QString STORE_CLOSEST_ID_AS;
     //static QString STORE_CLOSEST_ROUTE_AS;
     static QString STORE_CLOSEST_ROUTE_DISTANCE_AS;
-    //static QString CLOSEST_FROM_X;
-    //static QString CLOSEST_FROM_Y;
+    static QString STORE_CLOSEST_X_AS;
+    static QString STORE_CLOSEST_Y_AS;
     static QString NEXTS;
 
 protected:

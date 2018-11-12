@@ -11,8 +11,8 @@ QString FindClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";
 QString FindClosestBehaviour::STORE_CLOSEST_ID_AS = "store_closest_id_as";
 //QString FindClosestBehaviour::STORE_CLOSEST_ROUTE_AS = "store_closest_route_as";
 QString FindClosestBehaviour::STORE_CLOSEST_ROUTE_DISTANCE_AS = "store_closest_route_distance_as";
-//QString FindClosestBehaviour::CLOSEST_FROM_X = "closest_from_x";
-//QString FindClosestBehaviour::CLOSEST_FROM_Y = "closest_from_y";
+QString FindClosestBehaviour::STORE_CLOSEST_X_AS = "store_closest_agent_x_as";
+QString FindClosestBehaviour::STORE_CLOSEST_Y_AS = "store_closest_agent_y_as";
 QString FindClosestBehaviour::NEXTS = "nexts";
 
 
@@ -50,6 +50,14 @@ QStringList FindClosestBehaviour::behave(){
     QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString();
     if( save_closest_id_as.isEmpty() ){ save_closest_id_as = "closest_agent_id"; }
     agent->setProperty( save_closest_id_as , closest_agent_id );
+
+    QString save_closest_x_as = this->getProperty( STORE_CLOSEST_X_AS ).toString();
+    if( save_closest_x_as.isEmpty() ){ save_closest_x_as = "closest_agent_x"; }
+    agent->setProperty( save_closest_x_as , closest_coor_and_route.first.getX() );
+
+    QString save_closest_y_as = this->getProperty( STORE_CLOSEST_Y_AS ).toString();
+    if( save_closest_y_as.isEmpty() ){ save_closest_y_as = "closest_agent_y"; }
+    agent->setProperty( save_closest_y_as , closest_coor_and_route.first.getY() );
 
     // Extract and store the route to it:
     QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;

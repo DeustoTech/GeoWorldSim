@@ -120,7 +120,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             int edge_inside_agents_amount = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList().size();
             if( edge_capacity <= edge_inside_agents_amount ){
                 // Wait for edge to liberate, that is, do not move
-                agent->setProperty( "color" , "Red" );
                 MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , destination_coor );
                 return;
             }
@@ -143,6 +142,5 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
     }
 
-    agent->setProperty( "color" , "Blue" );
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
 }
