@@ -22,16 +22,6 @@ QStringList FollowTSPRouteBehaviour::behave(){
 
     QVariant route = this->getProperty( TSP_ROUTE );
 
-    bool tsp_route_is_property = route.toString().startsWith( "<" ) && route.toString().endsWith( ">" );
-
-    if ( tsp_route_is_property ){
-
-        QString tsp_route_property_name = route.toString().remove( 0 , 1 );
-        tsp_route_property_name = tsp_route_property_name.remove( tsp_route_property_name.length() - 1 , 1 );
-        route = agent->getProperty( tsp_route_property_name );
-
-    }
-
     QStringList tsp_route = route.toStringList();
     int route_size = tsp_route.size();
 
