@@ -136,14 +136,14 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
 
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto , 0 );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
 
 
 /* ----------------
  * Truck Agents
  * ----------------*/
 
-for( int i = 0 ; i < 0 ; i++ ){
+for( int i = 0 ; i < 1 ; i++ ){
 //    "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, , \"nexts\" : [\"MOVE_STAGES\"] } ,"
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
@@ -175,10 +175,13 @@ for( int i = 0 ; i < 0 ; i++ ){
  * RecyclingPlant Agents
  * ----------------------*/
 
-QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Pink\" ,  \"running\" : true , "
+QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Orange\" ,  \"weight\": 8 , \"running\" : true , "
                                                                  "\"geometry\" : { \"@type\" : \"GWSGeometry\" ,  \"type\" :  \"Point\" , \"coordinates\" : [ %1 , %2 , 0 ] }  , "
                                                                  "\"@family\": [ \"GWSAgent\" ]  ,"
-                                                                "\"@behaviours\" : [ { \"@type\": \"GenerateRandomValueBehaviour\", \"duration\" : 1 , \"start\" : true , \"@id\" : \"RANDOM_VALUE\" , \"store_random_value_as\" : \"random_value\"  , \"nexts\" : [\"RANDOM_VALUE\"] } ] }")
+                                                                 "\"@behaviours\" : [ "
+                                                                                      "{ \"@type\": \"GenerateRandomValueBehaviour\", \"duration\" : 1 , \"start\" : true , \"@id\" : \"RANDOM_VALUE\" , \"store_random_value_as\" : \"random_value\"  , \"nexts\" : [\"DISPLAY\"] } ,"
+                                                                                      "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"RANDOM_VALUE\"] } "
+                                                                                      "] }")
                                                                .arg( -2.86390 )
                                                                .arg( 43.28509 )
                                                                .toLatin1()
@@ -198,8 +201,8 @@ QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \
                                                                  "\"@family\": [ \"ContainerAgent\", \"Container\" ] } ")
                                                                  .toLatin1()
                                                                  );
-
-//GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( container_json.object() , "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" );
+QString container_url = "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read";
+GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( container_json.object() , container_url );
 
 
 
@@ -208,7 +211,7 @@ QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \
  * Zamudio roads
  * ----------------*/
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , "
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , \"running\" : true ,"
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"DISPLAY\"] }  "
@@ -218,28 +221,28 @@ QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSA
 
 // Read PEDESTRIAN ROAD data from datasource url:
 QString pedestrian_reader = "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" ;
-//GWSAgentGeneratorDatasource* ds1 = new GWSAgentGeneratorDatasource( road_json.object() , pedestrian_reader );
+GWSAgentGeneratorDatasource* ds1 = new GWSAgentGeneratorDatasource( road_json.object() , pedestrian_reader );
 
 
 // Read MISSING ROAD data from datasource url:
 QString missing_reader = "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" ;
-//GWSAgentGeneratorDatasource* ds2 = new GWSAgentGeneratorDatasource( road_json.object() , missing_reader );
+GWSAgentGeneratorDatasource* ds2 = new GWSAgentGeneratorDatasource( road_json.object() , missing_reader );
 
 
 // Read FOOTWAY ROAD data from datasource url:
 QString footway_reader = "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" ;
-//GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.object() , footway_reader );
+GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.object() , footway_reader );
 
 
 
-/*ds3->connect(ds3 , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [](){
+ds3->connect(ds3 , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [](){
 
     GWSTimeEnvironment::globalInstance()->setDatetime( 1000 );
     foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
         a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
     }
     GWSExecutionEnvironment::globalInstance()->run();
-} );*/
+} );
 
 GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
     QDateTime current_time = QDateTime::currentDateTime();
@@ -247,7 +250,7 @@ GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &G
     qDebug() << "Elapsed time" << secondsDiff;
 });
 
-GWSExecutionEnvironment::globalInstance()->run();
+
 
 app->exec();
 
