@@ -100,13 +100,14 @@ int main(int argc, char* argv[])
      * Human Agents
      * ----------------*/
 
-QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
+// Agents move:
+/*QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"color\" : \"Gray\" ,  \"running\" : true , "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"DISPLAY_AT_HOME\"] }, "
                                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
                                                                             "{ \"@type\": \"GenerateWasteZamudioModelBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"waste_type1\" : \"resto\" , \"store_waste_type1_as\": \"resto\", \"nexts\" : [\"FIND\"] }, "
-                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_agent_id\", \"store_closest_x_as\": \"closest_agent_x\", \"store_closest_y_as\": \"closest_agent_y\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"MOVE_TO_CONTAINER\" ] }, "
+                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_agent_id\" , \"store_closest_x_as\": \"closest_agent_x\", \"store_closest_y_as\": \"closest_agent_y\" , \"store_closest_route_distance_as\": \"closest_container_distance\" , \"nexts\": [ \"MOVE_TO_CONTAINER\" ] }, "
                                                                             "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_TO_CONTAINER\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<closest_agent_x>\" , \"y_value\": \"<closest_agent_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING_TO_CONTAINER\"] } , "
                                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_CONTAINER\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_TO_CONTAINER\"] } ,"
                                                                             "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_agent_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
@@ -115,7 +116,23 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_BACK_HOME\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_BACK_HOME\"] } "
                                                         "] } ")
                                                         .toLatin1()
+                                                        );*/
+
+// Agents don't move:
+QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
+                                                        "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
+                                                        "\"home_x\": -2, \"home_y\": 43, \"color\" : \"Gray\" ,  \"running\" : true , "
+                                                        "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"DISPLAY_AT_HOME\"] }, "
+                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
+                                                                            "{ \"@type\": \"GenerateWasteZamudioModelBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"waste_type1\" : \"resto\" , \"store_waste_type1_as\": \"resto\", \"nexts\" : [\"FIND\"] }, "
+                                                                            "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_agent_id\", \"store_closest_x_as\": \"closest_agent_x\", \"store_closest_y_as\": \"closest_agent_y\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
+                                                                            "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_agent_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
+                                                                            "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_name_to_transfer\": \"resto\" , \"emitting_agent_id\" : \"<@id>\" , \"receiving_agent_id\": \"<closest_agent_id>\" , \"nexts\" : [\"DISPLAY_AT_HOME\"] } "
+                                                                           "] } ")
+                                                        .toLatin1()
                                                         );
+
+
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
@@ -126,25 +143,25 @@ GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.ob
  * ----------------*/
 
 for( int i = 0 ; i < 1 ; i++ ){
+//    "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, , \"nexts\" : [\"MOVE_STAGES\"] } ,"
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], "
                                                                   "\"home_x\" :  %1, \"home_y\" :  %2,  \"weight\": 10 , \"color\" : \"Black\" , \"running\" : true , "
                                                                   "\"@behaviours\" : [ { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"DISPLAY\"] }, "
                                                                                        "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"TSP\"] } ,"
-                                                                                       "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\", \"nexts\" : [\"FOLLOW_TSP\"] } , "
-                                                                                       "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, \"store_closest_id_as\": \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\", \"nexts\" : [\"MOVE_STAGES\"] } ,"
+                                                                                       "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\" , \"store_closest_id_as\" : \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\" , \"nexts_if_no_tsp_route\" : [\"TSP\"] , \"nexts_if_tsp_route\" : [\"MOVE_STAGES\"] } , "
                                                                                        "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 150 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\", \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING\"] } , "
                                                                                        "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_STAGES\"] } ,"
                                                                                        "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER_CONTAINER_TO_TRUCK\" ] }, "
                                                                                        "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_CONTAINER_TO_TRUCK\", \"property_name_to_transfer\": \"resto\", \"emitting_agent_id\": \"<closest_container_id>\" , \"receiving_agent_id\":  \"<@id>\", \"nexts\" : [\"CHECK_WASTE\"] } ,"
-                                                                                       "{ \"@type\": \"CheckPropertyValueBehaviour\", \"duration\": 1, \"@id\": \"CHECK_WASTE\", \"property_to_compare\": \"resto\", \"threshold_value\": \"10000\" , \"nexts_if_true\" : [\"MOVE_PLANT\"] , \"nexts_if_false\" : [\"FOLLOW_TSP\"] } ,"
+                                                                                       "{ \"@type\": \"CheckPropertyValueBehaviour\", \"duration\": 1, \"@id\": \"CHECK_WASTE\", \"property_to_compare\": \"resto\", \"threshold_value\": \"1000000000000000\" , \"nexts_if_true\" : [\"MOVE_PLANT\"] , \"nexts_if_false\" : [\"TSP\"] } ,"
                                                                                        "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_PLANT\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": %1, \"y_value\": %2 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"TRANSFER_PLANT\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING_TO_PLANT\"] } , "
                                                                                        "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_PLANT\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_PLANT\"] } ,"
-                                                                                       "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_PLANT\", \"property_name_to_transfer\": \"resto\", \"emitting_agent_id\" : \"<@id>\" , \"receiving_agent_id\": \"RecyclingPlant\" , \"nexts\" : [\"FOLLOW_TSP\"] } "
+                                                                                       "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_PLANT\", \"property_name_to_transfer\": \"resto\", \"emitting_agent_id\" : \"<@id>\" , \"receiving_agent_id\": \"RecyclingPlant\" , \"nexts\" : [\"TSP\"] } "
                                                                                        " ] } ")
-                                                   .arg( -2.8638 )
-                                                   .arg( 43.2871 )
+                                                    .arg( -2.86390 )
+                                                    .arg( 43.28509 )
                                                    .toLatin1()
                                                     );
 
@@ -157,11 +174,11 @@ for( int i = 0 ; i < 1 ; i++ ){
  * RecyclingPlant Agents
  * ----------------------*/
 
-QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"darkGreen\" ,  "
+QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Pink\" ,  \"running\" : true , "
                                                                  "\"geometry\" : { \"@type\" : \"GWSGeometry\" ,  \"type\" :  \"Point\" , \"coordinates\" : [ %1 , %2 , 0 ] }  , "
                                                                  "\"@family\": [ \"GWSAgent\" ]  } ")
-                                                               .arg( -2.8638 )
-                                                               .arg( 43.2871 )
+                                                               .arg( -2.86390 )
+                                                               .arg( 43.28509 )
                                                                .toLatin1()
                                                                  );
 QSharedPointer<GWSAgent> plant = GWSObjectFactory::globalInstance()->fromJSON( jsonPlant.object() ).dynamicCast<GWSAgent>();
@@ -189,7 +206,7 @@ GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( con
  * Zamudio roads
  * ----------------*/
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , "
+QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , \"running\" : true , "
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"DISPLAY\"] }  "
