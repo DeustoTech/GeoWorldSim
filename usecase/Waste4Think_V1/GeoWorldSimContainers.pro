@@ -95,7 +95,8 @@ HEADERS += \
     HumanAgent.h \
     TruckAgent.h \
     RecyclingPlantAgent.h \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.h
             ## TRANSPORT LINES
 
 
@@ -170,7 +171,8 @@ SOURCES += mainlauncher.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
     RecyclingPlantAgent.cpp \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
