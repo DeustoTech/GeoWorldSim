@@ -22,7 +22,8 @@
 
 
 
-	"rroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" , "capacity" : 3 } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 } ,
+	"rroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" , "capacity" : 3 } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 ,
+				"@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] } ,
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" }, 
 
 
