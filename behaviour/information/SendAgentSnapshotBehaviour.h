@@ -14,6 +14,7 @@ public:
 
     // PARAMETERS
     static QString NEXTS;
+    static QString AGENT_TO_SEND_ID;
 
 private slots:
 

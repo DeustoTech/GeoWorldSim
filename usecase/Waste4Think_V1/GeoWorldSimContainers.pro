@@ -57,9 +57,14 @@ HEADERS += \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
     ../../behaviour/property/CopyPropertyBehaviour.h \
     ../../behaviour/waste4think/CheckPropertyValueBehaviour.h \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.h \
+    ../../behaviour/waste4think/PolluteBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
+    ../../util/io/csv/CsvImporter.h \
+    ../../util/io/ImporterExporter.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
             ## GEOMETRIES
@@ -94,10 +99,8 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    RecyclingPlantAgent.h \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
-    ../../behaviour/waste4think/GenerateRandomValueBehaviour.h
-            ## TRANSPORT LINES
+    RecyclingPlantAgent.h
+            ## TRANSPORT LINE
 
 
 
@@ -127,6 +130,9 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
     ../../behaviour/property/CopyPropertyBehaviour.cpp \
     ../../behaviour/waste4think/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp \
+    ../../behaviour/waste4think/PolluteBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -137,6 +143,8 @@ SOURCES += mainlauncher.cpp \
     ../../util/routing/Routing.cpp \
     ../../util/routing/GraphEdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
+    ../../util/io/csv/CsvImporter.cpp \
+    ../../util/io/ImporterExporter.cpp \
             ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
@@ -170,10 +178,7 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    RecyclingPlantAgent.cpp \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp
-
+    RecyclingPlantAgent.cpp
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon

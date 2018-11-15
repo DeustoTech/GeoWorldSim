@@ -4,7 +4,7 @@
 #include <QFile>
 #include <QDebug>
 
-GSSImporterExporter::GSSImporterExporter(QString path , QString file_name , QString file_extension , QObject *parent) : QObject( parent ){
+GSSImporterExporter::GSSImporterExporter(QString path , QString file_name , QString file_extension , QObject *parent) : QObject(  ){
     this->directory_path = path;
     this->file_name = file_name;
     this->file_extension = file_extension;
