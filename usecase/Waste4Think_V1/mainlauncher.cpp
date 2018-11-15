@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
+    GWSTimeEnvironment::globalInstance();
 
     // AVAILABLE AGENTS
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
@@ -152,14 +153,12 @@ int main(int argc, char* argv[])
     // LISTEN TO EXTERNAL SIMULATIONS
     QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
-        // Population type:
-            QJsonObject externalListener = json_external_listeners[ key ].toObject();
 
-            // Get simulation to be listened to from config.json file
-            if ( !externalListener.value( "agent_injector" ).isNull() ){
-                GWSExternalListener(externalListener.value( "agent_injector" ).toString() );
-            }
-            qDebug() << QString("Creating external listener %1").arg( key );
+        // Get simulation to be listened to from config.json file
+        if ( !json_external_listeners[ key ].isNull() ){
+            new GWSExternalListener( json_external_listeners[ key ].toString() );
+        }
+        qDebug() << QString("Creating external listener %1").arg( key );
      }
 
 

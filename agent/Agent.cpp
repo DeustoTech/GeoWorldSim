@@ -296,7 +296,6 @@ void GWSAgent::behave(){
     qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
     if( this->to_be_executed_behaviours.isEmpty() ){
-        GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + 1000 );
         return;
     }
 

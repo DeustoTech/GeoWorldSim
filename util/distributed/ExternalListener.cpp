@@ -19,11 +19,9 @@ GWSExternalListener::GWSExternalListener( QString simulation_id ) : QObject(){
 
 void GWSExternalListener::startSocket(){
 
-    qDebug() << "Trying to connect socket";
-
     // Connect and send info
     QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
-        qInfo() << "WebSocket connected successfully to" << this->websocket.peerAddress();
+        qInfo() << QString("Websocket %1 connected successfully to %2").arg( this->listening_simulation_id ).arg( this->websocket.peerAddress().toString() );
     });
 
     // Keep alive
@@ -47,12 +45,13 @@ void GWSExternalListener::reconnectSocket(){
 
 void GWSExternalListener::messageReceived(const QString message){
 
-    //qInfo() << "Received message" << message;
     QJsonObject json = QJsonDocument::fromJson( message.toLatin1() ).object();
 
     // RECEIVED AN AGENT
     if( json.value("signal") == "entity" ){
         json = json.value("body").toObject();
+
+        qInfo() << "External agent received" << json;
 
         QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
@@ -77,6 +76,8 @@ void GWSExternalListener::messageReceived(const QString message){
         if( !agent && alive ){
             agent = GWSObjectFactory::globalInstance()->fromJSON( json ).dynamicCast<GWSAgent>();
         }
+
+        qInfo() << agent;
     }
 
 }
