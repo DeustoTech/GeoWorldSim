@@ -12,8 +12,7 @@ QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
 
 
-TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour()
-{
+TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(){
 
 }
 
@@ -93,13 +92,13 @@ QJsonValue TransferAgentPropertyBehaviour::incrementQJsonValue( QJsonValue exist
 
     if( existing_value.isObject() ){
         foreach( QString key , existing_value.toObject().keys() ){
-            result.insert( key , this->incrementQJsonValue( existing_value[key] , increment[ key ] ) );
+            result.insert( key , this->incrementQJsonValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
         }
     }
 
     if( increment.isObject() ){
         foreach( QString key , increment.toObject().keys() ){
-            result.insert( key , this->incrementQJsonValue( existing_value[key] , increment[ key ] ) );
+            result.insert( key , this->incrementQJsonValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
         }
     }
 

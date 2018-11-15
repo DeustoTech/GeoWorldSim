@@ -71,6 +71,8 @@ HEADERS += \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
+            ## DATASOURCES
+    ../../util/datasource/AgentGeneratorDatasource.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \

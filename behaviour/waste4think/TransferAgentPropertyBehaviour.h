@@ -1,6 +1,8 @@
 #ifndef TRANSFERAGENTPROPERTYBEHAVIOUR_H
 #define TRANSFERAGENTPROPERTYBEHAVIOUR_H
 
+#include <QJsonValue>
+
 #include "../../behaviour/Behaviour.h"
 
 class TransferAgentPropertyBehaviour : public GWSBehaviour
