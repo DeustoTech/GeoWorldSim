@@ -20,6 +20,8 @@ QString GenerateWasteZamudioModelBehaviour::STORE_WASTE_TYPE4_AS = "store_waste_
 
 GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBehaviour(){
 
+    // Careful! These are the quantities obtained from a whole container.
+    // Right now, the model assumes each household generates this HUGE amount of waste
     QString characterization = "{"
                                  " \"resto\" : {"
                                         " \"despilfarro_alimento\" : 23.82 ,"

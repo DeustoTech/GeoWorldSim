@@ -5,7 +5,10 @@
 #include <QFile>
 #include <QTextStream>
 
-CsvImporter::CsvImporter( QString path , QString filename , QString extension , char separator, QObject *parent) : GSSImporterExporter( path , filename , extension , parent ){
+
+
+CsvImporter::CsvImporter( QString path , QString filename , QString extension , char separator, QObject *parent) : GSSImporterExporter( path , filename , extension , parent  )
+{
     this->separator = separator;
     this->getColumnNames();
 }

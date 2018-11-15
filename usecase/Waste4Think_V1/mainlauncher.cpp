@@ -36,6 +36,7 @@
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
 #include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
+#include "../../behaviour/waste4think/PolluteBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -52,6 +53,7 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
+#include "../../util/io/csv/CsvImporter.h"
 
 #include <time.h>
 #include <iostream>
@@ -93,6 +95,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject);
 
     // Init random numbers
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -106,15 +109,15 @@ int main(int argc, char* argv[])
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"color\" : \"Gray\" ,  \"running\" : true , "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"DISPLAY_AT_HOME\"] }, "
-                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
+                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
                                                                             "{ \"@type\": \"GenerateWasteZamudioModelBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"waste_type1\" : \"resto\" , \"store_waste_type1_as\": \"resto\", \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_agent_id\" , \"store_closest_x_as\": \"closest_agent_x\", \"store_closest_y_as\": \"closest_agent_y\" , \"store_closest_route_distance_as\": \"closest_container_distance\" , \"nexts\": [ \"MOVE_TO_CONTAINER\" ] }, "
                                                                             "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_TO_CONTAINER\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<closest_agent_x>\" , \"y_value\": \"<closest_agent_y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING_TO_CONTAINER\"] } , "
-                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_CONTAINER\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_TO_CONTAINER\"] } ,"
+                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_CONTAINER\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_TO_CONTAINER\"] } ,"
                                                                             "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_agent_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
                                                                             "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER\", \"property_name_to_transfer\": \"resto\" , \"emitting_agent_id\" : \"<@id>\" , \"receiving_agent_id\": \"<closest_agent_id>\" , \"nexts\" : [\"MOVE_BACK_HOME\"] }, "
                                                                             "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_BACK_HOME\" , \"duration\" : 1 , \"maxspeed\" : 50 , \"x_value\": \"<X>\" , \"y_value\": \"<Y>\" , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"store_current_speed_as\" : \"current_speed\", \"store_current_road_type_as\" : \"current_road_type\" , \"store_current_road_maxspeed\" : \"current_road_maxspeed\" , \"nexts_if_arrived\" : [\"DISPLAY_AT_HOME\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING_BACK_HOME\"] } , "
-                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_BACK_HOME\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_BACK_HOME\"] } "
+                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_BACK_HOME\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_BACK_HOME\"] } "
                                                         "] } ")
                                                         .toLatin1()
                                                         );*/
@@ -124,7 +127,7 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"color\" : \"Gray\" ,  \"running\" : true , "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"DISPLAY_AT_HOME\"] }, "
-                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
+                                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_AT_HOME\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 60 ,  \"nexts\" : [\"WASTE\"] } ,"
                                                                             "{ \"@type\": \"GenerateWasteZamudioModelBehaviour\", \"@id\": \"WASTE\", \"duration\": 1, \"waste_type1\" : \"resto\" , \"store_waste_type1_as\": \"resto\", \"nexts\" : [\"FIND\"] }, "
                                                                             "{ \"@type\": \"FindClosestBehaviour\", \"duration\": 1, \"@id\": \"FIND\", \"closest_agent_type\": \"ContainerAgent\", \"transport_network_type\": \"Road\", \"store_closest_id_as\": \"closest_agent_id\", \"store_closest_x_as\": \"closest_agent_x\", \"store_closest_y_as\": \"closest_agent_y\", \"store_closest_route_distance_as\": \"closest_container_distance\", \"nexts\": [ \"COPY\" ] }, "
                                                                             "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_agent_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER\" ] },  "
@@ -136,29 +139,29 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
 
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto );
+GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto  );
 
 
 /* ----------------
  * Truck Agents
  * ----------------*/
 
-for( int i = 0 ; i < 1 ; i++ ){
+for( int i = 0 ; i < 0 ; i++ ){
 //    "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, , \"nexts\" : [\"MOVE_STAGES\"] } ,"
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
                                                                   "\"@family\": [ \"GWSAgent\" ], "
                                                                   "\"home_x\" :  %1, \"home_y\" :  %2,  \"weight\": 10 , \"color\" : \"Black\" , \"running\" : true , "
                                                                   "\"@behaviours\" : [ { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1 , \"x_value\": %1,  \"y_value\": %2, \"nexts\" : [\"DISPLAY\"] }, "
-                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"TSP\"] } ,"
+                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"TSP\"] } ,"
                                                                                        "{ \"@type\": \"CalculateTSPRouteBehaviour\" , \"@id\" : \"TSP\" , \"duration\" : 1 , \"tsp_agent_type\" : \"ContainerAgent\" , \"transport_network_type\": \"Road\",  \"store_tsp_route_as\" : \"tsp_route\" , \"store_closest_id_as\" : \"closest_container_id\" , \"store_tsp_route_stage_x_as\" : \"x_dest\", \"store_tsp_route_stage_y_as\" : \"y_dest\" , \"nexts_if_no_tsp_route\" : [\"TSP\"] , \"nexts_if_tsp_route\" : [\"MOVE_STAGES\"] } , "
                                                                                        "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_STAGES\" , \"duration\" : 1 , \"maxspeed\" : 150 , \"x_value\": \"<x_dest>\", \"y_value\": \"<y_dest>\", \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"COPY\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING\"] } , "
-                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_STAGES\"] } ,"
+                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_STAGES\"] } ,"
                                                                                        "{ \"@type\": \"CopyPropertyBehaviour\", \"duration\": 1, \"@id\": \"COPY\", \"agent_id_to_copy_from\": \"<closest_container_id>\", \"property_name\" : \"color\" , \"nexts\": [ \"TRANSFER_CONTAINER_TO_TRUCK\" ] }, "
                                                                                        "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_CONTAINER_TO_TRUCK\", \"property_name_to_transfer\": \"resto\", \"emitting_agent_id\": \"<closest_container_id>\" , \"receiving_agent_id\":  \"<@id>\", \"nexts\" : [\"CHECK_WASTE\"] } ,"
-                                                                                       "{ \"@type\": \"CheckPropertyValueBehaviour\", \"duration\": 1, \"@id\": \"CHECK_WASTE\", \"property_to_compare\": \"resto\", \"threshold_value\": \"1000000000000000\" , \"nexts_if_true\" : [\"MOVE_PLANT\"] , \"nexts_if_false\" : [\"TSP\"] } ,"
+                                                                                       "{ \"@type\": \"CheckPropertyValueBehaviour\", \"duration\": 1, \"@id\": \"CHECK_WASTE\", \"property_to_compare\": \"resto\", \"threshold_value\": \"100000\" , \"nexts_if_true\" : [\"MOVE_PLANT\"] , \"nexts_if_false\" : [\"TSP\"] } ,"
                                                                                        "{ \"@type\": \"MoveThroughRouteBehaviour\" ,   \"@id\" : \"MOVE_PLANT\" , \"duration\" : 1 , \"maxspeed\" : 40 , \"x_value\": %1, \"y_value\": %2 , \"store_total_moved_distance_as\" : \"total_moved_distance\" , \"store_total_travel_time_as\" : \"total_travel_time\" ,  \"nexts_if_arrived\" : [\"TRANSFER_PLANT\"] , \"nexts_if_not_arrived\" : [\"DISPLAY_MOVING_TO_PLANT\"] } , "
-                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_PLANT\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_PLANT\"] } ,"
+                                                                                       "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY_MOVING_TO_PLANT\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"MOVE_PLANT\"] } ,"
                                                                                        "{ \"@type\": \"TransferAgentPropertyBehaviour\", \"duration\": 1, \"@id\": \"TRANSFER_PLANT\", \"property_name_to_transfer\": \"resto\", \"emitting_agent_id\" : \"<@id>\" , \"receiving_agent_id\": \"RecyclingPlant\" , \"nexts\" : [\"TSP\"] } "
                                                                                        " ] } ")
                                                     .arg( -2.86390 )
@@ -179,8 +182,9 @@ QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"Recy
                                                                  "\"geometry\" : { \"@type\" : \"GWSGeometry\" ,  \"type\" :  \"Point\" , \"coordinates\" : [ %1 , %2 , 0 ] }  , "
                                                                  "\"@family\": [ \"GWSAgent\" ]  ,"
                                                                  "\"@behaviours\" : [ "
-                                                                                      "{ \"@type\": \"GenerateRandomValueBehaviour\", \"duration\" : 1 , \"start\" : true , \"@id\" : \"RANDOM_VALUE\" , \"store_random_value_as\" : \"random_value\"  , \"nexts\" : [\"DISPLAY\"] } ,"
-                                                                                      "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 0 ,  \"nexts\" : [\"RANDOM_VALUE\"] } "
+                                                                                      "{ \"@type\": \"GenerateRandomValueBehaviour\", \"duration\" : 1 , \"start\" : true , \"@id\" : \"RANDOM_VALUE\" , \"store_random_value_as\" : \"random_value\"  , \"nexts\" : [\"POLLUTE\"] } ,"
+                                                                                      "{ \"@type\" : \"PolluteBehaviour\" , \"@id\" : \"POLLUTE\" , \"duration\" : 1  , \"nexts\" : [\"DISPLAY\"] } , "
+                                                                                      "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 0 ,  \"nexts\" : [\"RANDOM_VALUE\"] } "
                                                                                       "] }")
                                                                .arg( -2.86390 )
                                                                .arg( 43.28509 )
@@ -214,7 +218,7 @@ GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( con
 QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , \"running\" : true ,"
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
-                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"DISPLAY\"] }  "
+                                                            "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"DISPLAY\"] }  "
                                                             " ] } ")
                                                         .toLatin1()
                                                         );

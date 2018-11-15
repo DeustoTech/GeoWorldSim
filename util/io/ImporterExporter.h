@@ -7,7 +7,7 @@ class GSSImporterExporter : public QObject
 {
     Q_OBJECT
 public:
-    explicit GSSImporterExporter(QString directory_path , QString file_name = "", QString file_extension = "", QObject *parent = 0);
+    Q_INVOKABLE explicit GSSImporterExporter(QString directory_path , QString file_name = "", QString file_extension = "", QObject *parent = 0);
 
     // GETTERS
     QString getPath() const;
