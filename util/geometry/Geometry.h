@@ -18,6 +18,9 @@ class GWSGeometry : public GWSObject
 {
     Q_OBJECT
 
+    friend class GWSQuadtree;
+    friend class GWSPhysicalEnvironment;
+
 public:
     Q_INVOKABLE explicit GWSGeometry();
     GWSGeometry( GWSCoordinate coor ); // To use if needed to create a simple Point
@@ -48,14 +51,15 @@ public:
     bool equals( QSharedPointer<GWSGeometry> other ) const;
     GWSLengthUnit getDistance( QSharedPointer<GWSGeometry> other ) const;
 
+
+protected:
+    GWSGeometry(geos::geom::Geometry* inner_geometry);
+
     // SPATIAL TRANSFORMATIONS
     void transformMove( const GWSCoordinate &apply_movement );
     void transformBuffer( double threshold );
     void transformUnion( QSharedPointer<GWSGeometry> other );
     void transformIntersection( QSharedPointer<GWSGeometry> other );
-
-protected:
-    GWSGeometry(geos::geom::Geometry* inner_geometry);
 
     // INNER GEOMETRY
     geos::geom::Geometry* inner_geometry = Q_NULLPTR;

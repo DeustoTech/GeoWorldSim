@@ -61,25 +61,25 @@
 int main(int argc, char* argv[])
 {
 
-     QDateTime start = QDateTime::currentDateTime();
+    QDateTime start = QDateTime::currentDateTime();
 
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
-    // Init used environments
+    // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
 
-    // Agents
+    // AVAILABLE AGENTS
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( RecyclingPlantAgent::staticMetaObject);
 
-    // Behaviours
+    // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( DelayBehaviour::staticMetaObject );
@@ -94,8 +94,34 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
 
-    // Init random numbers
+    // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
+
+    // READ CONFIGURATION
+    QFile file( app->property( "config" ).toString() );
+    QJsonObject json_configuration;
+    if( !file.open( QFile::ReadOnly ) ){
+        qCritical() << QString("No configuration file found");
+        return -1;
+    }
+    QJsonParseError jerror;
+    json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
+    if( jerror.error != QJsonParseError::NoError ){
+        qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
+        return -1;
+    }
+
+    // CREATE POPULATION
+    QJsonObject json_population = json_configuration.value("population").toObject();
+    foreach( QString key , json_population.keys() ) {
+        qDebug() << QString("Creating population %1").arg( key );
+    }
+
+    // LISTEN TO EXTERNAL SIMULATIONS
+    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    foreach( QString key , json_external_listeners.keys() ) {
+        qDebug() << QString("Creating external listener %1").arg( key );
+    }
 
     /* ----------------
      * Human Agents

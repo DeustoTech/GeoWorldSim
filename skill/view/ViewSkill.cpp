@@ -28,7 +28,7 @@ QList< QSharedPointer<GWSAgent> > ViewSkill::getViewingAgents( QString agent_typ
     GWSCoordinate view_skill_centroid = geom->getCentroid();
     GWSCoordinate apply_movement = agent_centroid - view_skill_centroid;
     //qDebug() << geom->toString() << apply_movement.toString();
-    geom->transformMove( apply_movement );
+    //geom->transformMove( apply_movement );
     //qDebug() << geom->toString();
 
     // Query viewing agents

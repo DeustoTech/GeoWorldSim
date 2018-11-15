@@ -85,13 +85,6 @@ void GWSAgent::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent )
         }
     }
 
-    // RUNNING
-    if( json.keys().contains( GWSExecutionEnvironment::RUNNING_PROP ) ){
-        GWSExecutionEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
-    } else {
-        GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
-    }
-
     // ADD to MAIN environments !WARNING, DO NOT RE-REGISTER THEM AGAIN
     GWSEnvironmentsGroup::globalInstance()->registerAgent( this->getSharedPointer() );
 }
@@ -270,6 +263,16 @@ void GWSAgent::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> beha
 /**********************************************************************
  SLOTS
 **********************************************************************/
+
+void GWSAgent::run(){
+    this->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
+    GWSExecutionEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
+}
+
+void GWSAgent::stop(){
+    this->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
+    GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
+}
 
 /**
  * This method is a wrapper slot to be invoked by the Environment for behave() to be executed in the agents thread.

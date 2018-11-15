@@ -45,7 +45,7 @@ private:
     ~GWSApp();
 
     QWebSocket websocket; // WS to sockets.geoworldsim.com
-    QNetworkAccessManager http_manager; // HTTP Posts to history.geoworldsim.com
+    QNetworkAccessManager http_manager; // HTTP Posts to alerts.geoworldsim.com
     quint64 created_timestamp;
 
 };

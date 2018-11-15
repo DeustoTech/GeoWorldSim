@@ -7,6 +7,7 @@
 
 #include "../../app/App.h"
 #include "../../agent/Agent.h"
+#include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../util/parallelism/ParallelismController.h"
 
@@ -20,6 +21,7 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
@@ -76,12 +78,15 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 
 void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
+    // Not running
+    if( !agent->getProperty( RUNNING_PROP ).toBool() ){
+        return;
+    }
+
     // If already registered
     if( agent.isNull() || agent->getEnvironments().contains( this ) ){
         return;
     }
-
-    if( !agent || agent->deleted ){ return; }
 
     agent->incrementBusy();
 

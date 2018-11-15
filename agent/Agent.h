@@ -87,6 +87,10 @@ public:
     void addBehaviour( QSharedPointer<GWSBehaviour> behaviour );
     void addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> behaviour );
 
+public slots:
+    void run();
+    void stop();
+
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     virtual void tick() final; // Acts as a behave() wrapper
 protected slots:

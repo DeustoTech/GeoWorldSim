@@ -62,7 +62,6 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
 
     // Connect signal to socket slots
     this->connect( this , &GWSApp::sendAgentToSocketSignal , this , &GWSApp::sendAgentToSocket );
-    //this->connect( this , &GWSApp::sendAgentToHistorySignal , this , &GWSApp::sendAgentToHistory );
     this->connect( this , &GWSApp::sendAlertToSocketSignal , this , &GWSApp::sendAlertToSocket );
     this->connect( this , &GWSApp::sendDataToSocketSignal , this , &GWSApp::sendDataToSocket );
 
@@ -104,12 +103,6 @@ int GWSApp::exec(){
         this->exec();
     }
 
-    /*QUrl url = QString( "http://history.geoworldsim.com/api/scenario/%1/message" ).arg( this->app_id );
-    QNetworkRequest request = QNetworkRequest( url );
-    request.setHeader( QNetworkRequest::ContentTypeHeader , "application/json" );
-    QNetworkReply* reply = this->http_manager.post( request , QJsonDocument::fromJson( "{ \"message\" : \"finished\" }" ).toJson() );
-    reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );*/
-
     return -1;
 }
 
@@ -120,16 +113,14 @@ int GWSApp::exec(){
 
 void GWSApp::startSocket(){
 
-    qDebug() << "Trying to connect to socket";
-
     // Connect and send info
     QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
 
         qDebug() << QString("Simulation connected. WebSocket connected successfully to %1").arg( this->websocket.peerAddress().toString() );
 
-        if( !this->property("autorun").isNull() ){ // If Autorun
+        if( !this->property("run").isNull() ){ // If Autorun
 
-            QTimer::singleShot( 10000 , [this](){
+            QTimer::singleShot( this->property("run").toInt() * 1000 , [this](){
                 GWSExecutionEnvironment::globalInstance()->run();
             });
 
@@ -152,59 +143,8 @@ void GWSApp::reconnectSocket(){
     this->websocket.open( QUrl( "ws://sockets.geoworldsim.com/?scenario_id=" + this->getAppId() )  );
 }
 
-/*void GWSApp::socketPushData(QJsonValue json){
-    QJsonObject response;
-    response.insert( "app_id" , this->app_id );
-    response.insert( "data" , json );
-    QByteArray bytes = QJsonDocument( response ).toJson();
-
-    bytes = bytes.append('¶'); // Separator
-
-    this->tcp_socket->write( bytes , bytes.size() );
-    this->tcp_socket->waitForBytesWritten(1);
-    this->tcp_socket->flush();
-}
-
-void GWSApp::socketReceivedData(){
-    QByteArray bytes = this->tcp_socket->readAll();
-    qInfo() << "Received request" << bytes;
-
-    QJsonObject json = QJsonDocument::fromJson( bytes ).object();
-    QString type = json.value("type").toString();
-    QString operation = json.value("operation").toString();
-
-    /*if( type == GWSEnvironment::globalInstance()->metaObject()->className() ){
-        if( operation == "GET" ){ GWSEnvironment::globalInstance()->pushToInterfaceSignal( GWSEnvironment::globalInstance()->toJSON() ); }
-        if( operation == "RUN" ){ GWSExecutionEnvironment::globalInstance()->run(); }
-        if( operation == "STOP" ){ GWSExecutionEnvironment::globalInstance()->stop(); }
-    }
-    else
-    {
-        QString id = json.value("id").toString();
-        GWSAgent* agent = Q_NULLPTR;
-        QList<GWSAgent*> agents;
-        if( id.isEmpty() ){
-            agents = GWSEnvironment::globalInstance()->getByClass( type );
-        } else {
-            agent = GWSEnvironment::globalInstance()->getByClassAndId( type , id );
-        }
-
-        if( operation == "RUN" && agent ){ GWSExecutionEnvironment::globalInstance()->runAgent( agent ); }
-        if( operation == "RUN" && !agents.isEmpty() ){ GWSExecutionEnvironment::globalInstance()->runAgents( agents ); }
-        if( operation == "STOP" && agent ){ GWSExecutionEnvironment::globalInstance()->stopAgent( agent ); }
-        if( operation == "STOP" && !agents.isEmpty() ){ GWSExecutionEnvironment::globalInstance()->stopAgents( agents ); }
-
-        if( agent ){ GWSEnvironment::globalInstance()->pushToInterfaceSignal( agent->toJSON() ); }
-        if( !agents.isEmpty() ){
-            QJsonArray arr;
-            foreach( GWSAgent* agent , agents ){ arr.append( agent->toJSON() );}
-            GWSEnvironment::globalInstance()->pushToInterfaceSignal( arr );
-        }
-    }
-}*/
-
 /**********************************************************************
- HTTP SOCKET SLOTS
+ SOCKET SLOTS
 **********************************************************************/
 
 void GWSApp::sendAgentToSocket( QJsonObject entity_json ){
@@ -216,26 +156,6 @@ void GWSApp::sendAgentToSocket( QJsonObject entity_json ){
 
     this->sendDataToSocket( "entity" , entity_json );
 }
-
-/*void GWSApp::sendAgentToHistory(  QJsonObject entity_json ){
-
-    // TO history.geoworldsim.com
-    QUrl url = QString( "http://history.geoworldsim.com/api/scenario/%1/entity" ).arg( this->getAppId() );
-    QNetworkRequest request(url);
-
-    // Add data
-    QBuffer buffer;
-    buffer.open( ( QBuffer::ReadWrite ) );
-    buffer.write( QJsonDocument( entity_json ).toJson() );
-    buffer.seek( 0 );
-
-    /*QNetworkReply* reply = this->http_manager.post( request , &buffer );
-    reply->connect( reply , &QNetworkReply::finished , [reply](){
-        qDebug() << "Broadcasted information to history website!" << reply->readAll();
-        reply->deleteLater();
-    });
-
-}*/
 
 void GWSApp::sendAlertToSocket( int level, QString title, QString description ){
 

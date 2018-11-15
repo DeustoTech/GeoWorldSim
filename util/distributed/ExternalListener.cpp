@@ -9,7 +9,7 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-GWSExternalListener::GWSExternalListener(QString simulation_id ) : QObject(){
+GWSExternalListener::GWSExternalListener( QString simulation_id ) : QObject(){
     // Listening to yourself would be a loop
     Q_ASSERT( simulation_id != GWSApp::globalInstance()->getAppId() );
 
