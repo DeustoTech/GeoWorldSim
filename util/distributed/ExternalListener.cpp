@@ -24,10 +24,6 @@ void GWSExternalListener::startSocket(){
     // Connect and send info
     QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
         qInfo() << "WebSocket connected successfully to" << this->websocket.peerAddress();
-        QJsonObject socket_json;
-        socket_json.insert("signal" , "join" );
-        socket_json.insert("socket_id" , this->listening_simulation_id );
-        this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
     });
 
     // Keep alive
@@ -46,7 +42,7 @@ void GWSExternalListener::startSocket(){
 }
 
 void GWSExternalListener::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://sockets.deusto.io" ));
+    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com/?scenario_id=" + this->listening_simulation_id ) );
 }
 
 void GWSExternalListener::messageReceived(const QString message){
