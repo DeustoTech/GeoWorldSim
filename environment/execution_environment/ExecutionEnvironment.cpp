@@ -205,6 +205,8 @@ void GWSExecutionEnvironment::behave(){
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
                .arg( who_is_min_tick );
 
+    emit GWSApp::globalInstance()->sendDataToSocketSignal( "time" , min_tick );
+
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }
 
