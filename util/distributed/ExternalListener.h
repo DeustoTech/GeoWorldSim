@@ -3,6 +3,7 @@
 
 #include <QWebSocket>
 #include <QObject>
+#include <QString>
 
 class GWSExternalListener : public QObject
 {
@@ -19,7 +20,7 @@ public slots:
 
 private:
     QString listening_simulation_id;
-    QWebSocket websocket; // WS to sockets.deusto.io
+    QWebSocket websocket; // WS to sockets.geoworldsim.com
     bool reconnecting = false; // Flag
 };
 
