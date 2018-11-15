@@ -55,11 +55,6 @@
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
 
-#include <time.h>
-#include <iostream>
-#include <vector>
-
-
 int main(int argc, char* argv[])
 {
 
