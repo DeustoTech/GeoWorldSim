@@ -115,16 +115,54 @@ int main(int argc, char* argv[])
     }
 
     // CREATE POPULATION
+    int pending_population = 0;
     QJsonObject json_population = json_configuration.value("population").toObject();
     foreach( QString key , json_population.keys() ) {
-        qDebug() << QString("Creating population %1").arg( key );
+
+        // Population type:
+        QJsonObject population = json_population[ key ].toObject();
+
+        if ( !population.value("template").isNull() && !population.value("datasource_url").isNull() ){
+            pending_population++;
+            GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() , population.value("datasource_url").toString() );
+            ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ds,&pending_population](){
+                pending_population--;
+                ds->deleteLater();
+                if( pending_population <= 0 ){
+                    GWSExecutionEnvironment::globalInstance()->run();
+                }
+            });
+        }
+
+        if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
+            for ( int i = 0; i < population.value("amount").toInt() ; i++){
+                // Use template to generate amount agents
+                GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
+            }
+        }
+       qDebug() << QString("Creating population %1").arg( key );
     }
+    if( pending_population <= 0 ){
+        GWSExecutionEnvironment::globalInstance()->run();
+    }
+
+
+
 
     // LISTEN TO EXTERNAL SIMULATIONS
     QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
-        qDebug() << QString("Creating external listener %1").arg( key );
-    }
+        // Population type:
+            QJsonObject externalListener = json_external_listeners[ key ].toObject();
+
+            // Get simulation to be listened to from config.json file
+            if ( !externalListener.value( "agent_injector" ).isNull() ){
+                GWSExternalListener(externalListener.value( "agent_injector" ).toString() );
+            }
+            qDebug() << QString("Creating external listener %1").arg( key );
+     }
+
+
 
     /* ----------------
      * Human Agents
@@ -149,7 +187,7 @@ int main(int argc, char* argv[])
                                                         );*/
 
 // Agents don't move:
-QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
+/*QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"HumanAgent\",  "
                                                         "\"@family\": [ \"GWSAgent\", \"Citizen\" ], "
                                                         "\"home_x\": -2, \"home_y\": 43, \"color\" : \"Gray\" ,  \"running\" : true , "
                                                         "\"@behaviours\": [  { \"@type\": \"GenerateAgentGeometryBehaviour\", \"start\" : true , \"@id\": \"GEOM\", \"duration\": 1, \"x_value\": \"<X>\", \"y_value\": \"<Y>\", \"nexts\" : [\"DISPLAY_AT_HOME\"] }, "
@@ -165,14 +203,14 @@ QJsonDocument human_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"Hum
 
 
 QString url_censo_kg_resto = "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read";
-GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto  );
-
+//GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( human_json.object() , url_censo_kg_resto  );
+*/
 
 /* ----------------
  * Truck Agents
  * ----------------*/
 
-for( int i = 0 ; i < 0 ; i++ ){
+/*for( int i = 0 ; i < 0 ; i++ ){
 //    "{ \"@type\": \"FollowTSPRouteBehaviour\" , \"@id\" : \"FOLLOW_TSP\" , \"duration\" : 1 , \"tsp_route\" : \"<tsp_route>\", \"tsp_route_stage\" : 0, , \"nexts\" : [\"MOVE_STAGES\"] } ,"
 
     QJsonDocument jsonTrucks = QJsonDocument::fromJson( QString("{ \"@type\" : \"TruckAgent\" , "
@@ -198,13 +236,13 @@ for( int i = 0 ; i < 0 ; i++ ){
     QSharedPointer<GWSAgent> truck = GWSObjectFactory::globalInstance()->fromJSON( jsonTrucks.object() ).dynamicCast<GWSAgent>();
 
 
-}
+}*/
 
 /* ----------------------
  * RecyclingPlant Agents
  * ----------------------*/
 
-QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Orange\" ,  \"weight\": 8 , \"running\" : true , "
+/*QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"RecyclingPlantAgent\", \"@id\" : \"RecyclingPlant\" , \"color\" : \"Orange\" ,  \"weight\": 8 , \"running\" : true , "
                                                                  "\"geometry\" : { \"@type\" : \"GWSGeometry\" ,  \"type\" :  \"Point\" , \"coordinates\" : [ %1 , %2 , 0 ] }  , "
                                                                  "\"@family\": [ \"GWSAgent\" ]  ,"
                                                                  "\"@behaviours\" : [ "
@@ -215,8 +253,8 @@ QJsonDocument jsonPlant = QJsonDocument::fromJson( QString( "{ \"@type\": \"Recy
                                                                .arg( -2.86390 )
                                                                .arg( 43.28509 )
                                                                .toLatin1()
-                                                                 );
-QSharedPointer<GWSAgent> plant = GWSObjectFactory::globalInstance()->fromJSON( jsonPlant.object() ).dynamicCast<GWSAgent>();
+                                                                 );*/
+//QSharedPointer<GWSAgent> plant = GWSObjectFactory::globalInstance()->fromJSON( jsonPlant.object() ).dynamicCast<GWSAgent>();
 
 
 
@@ -226,14 +264,14 @@ QSharedPointer<GWSAgent> plant = GWSObjectFactory::globalInstance()->fromJSON( j
 
 // Read container data from datasource url:
 
-QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
+/*QJsonDocument container_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\", "
                                                                  "\"weight\": 5 , \"geometry\" : { \"@type\" : \"GWSGeometry\" } , "
                                                                  "\"@family\": [ \"ContainerAgent\", \"Container\" ] } ")
                                                                  .toLatin1()
                                                                  );
 QString container_url = "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read";
 GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( container_json.object() , container_url );
-
+*/
 
 
 
@@ -241,7 +279,7 @@ GWSAgentGeneratorDatasource* ds_container = new GWSAgentGeneratorDatasource( con
  * Zamudio roads
  * ----------------*/
 
-QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , \"running\" : true ,"
+/*QJsonDocument road_json = QJsonDocument::fromJson( QString( "{ \"@type\": \"GWSAgent\" , \"@family\" : [\"Road\"] , \"color\" : \"Blue\" , \"weight\" : 5 , \"maxspeed\" : 4 , \"running\" : true ,"
                                                             "\"edge\" : { \"@type\" : \"GWSGraphEdge\" , \"capacity\" : 3 } , "
                                                             "\"@behaviours\" : [ "
                                                             "{ \"@type\": \"SendAgentSnapshotBehaviour\" ,   \"@id\": \"DISPLAY\" , \"agent_to_send_id\" : \"<@id>\" , \"duration\": 30 ,  \"start\": true, \"nexts\" : [\"DISPLAY\"] }  "
@@ -272,7 +310,7 @@ ds3->connect(ds3 , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [](
         a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
     }
     GWSExecutionEnvironment::globalInstance()->run();
-} );
+} );*/
 
 GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
     QDateTime current_time = QDateTime::currentDateTime();
