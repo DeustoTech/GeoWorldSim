@@ -17,7 +17,9 @@
 
 
 
-	"containers" 	: { "template" : { "@type": "GWSAgent", "weight": 5 , "geometry" : { "@type" : "GWSGeometry" } , "@family": [ "ContainerAgent", "Container" ] }  , 
+	"containers" 	: { "template" : { "@type": "GWSAgent", "weight": 5 , "geometry" : { "@type" : "GWSGeometry" } , "@family": [ "ContainerAgent", "Container" ] , "running" : true , 
+				"@behaviours" : [{  "@type": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "@id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "Black" , "Red" , "Blue"] , "duration": 1  , "nexts" : ["LOOP"]} ,
+						 {  "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["LOOP"] }] }  , 
 		            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" }, 
 
 

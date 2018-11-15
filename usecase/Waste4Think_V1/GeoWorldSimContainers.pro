@@ -99,7 +99,9 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    RecyclingPlantAgent.h
+    RecyclingPlantAgent.h \
+    ../../behaviour/waste4think/SetRandomColorBehaviour.h \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -178,7 +180,9 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    RecyclingPlantAgent.cpp
+    RecyclingPlantAgent.cpp \
+    ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon

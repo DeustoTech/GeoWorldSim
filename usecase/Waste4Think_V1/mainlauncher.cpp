@@ -37,6 +37,7 @@
 #include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
 #include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 #include "../../behaviour/waste4think/PolluteBehaviour.h"
+#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -97,6 +98,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
