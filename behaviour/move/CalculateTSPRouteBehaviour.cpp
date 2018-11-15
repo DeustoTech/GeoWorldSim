@@ -1,10 +1,15 @@
 #include "CalculateTSPRouteBehaviour.h"
 #include "../../skill/move/GenerateOrderedTSPSkill.h"
 
-QString CalculateTSPRouteBehaviour::NEXTS = "nexts";
+QString CalculateTSPRouteBehaviour::NEXTS_IF_NO_TSP = "nexts_if_no_tsp_route";
+QString CalculateTSPRouteBehaviour::NEXTS_IF_TSP = "nexts_if_tsp_route";
 QString CalculateTSPRouteBehaviour::TSP_AGENT_TYPE = "tsp_agent_type"; // e.g. Glass Container
 QString CalculateTSPRouteBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  // e.g. roads
 QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_AS = "store_tsp_route_as";
+QString CalculateTSPRouteBehaviour::STORE_CLOSEST_ID_AS = "store_closest_id_as";
+QString CalculateTSPRouteBehaviour::TSP_ROUTE_STAGE = "tsp_route_stage";
+QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_STAGE_X_AS = "store_tsp_route_stage_x_as";
+QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_STAGE_Y_AS = "store_tsp_route_stage_y_as";
 
 CalculateTSPRouteBehaviour::CalculateTSPRouteBehaviour() : GWSBehaviour(){
 
@@ -18,6 +23,10 @@ QStringList CalculateTSPRouteBehaviour::behave(){
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
         GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
+
+        QStringList nexts;
+
+        QStringList tsp_route_ids;
 
         if ( agent->getProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() ).isNull() ){
 
@@ -68,15 +77,44 @@ QStringList CalculateTSPRouteBehaviour::behave(){
                  this->ordered_agents_to_visit_tsp_route_id_array.append( id );
              }
 
-             QStringList route_ids = this->ordered_agents_to_visit_tsp_route_id_array;
-             agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , route_ids );
-
+             tsp_route_ids = this->ordered_agents_to_visit_tsp_route_id_array;
+             agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , tsp_route_ids );
+             agent->setProperty( TSP_ROUTE_STAGE , QVariant() );
              routing->deleteLater();
+             nexts = this->getProperty( NEXTS_IF_NO_TSP ).toStringList();
+             return nexts;
 
         }
 
-        QStringList nexts = this->getProperty( NEXTS ).toStringList();
-        return nexts;
+        else {
+
+
+            int current_tsp_route_stage = agent->getProperty( TSP_ROUTE_STAGE ).toInt();
+            tsp_route_ids = this->ordered_agents_to_visit_tsp_route_id_array;
+            int tsp_route_size = tsp_route_ids.size();
+            QString current_tsp_route_stage_id = tsp_route_ids.at( current_tsp_route_stage );
+
+            if ( current_tsp_route_stage <= ( tsp_route_size - 1 )  ){
+
+               QSharedPointer< GWSAgent > current_tsp_stage_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( "ContainerAgent" ,  current_tsp_route_stage_id );
+               GWSCoordinate current_tsp_stage_agent_coors = GWSPhysicalEnvironment::globalInstance()->getGeometry( current_tsp_stage_agent )->getCentroid();
+
+               agent->setProperty( this->getProperty( STORE_TSP_ROUTE_STAGE_X_AS ).toString() , current_tsp_stage_agent_coors.getX() );
+               agent->setProperty( this->getProperty( STORE_TSP_ROUTE_STAGE_Y_AS ).toString() , current_tsp_stage_agent_coors.getY() );
+               agent->setProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString() , current_tsp_stage_agent->getId() );
+               agent->setProperty( TSP_ROUTE_STAGE , current_tsp_route_stage + 1 );
+
+               }
+              else {
+               agent->setProperty( this->getProperty( STORE_TSP_ROUTE_STAGE_X_AS ).toString() , agent->getProperty( "home_x" ).toDouble() );
+               agent->setProperty( this->getProperty( STORE_TSP_ROUTE_STAGE_Y_AS ).toString() , agent->getProperty( "home_y" ).toDouble() );
+               agent->setProperty( TSP_ROUTE_STAGE , QVariant() );
+            }
+
+            nexts = this->getProperty( NEXTS_IF_TSP ).toStringList();
+            return nexts;
+
+        }
 }
 
 

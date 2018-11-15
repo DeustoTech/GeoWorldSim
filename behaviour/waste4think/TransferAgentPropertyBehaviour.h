@@ -15,6 +15,7 @@ public:
 
     // PROPERTIES
     static QString PROPERTY_NAME_TO_TRANSFER;
+    static QString EMITTING_AGENT_ID;
     static QString RECEIVING_AGENT_ID;
     static QString NEXTS;
 

@@ -8,6 +8,7 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 
 QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
+QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
 
@@ -18,11 +19,27 @@ TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(
 
 QStringList TransferAgentPropertyBehaviour::behave(){
 
-    QSharedPointer< GWSAgent > agent = this->getAgent();
-    QVariant value_to_be_transferred = agent->getProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() );
-    QString closest_agent_id = this->getProperty( RECEIVING_AGENT_ID ).toString();
-    QSharedPointer< GWSAgent > closest_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , closest_agent_id );
-    QVariant existing_value = closest_agent->getProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() );
+    QSharedPointer< GWSAgent > emitter;
+    QSharedPointer< GWSAgent > receiver;
+
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+
+    // Get emitter
+    emitter = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , this->getProperty( EMITTING_AGENT_ID ).toString() );
+
+    // Get receiver
+    receiver = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , this->getProperty( RECEIVING_AGENT_ID ).toString() );
+
+    QStringList nexts = this->getProperty( NEXTS ).toStringList();
+
+    if( emitter.isNull() || receiver.isNull() ){
+        return nexts;
+    }
+
+    QString property_name_to_be_transferred = this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString();
+    QVariant value_to_be_transferred = emitter->getProperty( property_name_to_be_transferred );
+
+    QVariant existing_value = receiver->getProperty( property_name_to_be_transferred );
     QVariant values_sum;
 
     switch ( value_to_be_transferred.type() ) {
@@ -53,10 +70,10 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     }
     }
 
-    closest_agent->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , values_sum );
-    agent->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QVariant());
+    receiver->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , values_sum );
+    emitter->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QVariant());
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
+
     return nexts;
 
 }

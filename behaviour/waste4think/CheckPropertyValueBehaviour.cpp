@@ -16,23 +16,27 @@ QStringList CheckPropertyValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     double threshold_value = this->getProperty( PROPERTY_TO_COMPARE_THRESHOLD_VALUE).toDouble();
-    QVariant property_name = this->getProperty( PROPERTY_TO_COMPARE_NAME );
 
-    bool is_property = property_name.toString().startsWith( "<" ) && property_name.toString().endsWith( ">" );
+    // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
+    QVariant property_to_compare = this->getProperty( PROPERTY_TO_COMPARE_NAME );
+    QVariant agent_property_to_compare_value = agent->getProperty( property_to_compare.toString() );
 
-    if ( is_property ){
-        QString property = property_name.toString().remove( 0 , 1 );
-        property = property.remove( property.length()  - 1 , 1 );
-        property_name = agent->getProperty( property );
+    double total_property_amount = 0;
+
+    if( agent_property_to_compare_value.typeName() == QString("QJsonObject") ){
+
+        QJsonObject agent_property_to_compare_object = agent_property_to_compare_value.toJsonObject();
+
+        foreach( QString key , agent_property_to_compare_object.keys() ){
+            total_property_amount = total_property_amount + agent_property_to_compare_object[key].toDouble();
+        }
+
     }
-
-    //QString property_to_compare = property_name.toString();
 
 
     QStringList nexts;
 
-
-    if( property_name >= threshold_value ){
+    if( total_property_amount >= threshold_value ){
          nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
     }
 
