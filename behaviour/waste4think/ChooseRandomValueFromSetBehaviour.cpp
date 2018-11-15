@@ -22,7 +22,6 @@ QStringList ChooseRandomValueFromSetBehaviour::behave(){
     // Pick set element randomly:
     QString random_choice = set_to_choose_from.at( qrand() % set_to_choose_from.size() );
     agent->setProperty( property , random_choice);
-
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
 
