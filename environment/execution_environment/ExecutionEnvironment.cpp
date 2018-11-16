@@ -172,7 +172,6 @@ void GWSExecutionEnvironment::behave(){
     if( agents_to_tick ){
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
-        QList< QFuture<void> > async_ticks;
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
 
             qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
@@ -206,7 +205,6 @@ void GWSExecutionEnvironment::behave(){
                .arg( who_is_min_tick );
 
     emit GWSApp::globalInstance()->sendDataToSocketSignal( "time" , min_tick );
-
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }
 
