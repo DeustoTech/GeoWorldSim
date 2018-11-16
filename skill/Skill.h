@@ -22,7 +22,7 @@ public:
 
     // GETTERS
     QSharedPointer<GWSAgent> getAgent() const;
-    virtual const QVariant getProperty( QString name ) const;
+    virtual const QJsonValue getProperty( QString name ) const;
 
 private:
     QSharedPointer<GWSAgent> skilled_agent;

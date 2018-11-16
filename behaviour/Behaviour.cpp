@@ -73,8 +73,8 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
     return this->sub_behaviours;
 }
 
-const QVariant GWSBehaviour::getProperty( QString name ) const{
-    QVariant property_value = GWSObject::getProperty( name );
+const QJsonValue GWSBehaviour::getProperty( QString name ) const{
+    QJsonValue property_value = GWSObject::getProperty( name );
     QString property_value_as_string = property_value.toString();
 
     // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent

@@ -28,8 +28,8 @@ QSharedPointer<GWSAgent> GWSSkill::getAgent() const{
     return this->skilled_agent;
 }
 
-const QVariant GWSSkill::getProperty( QString name ) const{
-    QVariant property_value = GWSObject::getProperty( name );
+const QJsonValue GWSSkill::getProperty( QString name ) const{
+    QJsonValue property_value = GWSObject::getProperty( name );
     QString property_value_as_string = property_value.toString();
 
     // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent

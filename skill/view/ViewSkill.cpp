@@ -16,7 +16,7 @@ QList< QSharedPointer<GWSAgent> > ViewSkill::getViewingAgents( QString agent_typ
     QList< QSharedPointer<GWSAgent> > viewing_agents;
 
     // Geom viewport
-    QSharedPointer<GWSGeometry> geom = this->getProperty( VIEWPORT_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    /*QSharedPointer<GWSGeometry> geom = this->getProperty( VIEWPORT_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
 
     if( !geom ){
         return viewing_agents;
@@ -32,5 +32,5 @@ QList< QSharedPointer<GWSAgent> > ViewSkill::getViewingAgents( QString agent_typ
     //qDebug() << geom->toString();
 
     // Query viewing agents
-    return GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( geom , agent_type );
+    return GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( geom , agent_type );*/
 }

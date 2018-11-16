@@ -54,6 +54,4 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
     QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;
 
-
-
 }

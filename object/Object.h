@@ -39,21 +39,17 @@ public:
     QString getId() const;
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
-    QStringList getInheritanceFamily() const;
-    virtual const QVariant getProperty( QString name ) const;
-    const QVariant operator[]( QString name ) const;
+    QJsonArray getInheritanceFamily() const;
+    virtual const QJsonValue getProperty( QString name ) const;
+    const QJsonValue operator[]( QString name ) const;
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
     bool setProperty(const QString name, const GWSUnit &value);
-    bool setProperty(const QString name, const QVariant &value);
-    bool setProperty(const QString name, QSharedPointer<GWSObject> value);
+    bool setProperty(const QString name, const QJsonValue &value);
     void copyProperties(const GWSObject &other );
 
     bool deleted = true; // IMPORTANT
-
-protected:
-    void deserializeProperty( QString property_name , QJsonValue property_value );
 
 private:
 
