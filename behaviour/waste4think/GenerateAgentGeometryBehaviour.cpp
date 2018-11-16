@@ -22,7 +22,7 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
     QJsonValue x_value = this->getProperty( X_VALUE );
     QJsonValue y_value = this->getProperty( Y_VALUE );
 
-    GWSCoordinate destination_coor = GWSCoordinate( x_value.toString().toDouble() , y_value.toString().toDouble() );
+    GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble() , y_value.toDouble() );
 
     if( agent_geom.isNull() ){
 
