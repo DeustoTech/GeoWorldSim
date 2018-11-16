@@ -16,14 +16,17 @@ QStringList ChooseRandomValueFromSetBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Read property and value set from behaviour input:
-    QStringList set_to_choose_from = this->getProperty( VALUE_SET ).toStringList();
+    QJsonArray set_to_choose_from = this->getProperty( VALUE_SET ).toJsonArray();
     QString property = this->getProperty( AGENT_PROPERTY_TO_ASSIGN ).toString();
 
     // Pick set element randomly:
-    QString random_choice = set_to_choose_from.at( qrand() % set_to_choose_from.size() );
+    QStringList set;
+    foreach( QJsonValue n , this->getProperty( VALUE_SET ).toJsonArray() ){
+        set.append( n.toString() );
+    }
+    QString random_choice = set.at( qrand() % set_to_choose_from.size() );
     agent->setProperty( property , random_choice);
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 
 
 

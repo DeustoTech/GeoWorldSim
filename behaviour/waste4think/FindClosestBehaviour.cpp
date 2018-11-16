@@ -70,6 +70,5 @@ QStringList FindClosestBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
 
     // Set next behaviours:
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 }

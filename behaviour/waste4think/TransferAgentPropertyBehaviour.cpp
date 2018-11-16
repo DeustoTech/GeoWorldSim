@@ -6,13 +6,12 @@
 #include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
 QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
 QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
-
-
 TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(){
 
 }
@@ -30,10 +29,8 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     // Get receiver
     receiver = GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , this->getProperty( RECEIVING_AGENT_ID ).toString() );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-
     if( emitter.isNull() || receiver.isNull() ){
-        return nexts;
+        return this->getNexts( NEXTS );
     }
 
     QString property_name_to_be_transferred = this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString();
@@ -56,6 +53,13 @@ QStringList TransferAgentPropertyBehaviour::behave(){
         break;
     }
     default: {
+        if( value_to_be_transferred.typeName() == QString("QJsonArray") ){
+
+            QJsonArray existing_array = existing_value.toJsonArray();
+            Q_ASSERT(0); // Check value to create correct QJSONVALUE
+            existing_array.append( QJsonValue() );
+            values_sum = existing_array;
+        }
         if( value_to_be_transferred.typeName() == QString("QJsonObject") ){
 
             QJsonObject existing_object = existing_value.toJsonObject();
@@ -73,8 +77,16 @@ QStringList TransferAgentPropertyBehaviour::behave(){
     receiver->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , values_sum );
     emitter->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QVariant());
 
+    // Store transfers log
+    /*QString logname = this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() + "log";
+    QJsonObject log_entry;
+    log_entry.insert( "id" , emitter->getId() );
+    log_entry.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
 
-    return nexts;
+    QJsonArray existing_log = receiver->getProperty( logname ).toJsonArray();
+    existing_log.append( log_entry );
+    receiver->setProperty( logname , existing_log);*/
+    return this->getNexts( NEXTS );
 
 }
 

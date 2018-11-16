@@ -45,11 +45,9 @@ QStringList MoveThroughRouteBehaviour::behave(){
     movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP , x_destination );
     movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_Y_PROP , y_destination );
 
-    QStringList nexts;
     GWSCoordinate destination_coor = movethroughroute_skill->getRouteDestination();
     if( !destination_coor.isValid() ){
-        nexts = this->getProperty( BEHAVIOUR_NEXTS_IF_NOT_ARRIVED ).toStringList();
-        return nexts;
+        return this->getNexts( BEHAVIOUR_NEXTS_IF_NOT_ARRIVED );
     }
 
     QSharedPointer<GWSGeometry> agent_geom_init = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
@@ -63,12 +61,11 @@ QStringList MoveThroughRouteBehaviour::behave(){
 
     // Set NEXTS behaviour
     if ( agent_position_post == destination_coor ){
-        nexts = this->getProperty( BEHAVIOUR_NEXTS_IF_ARRIVED ).toStringList();
+        return this->getNexts( BEHAVIOUR_NEXTS_IF_ARRIVED );
     }
 
     if ( agent_position_post != destination_coor ){
-        nexts = this->getProperty( BEHAVIOUR_NEXTS_IF_NOT_ARRIVED ).toStringList();
+        return this->getNexts( BEHAVIOUR_NEXTS_IF_ARRIVED );
     }
 
-   return nexts;
 }

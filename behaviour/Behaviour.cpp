@@ -1,5 +1,7 @@
 #include "Behaviour.h"
 
+#include <QJsonValue>
+
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
@@ -88,16 +90,13 @@ const QVariant GWSBehaviour::getProperty( QString name ) const{
     }
 }
 
-/*QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNexts(){
-    QList< QSharedPointer<GWSBehaviour> > nexts;
-    foreach(QString id , this->next_behaviour_ids ){
-        QSharedPointer<GWSBehaviour> b = this->getAgent()->getBehaviour( id );
-        if( b ){
-            nexts.append( b );
-        }
+QStringList GWSBehaviour::getNexts(QString nexts_property_name) const{
+    QStringList nexts;
+    foreach( QJsonValue n , this->getProperty( nexts_property_name ).toJsonArray() ){
+        nexts.append( n.toString() );
     }
     return nexts;
-}*/
+}
 
 /*bool GWSBehaviour::canContinueToNext(){
 

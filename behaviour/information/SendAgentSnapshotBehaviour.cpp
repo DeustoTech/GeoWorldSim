@@ -19,7 +19,6 @@ QStringList SendAgentSnapshotBehaviour::behave(){
     QSharedPointer<GWSAgent> agent_to_send = GWSAgentEnvironment::globalInstance()->getById( agent_to_send_id );
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent_to_send->serialize() );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 
 }

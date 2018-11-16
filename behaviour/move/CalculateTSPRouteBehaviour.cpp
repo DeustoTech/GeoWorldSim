@@ -81,8 +81,7 @@ QStringList CalculateTSPRouteBehaviour::behave(){
              agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS ).toString() , tsp_route_ids );
              agent->setProperty( TSP_ROUTE_STAGE , QVariant() );
              routing->deleteLater();
-             nexts = this->getProperty( NEXTS_IF_NO_TSP ).toStringList();
-             return nexts;
+             return this->getNexts( NEXTS_IF_NO_TSP );
 
         }
 
@@ -111,8 +110,7 @@ QStringList CalculateTSPRouteBehaviour::behave(){
                agent->setProperty( TSP_ROUTE_STAGE , QVariant() );
             }
 
-            nexts = this->getProperty( NEXTS_IF_TSP ).toStringList();
-            return nexts;
+            return this->getNexts( NEXTS_IF_TSP );
 
         }
 }

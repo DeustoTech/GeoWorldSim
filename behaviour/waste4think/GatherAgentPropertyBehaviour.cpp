@@ -30,7 +30,6 @@ QStringList GatherAgentPropertyBehaviour::behave(){
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( emitting_agent->serialize() );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 
 }

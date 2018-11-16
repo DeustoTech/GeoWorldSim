@@ -50,7 +50,6 @@ QStringList FollowTSPRouteBehaviour::behave(){
     this->setProperty( TSP_ROUTE_STAGE  , loop_stage );
     agent->setProperty( TSP_ROUTE_STAGE  , loop_stage );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 }
 

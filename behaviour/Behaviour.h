@@ -30,7 +30,7 @@ public:
     QSharedPointer<GWSAgent> getAgent() const;
     QList< QSharedPointer<GWSBehaviour> > getSubs() const;
     virtual const QVariant getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
-    //QList< QSharedPointer<GWSBehaviour> > getNexts();
+    QStringList getNexts( QString nexts_property_name ) const; // NEXTS are stored as QJSONarray, convert them to StringList
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );

@@ -57,12 +57,9 @@ QStringList MoveBehaviour::behave(){
 
     }
 
-
-    QStringList nexts;
-
     GWSCoordinate destination_coor = move_skill->getMovingTowardsCoordinate();
     if( !destination_coor.isValid() ){
-        nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
+        return this->getNexts( NEXTS_IF_NOT_ARRIVED );
     }
 
     // Calculate speed
@@ -76,13 +73,12 @@ QStringList MoveBehaviour::behave(){
     move_skill->move( duration_of_movement , 4 , destination_coor );
 
     if ( agent_position == destination_coor ){
-        nexts = this->getProperty( NEXTS_IF_ARRIVED ).toStringList();
+        return this->getNexts( NEXTS_IF_ARRIVED );
     }
 
     if ( agent_position != destination_coor ){
-        nexts = this->getProperty( NEXTS_IF_NOT_ARRIVED ).toStringList();
+        return this->getNexts( NEXTS_IF_NOT_ARRIVED );
     }
 
-   return nexts;
 
 }

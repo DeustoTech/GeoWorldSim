@@ -8,6 +8,5 @@ DelayBehaviour::DelayBehaviour() : GWSBehaviour(){
 
 
 QStringList DelayBehaviour::behave(){
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getNexts( NEXTS );
 }

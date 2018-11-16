@@ -18,7 +18,6 @@ public:
     static QString EMITTING_AGENT_ID;
     static QString RECEIVING_AGENT_ID;
     static QString NEXTS;
-
 protected slots:
     virtual QStringList behave();
 

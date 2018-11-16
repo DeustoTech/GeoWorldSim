@@ -34,6 +34,5 @@ QStringList CopyPropertyBehaviour::behave(){
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( copy_agent->serialize() );
 
     // Set next behaviours:
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+   return this->getNexts( NEXTS );
 }

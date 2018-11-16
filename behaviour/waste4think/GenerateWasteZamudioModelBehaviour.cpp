@@ -109,9 +109,8 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
         nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
     }*/
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-    return nexts;
+    return this->getNexts( NEXTS );
 
 
 }

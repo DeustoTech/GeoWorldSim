@@ -94,6 +94,11 @@ QJsonObject GWSObject::serialize() const{
                     json.insert( property_name , property_value.toJsonValue() );
                 }
 
+                // case JSONArray
+                else if( QString( property_value.typeName() ) == "QJsonArray" ){
+                    json.insert( property_name , property_value.toJsonValue() );
+                }
+
                 else {
                     qDebug() << QString("Trying to serialize Property (%1) of unknown type %2").arg( property_name ).arg( property_value.typeName() );
                     json.insert( property_name , this->getProperty( property_name ).toJsonValue() ); break;
@@ -144,12 +149,7 @@ void GWSObject::deserializeProperty( QString property_name, QJsonValue property_
     case QJsonValue::Bool: {
             this->setProperty( property_name , property_value.toBool() ); break; }
     case QJsonValue::Array: {
-            QVariantList list;
-            foreach (QJsonValue v , property_value.toArray() ) {
-                list.append( v.toVariant() );
-            }
-            this->setProperty( property_name , list );
-            break; }
+            this->setProperty( property_name , property_value.toArray() ); break; }
     case QJsonValue::Object: {
 
             QJsonObject property_value_object = property_value.toObject();

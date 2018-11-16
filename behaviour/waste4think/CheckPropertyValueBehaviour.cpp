@@ -37,11 +37,11 @@ QStringList CheckPropertyValueBehaviour::behave(){
     QStringList nexts;
 
     if( total_property_amount >= threshold_value ){
-         nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
+         nexts = this->getNexts( NEXTS_IF_TRUE );
     }
 
     else {
-        nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
+        nexts = this->getNexts( NEXTS_IF_FALSE );
          }
 
     return nexts;

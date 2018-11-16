@@ -81,8 +81,7 @@ QStringList PolluteBehaviour::behave(){
 
 
        //qDebug() << column3;*/
-       QStringList nexts = this->getProperty( NEXTS ).toStringList();
-       return nexts;
+       return this->getNexts( NEXTS );
     /*QStringList nexts = this->getProperty( NEXTS ).toStringList();
     return nexts;*/
 
