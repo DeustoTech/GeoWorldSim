@@ -5,44 +5,27 @@
 QString CheckPropertyValueBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
 QString CheckPropertyValueBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
 QString CheckPropertyValueBehaviour::PROPERTY_TO_COMPARE_NAME = "property_to_compare";
-QString CheckPropertyValueBehaviour::PROPERTY_TO_COMPARE_THRESHOLD_VALUE = "threshold_value";
+QString CheckPropertyValueBehaviour::REFERENCE_VALUE_TO_COMPARE = "reference_value";
 
 CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
 
 }
 
 
-QStringList CheckPropertyValueBehaviour::behave(){
+QJsonArray CheckPropertyValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    double threshold_value = this->getProperty( PROPERTY_TO_COMPARE_THRESHOLD_VALUE).toDouble();
+    QJsonValue reference_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE);
 
     // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
-    QVariant property_to_compare = this->getProperty( PROPERTY_TO_COMPARE_NAME );
-    QVariant agent_property_to_compare_value = agent->getProperty( property_to_compare.toString() );
+    QJsonValue property_name = this->getProperty( PROPERTY_TO_COMPARE_NAME );
+    QJsonValue agent_property_value = agent->getProperty( property_name.toString() );
 
-    double total_property_amount = 0;
+    bool comparison_success = reference_value == agent_property_value;
 
-    if( agent_property_to_compare_value.typeName() == QString("QJsonObject") ){
-
-        QJsonObject agent_property_to_compare_object = agent_property_to_compare_value.toJsonObject();
-
-        foreach( QString key , agent_property_to_compare_object.keys() ){
-            total_property_amount = total_property_amount + agent_property_to_compare_object[key].toDouble();
-        }
-
+    if( comparison_success ){
+         return this->getProperty( NEXTS_IF_TRUE ).toArray();
+    } else {
+        return this->getProperty( NEXTS_IF_FALSE ).toArray();
     }
-
-
-    QStringList nexts;
-
-    if( total_property_amount >= threshold_value ){
-         nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
-    }
-
-    else {
-        nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
-         }
-
-    return nexts;
 }

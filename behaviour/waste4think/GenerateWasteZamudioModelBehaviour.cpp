@@ -81,19 +81,16 @@ double GenerateWasteZamudioModelBehaviour::partialModel ( double rest, double un
 }
 
 
-
-QStringList GenerateWasteZamudioModelBehaviour::behave(){
+QJsonArray GenerateWasteZamudioModelBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-
-
 
     QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString(); // e.g. fraccion resto
     //QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
     //QString waste_type3 = this->getProperty( WASTE_TYPE3 ).toString();
     //QString waste_type4 = this->getProperty( WASTE_TYPE4 ).toString();
 
-    QJsonObject characObject = this->getProperty( "characterization" ).toJsonObject();
+    QJsonObject characObject = this->getProperty( "characterization" ).toObject();
     QJsonValue restoObject = characObject[ waste_type1 ];
     //qDebug() << restoObject;
 
@@ -109,10 +106,8 @@ QStringList GenerateWasteZamudioModelBehaviour::behave(){
         nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
     }*/
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-    return nexts;
 
+    return this->getProperty( NEXTS ).toArray();
 
 }
 

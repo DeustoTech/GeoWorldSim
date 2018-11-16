@@ -7,7 +7,6 @@ DelayBehaviour::DelayBehaviour() : GWSBehaviour(){
 }
 
 
-QStringList DelayBehaviour::behave(){
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+QJsonArray DelayBehaviour::behave(){
+    return this->getProperty( NEXTS ).toArray();
 }

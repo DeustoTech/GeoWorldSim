@@ -71,11 +71,9 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
 
     // Set properties
     foreach( QString property_name , json.keys() ){
-
         // Avoid @ starting keywords
         if( property_name.contains('@') ){ continue; }
         this->setProperty( property_name , json.value( property_name ) );
-
     }
 }
 
@@ -121,8 +119,7 @@ const QJsonValue GWSObject::getProperty( QString name ) const{
     this->mutex.lock();
     const QVariant variant = QObject::property( name.toLatin1() );
     this->mutex.unlock();
-
-    return variant.toJsonValue();
+    return QJsonValue::fromVariant( variant );
 }
 
 const QJsonValue GWSObject::operator []( QString name ) const{
@@ -139,7 +136,7 @@ bool GWSObject::setProperty(const QString name, const GWSUnit &value){
 
 bool GWSObject::setProperty(const QString name, const QJsonValue &value){
     this->mutex.lock();
-    bool ok = QObject::setProperty( name.toLatin1() , value );
+    bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
     this->mutex.unlock();
     return ok;
 }

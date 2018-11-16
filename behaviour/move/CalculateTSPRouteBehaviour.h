@@ -27,11 +27,10 @@ public:
 
     QList< QPair< GWSCoordinate , QString > > route;
     QList< QPair< GWSCoordinate , QString > > ordered_agents_to_visit_tsp_route_coord_id_array;
-    QStringList ordered_agents_to_visit_tsp_route_id_array;
+    QJsonArray ordered_agents_to_visit_tsp_route_id_array;
 
 protected slots:
-    virtual QStringList behave();
-
+    virtual QJsonArray behave();
 };
 
 #endif // MOVEONPARTICULARWASTETSPROUTE_H

@@ -1,5 +1,6 @@
 #include "NetworkEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
+#include "../../object/ObjectFactory.h"
 
 #include "../../app/App.h"
 
@@ -161,23 +162,27 @@ QList< QList<QSharedPointer< GWSGraphEdge> > > GWSNetworkEnvironment::getShortes
 void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
 
     // If already registered
-    if( agent.isNull() || agent->getEnvironments().contains( this ) ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isNull() ){
         return;
     }
 
-    // GRAPH EDGE (comes parsed by GWSObject, extract and set it to null)
-    QSharedPointer<GWSGraphEdge> edge = agent->getProperty( EDGE_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGraphEdge>();
+    // GRAPH EDGE (comes as a QJSONOBJECT, need to extract it and build the GWSGRAPHEDGE)
+    QJsonObject edge_json = agent->getProperty( EDGE_PROP ).toObject();
+    QSharedPointer<GWSGraphEdge> edge = GWSObjectFactory::globalInstance()->fromJSON( edge_json ).dynamicCast<GWSGraphEdge>();
 
     if( !edge.isNull() ){
 
         try {
 
             GWSEnvironment::registerAgent( agent );
-            edge->setProperty( EDGE_INSIDE_AGENT_IDS_PROP , QStringList() );
-            QStringList classes = agent->getInheritanceFamily();
-            QList<QString> keys = this->network_edges.keys();
+            edge->setProperty( EDGE_INSIDE_AGENT_IDS_PROP , QJsonArray() );
+            QJsonArray classes = agent->getInheritanceFamily();
+            QStringList keys = this->network_edges.keys();
 
-            foreach(QString family , classes){
+            foreach(QJsonValue v , classes){
+
+                QString family = v.toString();
+                if( family.isEmpty() ){ continue; }
 
                 // Insert new spatial graph with the agents class
                 if( !keys.contains( family ) ){
@@ -189,7 +194,10 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
                 }
             }
 
-            foreach(QString family , classes){
+            foreach(QJsonValue v , classes){
+
+                QString family = v.toString();
+                if( family.isEmpty() ){ continue; }
 
                 // Add to spatial graph
                 this->network_edges.value( family )->upsert( edge , edge->getFrom() );
@@ -203,7 +211,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
     }
 
     // Set to null
-    agent->setProperty( EDGE_PROP , QVariant() );
+    agent->setProperty( EDGE_PROP , QJsonValue() );
 }
 
 void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
@@ -211,9 +219,12 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
     try {
 
         GWSEnvironment::unregisterAgent( agent );
-        QStringList classes = agent->getInheritanceFamily();
+        QJsonArray classes = agent->getInheritanceFamily();
 
-        foreach(QString family , classes){
+        foreach(QJsonValue v , classes){
+
+            QString family = v.toString();
+            if( family.isEmpty() ){ continue; }
 
             // Remove from spatial graph
             QSharedPointer<GWSGraphEdge> edge = this->agent_to_edge.value( agent );

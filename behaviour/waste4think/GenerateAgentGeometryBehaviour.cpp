@@ -2,7 +2,6 @@
 #include "../../util/geometry/Geometry.h"
 #include "../../app/App.h"
 
-
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 
@@ -15,21 +14,26 @@ GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(
 
 }
 
-QStringList GenerateAgentGeometryBehaviour::behave(){
-    bool ok = false;
+QJsonArray GenerateAgentGeometryBehaviour::behave(){
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QVariant x_value = this->getProperty( X_VALUE );
-    QVariant y_value = this->getProperty( Y_VALUE );
+    QJsonValue x_value = this->getProperty( X_VALUE );
+    QJsonValue y_value = this->getProperty( Y_VALUE );
 
-
-
-    GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble(&ok) , y_value.toDouble(&ok) );
+    GWSCoordinate destination_coor = GWSCoordinate( x_value.toString().toDouble() , y_value.toString().toDouble() );
 
     if( agent_geom.isNull() ){
 
-        GWSPhysicalEnvironment::globalInstance()->transformMove( agent , destination_coor );
+        QJsonObject geom_json;
+        geom_json.insert( GWSObject::GWS_TYPE_PROP , GWSGeometry::staticMetaObject.className() );
+        geom_json.insert( "type" , "Point" );
+        QJsonArray coordinates;
+        coordinates.append( destination_coor.getX() ); coordinates.append( destination_coor.getY() );
+        geom_json.insert( "coordinates" , coordinates );
+        agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
 
     } else {
 
@@ -48,10 +52,5 @@ QStringList GenerateAgentGeometryBehaviour::behave(){
         //qDebug() << new_agent_geom->getCentroid().toString();
 
     }
-
-    QString new_agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid().toString();
-
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
-
+    return this->getProperty( NEXTS ).toArray();
 }

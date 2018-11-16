@@ -16,20 +16,20 @@ FollowTSPRouteBehaviour::FollowTSPRouteBehaviour() : GWSBehaviour() {
 }
 
 
-QStringList FollowTSPRouteBehaviour::behave(){
+QJsonArray FollowTSPRouteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    QVariant route = this->getProperty( TSP_ROUTE );
+    QJsonValue route = this->getProperty( TSP_ROUTE );
 
-    QStringList tsp_route = route.toStringList();
+    QJsonArray tsp_route = route.toArray();
     int route_size = tsp_route.size();
 
     int loop_stage = this->getProperty( TSP_ROUTE_STAGE ).toInt();
 
     if ( loop_stage <= ( route_size - 1 )  ){
 
-       QSharedPointer< GWSAgent > tsp_stage_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( "ContainerAgent" ,  tsp_route[ loop_stage ]);
+       QSharedPointer< GWSAgent > tsp_stage_agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( "ContainerAgent" ,  tsp_route[ loop_stage ].toString() );
        GWSCoordinate tsp_stage_agent_coors = GWSPhysicalEnvironment::globalInstance()->getGeometry( tsp_stage_agent )->getCentroid();
 
        double x = tsp_stage_agent_coors.getX();
@@ -50,7 +50,6 @@ QStringList FollowTSPRouteBehaviour::behave(){
     this->setProperty( TSP_ROUTE_STAGE  , loop_stage );
     agent->setProperty( TSP_ROUTE_STAGE  , loop_stage );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getProperty( NEXTS ).toArray();
 }
 

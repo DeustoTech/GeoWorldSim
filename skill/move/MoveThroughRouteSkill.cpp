@@ -85,17 +85,22 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
             // Remove road information from agent
-            agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , QVariant() );
-            agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , QVariant() );
-            agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , QVariant() );
+            agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , QJsonValue() );
+            agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , QJsonValue() );
+            agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , QJsonValue() );
 
             // Remove agent from road
-            QStringList inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList();
-            inside_agent_ids.removeAll( agent->getId() );
-            starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
+            QJsonArray inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
+            QJsonArray new_inside_agent_ids;
+            foreach (QJsonValue v, inside_agent_ids ) {
+                if( v != agent->getId() ){ new_inside_agent_ids.append( v ); }
+            }
+            starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
 
-            this->pending_route.removeAt( 0 ); // Have completed the edge coordinates, so remove the edge too
+            // Have completed the edge coordinates, so remove the edge too
+            this->pending_route.removeAt( 0 );
             move_to = current_coor;
+
         } else {
             move_to = this->pending_edge_coordinates.at( 0 );
         }
@@ -118,7 +123,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         }
 
         if( edge_capacity >= 0 ){
-            int edge_inside_agents_amount = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList().size();
+            int edge_inside_agents_amount = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray().size();
             if( edge_capacity <= edge_inside_agents_amount ){
                 // Wait for edge to liberate, that is, do not move
                 MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , destination_coor );
@@ -135,7 +140,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , starting_current_edge_max_speed );
 
         // Add agent to road
-        QStringList inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList();
+        QJsonArray inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
         inside_agent_ids.append( agent->getId() );
         starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
 

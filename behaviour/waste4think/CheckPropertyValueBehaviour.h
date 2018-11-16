@@ -16,11 +16,11 @@ public:
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
     static QString PROPERTY_TO_COMPARE_NAME;
-    static QString PROPERTY_TO_COMPARE_THRESHOLD_VALUE;
+    static QString REFERENCE_VALUE_TO_COMPARE;
 
 
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

@@ -33,7 +33,7 @@ public:
     double partialModel( double rest, double uni, double tasParo , double urb );
 
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 };
 
 #endif // GENERATEWASTEBEHAVIOUR_H

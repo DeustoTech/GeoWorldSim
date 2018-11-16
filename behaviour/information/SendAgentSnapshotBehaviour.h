@@ -18,7 +18,7 @@ public:
 
 private slots:
 
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

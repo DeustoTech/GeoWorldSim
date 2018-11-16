@@ -19,7 +19,7 @@ public:
     static QString BEHAVIOUR_NEXTS_IF_NOT_ARRIVED;
 
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

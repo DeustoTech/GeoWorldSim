@@ -18,9 +18,8 @@ public:
     static QString EMITTING_AGENT_ID;
     static QString RECEIVING_AGENT_ID;
     static QString NEXTS;
-
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 private:
     QJsonValue incrementQJsonValue( QJsonValue existing_value , QJsonValue increment );

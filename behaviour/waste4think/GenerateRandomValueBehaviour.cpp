@@ -11,13 +11,12 @@ GenerateRandomValueBehaviour::GenerateRandomValueBehaviour() : GWSBehaviour (){
 
 
 
-QStringList GenerateRandomValueBehaviour::behave(){
+QJsonArray GenerateRandomValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     double random_number = UniformDistribution::uniformDistribution( );
     agent->setProperty( this->getProperty( STORE_RANDOM_VALUE_AS ).toString() , random_number );
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getProperty( NEXTS ).toArray();
 
 
 }

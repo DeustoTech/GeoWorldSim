@@ -10,22 +10,17 @@ ChooseRandomValueFromSetBehaviour::ChooseRandomValueFromSetBehaviour() : GWSBeha
 }
 
 
-QStringList ChooseRandomValueFromSetBehaviour::behave(){
-
+QJsonArray ChooseRandomValueFromSetBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Read property and value set from behaviour input:
-    QStringList set_to_choose_from = this->getProperty( VALUE_SET ).toStringList();
+    QJsonArray set_to_choose_from = this->getProperty( VALUE_SET ).toArray();
     QString property = this->getProperty( AGENT_PROPERTY_TO_ASSIGN ).toString();
 
     // Pick set element randomly:
-    QString random_choice = set_to_choose_from.at( qrand() % set_to_choose_from.size() );
-    agent->setProperty( property , random_choice);
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
-
-
-
+    QJsonValue random_choice = set_to_choose_from.at( qrand() % set_to_choose_from.size() );
+    agent->setProperty( property , random_choice );
+    return this->getProperty( NEXTS ).toArray();
 
 }

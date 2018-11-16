@@ -11,12 +11,12 @@ GatherAgentPropertyBehaviour::GatherAgentPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-QStringList GatherAgentPropertyBehaviour::behave(){
+QJsonArray GatherAgentPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    QVariant emitting_agent_id = this->getProperty( GENERATING_AGENT_ID );
-    QVariant emitting_agent_property = this->getProperty( PROPERTY_TO_GATHER );
+    QJsonValue emitting_agent_id = this->getProperty( GENERATING_AGENT_ID );
+    QJsonValue emitting_agent_property = this->getProperty( PROPERTY_TO_GATHER );
 
     QSharedPointer< GWSAgent > emitting_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , emitting_agent_id.toString() );
 
@@ -30,7 +30,6 @@ QStringList GatherAgentPropertyBehaviour::behave(){
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( emitting_agent->serialize() );
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getProperty( NEXTS ).toArray();
 
 }

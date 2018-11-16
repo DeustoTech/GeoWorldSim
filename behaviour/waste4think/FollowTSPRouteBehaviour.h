@@ -19,7 +19,7 @@ public:
     static QString NEXTS;
 
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 };
 
 #endif // FOLLOWTSPROUTEBEHAVIOUR_H

@@ -10,7 +10,7 @@ SetRandomColorBehaviour::SetRandomColorBehaviour() : GWSBehaviour(){
 
 
 
-QStringList SetRandomColorBehaviour::behave(){
+QJsonArray SetRandomColorBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -18,6 +18,5 @@ QStringList SetRandomColorBehaviour::behave(){
     QString random_color = QColor::colorNames().at( qrand() % QColor::colorNames().size() ) ;
     agent->setProperty( "color" , random_color);
 
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+    return this->getProperty( NEXTS ).toArray();
 }

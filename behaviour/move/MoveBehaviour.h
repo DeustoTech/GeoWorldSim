@@ -19,7 +19,7 @@ public:
     static QString NEXTS_IF_NOT_ARRIVED;
 
 private slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

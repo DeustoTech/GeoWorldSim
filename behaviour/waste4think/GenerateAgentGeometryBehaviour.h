@@ -17,7 +17,7 @@ public:
     static QString Y_VALUE;
 
 protected slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 };
 
 #endif // GENERATEAGENTGEOMETRYBEHAVIOUR_H

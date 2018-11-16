@@ -11,7 +11,7 @@ CopyPropertyBehaviour::CopyPropertyBehaviour() : GWSBehaviour(){
 
 }
 
-QStringList CopyPropertyBehaviour::behave(){
+QJsonArray CopyPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -30,10 +30,6 @@ QStringList CopyPropertyBehaviour::behave(){
     QSharedPointer<GWSAgent> copy_agent = GWSAgentEnvironment::globalInstance()->getById( agent_id_to_copy_from );
     agent->setProperty( property_name_to_copy , copy_agent->getProperty( property_name_to_copy ) );
 
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( copy_agent->serialize() );
-
     // Set next behaviours:
-    QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;
+   return this->getProperty( NEXTS ).toArray();
 }

@@ -300,15 +300,22 @@ void GWSAgent::behave(){
     }
 
     double max_behaviour_time_to_increment = 0;
-    QStringList next_execute_behaviour_ids;
+    QJsonArray next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
-        next_execute_behaviour_ids.append( behaviour->tick( behaving_time ) );
+        QJsonArray ids = behaviour->tick( behaving_time );
+        foreach (QJsonValue id , ids ) {
+            next_execute_behaviour_ids.append( id );
+        }
         max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , behaviour->getProperty( GWSBehaviour::BEHAVIOUR_DURATION ).toDouble() );
     }
 
     QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
-    foreach (QString id , next_execute_behaviour_ids) {
+    foreach (QJsonValue v , next_execute_behaviour_ids) {
+
+        QString id = v.toString();
+        if( id.isEmpty() ){ continue; }
+
         QSharedPointer<GWSBehaviour> behaviour = this->getBehaviour( id );
         if( behaviour.isNull() ){
             qWarning() << QString("Agent %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getId() ).arg( id );

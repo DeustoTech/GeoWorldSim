@@ -1,5 +1,7 @@
 #include "Behaviour.h"
 
+#include <QJsonValue>
+
 #include "../../object/ObjectFactory.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
@@ -88,17 +90,6 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
     }
 }
 
-/*QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getNexts(){
-    QList< QSharedPointer<GWSBehaviour> > nexts;
-    foreach(QString id , this->next_behaviour_ids ){
-        QSharedPointer<GWSBehaviour> b = this->getAgent()->getBehaviour( id );
-        if( b ){
-            nexts.append( b );
-        }
-    }
-    return nexts;
-}*/
-
 /*bool GWSBehaviour::canContinueToNext(){
 
     int condition = this->getProperty( FINISH_CONDITION_PROP ).toInt();
@@ -130,11 +121,11 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
 /**
  * This method is a wrapper slot to be invoked by the GWSAgent for behave() to be executed in the agents thread.
  **/
-QStringList GWSBehaviour::tick( qint64 behaviour_ticked_time ){
+QJsonArray GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
     //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
-    QStringList nexts;
+    QJsonArray nexts;
     this->behaving_time = behaviour_ticked_time;
 
     this->getAgent()->incrementBusy();
@@ -151,9 +142,9 @@ QStringList GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     return nexts;
 }
 
-QStringList GWSBehaviour::behave(){
+QJsonArray GWSBehaviour::behave(){
 
-    QStringList nexts;
+    QJsonArray nexts;
 
     // A parent behaviour will iterate all its child behaviours at each behave call
     foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {

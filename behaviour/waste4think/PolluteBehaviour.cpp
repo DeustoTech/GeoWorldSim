@@ -14,7 +14,7 @@ PolluteBehaviour::PolluteBehaviour() : GWSBehaviour ()
 }
 
 
-QStringList PolluteBehaviour::behave(){
+QJsonArray PolluteBehaviour::behave(){
 
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -72,18 +72,9 @@ QStringList PolluteBehaviour::behave(){
       qDebug() << "Column header" << fields[ 4 ];
       qDebug() << "Column data" << vehicles;
    }
-   file.close();
+   file.close();*/
 
 
-
-
-
-
-
-       //qDebug() << column3;*/
-       QStringList nexts = this->getProperty( NEXTS ).toStringList();
-       return nexts;
-    /*QStringList nexts = this->getProperty( NEXTS ).toStringList();
-    return nexts;*/
+   return this->getProperty( NEXTS ).toArray();
 
 }

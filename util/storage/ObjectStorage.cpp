@@ -1,5 +1,7 @@
 #include "ObjectStorage.h"
 
+#include <QJsonArray>
+
 GWSObjectStorage::GWSObjectStorage() : GWSObject(){
 
 }
@@ -121,8 +123,12 @@ bool GWSObjectStorage::contains( QSharedPointer<GWSObject> object ) const{
 void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
 
     // Create storages
-    QStringList classes = object->getInheritanceFamily();
-    foreach( QString c , classes ){
+    QJsonArray classes = object->getInheritanceFamily();
+    foreach( QJsonValue v , classes ){
+
+        QString c = v.toString();
+        if( c.isEmpty() ){ continue; }
+
         if( !this->classes_stored.contains( c ) ){
 
             QList< QSharedPointer<GWSObject> >* list = new QList< QSharedPointer<GWSObject> >();
@@ -139,7 +145,11 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
     }
 
     // Add to storage
-    foreach( QString c , classes ){
+    foreach( QJsonValue v , classes ){
+
+        QString c = v.toString();
+        if( c.isEmpty() ){ continue; }
+
         this->mutex.lock();
 
         this->objects[ c ]->append( object );
@@ -153,8 +163,12 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
 void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
 
     // Remove from storage
-    QStringList classes = object->getInheritanceFamily();
-    foreach( QString c , classes ){
+    QJsonArray classes = object->getInheritanceFamily();
+    foreach( QJsonValue v , classes ){
+
+        QString c = v.toString();
+        if( c.isEmpty() ){ continue; }
+
         if( this->classes_stored.contains( c ) ){
             this->mutex.lock();
 

@@ -1,5 +1,6 @@
 #include "PhysicalEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
+#include "../object/ObjectFactory.h"
 
 QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geometry";
 
@@ -122,12 +123,13 @@ void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
 
 void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
-    if( agent.isNull() || agent->getEnvironments().contains( this ) ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( GEOMETRY_PROP ).isNull() ){
         return;
     }
 
-    // GEOMETRY (comes parsed by GWSObject, extract and set it to null)
-    QSharedPointer<GWSGeometry> geom = agent->getProperty( GEOMETRY_PROP ).value< QSharedPointer<GWSObject> >().dynamicCast<GWSGeometry>();
+    // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
+    QJsonObject geom_json = agent->getProperty( GEOMETRY_PROP ).toObject();
+    QSharedPointer<GWSGeometry> geom = GWSObjectFactory::globalInstance()->fromJSON( geom_json ).dynamicCast<GWSGeometry>();
 
     if( geom.isNull() ){
         return;
@@ -145,7 +147,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     GWSEnvironment::registerAgent( agent );
 
     // Set geometry in agent to null, because it is be stored here in the environment
-    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QVariant() );
+    agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , QJsonValue() );
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
@@ -153,8 +155,12 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
     QString agent_id = agent->getId();
     GWSEnvironment::unregisterAgent( agent );
 
-    foreach (QString family_class , agent->getInheritanceFamily()) {
-        this->environment_agent_indexes.value( family_class )->remove( agent );
+    foreach (QJsonValue v , agent->getInheritanceFamily()) {
+
+        QString family = v.toString();
+        if( family.isEmpty() ){ continue; }
+
+        this->environment_agent_indexes.value( family )->remove( agent );
     }
     this->agent_ids.removeAll( agent_id );
 }
@@ -164,7 +170,11 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 **********************************************************************/
 
 void GWSPhysicalEnvironment::registerAgentToIndex(QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> geom){
-    foreach (QString family , agent->getInheritanceFamily() ) {
+    foreach (QJsonValue v , agent->getInheritanceFamily() ) {
+
+        QString family = v.toString();
+        if( family.isEmpty() ){ continue; }
+
         this->mutex.lock();
         if( !this->environment_agent_indexes.keys().contains( family ) ){
             this->environment_agent_indexes.insert( family , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
