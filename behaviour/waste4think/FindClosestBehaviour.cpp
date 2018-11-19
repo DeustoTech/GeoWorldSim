@@ -14,6 +14,7 @@ QString FindClosestBehaviour::STORE_CLOSEST_ROUTE_DISTANCE_AS = "store_closest_r
 QString FindClosestBehaviour::STORE_CLOSEST_X_AS = "store_closest_agent_x_as";
 QString FindClosestBehaviour::STORE_CLOSEST_Y_AS = "store_closest_agent_y_as";
 QString FindClosestBehaviour::NEXTS = "nexts";
+QString FindClosestBehaviour::NEXTS_IF_NO_CLOSEST_FOUND = "nexts_if_no_closest_found";
 
 
 FindClosestBehaviour::FindClosestBehaviour() : GWSBehaviour(){
@@ -43,8 +44,24 @@ QJsonArray FindClosestBehaviour::behave(){
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
     QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
-    // Extract and store its ID:
+
+    // Extract and store the route to nearest node it:
+    QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
+
+    // If agent can not be connected to road network nearest node. Closest nearest node is null
+    if ( closest_route.isEmpty() ){
+        return this->getProperty( NEXTS_IF_NO_CLOSEST_FOUND ).toArray();
+    }
+
+    // Extract and store the distance of the route:
+    GWSLengthUnit closest_route_distance = 0;
+    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
+        closest_route_distance = closest_route_distance + edge->getLength();
+    }
+
+    // Extract and store closest node ID and coordinates:
     QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
+    GWSCoordinate  closest_agent_nearest_node = closest_coor_and_route.first;
 
     QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString("closest_agent_id");
     agent->setProperty( save_closest_id_as , closest_agent_id );
@@ -55,14 +72,6 @@ QJsonArray FindClosestBehaviour::behave(){
     QString save_closest_y_as = this->getProperty( STORE_CLOSEST_Y_AS ).toString("closest_agent_y");
     agent->setProperty( save_closest_y_as , closest_coor_and_route.first.getY() );
 
-    // Extract and store the route to it:
-    QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
-
-    // Extract and store the distance of the route:
-    GWSLengthUnit closest_route_distance = 0;
-    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
-        closest_route_distance = closest_route_distance + edge->getLength();
-    }
     agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
 
     // Set next behaviours:

@@ -13,7 +13,7 @@ StopAgentBehaviour::StopAgentBehaviour() : GWSBehaviour(){
  SLOTS
 **********************************************************************/
 
-QStringList StopAgentBehaviour::behave(){
+QJsonArray  StopAgentBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSExecutionEnvironment* env = GWSExecutionEnvironment::globalInstance();
@@ -25,5 +25,5 @@ QStringList StopAgentBehaviour::behave(){
 
     emit GWSApp::globalInstance()->sendAgentToSocketSignal( json );
 
-    return QStringList();
+    return QJsonArray();
 }

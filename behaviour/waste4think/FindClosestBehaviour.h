@@ -20,6 +20,7 @@ public:
     static QString STORE_CLOSEST_X_AS;
     static QString STORE_CLOSEST_Y_AS;
     static QString NEXTS;
+    static QString NEXTS_IF_NO_CLOSEST_FOUND;
 
 protected:
 

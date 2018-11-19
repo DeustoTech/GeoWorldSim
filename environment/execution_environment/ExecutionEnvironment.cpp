@@ -12,6 +12,8 @@
 #include "../../util/parallelism/ParallelismController.h"
 
 QString GWSExecutionEnvironment::RUNNING_PROP = "running";
+QString GWSExecutionEnvironment::START_TIME = "start_time";
+QString GWSExecutionEnvironment::END_TIME = "end_time";
 
 GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
     static GWSExecutionEnvironment instance;
@@ -97,6 +99,9 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
     agent->decrementBusy();
     emit agent->agentStartedSignal();
+
+    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
+
     qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
 
@@ -105,9 +110,12 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     if( agent.isNull() || !agent->getEnvironments().contains( this ) ){
         return;
     }
-
+    agent->setProperty( GWSExecutionEnvironment::END_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
     agent->incrementBusy();
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
+    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
+
+
 
     // Remove from running lists
     GWSEnvironment::unregisterAgent( agent );

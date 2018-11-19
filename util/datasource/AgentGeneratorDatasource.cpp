@@ -5,9 +5,13 @@
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
-#include <QObject>
-#include "../../app/App.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
+#include "../../app/App.h"
+#include "../../agent/Agent.h"
+
+#include <QObject>
+#include <QTimer>
 
 GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString url , int amount ) : QObject ()
 {
@@ -25,7 +29,22 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
 
         QJsonObject template_to_be_constructed = this->joinJSON( json , data );
         if ( !template_to_be_constructed.isEmpty() ){
-            GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
+            //QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
+
+            if( !template_to_be_constructed.value( GWSExecutionEnvironment::START_TIME ).isNull() ){
+               qint64 currentDateTimeMsecs = GWSTimeEnvironment::globalInstance()->getCurrentDateTime(); // returns milliseconds
+               qint64 startAfterMsecs = template_to_be_constructed.value( GWSExecutionEnvironment::START_TIME ).toInt();
+               qint64 executionTimeMsecs = startAfterMsecs + currentDateTimeMsecs;
+               qDebug() << currentDateTimeMsecs;
+               qDebug() << startAfterMsecs;
+               qDebug() << executionTimeMsecs;
+               QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
+               QTimer::singleShot( executionTimeMsecs , [agent ]() {
+                   //qDebug() << GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+                   agent->run() ;
+
+               } );
+            }
         }
 
     });

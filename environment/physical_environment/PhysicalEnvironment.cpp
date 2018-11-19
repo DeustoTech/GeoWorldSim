@@ -1,6 +1,6 @@
 #include "PhysicalEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
-#include "../object/ObjectFactory.h"
+#include "../../object/ObjectFactory.h"
 
 QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geometry";
 

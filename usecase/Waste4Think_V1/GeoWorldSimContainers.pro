@@ -60,6 +60,7 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/waste4think/GenerateRandomValueBehaviour.h \
     ../../behaviour/waste4think/PolluteBehaviour.h \
+    ../../behaviour/execution/StopAgentBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -135,6 +136,7 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
     ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp \
     ../../behaviour/waste4think/PolluteBehaviour.cpp \
+    ../../behaviour/execution/StopAgentBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \

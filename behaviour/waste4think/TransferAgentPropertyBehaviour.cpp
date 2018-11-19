@@ -33,7 +33,6 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
 
     QString property_name_to_be_transferred = this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString();
     QJsonValue value_to_be_transferred = emitter->getProperty( property_name_to_be_transferred );
-
     QJsonValue existing_value = receiver->getProperty( property_name_to_be_transferred );
     QJsonValue values_sum;
 
@@ -54,6 +53,7 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
         QJsonArray existing_array = existing_value.toArray();
         existing_array.append( value_to_be_transferred );
         values_sum = existing_array;
+        break;
     }
     case QJsonValue::Object : {
         QJsonObject existing_object = existing_value.toObject();
@@ -63,6 +63,11 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
         }
 
         values_sum = existing_object;
+        break;
+    }
+    case QJsonValue::Null : {
+        values_sum = value_to_be_transferred;
+        break;
     }
     }
 
