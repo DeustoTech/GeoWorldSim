@@ -29,9 +29,7 @@ GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
     return &instance;
 }
 
-GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
-
-    this->created_timestamp = QDateTime::currentMSecsSinceEpoch();
+GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , created_timestamp( QDateTime::currentMSecsSinceEpoch() ) {
 
     for( int i = 0 ; i < argc ; i++){
         QString arg = QString( argv[i] );
@@ -70,7 +68,11 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ){
 }
 
 GWSApp::~GWSApp(){
-    emit this->sendAlertToSocket( 0 , "Simulation finished" , QString("Simulation %1 finished, took %2 miliseconds").arg( this->getAppId() ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ) );
+    emit this->sendAlertToSocket( 0 , "Simulation finished" , QString("Simulation %1 finished, took %2 miliseconds at %3x speed with %4 threads")
+                                  .arg( this->getAppId() )
+                                  .arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp )
+                                  .arg( GWSTimeEnvironment::globalInstance()->getTimeSpeed() )
+                                  .arg( QThreadPool::globalInstance()->maxThreadCount() ) );
     this->setProperty( "id" , QVariant() ); // Set to null
 }
 

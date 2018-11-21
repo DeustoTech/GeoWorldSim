@@ -47,7 +47,7 @@ QString GWSCoordinate::toString() const{
 **********************************************************************/
 
 bool GWSCoordinate::operator == (const GWSCoordinate& other) const {
-    return this->x == other.x && this->y == other.y && ( this->z != this->z || other.z != other.z ? true : this->z == other.z );
+    return (this->x == other.x) && (this->y == other.y) && ( this->z != this->z || other.z != other.z ? true : this->z == other.z );
 }
 
 bool GWSCoordinate::operator != (const GWSCoordinate& other) const{

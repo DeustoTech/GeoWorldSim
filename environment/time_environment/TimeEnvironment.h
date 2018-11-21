@@ -53,12 +53,12 @@ private:
     GWSTimeEnvironment(GWSTimeEnvironment const&);
     ~GWSTimeEnvironment();
 
-    quint64 simulating_datetime_msecs;
-    quint64 started_datetime_msecs;
+    quint64 simulation_datetime_msecs;
+    quint64 software_started_datetime_msecs;
 
     // Time speed
     // (How many seconds will there be in a real world second)
-    double time_speed = 6;
+    double time_speed = 8;
 
     // Agent internal times
     QMap<QString , quint64> agent_internal_times;

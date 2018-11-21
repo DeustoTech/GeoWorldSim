@@ -53,16 +53,18 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !this->route_found_remove ){
         // Generate pending route
         QString graph_type = this->getProperty( SKILL_NETWORK_TYPE_PROP ).toString();
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
+        this->route_found_remove = true;
     }
 
     // Assume we have reached route end OR not found route, free move to destination
     if( this->pending_route.isEmpty() ){
-        MoveSkill::move( movement_duration , GWSSpeedUnit( 4 ) , destination_coor );
+        GWSLengthUnit pending_distance = current_coor.getDistance( destination_coor );
+        MoveSkill::move( movement_duration , GWSSpeedUnit( ( pending_distance >= GWSLengthUnit(4) ) ? 4 : pending_distance.number() ) , destination_coor );
         return;
     }
 
@@ -102,11 +104,12 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             move_to = current_coor;
 
         } else {
-            move_to = this->pending_edge_coordinates.at( 0 );
+            //move_to = this->pending_edge_coordinates.at( 0 );
+            move_to = next_coordinate;
         }
 
         destination_coor = move_to;
-        destination_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble() , destination_speed .number()+ 10 );
+        destination_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble() , destination_speed.number()+ 10 );
     }
 
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
@@ -149,4 +152,5 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     }
 
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
+    
 }

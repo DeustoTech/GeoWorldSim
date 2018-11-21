@@ -32,6 +32,8 @@ protected:
     QList< QSharedPointer<GWSGraphEdge> > pending_route;
     QList<GWSCoordinate> pending_edge_coordinates;
 
+    bool route_found_remove = false;
+
 };
 
 #endif // MOVETHROUGHROUTESKILL_H

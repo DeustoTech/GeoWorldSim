@@ -303,7 +303,6 @@ GWSAgentGeneratorDatasource* ds3 = new GWSAgentGeneratorDatasource( road_json.ob
 
 ds3->connect(ds3 , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [](){
 
-    GWSTimeEnvironment::globalInstance()->setDatetime( 1000 );
     foreach (QSharedPointer<GWSAgent> a , GWSAgentEnvironment::globalInstance()->getByClass( ContainerAgent::staticMetaObject.className() ) ) {
         a->setProperty( "color" , QColor::colorNames().at( qrand() % QColor::colorNames().size() ) );
     }

@@ -90,19 +90,30 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
 
     // Distance
     double meter_distance = current_coor.getDistance( movement_towards ).number();
-    double distance_percentage = ( meters / meter_distance );
 
-    distance_percentage = qMin( distance_percentage , 1.0 );
+    // Check if not arrived
+    if( meter_distance > 0 ){
 
-    // Displacement
-    double x_distance = qAbs( movement_towards.getX() - current_coor.getX() );
-    double y_distance = qAbs( movement_towards.getY() - current_coor.getY() );
-    double x_move = x_distance * distance_percentage * ( movement_towards.getX() > current_coor.getX() ? 1 : -1 );
-    double y_move = y_distance * distance_percentage * ( movement_towards.getY() > current_coor.getY() ? 1 : -1 );
+        double distance_percentage = ( meters / meter_distance );
 
-    // Set the agents position
-    GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
-    GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+        // Check if we are overpassing the movement_towards coordinate.
+        // If so, set to destination
+        if( distance_percentage > 1 ){
+            distance_percentage = 1;
+        }
+
+        // Displacement
+        double x_distance = qAbs( movement_towards.getX() - current_coor.getX() );
+        double y_distance = qAbs( movement_towards.getY() - current_coor.getY() );
+
+        double x_move = x_distance * distance_percentage * ( movement_towards.getX() > current_coor.getX() ? 1 : -1 );
+        double y_move = y_distance * distance_percentage * ( movement_towards.getY() > current_coor.getY() ? 1 : -1 );
+
+        // Set the agents position
+        GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
+        GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
+
+    }
 
     agent->setProperty( AGENT_ACCUMULATED_DISTANCE_PROP , agent->getProperty( AGENT_ACCUMULATED_DISTANCE_PROP ).toDouble() + meters );
     agent->setProperty( AGENT_ACCUMULATED_TIME_PROP , agent->getProperty( AGENT_ACCUMULATED_TIME_PROP ).toDouble() + movement_duration.number() );
