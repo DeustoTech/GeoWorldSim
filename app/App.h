@@ -46,7 +46,12 @@ private:
 
     QWebSocket websocket; // WS to sockets.geoworldsim.com
     QNetworkAccessManager http_manager; // HTTP Posts to alerts.geoworldsim.com
+
+    // Times
     const quint64 created_timestamp;
+    quint64 load_time; // From creation time to start time
+    quint64 started_timestamp;
+    quint64 run_time; // From start to end
 
 };
 

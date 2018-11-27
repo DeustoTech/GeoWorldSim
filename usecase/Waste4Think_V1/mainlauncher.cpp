@@ -315,10 +315,6 @@ GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &G
     qDebug() << "Elapsed time" << secondsDiff;
 });
 
-
-
 app->exec();
-
-
 
 }

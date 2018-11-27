@@ -96,6 +96,9 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::registerAgent( agent );
     this->running_agents->add( agent );
 
+    agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
+    qDebug() << "Moving to thread";
+
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
     agent->decrementBusy();
     emit agent->agentStartedSignal();
@@ -194,7 +197,8 @@ void GWSExecutionEnvironment::behave(){
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->incrementBusy(); // Increment here, Decrement after agent Tick()
                 //QtConcurrent::run( agent.data() , &GWSAgent::tick );
-                agent->tick();
+                //agent->tick();
+                QTimer::singleShot( 0 , agent.data() , &GWSAgent::tick );
 
                 ticked_agents++;
             }

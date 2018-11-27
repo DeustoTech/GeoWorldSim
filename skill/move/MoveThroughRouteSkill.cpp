@@ -53,15 +53,15 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         return;
     }
 
-    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !this->route_found_remove ){
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !route_found_borrame ){
         // Generate pending route
         QString graph_type = this->getProperty( SKILL_NETWORK_TYPE_PROP ).toString();
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
-        this->route_found_remove = true;
+        this->route_found_borrame = true;
     }
 
-    // Assume we have reached route end OR not found route, free move to destination
+    // Assume we have reached route end OR not found route, move freely
     if( this->pending_route.isEmpty() ){
         GWSLengthUnit pending_distance = current_coor.getDistance( destination_coor );
         MoveSkill::move( movement_duration , GWSSpeedUnit( ( pending_distance >= GWSLengthUnit(4) ) ? 4 : pending_distance.number() ) , destination_coor );
@@ -99,7 +99,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             }
             starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
 
-            // Have completed the edge coordinates, so remove the edge too
+            // Have completed the edge coordinates, so remove the edge too (if exists)
             this->pending_route.removeAt( 0 );
             move_to = current_coor;
 

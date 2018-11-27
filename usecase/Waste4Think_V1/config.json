@@ -2,7 +2,7 @@
 
 "population" : {
 
-	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "start_time" : 0 , 
+	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "running" : true , 
 					   "@behaviours": [  { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1, "x_value": "<from_x>", "y_value": "<from_y>", "nexts" : ["DISPLAY_AT_HOME"] }, 
                                                              { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_AT_HOME" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["WASTE"] } ,
                                                              { "@type": "GenerateWasteZamudioModelBehaviour", "@id": "WASTE", "duration": 1, "waste_type1" : "resto" , "store_waste_type1_as": "resto", "nexts" : ["FIND"] }, 
@@ -14,30 +14,30 @@
                                                              { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE_BACK_HOME" , "duration" : 1 , "maxspeed" : 50 , "x_value": "<from_x>" , "y_value": "<from_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "store_current_speed_as" : "current_speed", "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_BACK_HOME"] } , 
                                                              { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] }  , 
-			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/098a0eb1-9504-41af-9a93-fcb6bfc772d8/read" }, 
+			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/49c9ee5f-827a-4bc1-83a0-d0c9c82588d7/read" }, 
 
 
 
 	"containers" 	: { "template" : { "@type": "GWSAgent", "weight": 5 , "geometry" : { "@type" : "GWSGeometry" } , "@family": [ "ContainerAgent", "Container" ] , "running" : true , 
-				"@behaviours" : [{  "@type": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "@id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink", "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow", "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue", "tan", "teal", "thistle", "tomato", "transparent", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
-						 {  "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 30 , "nexts" : ["STOP"] } ,
+				"@behaviours" : [{  "@type": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "@id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
+						 {  "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 3000 , "nexts" : ["STOP"] } ,
 						 { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 } ] }  , 
 		            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" }, 
 
 
 
-	"rroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 10 ,
+	"rroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 ,
 				"@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] } ,
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" }, 
 
 
 
-	"froads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 10 }  , 
+	"froads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 }  , 
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" }, 
 
 
 
-	"proads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 10  }  , 
+	"proads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4  }  , 
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" }, 
 
 
@@ -59,7 +59,7 @@
 },
 
 "external_listeners" : {
-	"agent_injector" : "W4Tinj"
+	"agent_injector" : "TESIS-injector"
 }
 
 
