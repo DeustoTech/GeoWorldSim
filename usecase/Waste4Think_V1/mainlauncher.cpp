@@ -1,4 +1,4 @@
- #include "../../app/App.h"
+#include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
 #include <QFile>
