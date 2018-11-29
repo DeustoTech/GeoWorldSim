@@ -52,13 +52,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     if( current_coor == destination_coor ){
         return;
     }
-
-    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !route_found_borrame ){
+ //if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !route_found_borrame )
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty()  ){
         // Generate pending route
         QString graph_type = this->getProperty( SKILL_NETWORK_TYPE_PROP ).toString();
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
-        this->route_found_borrame = true;
+        //this->route_found_borrame = true;
     }
 
     // Assume we have reached route end OR not found route, move freely
@@ -72,7 +72,10 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     if ( !this->pending_edge_coordinates.isEmpty() ){
 
         QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
+
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
+        starting_current_edge_agent->setProperty("color" , "Red");
+        emit GWSApp::globalInstance()->sendAgentToSocketSignal( starting_current_edge_agent->serialize() );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );
@@ -85,6 +88,10 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
             QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
             QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
+
+            starting_current_edge_agent->setProperty("color" , "Red");
+            emit GWSApp::globalInstance()->sendAgentToSocketSignal( starting_current_edge_agent->serialize() );
+
 
             // Remove road information from agent
             agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , QJsonValue() );
@@ -116,7 +123,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
         // We are going to start iterating the coordinates of edge located at pending_route[0]
         QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
+
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
+
+        starting_current_edge_agent->setProperty("color" , "Red");
+        emit GWSApp::globalInstance()->sendAgentToSocketSignal( starting_current_edge_agent->serialize() );
+
+
         GWSSpeedUnit starting_current_edge_max_speed = starting_current_edge_agent->getProperty( "maxspeed").toDouble();
 
         // First look if edge has a capacity and therefore we can enter edge
