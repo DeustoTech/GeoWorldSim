@@ -12,7 +12,7 @@ QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_TYPE_PROP = "current_road_type
 QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_MAXSPEED_PROP = "current_road_maxspeed";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
-    this->setProperty( SKILL_NETWORK_TYPE_PROP , "Road" );
+    //this->setProperty( SKILL_NETWORK_TYPE_PROP , "GWSAgent" );
 }
 
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){

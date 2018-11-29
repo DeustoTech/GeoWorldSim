@@ -8,7 +8,7 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
-
+QString MoveThroughRouteBehaviour::BEHAVIOUR_NETWORK_TYPE_PROP = "network_type";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_X_VALUE = "x_value";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_Y_VALUE = "y_value";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_ARRIVED = "nexts_if_arrived";
@@ -40,6 +40,8 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
         agent->addSkill( movethroughroute_skill );
     }
 
+
+
     QJsonValue x_destination = this->getProperty( BEHAVIOUR_DESTINATION_X_VALUE );
     QJsonValue y_destination = this->getProperty( BEHAVIOUR_DESTINATION_Y_VALUE );
     movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP , x_destination );
@@ -54,6 +56,7 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     GWSCoordinate agent_position_init = agent_geom_init->getCentroid();
 
     // Move towards
+    movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_NETWORK_TYPE_PROP , this->getProperty( BEHAVIOUR_NETWORK_TYPE_PROP ) );
     movethroughroute_skill->move( duration_of_movement );
 
     QSharedPointer<GWSGeometry> agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );

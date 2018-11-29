@@ -17,6 +17,7 @@ public:
     static QString BEHAVIOUR_DESTINATION_Y_VALUE;
     static QString BEHAVIOUR_NEXTS_IF_ARRIVED;
     static QString BEHAVIOUR_NEXTS_IF_NOT_ARRIVED;
+    static QString BEHAVIOUR_NETWORK_TYPE_PROP;
 
 protected slots:
     virtual QJsonArray behave();
