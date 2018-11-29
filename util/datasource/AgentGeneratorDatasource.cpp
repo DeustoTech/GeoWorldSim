@@ -31,7 +31,7 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         if ( !template_to_be_constructed.isEmpty() ){
             QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
 
-            if( !agent->getProperty( GWSExecutionEnvironment::START_TIME ).isNull() ){
+            /*if( !agent->getProperty( GWSExecutionEnvironment::START_TIME ).isNull() ){
                qint64 currentDateTimeMsecs = GWSTimeEnvironment::globalInstance()->getCurrentDateTime(); // returns milliseconds
                qint64 startAfterMsecs = agent->getProperty( GWSExecutionEnvironment::START_TIME ).toDouble();
                qint64 start_in_msecs = qMax( (qint64)0 , startAfterMsecs - currentDateTimeMsecs );
@@ -45,7 +45,7 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
             else {
                 agent->setProperty( GWSExecutionEnvironment::START_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
 
-            }
+            }*/
         }
 
     });

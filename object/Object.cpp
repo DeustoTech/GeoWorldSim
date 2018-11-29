@@ -118,8 +118,9 @@ const QJsonValue GWSObject::getProperty( QString name ) const{
 
     this->mutex.lock();
     const QVariant variant = QObject::property( name.toLatin1() );
+    QJsonValue value = QJsonValue::fromVariant( variant );
     this->mutex.unlock();
-    return QJsonValue::fromVariant( variant );
+    return value;
 }
 
 const QJsonValue GWSObject::operator []( QString name ) const{
