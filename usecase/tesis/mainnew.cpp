@@ -12,21 +12,29 @@
 // Agents
 
 
-
 // Skills
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
 // Behaviours
-#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
-#include "../../behaviour/property/IncrementPropertyBehaviour.h"
-#include "../../behaviour/agent/FindRandomAgentBehaviour.h"
-#include "../../behaviour/move/MoveBehaviour.h"
-#include "../../behaviour/execution/StopAgentBehaviour.h"
+#include "../../behaviour/Behaviour.h"
+#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
+#include "../../behaviour/waste4think/DelayBehaviour.h"
+#include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
+#include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
-#include "../../behaviour/property/SetAgentPropertyBehaviour.h"
-
+#include "../../behaviour/waste4think/FollowTSPRouteBehaviour.h"
+#include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
+#include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
+#include "../../behaviour/property/CopyPropertyBehaviour.h"
+#include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
+#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
+#include "../../behaviour/waste4think/PolluteBehaviour.h"
+#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
+#include "../../behaviour/execution/StopAgentBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -45,6 +53,8 @@
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
 
+
+
 int main(int argc, char* argv[])
 {
 
@@ -61,16 +71,24 @@ int main(int argc, char* argv[])
     GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
 
-    // AVAILABLE AGENTS
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( FindRandomAgentBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( DelayBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( FollowTSPRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( GatherAgentPropertyBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -134,7 +152,6 @@ int main(int argc, char* argv[])
         }
         qDebug() << QString("Creating external listener %1").arg( key );
      }
-
 
 
 

@@ -103,8 +103,6 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     agent->decrementBusy();
     emit agent->agentStartedSignal();
 
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-
     qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
 
@@ -116,9 +114,6 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     agent->setProperty( GWSExecutionEnvironment::END_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
     agent->incrementBusy();
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-
-
 
     // Remove from running lists
     GWSEnvironment::unregisterAgent( agent );
@@ -172,7 +167,7 @@ void GWSExecutionEnvironment::behave(){
             qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
             if( agent_time <= 0 ){
                 agents_to_tick = true;
-            } else if( agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() || !agent->isBusy() ){
+            } else if( (agent->getProperty( GWSObject::GWS_SIM_ID_PROP ).toString() == GWSApp::globalInstance()->getAppId() || agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool()) && !agent->isBusy() ){
                 min_tick = qMin( min_tick , agent_time );
                 if( min_tick == agent_time ){ who_is_min_tick = agent->getId(); }
                 agents_to_tick = true;
@@ -212,7 +207,8 @@ void GWSExecutionEnvironment::behave(){
         this->timer->singleShot( (1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
-    qInfo() << QString("Ticking %3 , Agents %1 / %2 , Min tick %4" )
+    qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
+               .arg( GWSApp::globalInstance()->getAppId() )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )

@@ -2,29 +2,21 @@
 
 QString SetAgentPropertyBehaviour::PROPERTY_NAME = "property_name";
 QString SetAgentPropertyBehaviour::PROPERTY_VALUE = "property_value";
+QString SetAgentPropertyBehaviour::NEXTS = "nexts";
 
 SetAgentPropertyBehaviour::SetAgentPropertyBehaviour() : GWSBehaviour(){
 
 }
 
 
-bool SetAgentPropertyBehaviour::canContinueToNext(){
+QJsonArray SetAgentPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    // Unless the value of the property equals the behaviour's input value
-    if ( this->getProperty( PROPERTY_VALUE ) != agent->getProperty( this->getProperty( PROPERTY_NAME ).toString() ) ){
-        return false;
-    }
+    QString property_name = this->getProperty( PROPERTY_NAME ).toString();
+    QJsonValue property_value = this->getProperty( PROPERTY_VALUE );
 
-    return true;
-}
-
-
-bool SetAgentPropertyBehaviour::behave(){
-
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    agent->setProperty(  this->getProperty( PROPERTY_NAME ).toString() , this->getProperty( PROPERTY_VALUE )  );
-    return true;
+    agent->setProperty( property_name , property_value );
+    return this->getProperty( NEXTS ).toArray();
 
 }

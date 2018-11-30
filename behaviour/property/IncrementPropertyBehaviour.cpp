@@ -6,6 +6,11 @@ QString IncrementPropertyBehaviour::PROPERTY_NAME_PROP = "property";
 QString IncrementPropertyBehaviour::INCREMENT_VALUE_PROP = "increment";
 QString IncrementPropertyBehaviour::MAX_VALUE_PROP = "max";
 QString IncrementPropertyBehaviour::MIN_VALUE_PROP = "min";
+QString IncrementPropertyBehaviour::NEXTS_IF_MAX = "nexts_if_max";
+QString IncrementPropertyBehaviour::NEXTS_IF_MIN = "nexts_if_min";
+QString IncrementPropertyBehaviour::NEXTS_IF_WITHIN_THRESHOLD = "nexts_if_within_threshold";
+
+
 
 IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 
@@ -15,15 +20,8 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
  SLOTS
 **********************************************************************/
 
-bool IncrementPropertyBehaviour::canContinueToNext(){
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    QVariant value = agent->getProperty( this->getProperty( PROPERTY_NAME_PROP ).toString() );
-    QVariant max_value = this->getProperty( MAX_VALUE_PROP );
-    QVariant min_value = this->getProperty( MIN_VALUE_PROP );
-    return value >= max_value || value <= min_value;
-}
 
-QStringList IncrementPropertyBehaviour::behave(){
+QJsonArray IncrementPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
@@ -32,7 +30,18 @@ QStringList IncrementPropertyBehaviour::behave(){
     QVariant min_value = this->getProperty( MIN_VALUE_PROP );
     QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
     if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
-    this->getAgent()->setProperty( property_name , incremented );
-    emit GWSApp::globalInstance()->sendAgentSignal( agent->serialize() );
-    return QStringList();
+
+    agent->setProperty( property_name , incremented.toJsonValue() );
+
+    if ( incremented <= min_value ){
+        return this->getProperty( NEXTS_IF_MIN ).toArray();
+    }
+
+    if ( incremented >= max_value ){
+        return this->getProperty( NEXTS_IF_MAX ).toArray();
+    }
+
+    // Else
+    return this->getProperty( NEXTS_IF_WITHIN_THRESHOLD ).toArray();
+
 }

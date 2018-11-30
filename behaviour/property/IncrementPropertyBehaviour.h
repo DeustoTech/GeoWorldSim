@@ -15,11 +15,12 @@ public:
     static QString INCREMENT_VALUE_PROP;
     static QString MAX_VALUE_PROP;
     static QString MIN_VALUE_PROP;
-
-    virtual bool canContinueToNext(); // Behaviour finished check
+    static QString NEXTS_IF_MAX;
+    static QString NEXTS_IF_MIN;
+    static QString NEXTS_IF_WITHIN_THRESHOLD;
 
 private slots:
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

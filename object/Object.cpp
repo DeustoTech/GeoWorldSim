@@ -9,6 +9,7 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
+QString GWSObject::GWS_SIM_ID_PROP = "@simulation_id";
 QString GWSObject::GWS_ID_PROP = "@id";
 QString GWSObject::GWS_TYPE_PROP = "@type";
 QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@family";
@@ -19,6 +20,7 @@ quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
 GWSObject::GWSObject() : QObject() , deleted(false) {
     QString generated_id = QString("%1::GWSObject::%2").arg( GWSApp::globalInstance()->getAppId() ).arg( ++GWSObject::counter );
     this->setProperty( GWS_ID_PROP ,  generated_id );
+    this->setProperty( GWS_SIM_ID_PROP ,  GWSApp::globalInstance()->getAppId() );
 }
 
 GWSObject::GWSObject(const GWSObject &other) : QObject(){
@@ -38,6 +40,7 @@ GWSObject::~GWSObject(){
  */
 QJsonObject GWSObject::serializeMini() const{
     QJsonObject json;
+    json.insert( GWS_SIM_ID_PROP , this->getProperty( GWS_SIM_ID_PROP ).toString() );
     json.insert( GWS_ID_PROP , this->getId() );
     json.insert( GWS_TYPE_PROP , this->metaObject()->className() );
     return json;
@@ -65,6 +68,7 @@ QJsonObject GWSObject::serialize() const{
 void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     Q_UNUSED( parent );
 
+    if( json.keys().contains( GWS_SIM_ID_PROP ) ){ this->setProperty( GWS_SIM_ID_PROP , json.value( GWS_SIM_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_TYPE_PROP ) ){ this->setProperty( GWS_TYPE_PROP , json.value( GWS_TYPE_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){ this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() ); }

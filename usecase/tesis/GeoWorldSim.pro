@@ -36,18 +36,37 @@ HEADERS += \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
     ../../agent/Agent.h \
+    ../../agent/AgentSource.h \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
+    ../../skill/move/MoveThroughRouteSkill.h \
     ../../skill/view/ViewSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.h \
+    ../../behaviour/waste4think/FindClosestBehaviour.h \
+    ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/move/MoveBehaviour.h \
-    ../../behaviour/property/IncrementPropertyBehaviour.h \
-    ../../util/uistyle/Style.h \
+    ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/waste4think/DelayBehaviour.h \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
+    ../../behaviour/waste4think/FollowTSPRouteBehaviour.h \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
+    ../../behaviour/property/CopyPropertyBehaviour.h \
+    ../../behaviour/waste4think/CheckPropertyValueBehaviour.h \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.h \
+    ../../behaviour/waste4think/PolluteBehaviour.h \
+    ../../behaviour/execution/StopAgentBehaviour.h \
+    ../../behaviour/property/SetAgentPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
+    ../../util/io/csv/CsvImporter.h \
+    ../../util/io/ImporterExporter.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
             ## GEOMETRIES
@@ -55,38 +74,33 @@ HEADERS += \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
     ../../util/distributed/ExternalListener.h \
+    ../../util/api/APIDriver.h \
+    ../../util/datasource/DatasourceReader.h \
+    ../../util/routing/Routing.h \
+    ../../util/routing/GraphEdgeVisitor.h \
+    ../../util/routing/TSPRouting.h \
             ## GRAPH
-    ../../util/graph/GraphNode.h \
     ../../util/graph/GraphEdge.h \
-    ../../util/graph/Graph.h \
-    #../../util/graph/GraphUtils.h \
             ## GRID
     ../../util/grid/Grid.h \
-    #../../util/grid/NumberGrid.h \
     ../../util/grid/AgentGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
+    ../../environment/EnvironmentsGroup.h \
     ../../environment/agent_environment/AgentEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
-    #../../environment/social_environment/SocialEnvironment.h \
-    #../../environment/social_environment/Message.h \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-    SheepAgent.h \
-    TesisBehaviour.h \
-    PredatorAgent.h \
-    PastureAgent.h \
-    ../../behaviour/eat/EatBehaviour.h \
-    ../../behaviour/move/SelectDestinationBehaviour.h \
-    ../../behaviour/alive/CheckAliveBehaviour.h \
-    ../../behaviour/breed/BreedBehaviour.h
-        # AGENTS
-    #agent/person/Person.h
+    ../../behaviour/waste4think/SetRandomColorBehaviour.h \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
+    ../../behaviour/agent/FindRandomAgentBehaviour.h
+
 
 
 SOURCES += mainEmpty.cpp \
@@ -95,28 +109,53 @@ SOURCES += mainEmpty.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
     ../../agent/Agent.cpp \
+    ../../agent/AgentSource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
     ../../skill/view/ViewSkill.cpp \
+    ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/FindClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/waste4think/DelayBehaviour.cpp \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
+    ../../behaviour/waste4think/FollowTSPRouteBehaviour.cpp \
+    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/CopyPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp \
+    ../../behaviour/waste4think/PolluteBehaviour.cpp \
+    ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/IncrementPropertyBehaviour.cpp \
-    ../../util/uistyle/Style.cpp \
+    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/distributed/ExternalListener.cpp \
+    ../../util/api/APIDriver.cpp \
+    ../../util/datasource/DatasourceReader.cpp \
+    ../../util/routing/Routing.cpp \
+    ../../util/routing/GraphEdgeVisitor.cpp \
+    ../../util/routing/TSPRouting.cpp \
+    ../../util/io/csv/CsvImporter.cpp \
+    ../../util/io/ImporterExporter.cpp \
+            ## DATASOURCES
+    ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphNode.cpp \
     ../../util/graph/GraphEdge.cpp \
-    ../../util/graph/Graph.cpp \
+    #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
@@ -127,6 +166,7 @@ SOURCES += mainEmpty.cpp \
     ../../util/random/UniformDistribution.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
+    ../../environment/EnvironmentsGroup.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     #../../environment/social_environment/SocialEnvironment.cpp \
@@ -135,41 +175,23 @@ SOURCES += mainEmpty.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
-    SheepAgent.cpp \
-    TesisBehaviour.cpp \
-    PredatorAgent.cpp \
-    PastureAgent.cpp \
-    ../../behaviour/eat/EatBehaviour.cpp \
-    ../../behaviour/move/SelectDestinationBehaviour.cpp \
-    ../../behaviour/alive/CheckAliveBehaviour.cpp \
-    ../../behaviour/breed/BreedBehaviour.cpp
         # AGENTS
-    #agent/person/Person.cpp
+    ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../behaviour/agent/FindRandomAgentBehaviour.cpp
 
 
-
-#INCLUDE LEMON COMPILED LIBRARY
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/release/ -lemon
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/debug/ -lemon
-else:unix: LIBS += -L$$PWD/../../lib/lemon-1.3.1/build/lemon/ -lemon
-
-INCLUDEPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-DEPENDPATH += $$PWD/../../lib/lemon-1.3.1/build/lemon
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/libemon.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/libemon.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/release/emon.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/debug/emon.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../../lib/lemon-1.3.1/build/lemon/libemon.a
-
-#INCLUDE LEMON SYSTEM LIBRARY
-#unix|win32: LIBS += -lemon
+#INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
+unix|win32: LIBS += -llemon
 
 #INCLUDE LIBPQ SYSTEM LIBRARY (sudo apt-get install libpq-dev)
 unix|win32: LIBS += -lpq
 
 #INCLUDE LIBGEOS SYSTEM LIBRARY (sudo apt-get install libgeos-dev libgeos++-dev)
 unix|win32: LIBS += -lgeos
+
+#INCLUDE SPATIALINDEX SYSTEM LIBRARY (sudo apt-get install libspatialindex-dev)
+unix|win32: LIBS += -lspatialindex
 
 #INCLUDE LIBPROJ SYSTEM LIBRARY (sudo apt-get install libproj-dev)
 unix|win32: LIBS += -lproj

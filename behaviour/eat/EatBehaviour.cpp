@@ -8,9 +8,6 @@
 EatBehaviour::EatBehaviour() : GWSBehaviour(){
 }
 
-bool EatBehaviour::finished(){
-    return false;
-}
 
 bool EatBehaviour::behave(){
 
@@ -36,11 +33,8 @@ bool EatBehaviour::behave(){
                 double finalEnergy = agent->getProperty("energy").toDouble() + foodGains;
                 agent->setProperty("energy", finalEnergy);
                 qDebug() << "Final energy = " << agent->getProperty("energy");
-                emit GWSApp::globalInstance()->pushAgentSignal( agent->serialize() );
-
                 // Less grass = less energy of PastureAgent
                 CellOccupation.at(i)->setProperty( "energy" , 0.1 );
-                emit GWSApp::globalInstance()->pushAgentSignal( CellOccupation.at(i)->serialize() );
 
                /*if (this->getProperty("prey").toString() == "PastureAgent")
                   {

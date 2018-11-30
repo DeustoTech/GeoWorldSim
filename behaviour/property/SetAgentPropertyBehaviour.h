@@ -10,14 +10,13 @@ class SetAgentPropertyBehaviour : public GWSBehaviour
 public:
     Q_INVOKABLE explicit SetAgentPropertyBehaviour();
 
-    virtual bool canContinueToNext();
-
     //- PROPERTIES
     static QString PROPERTY_NAME;
     static QString PROPERTY_VALUE;
+    static QString NEXTS;
 
 protected:
-    virtual bool behave();
+    virtual QJsonArray behave();
 };
 
 #endif // SETAGENTPROPERTYBEHAVIOUR_H

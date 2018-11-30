@@ -37,24 +37,10 @@ QJsonArray MoveBehaviour::behave(){
 
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QVariant x_destination = this->getProperty( X_VALUE );
-    QVariant y_destination = this->getProperty( Y_VALUE );
-
-    bool x_is_property = x_destination.toString().startsWith( "<" ) && x_destination.toString().endsWith( ">" );
-    bool y_is_property = y_destination.toString().startsWith( "<" ) && y_destination.toString().endsWith( ">" );
-
-    if ( x_is_property && y_is_property ){
-
-        QString x_property_name = x_destination.toString().remove( 0 , 1 );
-        QString y_property_name = y_destination.toString().remove( 0 , 1 );
-
-        x_property_name = x_property_name.remove( x_property_name.length() - 1 , 1 );
-        y_property_name = y_property_name.remove( y_property_name.length() - 1 , 1 );
-
-        x_destination = agent->getProperty( x_property_name );
-        y_destination = agent->getProperty( y_property_name );
-
-    }
+    QJsonValue x_destination = this->getProperty( X_VALUE );
+    QJsonValue y_destination = this->getProperty( Y_VALUE );
+    move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_X_PROP , x_destination );
+    move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP , y_destination );
 
     GWSCoordinate destination_coor = move_skill->getMovingTowardsCoordinate();
     if( !destination_coor.isValid() ){
@@ -78,6 +64,5 @@ QJsonArray MoveBehaviour::behave(){
     if ( agent_position != destination_coor ){
         return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
     }
-
 
 }

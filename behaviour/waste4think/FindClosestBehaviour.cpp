@@ -3,7 +3,6 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
-#include "ContainerAgent.h"
 
 
 QString FindClosestBehaviour::CLOSEST_AGENT_TYPE = "closest_agent_type";  // e.g. glass ContainerAgent
