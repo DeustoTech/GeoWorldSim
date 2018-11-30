@@ -1,0 +1,29 @@
+{
+
+"population" : {
+
+		"ZamudioSheep" : { "template" : {  "@type" : "GWSAgent" , "energy" : 100 , "geometry" : { "@type" : "GWSGeometry" } , "running" : true , 
+                                                   "@behaviours" : [ { "@type" : "FindRandomAgentBehaviour" , "start" : true , "@id" : "FIND" , "duration" : 1 , "random_agent_type" : "Tree" , "store_random_agent_as" : "destination_agent" , 
+"store_random_agent_x_as" : "destination_x" , "store_random_agent_y_as" : "destination_y" , "nexts_if_found" : ["MOVE"] , "nexts_if_not_found" : ["FIND"]} , 
+							             { "@type" : "MoveBehaviour", "@id" : "MOVE" ,"duration" : 1 , "x_value" : "<destination_x>" , "y_value" : "<destination_y>" ,"nexts_if_arrived" : ["TRANSFER"], "nexts_if_not_arrived" :  ["INCR_AGE"] } ,
+								     { "@type" : "IncrementPropertyBehaviour" , "@id": "INCR_AGE" , "duration" : 0 ,  "property" : "energy" , "increment" : -0.01 , "max" : 1 , "min" : 0 , "nexts_if_min" : ["STOP"] , "nexts_if_max" : ["DISPLAY"]  , "nexts_if_within_threshold" : ["DISPLAY"] } , 
+								     { "@type" : "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
+							             { "@type" : "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER", "property_name_to_transfer": "energy" , "emitting_agent_id" : "<destination_agent>" , "receiving_agent_id": "<@id>" , "nexts" : ["SEND_BACK"] } ,
+								     { "@type" : "SendAgentSnapshotBehaviour" ,   "@id": "SEND_BACK" , "agent_to_send_id" : "<destination_agent>" , "duration": 1 ,  "nexts" : ["FIND"] } , 
+								     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }
+								     
+] } ,
+
+ 								"datasource_url" : "http://datasources.geoworldsim.com/api/datasource/e6228889-4ff6-44b8-be5d-c8ea7c7a22be/read" }
+} , 
+
+
+"external_listeners" : {
+	"agent_injector" : "PastureSim"
+}
+
+} 
+
+
+
+ 
