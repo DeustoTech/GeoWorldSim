@@ -11,6 +11,7 @@ public:
     Q_INVOKABLE explicit SetAgentPropertyBehaviour();
 
     //- PROPERTIES
+    static QString AGENT_ID;
     static QString PROPERTY_NAME;
     static QString PROPERTY_VALUE;
     static QString NEXTS;

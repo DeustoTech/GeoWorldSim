@@ -25,19 +25,20 @@ QJsonArray IncrementPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
-    QVariant value = agent->getProperty( property_name );
-    QVariant max_value = this->getProperty( MAX_VALUE_PROP );
-    QVariant min_value = this->getProperty( MIN_VALUE_PROP );
-    QVariant incremented = value.toDouble() + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
-    if( max_value.isValid() ){ incremented = qMin( max_value , incremented ); }
+    double value = agent->getProperty( property_name ).toDouble();
+    QJsonValue max_value = this->getProperty( MAX_VALUE_PROP );
+    QJsonValue min_value = this->getProperty( MIN_VALUE_PROP );
+    double incremented = value + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
+    if( max_value.isDouble() ){ incremented = qMin( max_value.toDouble() , incremented ); }
+    if( min_value.isDouble() ){ incremented = qMax( min_value.toDouble() , incremented ); }
 
-    agent->setProperty( property_name , incremented.toJsonValue() );
+    agent->setProperty( property_name , incremented );
 
-    if ( incremented <= min_value ){
+    if ( max_value.isDouble() && incremented <= min_value.toDouble() ){
         return this->getProperty( NEXTS_IF_MIN ).toArray();
     }
 
-    if ( incremented >= max_value ){
+    if ( min_value.isDouble() && incremented >= max_value.toDouble() ){
         return this->getProperty( NEXTS_IF_MAX ).toArray();
     }
 

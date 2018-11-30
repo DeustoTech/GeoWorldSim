@@ -12,7 +12,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
+GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( 0 ) {
     qInfo() << "TimeEnvironment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
