@@ -1,21 +1,17 @@
 #ifndef GWSEXTERNALLISTENER_H
 #define GWSEXTERNALLISTENER_H
 
-#include <QWebSocket>
-#include <QObject>
-#include <QString>
+#include "ExternalCommunicator.h"
 
-class GWSExternalListener : public QObject
+class GWSExternalListener : public GWSExternalCommunicator
 {
     Q_OBJECT
 
 public:
-    GWSExternalListener( QString simulation_id );
+    GWSExternalListener( QString socket_id );
 
 public slots:
 
-    void startSocket();
-    void reconnectSocket();
     void messageReceived(const QString message);
 
 private:

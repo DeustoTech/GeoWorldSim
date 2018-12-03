@@ -5,43 +5,17 @@
 #include "../../agent/Agent.h"
 #include "../../app/App.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-GWSExternalListener::GWSExternalListener( QString simulation_id ) : QObject(){
+GWSExternalListener::GWSExternalListener( QString socket_id ) : GWSExternalCommunicator( socket_id ){
     // Listening to yourself would be a loop
-    Q_ASSERT( simulation_id != GWSApp::globalInstance()->getAppId() );
+    Q_ASSERT( socket_id != GWSApp::globalInstance()->getAppId() );
 
-    this->listening_simulation_id = simulation_id;
-    this->startSocket();
+    this->websocket.connect( &this->websocket , &QWebSocket::connected , [this](){
+        this->websocket.connect( &this->websocket , &QWebSocket::textMessageReceived , this , &GWSExternalListener::messageReceived );
+    } );
 }
 
-void GWSExternalListener::startSocket(){
-
-    // Connect and send info
-    QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
-        qInfo() << QString("Websocket %1 connected successfully to %2").arg( this->listening_simulation_id ).arg( this->websocket.peerAddress().toString() );
-    });
-
-    // Keep alive
-    QObject::connect( &this->websocket , &QWebSocket::pong , [this](quint64 elapsedTime, const QByteArray &payload){
-        Q_UNUSED(elapsedTime); Q_UNUSED(payload);
-        emit this->websocket.ping();
-    });
-
-    // Events
-    QObject::connect( &this->websocket , &QWebSocket::textMessageReceived , this , &GWSExternalListener::messageReceived );
-    QObject::connect( &this->websocket , &QWebSocket::disconnected , [this](){
-        QTimer::singleShot( 10*1000 , this , &GWSExternalListener::reconnectSocket );
-    });
-
-    this->reconnectSocket();
-}
-
-void GWSExternalListener::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com/?scenario_id=" + this->listening_simulation_id ) );
-}
 
 void GWSExternalListener::messageReceived(const QString message){
 
@@ -50,8 +24,6 @@ void GWSExternalListener::messageReceived(const QString message){
     // RECEIVED AN AGENT
     if( json.value("signal") == "entity" ){
         json = json.value("body").toObject();
-
-        qInfo() << "External agent received" << json;
 
         QString type = json.value( GWSAgent::GWS_TYPE_PROP ).toString();
         QString id = json.value( GWSAgent::GWS_ID_PROP ).toString();
@@ -77,7 +49,5 @@ void GWSExternalListener::messageReceived(const QString message){
             agent = GWSObjectFactory::globalInstance()->fromJSON( json ).dynamicCast<GWSAgent>();
         }
 
-        qInfo() << agent;
     }
-
 }

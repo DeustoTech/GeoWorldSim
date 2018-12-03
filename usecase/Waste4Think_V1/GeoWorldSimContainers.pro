@@ -72,7 +72,6 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
-    ../../util/distributed/ExternalListener.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.h \
@@ -102,7 +101,11 @@ HEADERS += \
     TruckAgent.h \
     RecyclingPlantAgent.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
+    ../../util/distributed/ExternalListener.h \
+    ../../util/distributed/ExternalCommunicator.h \
+    ../../util/distributed/ExternalPublisher.h \
+    ../../environment/communication_environment/CommunicationEnvironment.h
             ## TRANSPORT LINE
 
 
@@ -141,7 +144,6 @@ SOURCES += mainlauncher.cpp \
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
-    ../../util/distributed/ExternalListener.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/Routing.cpp \
@@ -184,7 +186,11 @@ SOURCES += mainlauncher.cpp \
     TruckAgent.cpp \
     RecyclingPlantAgent.cpp \
     ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../util/distributed/ExternalListener.cpp \
+    ../../util/distributed/ExternalCommunicator.cpp \
+    ../../util/distributed/ExternalPublisher.cpp \
+    ../../environment/communication_environment/CommunicationEnvironment.cpp
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon
