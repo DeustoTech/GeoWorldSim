@@ -15,6 +15,7 @@ public:
 
     // METHODS
     void startReading();
+    QJsonArray getDownloadedData();
 
 signals:
     void dataValueReadSignal( QJsonObject json_data );
@@ -32,6 +33,8 @@ private:
 
     unsigned int downloaded_total = 0;
     unsigned int download_limit;
+
+    QJsonArray downloaded_data;
 
 };
 

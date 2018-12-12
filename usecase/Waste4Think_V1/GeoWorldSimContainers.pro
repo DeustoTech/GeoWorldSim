@@ -106,6 +106,7 @@ HEADERS += \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
+    ../../util/neural_network/NeuralNetwork.h \
     ../../util/neural_network/NeuralNetworkFromDatasource.h \
     ../../behaviour/pollute/CreateTrainedNeuralNetworkBehaviour.h
             ## TRANSPORT LINE
@@ -193,6 +194,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
+    ../../util/neural_network/NeuralNetwork.cpp \
     ../../util/neural_network/NeuralNetworkFromDatasource.cpp \
     ../../behaviour/pollute/CreateTrainedNeuralNetworkBehaviour.cpp
 

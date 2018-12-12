@@ -1,39 +1,51 @@
-#ifndef NEURALNETWORK_H
-#define NEURALNETWORK_H
+#ifndef GWSNEURALNETWORK_H
+#define GWSNEURALNETWORK_H
 
 #include <QObject>
+#include <QMap>
+#include <QJsonValue>
+#include <QJsonArray>
 
-#include "fann.h"
-#include "floatfann.h"
+#include "doublefann.h"
 #include "fann_cpp.h"
+#include "fann_train.h"
+#include "fann_data.h"
 
-
-class NeuralNetwork : public QObject{
+class GWSNeuralNetwork : public QObject{
     Q_OBJECT
 
 public:
-    explicit NeuralNetwork(int learning_rate, int num_layers, int num_input, int num_hidden, int num_output, double desired_error, int max_iterations, int iterations_between_reports, QObject *parent = 0);
-    explicit NeuralNetwork(QString training_path);
+    explicit GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports, QObject *parent = 0);
+    explicit GWSNeuralNetwork(QString training_path);
 
     // METHODS
-    void train( QString data_path );
-    double run(QList<double>  input_values);
+    void trainFromFile( QString inputs_file_path , QString outputs_file_path );
+    void train( QJsonArray inputs_array , QJsonArray outputs_array  );
+    QJsonObject run( QJsonObject inputs );
 
 private:
 
     // NN Parameters
     float learning_rate;
+
     unsigned int num_layers;
-    unsigned int num_input;
     unsigned int num_hidden;
-    unsigned int num_output;
+
     float desired_error;
     unsigned int max_iterations;
     unsigned int iterations_between_reports;
 
+    FANN::training_data train_data;
     FANN::neural_net net;
 
+    // Inputs
+    QMap<QString , int> input_positions; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
+
+    // Outputs
+    QMap<QString , int> output_positions; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
+
+    QMap<QString , int> generatePositions( QJsonArray ios );
 
 };
 
-#endif // NEURALNETWORK_H
+#endif // GWSNEURALNETWORK_H

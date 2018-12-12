@@ -16,6 +16,10 @@ void GWSDatasourceReader::startReading(){
     this->requestPaginated( this->last_paginated );
 }
 
+QJsonArray GWSDatasourceReader::getDownloadedData(){
+    return this->downloaded_data;
+}
+
 void GWSDatasourceReader::requestPaginated(int page){
     QString paginated_url = this->datasource_url + QString("?offset=%1&limit=%2").arg( page * this->page_size ).arg( this->page_size );
 
@@ -32,6 +36,7 @@ void GWSDatasourceReader::dataReceived(){
         QJsonObject data_received = j.toObject();
         if( this->downloaded_total < this->download_limit ){
             emit this->dataValueReadSignal( data_received );
+            this->downloaded_data.append( data_received );
         }
         this->downloaded_total++;
     }

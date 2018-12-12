@@ -74,6 +74,8 @@ HEADERS += \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
     ../../util/distributed/ExternalListener.h \
+    ../../util/distributed/ExternalCommunicator.h \
+    ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.h \
@@ -96,6 +98,7 @@ HEADERS += \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
+    ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/property/IncrementPropertyBehaviour.h \
@@ -140,6 +143,8 @@ SOURCES += mainEmpty.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/distributed/ExternalListener.cpp \
+    ../../util/distributed/ExternalCommunicator.cpp \
+    ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/Routing.cpp \
@@ -175,6 +180,7 @@ SOURCES += mainEmpty.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
+    ../../environment/communication_environment/CommunicationEnvironment.cpp \
         # AGENTS
     ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \

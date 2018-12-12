@@ -5,7 +5,7 @@
 	"truck" 	: { "template" : { "@type" : "TruckAgent" , "weight": 30 , "home_x" :  -2.86590, "home_y" :  43.28309,  "@family": [ "GWSAgent" ], "color" : "Black" , "running" : true  , 
 					   "@behaviours" : [ { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1 , "x_value": "<home_x>" ,  "y_value": "<home_y>", "nexts" : ["DISPLAY"] }, 
                                                   	     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["NN"] } ,
-                                                             { "@type": "CreateTrainedNeuralNetworkBehaviour" , "@id" : "NN" , "duration" : 1 , "training_url" : "http://datasources.geoworldsim.com/api/datasource/755fb482-c2aa-4c19-aa3d-d1456cf248a0/read" ,"next" : ["NN"]  }
+                                                             { "@type": "CreateTrainedNeuralNetworkBehaviour" , "@id" : "NN" , "duration" : 10 , "training_url" : "http://datasources.geoworldsim.com/api/datasource/755fb482-c2aa-4c19-aa3d-d1456cf248a0/read" ,"next" : ["NN"]  }
                                                             ] }  , 
                             "amount" : 1 } 
 },

@@ -25,6 +25,7 @@ public slots:
         void generateDataset( int train_pos , int train_length , int test_pos , int test_length );
         //void createNetwork();
         //void train( );
+        void startTraining();
         void test();
         void run( double* input_values );
 
@@ -52,6 +53,7 @@ private:
 
         double* output;
 
+        bool started = false;
 
 };
 
