@@ -10,13 +10,13 @@
 #include "fann_error.h"
 #include "../../behaviour/Behaviour.h"
 
-class CreateTrainedNeuralNetwork : public GWSBehaviour
+class CreateTrainedNeuralNetworkBehaviour : public GWSBehaviour
 {
 
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit CreateTrainedNeuralNetwork();
+    Q_INVOKABLE explicit CreateTrainedNeuralNetworkBehaviour();
 
     // PARAMETERS:
     static QString URL;

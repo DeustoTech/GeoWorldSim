@@ -39,7 +39,7 @@
 #include "../../behaviour/waste4think/PolluteBehaviour.h"
 #include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
-#include "../../behaviour/pollute/CreateTrainedNeuralNetwork.h"
+#include "../../behaviour/pollute/CreateTrainedNeuralNetworkBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
-    GWSObjectFactory::globalInstance()->registerType( CreateTrainedNeuralNetwork::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CreateTrainedNeuralNetworkBehaviour::staticMetaObject );
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );

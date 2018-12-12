@@ -1,17 +1,17 @@
-#include "CreateTrainedNeuralNetwork.h"
+#include "CreateTrainedNeuralNetworkBehaviour.h"
 
 #include "../../util/neural_network/NeuralNetworkFromDatasource.h"
 
-QString CreateTrainedNeuralNetwork::URL = "training_url";
-QString CreateTrainedNeuralNetwork::NEXT = "next";
+QString CreateTrainedNeuralNetworkBehaviour::URL = "training_url";
+QString CreateTrainedNeuralNetworkBehaviour::NEXT = "next";
 
-CreateTrainedNeuralNetwork::CreateTrainedNeuralNetwork() : GWSBehaviour ()
+CreateTrainedNeuralNetworkBehaviour::CreateTrainedNeuralNetworkBehaviour() : GWSBehaviour ()
 {
 
 }
 
 
-QJsonArray CreateTrainedNeuralNetwork::behave(){
+QJsonArray CreateTrainedNeuralNetworkBehaviour::behave(){
 
 
     NeuralNetworkFromDatasource* neural_network = new NeuralNetworkFromDatasource( this->getProperty( URL ).toString() );
