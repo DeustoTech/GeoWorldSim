@@ -318,6 +318,50 @@ GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &G
     qDebug() << "Elapsed time" << secondsDiff;
 });
 
+
+/*
+   NEURAL NETWORK:
+   Get NN training data from GWS DataSources from URL  */
+
+
+GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/cfd3b904-82dc-41b2-9a03-a9c76635cce7/read" );
+GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/69fe3201-7be1-45a0-85fe-d97017426531/read" );
+
+// Create empty QJsonArray to store data from DataSource
+QJsonArray* train_json_inputs = new QJsonArray();
+QJsonArray* train_json_outputs = new QJsonArray();
+
+bool inputs_finished = false;
+bool outputs_finished = false;
+
+// Connect training input DSR to load data into QJsonArray:
+idsr->connect( idsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_inputs]( QJsonObject read_json ){
+       train_json_inputs->append( read_json );
+});
+
+idsr->connect( idsr , &GWSDatasourceReader::dataReadingFinishedSignal , [&inputs_finished](){
+    inputs_finished = true;
+    if( outputs_finished ){ this->startTraining(); }
+ });
+
+
+
+odsr->connect( odsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_outputs]( QJsonObject read_json ){
+       train_json_outputs->append( read_json );
+});
+
+odsr->connect( odsr , &GWSDatasourceReader::dataReadingFinishedSignal , [&outputs_finished](){
+    outputs_finished = true;
+    if( inputs_finished ){ this->startTraining(); }
+ });
+
+idsr->startReading();
+odsr->startReading();
+
+
+
+
+
 app->exec();
 
 }
