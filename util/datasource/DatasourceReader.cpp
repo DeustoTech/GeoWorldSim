@@ -3,10 +3,7 @@
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
-
-#include "../../object/ObjectFactory.h"
-#include "../../agent/Agent.h"
-#include "../../environment/Environment.h"
+#include <QJsonArray>
 
 GWSDatasourceReader::GWSDatasourceReader(QString datasource_url , int limit ) : QObject(){
     this->datasource_url = datasource_url;
