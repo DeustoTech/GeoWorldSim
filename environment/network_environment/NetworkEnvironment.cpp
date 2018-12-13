@@ -206,7 +206,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
             }
 
         } catch (std::exception &e){
-            emit GWSApp::globalInstance()->sendAlertToSocketSignal( 1 , "Catched exception" , QString("Simulation threw an exception registering agent to GWSNetworkEnvironment. Exception %1").arg( e.what() ) );
+            qWarning() << QString("Simulation threw an exception registering agent to GWSNetworkEnvironment. Exception %1").arg( e.what() );
         }
     }
 
@@ -236,6 +236,6 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
         }
 
     } catch (std::exception &e){
-        emit GWSApp::globalInstance()->sendAlertToSocketSignal( 1 , "Catched exception" , QString("Simulation threw an exception unregistering agent from GWSNetworkEnvironment. Exception %1").arg( e.what() ) );
+        qWarning() << QString("Simulation threw an exception unregistering agent from GWSNetworkEnvironment. Exception %1").arg( e.what() );
     }
 }

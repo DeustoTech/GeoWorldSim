@@ -15,7 +15,7 @@ class GWSNeuralNetwork : public QObject{
     Q_OBJECT
 
 public:
-    explicit GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports, QObject *parent = 0);
+    explicit GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports );
     explicit GWSNeuralNetwork(QString training_path);
 
     // METHODS

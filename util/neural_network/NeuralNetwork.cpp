@@ -3,7 +3,7 @@
 #include <QJsonObject>
 #include <QDebug>
 
-GWSNeuralNetwork::GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports, QObject *parent) : QObject(parent){
+GWSNeuralNetwork::GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports ) : QObject( ){
 
     this->learning_rate = learning_rate;
 
@@ -101,13 +101,6 @@ void GWSNeuralNetwork::train( QJsonArray input_train_dataset , QJsonArray output
 
     // Divide data into training and testing batches:
     this->train_data.set_train_data( input_train_dataset.size() , this->input_positions.size() , fann_inputs , this->output_positions.size() , fann_outputs );
-
-    this->learning_rate = 0.7;
-    this->num_layers = 3;
-    this->num_hidden = 13;
-    this->desired_error = 0.001;
-    this->max_iterations = 300000;
-    this->iterations_between_reports = 1000;
 
     qDebug() << "Creating network." << endl;
 

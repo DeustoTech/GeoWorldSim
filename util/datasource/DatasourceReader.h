@@ -17,6 +17,7 @@ public:
     // METHODS
     void startReading();
     QJsonArray getDownloadedData();
+    bool downloadedFinished();
 
 signals:
     void dataValueReadSignal( QJsonObject json_data );
@@ -36,6 +37,7 @@ private:
     unsigned int download_limit;
 
     QJsonArray downloaded_data;
+    bool downloaded_finished = false;
 
 };
 

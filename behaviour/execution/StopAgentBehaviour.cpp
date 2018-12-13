@@ -3,6 +3,7 @@
 #include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 
 StopAgentBehaviour::StopAgentBehaviour() : GWSBehaviour(){
 }
@@ -23,7 +24,7 @@ QJsonArray  StopAgentBehaviour::behave(){
     json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , false );
     json.insert( GWSExecutionEnvironment::RUNNING_PROP , false );
 
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( json );
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
 
     return QJsonArray();
 }
