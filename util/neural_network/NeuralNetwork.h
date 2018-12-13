@@ -6,7 +6,7 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
-#include "doublefann.h"
+#include "fann.h"
 #include "fann_cpp.h"
 #include "fann_train.h"
 #include "fann_data.h"
@@ -15,7 +15,7 @@ class GWSNeuralNetwork : public QObject{
     Q_OBJECT
 
 public:
-    explicit GWSNeuralNetwork(int learning_rate, int num_layers, int num_hidden, double desired_error, int max_iterations, int iterations_between_reports );
+    explicit GWSNeuralNetwork(double learning_rate,  double desired_error, int max_iterations, int iterations_between_reports );
     explicit GWSNeuralNetwork(QString training_path);
 
     // METHODS
@@ -27,8 +27,6 @@ private:
 
     // NN Parameters
     float learning_rate;
-
-    unsigned int num_layers;
     unsigned int num_hidden;
 
     float desired_error;
@@ -39,12 +37,16 @@ private:
     FANN::neural_net net;
 
     // Inputs
-    QMap<QString , int> input_positions; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
+    QMap<QString , int>* input_positions; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
+    QMap< QString , double >* input_maximums; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double >* input_minimums; // { pos0 : 2.43 , pos1 : 0 ...
 
     // Outputs
-    QMap<QString , int> output_positions; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
+    QMap<QString , int>* output_positions; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
+    QMap< QString , double >* output_maximums; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double >* output_minimums; // { pos0 : 2.43 , pos1 : 0 ...
 
-    QMap<QString , int> generatePositions( QJsonArray ios );
+    void generatePositions( QJsonArray ios , QMap<QString , int>* positions , QMap< QString , double >* maximums , QMap< QString , double >* minimums );
 
 };
 

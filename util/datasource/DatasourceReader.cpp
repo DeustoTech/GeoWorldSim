@@ -21,7 +21,7 @@ QJsonArray GWSDatasourceReader::getDownloadedData(){
 }
 
 bool GWSDatasourceReader::downloadedFinished(){
-    return this->downloadedFinished();
+    return this->downloaded_finished;
 }
 
 void GWSDatasourceReader::requestPaginated(int page){

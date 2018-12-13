@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QString>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QProcess>
 #include <QtMath>
 
@@ -169,27 +170,38 @@ int main(int argc, char* argv[])
    NEURAL NETWORK:
    Get NN training data from GWS DataSources from URL  */
 
-GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/cfd3b904-82dc-41b2-9a03-a9c76635cce7/read" );
-GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/69fe3201-7be1-45a0-85fe-d97017426531/read" );
+GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/1be32013-cba4-4c71-ae00-dc27eedab56c/read" );
+GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/f80c0a51-8a0e-4999-a5d1-7009b0caf3a5/read" );
 
 // Create empty QJsonArray to store data from DataSource
 QJsonArray* train_json_inputs = new QJsonArray();
 QJsonArray* train_json_outputs = new QJsonArray();
-
-bool inputs_finished = false;
-bool outputs_finished = false;
 
 // Connect training input DSR to load data into QJsonArray:
 idsr->connect( idsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_inputs]( QJsonObject read_json ){
        train_json_inputs->append( read_json );
 });
 
-idsr->connect( idsr , &GWSDatasourceReader::dataReadingFinishedSignal , [&inputs_finished , outputs_finished , train_json_inputs , train_json_outputs ](){
-    inputs_finished = true;
-    if( outputs_finished ){
+idsr->connect( idsr , &GWSDatasourceReader::dataReadingFinishedSignal , [odsr , train_json_inputs , train_json_outputs ](){
+     if( odsr->downloadedFinished() ){
 
-        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 3, 13, 0.001, 30000, 100 );
+        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
         neural_network->train( *train_json_inputs , *train_json_outputs );
+
+        // 10448: HC	RUR/MW/130/Heavy	+2%	151-250cc	MC 4S Euro-0	124.2134170532
+        // 10276: HC	RUR/MW/130/Heavy	-6%	≤50cc	Moped-EU2	30
+
+        QJsonObject test_input = {
+                                 { "Component" , "HC" },
+                                 { "TrafficSit" , "RUR/MW/130/Heavy" } ,
+                                 { "Gradient" ,  "-6%" } ,
+                                 { "SizeClasse" , "≤50cc" },
+                                 { "EmConcept" , "Moped-EU2" },
+                                 { "V" , 30 }
+                                 };
+        qDebug() << test_input;
+        QJsonObject result = neural_network->run( test_input );
+        qDebug() << 2;
 
     }
 });
@@ -199,19 +211,19 @@ odsr->connect( odsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_ou
        train_json_outputs->append( read_json );
 });
 
-odsr->connect( odsr , &GWSDatasourceReader::dataReadingFinishedSignal , [&outputs_finished , inputs_finished , train_json_inputs , train_json_outputs ](){
-    outputs_finished = true;
-    if( inputs_finished ){
+odsr->connect( odsr , &GWSDatasourceReader::dataReadingFinishedSignal , [idsr , train_json_inputs , train_json_outputs ](){
+    if( idsr->downloadedFinished() ){
 
-        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 3, 13, 0.001, 30000, 100 );
+        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
         neural_network->train( *train_json_inputs , *train_json_outputs );
-
     }
  });
 
 
 idsr->startReading();
 odsr->startReading();
+
+
 
 
 GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
