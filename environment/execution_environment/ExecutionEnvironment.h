@@ -18,8 +18,11 @@ public:
 
     // PROPERTIES
     static QString RUNNING_PROP;
-    static QString START_TIME;
-    static QString END_TIME;
+    static QString STARTED_SIMULATION_TIME;
+    static QString STARTED_REAL_TIME;
+    static QString ENDED_SIMULATION_TIME;
+    static QString ENDED_REAL_TIME;
+    static QString CURRENT_TICK_TIME;
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

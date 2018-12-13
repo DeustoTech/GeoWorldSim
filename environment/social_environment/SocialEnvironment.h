@@ -1,10 +1,8 @@
-#ifndef SOCIALENVIRONMENT_H
-#define SOCIALENVIRONMENT_H
+#ifndef GWSSOCIALENVIRONMENT_H
+#define GWSSOCIALENVIRONMENT_H
 
 #include "../../environment/Environment.h"
 #include "../../util/graph/GraphEdge.h"
-
-using namespace geos::geom;
 
 class GWSSocialEnvironment : public GWSEnvironment
 {
@@ -22,4 +20,4 @@ private:
 
 };
 
-#endif // SOCIALENVIRONMENT_H
+#endif // GWSSOCIALENVIRONMENT_H

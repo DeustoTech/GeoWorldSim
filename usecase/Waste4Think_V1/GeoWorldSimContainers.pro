@@ -94,6 +94,8 @@ HEADERS += \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
+    ../../environment/communication_environment/CommunicationEnvironment.h \
+    ../../environment/social_environment/SocialEnvironment.h \
         # AGENTS
     #agent/person/Person.h \
     ContainerAgent.h \
@@ -105,7 +107,6 @@ HEADERS += \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
-    ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../util/neural_network/NeuralNetwork.h \
     ../../util/neural_network/NeuralNetworkFromDatasource.h \
     ../../behaviour/pollute/CreateTrainedNeuralNetworkBehaviour.h
@@ -182,6 +183,8 @@ SOURCES += mainlauncher.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
+    ../../environment/communication_environment/CommunicationEnvironment.cpp \
+    ../../environment/social_environment/SocialEnvironment.cpp \
         # AGENTS
     #agent/person/Person.cpp \
     ContainerAgent.cpp \
@@ -193,7 +196,6 @@ SOURCES += mainlauncher.cpp \
     ../../util/distributed/ExternalListener.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
-    ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../util/neural_network/NeuralNetwork.cpp \
     ../../util/neural_network/NeuralNetworkFromDatasource.cpp \
     ../../behaviour/pollute/CreateTrainedNeuralNetworkBehaviour.cpp

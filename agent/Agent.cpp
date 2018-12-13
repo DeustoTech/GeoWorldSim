@@ -39,14 +39,9 @@ GWSAgent::~GWSAgent() {
         env->unregisterAgent( this->getSharedPointer() );
     }
 
-    // Emit withoug 'ALIVE' property to be removed
-    this->setProperty( ALIVE_PROP , false );
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( this->serializeMini() );
-
     qDebug() << QString("%1 deleted").arg( this->getId() );
     if( this->skills ){ this->skills->deleteAll(); this->skills->deleteLater(); }
     if( this->behaviours ){ this->behaviours->deleteAll(); this->behaviours->deleteLater(); }
-
 }
 
 /**********************************************************************

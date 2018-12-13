@@ -59,21 +59,9 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     // Init random generators
     qsrand( QDateTime::currentDateTime().time().second() );
 
-    // Connect signal to socket slots
-    this->connect( this , &GWSApp::sendAgentToSocketSignal , this , &GWSApp::sendAgentToSocket );
-    this->connect( this , &GWSApp::sendAlertToSocketSignal , this , &GWSApp::sendAlertToSocket );
-    this->connect( this , &GWSApp::sendDataToSocketSignal , this , &GWSApp::sendDataToSocket );
-
-    // Start WebSocket
-    this->startSocket();
 }
 
 GWSApp::~GWSApp(){
-    emit this->sendAlertToSocket( 0 , "Simulation finished" , QString("Simulation %1 finished, took %2 miliseconds at %3x speed with %4 threads")
-                                  .arg( this->getAppId() )
-                                  .arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp )
-                                  .arg( GWSTimeEnvironment::globalInstance()->getTimeSpeed() )
-                                  .arg( QThreadPool::globalInstance()->maxThreadCount() ) );
     this->setProperty( "id" , QVariant() ); // Set to null
 }
 
@@ -95,108 +83,11 @@ QString GWSApp::getUserId(){
 
 int GWSApp::exec(){
 
-    emit this->sendAlertToSocket( 0 , "Simulation started" , QString("Simulation %1 started, took %2 miliseconds").arg( this->getAppId() ).arg( QDateTime::currentMSecsSinceEpoch() - this->created_timestamp ) );
-
     try {
-
         QCoreApplication::exec(); // Real exec()
-
     } catch(std::exception &e){
-        emit this->sendAlertToSocketSignal( 2 , "Simulation had an error, trying to recover." , QString("Exception : %1").arg( e.what() ) );
         this->exec();
     }
 
     return -1;
 }
-
-
-/**********************************************************************
- TCP SOCLET SLOTS
-**********************************************************************/
-
-void GWSApp::startSocket(){
-
-    // Connect and send info
-    QObject::connect( &this->websocket , &QWebSocket::connected , [this](){
-
-        qDebug() << QString("Simulation connected. WebSocket connected successfully to %1").arg( this->websocket.peerAddress().toString() );
-
-        if( !this->property("run").isNull() ){ // If Autorun
-
-            QTimer::singleShot( this->property("run").toInt() * 1000 , [this](){
-                GWSExecutionEnvironment::globalInstance()->run();
-            });
-
-        }
-    });
-    QObject::connect( &this->websocket , &QWebSocket::pong , [this](quint64 elapsedTime, const QByteArray &payload){
-        Q_UNUSED(elapsedTime); Q_UNUSED(payload);
-        emit this->websocket.ping();
-    });
-    /*QObject::connect( this->websocket , &QWebSocket::error , [this](QAbstractSocket::SocketError error){
-        qWarning() << "Error connecting websocket" << error;
-        this->startSocket();
-    });*/
-    QObject::connect( &this->websocket , &QWebSocket::disconnected , this , &GWSApp::reconnectSocket );
-
-    this->reconnectSocket();
-}
-
-void GWSApp::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com/?scenario_id=" + this->getAppId() )  );
-}
-
-/**********************************************************************
- SOCKET SLOTS
-**********************************************************************/
-
-void GWSApp::sendAgentToSocket( QJsonObject entity_json ){
-
-    QString entity_type = entity_json.value( GWSObject::GWS_TYPE_PROP ).toString();
-    QString entity_id = entity_json.value( GWSObject::GWS_ID_PROP ).toString();
-    //entity_json.insert("time" , QString("%1ms").arg( GWSTimeEnvironment::globalInstance()->getCurrentDateTime() ) );
-    if( entity_type.isEmpty() || entity_id.isEmpty() ){ return; }
-
-    this->sendDataToSocket( "entity" , entity_json );
-}
-
-void GWSApp::sendAlertToSocket( int level, QString title, QString description ){
-
-    if( level == 0 ){
-        qInfo() << title << description;
-    }
-    if( level == 1 ){
-        qWarning() << title << description;
-    }
-    if( level >= 2 ){
-        qCritical() << title << description;
-    }
-
-    QJsonObject alert_json;
-    alert_json.insert( "level" , level );
-    alert_json.insert( "title" , title );
-    alert_json.insert( "description" , description );
-    alert_json.insert( "user_id" , this->getUserId() );
-    alert_json.insert( "generator_type" , "simulation" );
-    alert_json.insert( "generator_id" , this->getAppId() );
-
-    // TO alerts.geoworldsim.com
-    QUrl url = QString( "https://alerts.geoworldsim.com/api/alert" );
-    QNetworkRequest request = QNetworkRequest( url );
-    request.setHeader( QNetworkRequest::ContentTypeHeader , "application/json" );
-    QNetworkReply* reply = this->http_manager.post( request , QJsonDocument( alert_json ).toJson() );
-    reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
-}
-
-void GWSApp::sendDataToSocket(QString signal , QJsonValue json){
-
-    // TO sockets.geoworldsim.com
-    QJsonObject socket_json;
-    socket_json.insert("signal" , signal );
-    socket_json.insert("scenario_id" , this->getAppId() );
-    socket_json.insert("body" , json );
-    this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
-
-}
-
-

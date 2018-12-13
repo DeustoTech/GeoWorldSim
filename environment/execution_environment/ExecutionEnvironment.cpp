@@ -9,11 +9,15 @@
 #include "../../agent/Agent.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../util/parallelism/ParallelismController.h"
 
 QString GWSExecutionEnvironment::RUNNING_PROP = "running";
-QString GWSExecutionEnvironment::START_TIME = "start_time";
-QString GWSExecutionEnvironment::END_TIME = "end_time";
+QString GWSExecutionEnvironment::STARTED_SIMULATION_TIME = "started_simulation_time";
+QString GWSExecutionEnvironment::STARTED_REAL_TIME = "started_real_time";
+QString GWSExecutionEnvironment::ENDED_SIMULATION_TIME = "ended_simulation_time";
+QString GWSExecutionEnvironment::ENDED_REAL_TIME = "ended_real_time";
+QString GWSExecutionEnvironment::CURRENT_TICK_TIME = "current_tick_time";
 
 GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
     static GWSExecutionEnvironment instance;
@@ -38,7 +42,7 @@ QJsonObject GWSExecutionEnvironment::serialize() const{
     QJsonObject json = GWSEnvironment::serializeMini();
     json.insert( "running_amount" , this->getRunningAgentsAmount() );
     json.insert( "ticks_amount" , this->getTicksAmount() );
-    json.insert( "time" , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     return json;
 }
 
@@ -113,7 +117,7 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
         return;
     }
 
-    agent->setProperty( GWSExecutionEnvironment::END_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
+    agent->setProperty( GWSExecutionEnvironment::ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
     agent->incrementBusy();
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
 
@@ -139,9 +143,10 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation running" , QString("Agents' execution started") );
     this->timer = new QTimer();
     this->timer->singleShot( 1000 , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
+    this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+    this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
     emit this->runningExecutionSignal();
 }
@@ -151,7 +156,6 @@ void GWSExecutionEnvironment::behave(){
     QList< QSharedPointer<GWSAgent> > currently_running_agents = this->getRunningAgents();
 
     if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
-        emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation has no (more) agents" , QString("Simulation has no (more) agents to run, stopping and finishing.") );
         this->stop();
         GWSApp::exit( 0 );
     }
@@ -216,7 +220,8 @@ void GWSExecutionEnvironment::behave(){
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
                .arg( who_is_min_tick ? who_is_min_tick->getId() : "" );
 
-    emit GWSApp::globalInstance()->sendDataToSocketSignal( "time" , min_tick );
+    this->setProperty( CURRENT_TICK_TIME , min_tick );
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( this->serialize() );
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }
 
@@ -224,9 +229,10 @@ void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
-    emit GWSApp::globalInstance()->sendAlertToSocketSignal( 0 , "Simulation stopped" , QString("Agents execution stopped.") );
     this->timer->deleteLater();
     this->timer = Q_NULLPTR;
+    this->setProperty( ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+    this->setProperty( ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
     emit this->stoppingExecutionSignal();
 }

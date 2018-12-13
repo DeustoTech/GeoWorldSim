@@ -27,9 +27,6 @@ QJsonArray GatherAgentPropertyBehaviour::behave(){
     emitting_agent->setProperty( property_to_gather  , 0. );
     agent->setProperty( property_to_gather , new_waste );
 
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( agent->serialize() );
-    emit GWSApp::globalInstance()->sendAgentToSocketSignal( emitting_agent->serialize() );
-
     return this->getProperty( NEXTS ).toArray();
 
 }

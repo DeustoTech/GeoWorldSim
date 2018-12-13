@@ -2,8 +2,6 @@
 
 #include "SocialEnvironment.h"
 
-#include "../../util/parallelism/ParallelismController.h"
-
 GWSSocialEnvironment* GWSSocialEnvironment::globalInstance(){
     static GWSSocialEnvironment instance;
     return &instance;
