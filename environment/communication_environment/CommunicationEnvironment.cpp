@@ -1,5 +1,7 @@
 #include "CommunicationEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../object/ObjectFactory.h"
 
 GWSCommunicationEnvironment* GWSCommunicationEnvironment::globalInstance(){
     static GWSCommunicationEnvironment instance;
@@ -35,11 +37,50 @@ void GWSCommunicationEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agen
     Q_UNUSED(agent);
 }
 
+void GWSCommunicationEnvironment::connectExternalEnvironment(QString socket_id){
+
+}
+
+void GWSCommunicationEnvironment::disconnectExternalEnvironment(QString socket_id){
+
+}
+
 /**********************************************************************
  LISTENERS
 **********************************************************************/
 
+void GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_data){
 
+    // RECEIVED AN AGENT
+    if( json_data.value("signal") == "entity" ){
+        json_data = json_data.value("body").toObject();
+
+        QString type = json_data.value( GWSAgent::GWS_TYPE_PROP ).toString();
+        QString id = json_data.value( GWSAgent::GWS_ID_PROP ).toString();
+        bool alive = json_data.value( GWSAgent::ALIVE_PROP ).toBool();
+
+        QSharedPointer<GWSAgent> agent;
+
+        if( !type.isEmpty() && !id.isEmpty() ){
+            agent = GWSAgentEnvironment::globalInstance()->getByClassAndId( type , id );
+        }
+
+        if( agent && !alive ){
+            agent->deleteLater();
+            return;
+        }
+
+        if( agent && alive ){
+            agent->deserialize( json_data );
+            return;
+        }
+
+        if( !agent && alive ){
+            agent = GWSObjectFactory::globalInstance()->fromJSON( json_data ).dynamicCast<GWSAgent>();
+        }
+
+    }
+}
 
 /**********************************************************************
  PUBLISHERS

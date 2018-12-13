@@ -3,6 +3,8 @@
 
 #include "ExternalCommunicator.h"
 
+#include <QJsonObject>
+
 class GWSExternalListener : public GWSExternalCommunicator
 {
     Q_OBJECT
@@ -10,14 +12,11 @@ class GWSExternalListener : public GWSExternalCommunicator
 public:
     GWSExternalListener( QString socket_id );
 
+signals:
+    void dataReceived( QJsonObject json_data );
+
 public slots:
 
-    void messageReceived(const QString message);
-
-private:
-    QString listening_simulation_id;
-    QWebSocket websocket; // WS to sockets.geoworldsim.com
-    bool reconnecting = false; // Flag
 };
 
 #endif // GWSEXTERNALLISTENER_H
