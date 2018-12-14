@@ -82,8 +82,8 @@ void electricTravelling_impactTool()
 
     // Train from files:
     GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
-    neural_network->trainFromFile( "/home/maialen/Escritorio/WorkSpace/FILES/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_INPUTS.csv" , "/home/maialen/Escritorio/WorkSpace/FILES/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_OUTPUTS.csv" );
-
+    neural_network->trainFromFile( "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/MC_OLD/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_INPUTS.csv" , "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/MC_OLD/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_OUTPUTS.csv" );
+    neural_network->save( "/home/maialen/Escritorio/WorkSpace/GwoWorldSim/usecase/ElectricTravelling/ElectricTravelling_ImpactTool/trained_network.net" );
 
 
 
