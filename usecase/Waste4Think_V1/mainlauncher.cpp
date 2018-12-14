@@ -170,8 +170,8 @@ int main(int argc, char* argv[])
    NEURAL NETWORK:
    Get NN training data from GWS DataSources from URL  */
 
-GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/1be32013-cba4-4c71-ae00-dc27eedab56c/read" );
-GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/f80c0a51-8a0e-4999-a5d1-7009b0caf3a5/read" );
+GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/fa6eeb69-b9c6-4293-9f6d-ceb66f64a72a/read" );
+GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/ae53c8d8-fcdb-40db-83cf-0cfbfd0b3e48/read" );
 
 // Create empty QJsonArray to store data from DataSource
 QJsonArray* train_json_inputs = new QJsonArray();

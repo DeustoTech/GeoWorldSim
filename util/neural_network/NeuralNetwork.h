@@ -17,10 +17,13 @@ class GWSNeuralNetwork : public QObject{
 public:
     explicit GWSNeuralNetwork(double learning_rate,  double desired_error, int max_iterations, int iterations_between_reports );
     explicit GWSNeuralNetwork(QString training_path);
+    ~GWSNeuralNetwork();
 
     // METHODS
     void trainFromFile( QString inputs_file_path , QString outputs_file_path );
-    void train( QJsonArray inputs_array , QJsonArray outputs_array  );
+    void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
+    void train( QList< QList< QPair< QString , QVariant> > > input_train_dataset, QList< QList< QPair< QString , QVariant> > >  output_train_dataset );
+    void save( const std::string trained_network_filename );
     QJsonObject run( QJsonObject inputs );
 
 private:
@@ -37,16 +40,16 @@ private:
     FANN::neural_net net;
 
     // Inputs
-    QMap<QString , int>* input_positions; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
-    QMap< QString , double >* input_maximums; // { pos0 : 2.43 , pos1 : 42 ...
-    QMap< QString , double >* input_minimums; // { pos0 : 2.43 , pos1 : 0 ...
+    QMap<QString , int>* input_positions = Q_NULLPTR; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
+    QMap< QString , double >* input_maximums = Q_NULLPTR;; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double >* input_minimums = Q_NULLPTR;; // { pos0 : 2.43 , pos1 : 0 ...
 
     // Outputs
-    QMap<QString , int>* output_positions; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
-    QMap< QString , double >* output_maximums; // { pos0 : 2.43 , pos1 : 42 ...
-    QMap< QString , double >* output_minimums; // { pos0 : 2.43 , pos1 : 0 ...
+    QMap<QString , int>* output_positions = Q_NULLPTR;; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
+    QMap< QString , double >* output_maximums = Q_NULLPTR;; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double >* output_minimums = Q_NULLPTR;; // { pos0 : 2.43 , pos1 : 0 ...
 
-    void generatePositions( QJsonArray ios , QMap<QString , int>* positions , QMap< QString , double >* maximums , QMap< QString , double >* minimums );
+    void generatePositions( QList< QList< QPair< QString , QVariant> > > data_rows ,  QMap<QString , int>* positions , QMap< QString , double >* maximums , QMap< QString , double >* minimums );
 
 };
 
