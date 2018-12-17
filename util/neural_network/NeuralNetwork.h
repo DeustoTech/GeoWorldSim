@@ -24,7 +24,10 @@ public:
     void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
     void train( QList< QList< QPair< QString , QVariant> > > input_train_dataset, QList< QList< QPair< QString , QVariant> > >  output_train_dataset );
     void save( const std::string trained_network_filename );
+    void load( const std::string trained_network_filename );
     QJsonObject run( QJsonObject inputs );
+    QList< QList< QPair< QString , QVariant> > > inputs;
+    void randomLine( QString inputs_file_path );
 
 private:
 

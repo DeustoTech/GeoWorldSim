@@ -9,12 +9,11 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QDebug>
+#include <QFile>
 
 
 // Utils
-#include "../../../util/datasource/DatasourceReader.h"
 #include "../../../util/neural_network/NeuralNetwork.h"
-#include "../../../util/api/APIDriver.h"
 
 
 // Test function that demonstrates usage of the fann C++ wrapper
@@ -24,13 +23,6 @@ void electricTravelling_impactTool()
     /*
        NEURAL NETWORK:
        Get NN training data from GWS DataSources from URL  */
-
-    GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/fa6eeb69-b9c6-4293-9f6d-ceb66f64a72a/read" );
-    GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/ae53c8d8-fcdb-40db-83cf-0cfbfd0b3e48/read" );
-
-    // Create empty QJsonArray to store data from DataSource
-    QJsonArray* train_json_inputs = new QJsonArray();
-    QJsonArray* train_json_outputs = new QJsonArray();
 
     // Connect training input DSR to load data into QJsonArray:
     /*idsr->connect( idsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_inputs]( QJsonObject read_json ){
@@ -80,10 +72,9 @@ void electricTravelling_impactTool()
     odsr->startReading();*/
 
 
-    // Train from files:
-    GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
-    neural_network->trainFromFile( "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/MC_OLD/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_INPUTS.csv" , "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/MC_OLD/EFA_HOT_Subsegm_MC_allpollutants_rural_allLevelsOfService_LESSColumns_OUTPUTS.csv" );
-    neural_network->save( "/home/maialen/Escritorio/WorkSpace/GwoWorldSim/usecase/ElectricTravelling/ElectricTravelling_ImpactTool/trained_network.net" );
+
+
+
 
 
 
@@ -97,8 +88,30 @@ int main(int argc, char **argv)
     {
         QCoreApplication app( argc , argv );
         std::ios::sync_with_stdio(); // Syncronize cout and printf output
-        electricTravelling_impactTool();
-        app.exec();
+
+        // Check if trained network file exists:
+        QString save_file = argv[3];
+        GWSNeuralNetwork* neural_network;
+
+        if ( !QFile( save_file ).exists() ){
+
+            QString inputs_file = argv[1];
+            QString outputs_file = argv[2];
+
+            neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
+            neural_network->trainFromFile( inputs_file , outputs_file );
+            neural_network->save( save_file.toStdString() );
+
+        }
+
+        else {
+
+            neural_network->load( save_file.toStdString() );
+
+        }
+
+
+
     }
     catch (...)
     {

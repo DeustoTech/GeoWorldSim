@@ -39,7 +39,9 @@ GWSNeuralNetwork::~GWSNeuralNetwork(){
 
 void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_file_path) {
 
+
     QList< QList< QPair< QString , QVariant> > > inputs;
+
     {
         QFile file( inputs_file_path );
 
@@ -141,6 +143,53 @@ void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_f
     this->train( inputs , outputs );
 }
 
+
+/* Select random input from file to test the network */
+void GWSNeuralNetwork::randomLine( QString inputs_file_path ){
+
+       QFile input_file( inputs_file_path );
+
+       if(!input_file.open(QIODevice::ReadOnly)) {
+            qWarning() << "NO FILE";
+            return;
+       }
+
+    // Get number of lines in input file:
+       QTextStream in(&input_file);
+       int line_number = 0;
+       while( !in.atEnd() ) {
+
+           QString line = in.readLine();
+           ++line_number;
+        }
+
+        // Select a line randomly:
+       int random_line = qrand() % line_number;
+
+       while( !in.atEnd() ) {
+
+           QString line = in.readLine();
+           ++line_number;
+           if ( line_number == random_line ){
+               QStringList columns = line.split(';');
+               for(int i = 0; i < columns.size() ; i++ ){
+
+                   QString string_value = columns.at(i);
+                   // Remove surrounding quotes
+                   string_value.replace( "\"" , "" );
+
+                   bool ok;
+                   QVariant value = string_value.toDouble( &ok );
+                   if( !ok ){ value = string_value; }
+
+                   row.append( QPair< QString, QVariant>( headers.key( i ) , value ) );
+               }
+           }
+        }
+
+
+
+}
 
 /* Train the network on given input and output arrays  */
 
@@ -312,6 +361,17 @@ void GWSNeuralNetwork::save( const std::string trained_network_filename ){
 
 }
 
+
+
+/* Load trained network */
+void GWSNeuralNetwork::load( const std::string trained_network_filename ){
+
+
+    // Save trained network:
+    this->net.create_from_file( trained_network_filename );
+
+}
+
 /*  Run the network on a given input set  */
 
 QJsonObject GWSNeuralNetwork::run( QJsonObject inputs ){
@@ -342,6 +402,13 @@ QJsonObject GWSNeuralNetwork::run( QJsonObject inputs ){
             input[position] = inputs.value( input_name ).toDouble( 1 );
         }
     }
+
+
+
+
+
+
+
 
     fann_type* output = this->net.run( input );
 
