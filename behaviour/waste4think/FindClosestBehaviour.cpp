@@ -41,11 +41,11 @@ QJsonArray FindClosestBehaviour::behave(){
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSGraphEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
 
     // Extract and store the route to nearest node it:
-    QList< QSharedPointer<GWSGraphEdge> > closest_route = closest_coor_and_route.second;
+    QList< QSharedPointer<GWSNetworkEdge> > closest_route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
@@ -54,7 +54,7 @@ QJsonArray FindClosestBehaviour::behave(){
 
     // Extract and store the distance of the route:
     GWSLengthUnit closest_route_distance = 0;
-    foreach ( QSharedPointer<GWSGraphEdge> edge , closest_route ){
+    foreach ( QSharedPointer<GWSNetworkEdge> edge , closest_route ){
         closest_route_distance = closest_route_distance + edge->getLength();
     }
 

@@ -1,5 +1,5 @@
-#ifndef EXTERNALCOMMUNICATOR_H
-#define EXTERNALCOMMUNICATOR_H
+#ifndef GWSEXTERNALCOMMUNICATOR_H
+#define GWSEXTERNALCOMMUNICATOR_H
 
 #include <QWebSocket>
 #include <QObject>
@@ -20,8 +20,7 @@ public slots:
 protected:
     QString socket_id;
     QWebSocket websocket; // WS to sockets.geoworldsim.com
-    bool reconnecting = false; // Flag
-
+    QString last_status;
 };
 
-#endif // EXTERNALCOMMUNICATOR_H
+#endif // GWSEXTERNALCOMMUNICATOR_H

@@ -73,6 +73,7 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/graph/Edge.h \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
@@ -82,7 +83,6 @@ HEADERS += \
     ../../util/routing/GraphEdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
-    ../../util/graph/GraphEdge.h \
             ## GRID
     ../../util/grid/Grid.h \
     ../../util/grid/AgentGrid.h \
@@ -97,6 +97,7 @@ HEADERS += \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
+    ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
@@ -159,9 +160,7 @@ SOURCES += mainEmpty.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphEdge.cpp \
-    #../../util/graph/Graph.cpp \
-    #../../util/graph/GraphUtils.cpp \
+    ../../util/graph/Edge.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
     #../../util/grid/NumberGrid.cpp \
@@ -178,6 +177,7 @@ SOURCES += mainEmpty.cpp \
     #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
+    ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
@@ -185,7 +185,6 @@ SOURCES += mainEmpty.cpp \
     ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/agent/FindRandomAgentBehaviour.cpp
-
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon

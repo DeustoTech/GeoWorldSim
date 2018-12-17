@@ -8,8 +8,13 @@ class GWSEnvironment : public GWSAgent
     Q_OBJECT
 
 public:
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
+
+    // METHODS
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+
 
 signals:
     void environmentCreatedSignal();

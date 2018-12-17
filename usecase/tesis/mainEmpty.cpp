@@ -35,6 +35,7 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
@@ -60,6 +61,7 @@ int main(int argc, char* argv[])
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
+    GWSCommunicationEnvironment::globalInstance();
 
     // AVAILABLE AGENTS
 
@@ -129,10 +131,8 @@ int main(int argc, char* argv[])
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
-        if ( !json_external_listeners[ key ].isNull() ){
-            new GWSExternalListener( json_external_listeners[ key ].toString() );
-        }
-        qDebug() << QString("Creating external listener %1").arg( key );
+        GWSCommunicationEnvironment::globalInstance()->connectExternalEnvironment( json_external_listeners.value( key ).toString() );
+        qDebug() << QString("Creating external listener %1 to %2").arg( key ).arg( json_external_listeners.value( key ).toString() );
      }
 
 

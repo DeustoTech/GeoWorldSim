@@ -7,7 +7,7 @@
 #include <lemon/list_graph.h>
 #include <lemon/dijkstra.h>
 
-#include "../../util/graph/GraphEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 #include "../../util/routing/GraphEdgeVisitor.h"
 
 class GWSRouting : public GWSObject
@@ -20,13 +20,13 @@ public:
     ~GWSRouting();
 
     // GETTERS
-    QList<QSharedPointer<GWSGraphEdge> > getShortestPath( GWSCoordinate from, GWSCoordinate to );
-    QList<QList<QSharedPointer<GWSGraphEdge> > > getShortestPath(QList< GWSCoordinate > ordered_coors );
-    QList<QList<QSharedPointer< GWSGraphEdge> > > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many );
+    QList<QSharedPointer<GWSNetworkEdge> > getShortestPath( GWSCoordinate from, GWSCoordinate to );
+    QList<QList<QSharedPointer< GWSNetworkEdge > > > getShortestPath(QList< GWSCoordinate > ordered_coors );
+    QList<QList<QSharedPointer< GWSNetworkEdge > > > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many );
 
     // SETTERS
-    void upsert( QSharedPointer<GWSGraphEdge> edge );
-    void remove( QSharedPointer<GWSGraphEdge> edge );
+    void upsert( QSharedPointer<GWSNetworkEdge> edge );
+    void remove( QSharedPointer<GWSNetworkEdge> edge );
 
 protected:
 
@@ -38,14 +38,14 @@ protected:
     GWSGraphEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
-    QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSGraphEdge> >* arc_to_edges;
+    QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSNetworkEdge> >* arc_to_edges;
 
     // To link nodes with its original GSSGraphNode
     QMap< GWSCoordinate , lemon::ListDigraph::Node >* coors_to_node;
 
     // Routes cache
-    void cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSGraphEdge> > route = QList<QSharedPointer<GWSGraphEdge> >() );
-    QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QList<QSharedPointer<GWSGraphEdge> > > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >
+    void cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSNetworkEdge> > route = QList<QSharedPointer<GWSNetworkEdge> >() );
+    QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QList<QSharedPointer<GWSNetworkEdge> > > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >
 
 };
 

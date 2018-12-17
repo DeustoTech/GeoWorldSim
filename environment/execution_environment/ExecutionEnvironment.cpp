@@ -39,7 +39,7 @@ GWSExecutionEnvironment::~GWSExecutionEnvironment(){
 **********************************************************************/
 
 QJsonObject GWSExecutionEnvironment::serialize() const{
-    QJsonObject json = GWSEnvironment::serializeMini();
+    QJsonObject json = GWSEnvironment::serialize();
     json.insert( "running_amount" , this->getRunningAgentsAmount() );
     json.insert( "ticks_amount" , this->getTicksAmount() );
     json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );

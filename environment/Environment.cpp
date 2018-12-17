@@ -19,6 +19,10 @@ GWSEnvironment::~GWSEnvironment(){
  AGENTS METHODS
 **********************************************************************/
 
+QJsonObject GWSEnvironment::serialize() const{
+    return GWSObject::serialize(); // Jump all agent serialisation
+}
+
 void GWSEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     if( agent->environments_registerd_in.contains( this ) ){
         return;

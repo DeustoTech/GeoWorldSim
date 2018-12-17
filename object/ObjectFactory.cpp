@@ -14,7 +14,7 @@
 #include "../../util/geometry/Polygon.h"
 
 #include "../../util/grid/Grid.h"
-#include "../../util/graph/GraphEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 
 
 #include "../../util/parallelism/ParallelismController.h"
@@ -32,7 +32,7 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
     this->registerType( GWSGeometry::staticMetaObject );
-    this->registerType( GWSGraphEdge::staticMetaObject );
+    this->registerType( GWSNetworkEdge::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
@@ -72,7 +72,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
 
     if( !this->constructors.keys().contains( type ) ){
         qWarning() << QString("Object type %1 not registered in the ObjectFactory.").arg( type );
-        Q_ASSERT(false);
+        return Q_NULLPTR;
     }
 
     // Create object

@@ -38,11 +38,19 @@ void GWSCommunicationEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agen
 }
 
 void GWSCommunicationEnvironment::connectExternalEnvironment(QString socket_id){
-
+    GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
+    if( !listener ){
+        listener = new GWSExternalListener( socket_id );
+        this->listeners.insert( socket_id , listener );
+        listener->connect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::externalEnvironmentReceived );
+    }
 }
 
 void GWSCommunicationEnvironment::disconnectExternalEnvironment(QString socket_id){
-
+    GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
+    if( listener ){
+        listener->disconnect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::externalEnvironmentReceived );
+    }
 }
 
 /**********************************************************************
