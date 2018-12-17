@@ -147,7 +147,7 @@ void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_f
 /* Select random input from file to test the network */
 void GWSNeuralNetwork::randomLine( QString inputs_file_path ){
 
-       QFile input_file( inputs_file_path );
+       /*QFile input_file( inputs_file_path );
 
        if(!input_file.open(QIODevice::ReadOnly)) {
             qWarning() << "NO FILE";
@@ -185,7 +185,7 @@ void GWSNeuralNetwork::randomLine( QString inputs_file_path ){
                    row.append( QPair< QString, QVariant>( headers.key( i ) , value ) );
                }
            }
-        }
+        }*/
 
 
 
