@@ -11,7 +11,7 @@
 
 #include <QMap>
 
-#include "../../util/graph/GraphEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 
 
 QT_FORWARD_DECLARE_CLASS(GWSRouting)

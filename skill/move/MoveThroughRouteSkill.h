@@ -2,7 +2,7 @@
 #define MOVETHROUGHROUTESKILL_H
 
 #include <QObject>
-#include "../../util/graph/GraphEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 #include "../../skill/move/MoveSkill.h"
 
 class MoveThroughRouteSkill : public MoveSkill
@@ -29,7 +29,7 @@ public:
 
 protected:
 
-    QList< QSharedPointer<GWSGraphEdge> > pending_route;
+    QList< QSharedPointer<GWSNetworkEdge> > pending_route;
     QList<GWSCoordinate> pending_edge_coordinates;
     bool route_found_borrame = false;
 

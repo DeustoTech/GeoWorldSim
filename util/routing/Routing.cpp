@@ -7,7 +7,7 @@
  * @param graph
  */
 GWSRouting::GWSRouting() : GWSObject(){
-    this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSGraphEdge> >();
+    this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSNetworkEdge> >();
     this->coors_to_node = new QMap< GWSCoordinate , lemon::ListDigraph::Node >();
     this->routing_graph = new lemon::ListDigraph();
     this->graph_edge_visitor = new GWSGraphEdgeVisitor( this->routing_graph );
@@ -21,19 +21,19 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-QList<QSharedPointer<GWSGraphEdge> > GWSRouting::getShortestPath( GWSCoordinate from_coor, GWSCoordinate to_coor ){
+QList<QSharedPointer<GWSNetworkEdge> > GWSRouting::getShortestPath( GWSCoordinate from_coor, GWSCoordinate to_coor ){
     QList< GWSCoordinate > coors;
     coors.append( from_coor );
     coors.append( to_coor );
     return this->getShortestPath(coors).at(0);
 }
 
-QList<QList<QSharedPointer<GWSGraphEdge> > > GWSRouting::getShortestPath(QList< GWSCoordinate > ordered_coors ){
-    QList<QList<QSharedPointer<GWSGraphEdge> > > result_routes;
+QList<QList<QSharedPointer<GWSNetworkEdge> > > GWSRouting::getShortestPath(QList< GWSCoordinate > ordered_coors ){
+    QList<QList<QSharedPointer<GWSNetworkEdge> > > result_routes;
 
     for(int i = 0; i < ordered_coors.size()-1; i++){
 
-        QList<QSharedPointer<GWSGraphEdge> > route;
+        QList<QSharedPointer<GWSNetworkEdge> > route;
         GWSCoordinate from_coor = ordered_coors.at( i );
         GWSCoordinate to_coor = ordered_coors.at( i+1 );
 
@@ -99,8 +99,8 @@ QList<QList<QSharedPointer<GWSGraphEdge> > > GWSRouting::getShortestPath(QList< 
     return result_routes;
 }
 
-QList<QList<QSharedPointer< GWSGraphEdge> > > GWSRouting::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many ){
-    QList< QList< QSharedPointer<GWSGraphEdge> > > result_routes;
+QList<QList<QSharedPointer< GWSNetworkEdge> > > GWSRouting::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many ){
+    QList< QList< QSharedPointer<GWSNetworkEdge> > > result_routes;
 
     // Compute dijkstra shortest path
     lemon::ListDigraph::Node start = this->coors_to_node->value( from_one );
@@ -117,7 +117,7 @@ QList<QList<QSharedPointer< GWSGraphEdge> > > GWSRouting::getShortestPaths( GWSC
 
     // Iterate all end nodes
     foreach( GWSCoordinate to_coor , to_many ){
-        QList< QSharedPointer<GWSGraphEdge> > route = QList< QSharedPointer<GWSGraphEdge> >();
+        QList< QSharedPointer<GWSNetworkEdge> > route = QList< QSharedPointer<GWSNetworkEdge> >();
 
         lemon::ListDigraph::Node end = this->coors_to_node->value( to_coor );
 
@@ -161,7 +161,7 @@ QList<QList<QSharedPointer< GWSGraphEdge> > > GWSRouting::getShortestPaths( GWSC
  SETTERS
 **********************************************************************/
 
-void GWSRouting::upsert(QSharedPointer<GWSGraphEdge> edge){
+void GWSRouting::upsert(QSharedPointer<GWSNetworkEdge> edge){
 
     try {
 
@@ -198,7 +198,7 @@ void GWSRouting::upsert(QSharedPointer<GWSGraphEdge> edge){
 
 }
 
-void GWSRouting::remove(QSharedPointer<GWSGraphEdge> edge){
+void GWSRouting::remove(QSharedPointer<GWSNetworkEdge> edge){
     lemon::ListDigraph::Arc arc = this->arc_to_edges->key( edge );
     if( this->routing_graph->id( arc ) > 0 ){
         this->routing_graph->erase( arc );
@@ -207,9 +207,9 @@ void GWSRouting::remove(QSharedPointer<GWSGraphEdge> edge){
 }
 
 
-void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSGraphEdge> > route ){
+void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSNetworkEdge> > route ){
     if( !this->routes_cache.keys().contains( start ) ){
-        this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< QSharedPointer< GWSGraphEdge> > >() );
+        this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< QSharedPointer< GWSNetworkEdge> > >() );
     }
     this->routes_cache[ start ].insert( end , route );
 }

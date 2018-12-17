@@ -128,7 +128,7 @@ QJsonObject GWSAgent::serialize() const{
     }
 
     // EDGE
-    QSharedPointer<GWSGraphEdge> edge = GWSNetworkEnvironment::globalInstance()->getEdge( this->getSharedPointer() );
+    QSharedPointer<GWSNetworkEdge> edge = GWSNetworkEnvironment::globalInstance()->getEdge( this->getSharedPointer() );
     if( edge ){
         json.insert( GWSNetworkEnvironment::EDGE_PROP , edge->serialize() );
     }

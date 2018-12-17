@@ -71,7 +71,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
 
-        QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
+        QSharedPointer<GWSNetworkEdge> starting_current_edge = this->pending_route.at(0);
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
@@ -112,7 +112,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
         // We are going to start iterating the coordinates of edge located at pending_route[0]
-        QSharedPointer<GWSGraphEdge> starting_current_edge = this->pending_route.at(0);
+        QSharedPointer<GWSNetworkEdge> starting_current_edge = this->pending_route.at(0);
 
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 

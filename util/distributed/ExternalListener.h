@@ -13,7 +13,7 @@ public:
     GWSExternalListener( QString socket_id );
 
 signals:
-    void dataReceived( QJsonObject json_data );
+    void dataReceivedSignal( QJsonObject json_data );
 
 public slots:
 

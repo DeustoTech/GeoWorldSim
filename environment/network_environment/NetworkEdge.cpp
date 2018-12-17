@@ -1,52 +1,43 @@
-#include "GraphEdge.h"
+#include "NetworkEdge.h"
 
 #include <QDebug>
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
-QString GWSGraphEdge::EDGE_FROM_X_PROP = "from_x";
-QString GWSGraphEdge::EDGE_FROM_Y_PROP = "from_y";
-QString GWSGraphEdge::EDGE_FROM_Z_PROP = "from_z";
-QString GWSGraphEdge::EDGE_TO_X_PROP = "to_x";
-QString GWSGraphEdge::EDGE_TO_Y_PROP = "to_y";
-QString GWSGraphEdge::EDGE_TO_Z_PROP = "to_z";
+QString GWSNetworkEdge::EDGE_FROM_X_PROP = "from_x";
+QString GWSNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
+QString GWSNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
+QString GWSNetworkEdge::EDGE_TO_X_PROP = "to_x";
+QString GWSNetworkEdge::EDGE_TO_Y_PROP = "to_y";
+QString GWSNetworkEdge::EDGE_TO_Z_PROP = "to_z";
 
-GWSGraphEdge::GWSGraphEdge() : GWSObject() {
+GWSNetworkEdge::GWSNetworkEdge() : GWSEdge() {
 }
 
-GWSGraphEdge::~GWSGraphEdge(){
+GWSNetworkEdge::~GWSNetworkEdge(){
 }
 
 /**********************************************************************
  IMPORTERS
 **********************************************************************/
 
-void GWSGraphEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+void GWSNetworkEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     GWSObject::deserialize( json , parent );
     this->length = GWSLengthUnit( this->getFrom().getDistance( this->getTo() ) );
-}
-
-/**********************************************************************
- EXPORTERS
-**********************************************************************/
-
-QJsonObject GWSGraphEdge::serialize() const{
-    QJsonObject json = GWSObject::serialize();
-    return json;
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-GWSCoordinate GWSGraphEdge::getFrom() const{
+GWSCoordinate GWSNetworkEdge::getFrom() const{
     return GWSCoordinate( this->getProperty( EDGE_FROM_X_PROP ).toDouble() , this->getProperty( EDGE_FROM_Y_PROP ).toDouble() , this->getProperty( EDGE_FROM_Z_PROP ).toDouble() );
 }
 
-GWSCoordinate GWSGraphEdge::getTo() const{
+GWSCoordinate GWSNetworkEdge::getTo() const{
     return GWSCoordinate( this->getProperty( EDGE_TO_X_PROP ).toDouble() , this->getProperty( EDGE_TO_Y_PROP ).toDouble() , this->getProperty( EDGE_TO_Z_PROP ).toDouble() );
 }
 
-GWSLengthUnit GWSGraphEdge::getLength() const {
+GWSLengthUnit GWSNetworkEdge::getLength() const {
     return this->length;
 }
 
@@ -55,7 +46,7 @@ GWSLengthUnit GWSGraphEdge::getLength() const {
  * (positive for climbing up and negative for going down)
  * @return
  */
-double GWSGraphEdge::getGradient() const{
+double GWSNetworkEdge::getGradient() const{
     double length = this->getLength().number();
     if( length ){
         try {
@@ -74,16 +65,16 @@ double GWSGraphEdge::getGradient() const{
  * @param accumulated_cost Accumulated cost at which this edge was reached (used to know at what time we pass)
  * @return
  */
-double GWSGraphEdge::getCost(double accumulated_cost) const{
+double GWSNetworkEdge::getCost(double accumulated_cost) const{
     Q_UNUSED( accumulated_cost )
     return this->length.value;
 }
 
-bool GWSGraphEdge::equals( const QSharedPointer<GWSGraphEdge> other) const{
+bool GWSNetworkEdge::equals( const QSharedPointer<GWSNetworkEdge> other) const{
     return this->getFrom() == other->getFrom() && this->getTo() == other->getTo();
 }
 
-bool GWSGraphEdge::equalsReversed(const QSharedPointer<GWSGraphEdge> other) const{
+bool GWSNetworkEdge::equalsReversed(const QSharedPointer<GWSNetworkEdge> other) const{
     return this->getFrom() == other->getTo() && this->getTo() == other->getFrom();
 }
 
@@ -91,6 +82,6 @@ bool GWSGraphEdge::equalsReversed(const QSharedPointer<GWSGraphEdge> other) cons
  SETTERS
 **********************************************************************/
 
-void GWSGraphEdge::setLength(GWSLengthUnit length){
+void GWSNetworkEdge::setLength(GWSLengthUnit length){
     this->length = length;
 }

@@ -2,7 +2,7 @@
 #define GWSSOCIALENVIRONMENT_H
 
 #include "../../environment/Environment.h"
-#include "../../util/graph/GraphEdge.h"
+
 
 class GWSSocialEnvironment : public GWSEnvironment
 {
