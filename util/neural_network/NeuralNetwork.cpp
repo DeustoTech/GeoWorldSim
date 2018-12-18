@@ -1,6 +1,7 @@
 #include "NeuralNetwork.h"
 
 #include <QJsonObject>
+#include <QJsonDocument>
 #include <QDebug>
 #include <QFile>
 
@@ -145,13 +146,14 @@ void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_f
 
 
 /* Select random input from file to test the network */
-void GWSNeuralNetwork::randomLine( QString inputs_file_path ){
+QJsonObject GWSNeuralNetwork::randomLine( QString inputs_file_path ){
 
-       /*QFile input_file( inputs_file_path );
+       QFile input_file( inputs_file_path );
+       QJsonObject randomLine;
 
        if(!input_file.open(QIODevice::ReadOnly)) {
             qWarning() << "NO FILE";
-            return;
+            return QJsonObject();
        }
 
     // Get number of lines in input file:
@@ -171,25 +173,18 @@ void GWSNeuralNetwork::randomLine( QString inputs_file_path ){
            QString line = in.readLine();
            ++line_number;
            if ( line_number == random_line ){
-               QStringList columns = line.split(';');
-               for(int i = 0; i < columns.size() ; i++ ){
-
-                   QString string_value = columns.at(i);
-                   // Remove surrounding quotes
-                   string_value.replace( "\"" , "" );
-
-                   bool ok;
-                   QVariant value = string_value.toDouble( &ok );
-                   if( !ok ){ value = string_value; }
-
-                   row.append( QPair< QString, QVariant>( headers.key( i ) , value ) );
+                randomLine = QJsonDocument::fromJson(line.toUtf8()).object();
                }
            }
-        }*/
 
-
-
+       return randomLine;
 }
+
+
+
+
+
+
 
 /* Train the network on given input and output arrays  */
 
@@ -402,12 +397,6 @@ QJsonObject GWSNeuralNetwork::run( QJsonObject inputs ){
             input[position] = inputs.value( input_name ).toDouble( 1 );
         }
     }
-
-
-
-
-
-
 
 
     fann_type* output = this->net.run( input );

@@ -110,12 +110,13 @@ int main(int argc, char **argv)
 
         }
 
-
+        QJsonObject test = neural_network->randomLine( argv[1] );
+        neural_network->run( test );
 
     }
-    catch (...)
+    catch (const std::exception e )
     {
-        qWarning() << endl << "Abnormal exception." << endl;
+        qWarning() << endl << "Abnormal exception." << e.what() << endl;
     }
     return 0;
 }

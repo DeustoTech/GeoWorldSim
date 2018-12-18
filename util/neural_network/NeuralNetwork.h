@@ -27,7 +27,7 @@ public:
     void load( const std::string trained_network_filename );
     QJsonObject run( QJsonObject inputs );
     QList< QList< QPair< QString , QVariant> > > inputs;
-    void randomLine( QString inputs_file_path );
+    QJsonObject randomLine( QString inputs_file_path );
 
 private:
 
