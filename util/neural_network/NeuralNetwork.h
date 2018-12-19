@@ -15,17 +15,18 @@ class GWSNeuralNetwork : public QObject{
     Q_OBJECT
 
 public:
-    explicit GWSNeuralNetwork(double learning_rate,  double desired_error, int max_iterations, int iterations_between_reports );
+    explicit GWSNeuralNetwork();
     explicit GWSNeuralNetwork(QString training_path);
     ~GWSNeuralNetwork();
 
     // METHODS
+    void setParameters(double learning_rate,  double desired_error, int max_iterations, int iterations_between_reports);
     void trainFromFile( QString inputs_file_path , QString outputs_file_path );
     void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
     void train( QList< QList< QPair< QString , QVariant> > > input_train_dataset, QList< QList< QPair< QString , QVariant> > >  output_train_dataset );
-    void save( const std::string trained_network_filename );
-    void load( const std::string trained_network_filename );
-    QJsonObject run( QJsonObject inputs );
+    void save( const QString fann_trained_network_filename , const QString gws_neural_network_filename );
+    void load( const QString fann_trained_network_filename , const QString gws_neural_network_filename );
+    QJsonObject run(  QList<QPair <QString, QVariant> > inputs );
     QList< QList< QPair< QString , QVariant> > > inputs;
     QJsonObject randomLine( QString inputs_file_path );
 
@@ -53,7 +54,9 @@ private:
     QMap< QString , double >* output_minimums = Q_NULLPTR;; // { pos0 : 2.43 , pos1 : 0 ...
 
     void generatePositions( QList< QList< QPair< QString , QVariant> > > data_rows ,  QMap<QString , int>* positions , QMap< QString , double >* maximums , QMap< QString , double >* minimums );
-
+    QString getIOName( QString key , QVariant value );
+    double normalizeIO( QVariant value , QString hash , QMap< QString , double >* maximums , QMap< QString , double >* minimums );
+    double denormalizeIO( double normalized_value , int position );
 };
 
 #endif // GWSNEURALNETWORK_H

@@ -4,25 +4,15 @@
 #include <QJsonDocument>
 #include <QDebug>
 #include <QFile>
+#include <QTextStream>
 
 using namespace std;
 
-GWSNeuralNetwork::GWSNeuralNetwork(double learning_rate, double desired_error, int max_iterations, int iterations_between_reports ) : QObject( ){
-
-    this->learning_rate = learning_rate;
-
-    this->num_hidden = num_hidden;
-
-    this->desired_error = desired_error;
-    this->max_iterations = max_iterations;
-    this->iterations_between_reports = iterations_between_reports;
-
-
+GWSNeuralNetwork::GWSNeuralNetwork() : QObject( ){
 }
 
 GWSNeuralNetwork::GWSNeuralNetwork( QString training_file ){
     FANN::training_data data;
-
 }
 
 GWSNeuralNetwork::~GWSNeuralNetwork(){
@@ -37,6 +27,13 @@ GWSNeuralNetwork::~GWSNeuralNetwork(){
 /**********************************************************************
   METHODS
 **********************************************************************/
+
+void GWSNeuralNetwork::setParameters(double learning_rate, double desired_error, int max_iterations, int iterations_between_reports){
+    this->learning_rate = learning_rate;
+    this->desired_error = desired_error;
+    this->max_iterations = max_iterations;
+    this->iterations_between_reports = iterations_between_reports;
+}
 
 void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_file_path) {
 
@@ -145,45 +142,6 @@ void GWSNeuralNetwork::trainFromFile(QString inputs_file_path, QString outputs_f
 }
 
 
-/* Select random input from file to test the network */
-QJsonObject GWSNeuralNetwork::randomLine( QString inputs_file_path ){
-
-       QFile input_file( inputs_file_path );
-       QJsonObject randomLine;
-
-       if(!input_file.open(QIODevice::ReadOnly)) {
-            qWarning() << "NO FILE";
-            return QJsonObject();
-       }
-
-    // Get number of lines in input file:
-       QTextStream in(&input_file);
-       int line_number = 0;
-       while( !in.atEnd() ) {
-
-           QString line = in.readLine();
-           ++line_number;
-        }
-
-        // Select a line randomly:
-       int random_line = qrand() % line_number;
-
-       while( !in.atEnd() ) {
-
-           QString line = in.readLine();
-           ++line_number;
-           if ( line_number == random_line ){
-                randomLine = QJsonDocument::fromJson(line.toUtf8()).object();
-               }
-           }
-
-       return randomLine;
-}
-
-
-
-
-
 
 
 /* Train the network on given input and output arrays  */
@@ -228,17 +186,15 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
     this->output_minimums = new QMap<QString , double>();
     this->generatePositions( output_train_dataset , this->output_positions , this->output_maximums , this->output_minimums );
 
+    // Create training_data
+    struct fann_train_data* data = fann_create_train( input_train_dataset.size() , this->input_positions->keys().size() , this->output_positions->keys().size() );
 
-    // Initialize input set:
-    fann_type** fann_inputs = new fann_type* [ input_train_dataset.size() ]; // Row amount of the dataset
-
+    // Initialize and fill input set:
     for ( int i = 0 ; i < input_train_dataset.size() ; i++ ){ // Columns that represent the inputs of the dataset
-
-        fann_inputs[i] = new fann_type[ this->input_positions->keys().size() ];
 
         // Init all positions to 0
         for(int j = 0 ; j < this->input_positions->keys().size() ; j++ ){
-            fann_inputs[i][j] = 0;
+            data->input[i][j] = 0;
         }
 
         // Go row by row setting the inputs
@@ -249,37 +205,26 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
             QPair< QString , QVariant > pair = row.at( j );
             QString hash = pair.first;
             QVariant value_variant = pair.second;
-            double value_double = 0;
+            hash = this->getIOName( hash , value_variant );
 
-            if( value_variant.type() == QVariant::String ){
-                hash = hash + ":" + value_variant.toString();
-                value_double = 1;
-            } else {
-                value_double = value_variant.toDouble();
-            }
+            // Normalize only if value_variant is double AND not zero:
 
-            double min = this->input_minimums->value( hash );
-            double max = this->input_maximums->value( hash );
-            value_double = ( value_double - min ) / ( max - min );
+            double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
 
             int position = this->input_positions->value( hash , -1 );
             if( position > -1 ){
-                fann_inputs[i][position] = value_double;
+                data->input[i][position] = value_double;
             }
 
         }
     }
 
     // Initialize and fill output set:
-    fann_type** fann_outputs = new fann_type* [ output_train_dataset.size() ];
-
     for ( int i = 0 ; i < output_train_dataset.size() ; i++ ){  // Columns tha represent the outputs of the dataset
-
-        fann_outputs[i] = new fann_type[ this->output_positions->keys().size() ];
 
         // Init all positions to 0
         for(int j = 0 ; j < this->output_positions->keys().size() ; j++ ){
-            fann_outputs[i][j] = 0;
+            data->output[i][j] = 0;
         }
 
         // Go row by row setting the inputs
@@ -290,129 +235,254 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
             QPair< QString , QVariant > pair = row.at( j );
             QString hash = pair.first;
             QVariant value_variant = pair.second;
-            double value_double = 0;
-
-            if( value_variant.type() == QVariant::String ){
-                hash = hash + ":" + value_variant.toString();
-                value_double = 1;
-            } else {
-                value_double = value_variant.toDouble();
-            }
-
-            double min = this->output_minimums->value( hash );
-            double max = this->output_maximums->value( hash );
-            value_double = ( value_double - min ) / ( max - min );
+            hash = this->getIOName( hash , value_variant );
+            double value_double = this->normalizeIO( value_variant , hash , this->output_maximums , this->output_minimums );
 
             int position = this->output_positions->value( hash , -1 );
             if( position > -1 ){
-                fann_inputs[i][position] = value_double;
+                data->output[i][position] = value_double;
             }
-
         }
-
     }
 
-    // Divide data into training and testing batches:
-    this->train_data.set_train_data( input_train_dataset.size() , this->input_positions->keys().size() , fann_inputs , this->output_positions->keys().size() , fann_outputs );
 
     qDebug() << "Creating network." << endl;
 
-    // this->net.create_standard( this->input_positions->size() + this->output_positions->size(), this->input_positions->size(), this->num_hidden, this->output_positions->size());
+    this->train_data = FANN::training_data();
+    this->train_data.set_train_data( data->num_data , data->num_input , data->input , data->num_output , data->output );
+
+    //this->net.create_standard( 2 , this->input_positions->size(),  this->output_positions->size());
 
     // Crash when using create_standard method if total layers > 3. Using create_standard_array instead:
-    unsigned int layers[4] = { (unsigned int)this->input_positions->keys().size()  , 8 , 9 ,  (unsigned int)this->output_positions->keys().size() };
+    unsigned int layers[4] = { (unsigned int)this->input_positions->keys().size() ,  74 , 32 , (unsigned int)this->output_positions->keys().size() };
     this->net.create_standard_array(4, layers);
 
     this->net.set_learning_rate( this->learning_rate );
     this->net.set_activation_steepness_hidden(1.0);
     this->net.set_activation_steepness_output(1.0);
+
     this->net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
     this->net.set_activation_function_output(FANN::SIGMOID_SYMMETRIC_STEPWISE);
 
     // Set additional properties such as the training algorithm
-    //net.set_training_algorithm(FANN::TRAIN_INCREMENTAL);
-
-    // Print NN parameters
-    this->net.print_parameters();
+    net.set_training_algorithm(FANN::TRAIN_BATCH);
 
     qDebug() << endl << "Training network." << endl;
 
     // Train the network with the training dataset:
-    this->net.init_weights( this->train_data );
+    //this->net.init_weights( this->train_data );
+
+    this->net.randomize_weights( -1 , 1 );
     this->net.train_on_data( this->train_data , this->max_iterations , this->iterations_between_reports , this->desired_error );
     //this->net.save( "/home/maialen/Escritorio/WorkSpace/FannExamples/XOR_QJsonInput/network.net" );
 
+    this->net.print_parameters();
+    //this->net.print_connections();
 }
 
 
 /*  Save the network to given file name  */
 
 
-void GWSNeuralNetwork::save( const std::string trained_network_filename ){
-
+void GWSNeuralNetwork::save(const QString fann_trained_network_filename, const QString gws_neural_network_filename){
 
     // Save trained network:
-    this->net.save( trained_network_filename );
+    this->net.save( fann_trained_network_filename.toStdString() );
+    QFile out( gws_neural_network_filename );
+    if( out.open(QIODevice::ReadWrite) ) {
+        QTextStream stream(&out);
+
+        // Input positions
+        {
+            QString str;
+            for(int i = 0 ; i < this->input_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += this->input_positions->key( i );
+            }
+            stream << str << endl;
+        }
+
+        // Input maximums
+        {
+            QString str;
+            for(int i = 0 ; i < this->input_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += QString::number( this->input_maximums->value( this->input_positions->key( i ) ) );
+            }
+            stream << str << endl;
+        }
+
+        // Input minimums
+        {
+            QString str;
+            for(int i = 0 ; i < this->input_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += QString::number( this->input_minimums->value( this->input_positions->key( i ) ) );
+            }
+            stream << str << endl;
+        }
+
+        // Output positions
+        {
+            QString str;
+            for(int i = 0 ; i < this->output_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += this->output_positions->key( i );
+            }
+            stream << str << endl;
+        }
+
+        // Output maximums
+        {
+            QString str;
+            for(int i = 0 ; i < this->output_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += QString::number( this->output_maximums->value( this->output_positions->key( i ) ) );
+            }
+            stream << str << endl;
+        }
+
+        // Output minimums
+        {
+            QString str;
+            for(int i = 0 ; i < this->output_positions->values().size() ; i++){
+                if( !str.isEmpty() ){ str += ";"; }
+                str += QString::number( this->output_minimums->value( this->output_positions->key( i ) ) );
+            }
+            stream << str << endl;
+        }
+    }
 
 }
 
-
-
 /* Load trained network */
-void GWSNeuralNetwork::load( const std::string trained_network_filename ){
+void GWSNeuralNetwork::load(const QString fann_trained_network_filename, const QString gws_neural_network_filename){
+
+    // Load trained network:
+    this->net.create_from_file( fann_trained_network_filename.toStdString() );
+
+    QFile in( gws_neural_network_filename );
+    if( in.open(QIODevice::ReadWrite) ) {
+
+        QTextStream stream(&in);
 
 
-    // Save trained network:
-    this->net.create_from_file( trained_network_filename );
+        // First line = input_positions
+        {
+            QString line = stream.readLine();
+            if( this->input_positions ){ delete this->input_positions; }
+            this->input_positions = new QMap<QString , int>();
+            foreach( QString key , line.split(";") ){
+                this->input_positions->insert( key , this->input_positions->size() );
+            }
 
+        }
+
+        // Second line = input_maximums
+        {
+            QString line = stream.readLine();
+            if( this->input_maximums ){ delete this->input_maximums; }
+            this->input_maximums = new QMap<QString , double>();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions->key( i );
+                this->input_maximums->insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Third line = input_minimums
+        {
+            QString line = stream.readLine();
+            if( this->input_minimums ){ delete this->input_minimums; }
+            this->input_minimums = new QMap<QString , double>();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions->key( i );
+                this->input_minimums->insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Fourth line = output_positions
+        {
+            QString line = stream.readLine();
+            if( this->output_positions ){ delete this->output_positions; }
+            this->output_positions = new QMap<QString , int>();
+            foreach( QString key , line.split(";") ){
+                this->output_positions->insert( key , this->output_positions->size() );
+            }
+        }
+
+        // Fifth line = output_maximums
+        {
+            QString line = stream.readLine();
+            if( this->output_maximums ){ delete this->output_maximums; }
+            this->output_maximums = new QMap<QString , double>();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions->key( i );
+                this->output_maximums->insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Sixth line = output_minimums
+        {
+            QString line = stream.readLine();
+            if( this->output_minimums ){ delete this->output_minimums; }
+            this->output_minimums = new QMap<QString , double>();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions->key( i );
+                this->output_minimums->insert( key , values.at( i ).toDouble() );
+            }
+        }
+    }
 }
 
 /*  Run the network on a given input set  */
 
-QJsonObject GWSNeuralNetwork::run( QJsonObject inputs ){
+QJsonObject GWSNeuralNetwork::run( QList< QPair <QString, QVariant> > test_inputs ){
 
-    fann_type input[ this->input_positions->keys().size() ];
+    fann_type* test_input = new fann_type[ this->input_positions->keys().size() ];
 
     // Init all positions to 0
     for(int j = 0 ; j < this->input_positions->keys().size() ; j++ ){
-        input[j] = 0;
+        test_input[j] = 0;
     }
 
-    // Iterate received inputs
-    double min;
-    double max;
-    foreach( QString input_name , inputs.keys() ) {
+    // Recorrer los input pairs:
+    for ( int i = 0; i < test_inputs.size() ; i++ ){
 
-        QString hash = input_name;
-        if( inputs.value( input_name ).isString() ){
-            hash = input_name + ":" + inputs.value( input_name ).toString();
-        }
-        if( inputs.value( input_name ).isDouble() ){
-            min = this->input_minimums->value( input_name );
-            max = this->input_maximums->value( input_name );
-            inputs[ input_name ] = ( inputs.value( input_name ).toDouble() - min ) / ( max - min );
-        }
+        QPair<QString , QVariant> input_pair = test_inputs.at(i);
+        QString hash = input_pair.first;
+        QVariant value_variant = input_pair.second;
+        hash = this->getIOName( hash , value_variant );
+        double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
+
         int position = this->input_positions->value( hash , -1 );
         if( position > -1 ){
-            input[position] = inputs.value( input_name ).toDouble( 1 );
+            test_input[i] = value_double;
         }
     }
 
+    fann_type* test_output = this->net.run( test_input );
 
-    fann_type* output = this->net.run( input );
+    QJsonObject result;
 
     foreach( int position , this->output_positions->values() ){
-        double normalized_output = output[position];
-        qDebug() << "Normalized output for" << this->output_positions->key( position ) << " = " << normalized_output;
-        double output_min = this->output_minimums->value( this->output_positions->key( position ) );
-        double output_max = this->output_maximums->value( this->output_positions->key( position ) );
-        double denormalized_output = normalized_output * ( output_max - output_min) + output_min;
-        qDebug() << "Denormalized output for " << this->output_positions->key( position ) << " = " <<  denormalized_output;
+
+        double normalized_output = test_output[position];
+        double denormalized_output = this->denormalizeIO( normalized_output , position );
+
+        result.insert( this->output_positions->key( position ) , denormalized_output );
     }
 
-    return QJsonObject();
 
+    qDebug() << this->net.get_MSE();
+    return result;
 }
+
+
+
 
 
 /**********************************************************************
@@ -434,10 +504,10 @@ void GWSNeuralNetwork::generatePositions(QList< QList< QPair< QString , QVariant
             QPair< QString , QVariant > pair = row.at( j );
             QString hash = pair.first;
             QVariant value_variant = pair.second;
+            hash = this->getIOName( hash , value_variant );
             double value_double = 0;
 
             if( value_variant.type() == QVariant::String ){
-                hash = hash + ":" + value_variant.toString();
                 value_double = 1;
             } else {
                 value_double = value_variant.toDouble();
@@ -464,3 +534,51 @@ void GWSNeuralNetwork::generatePositions(QList< QList< QPair< QString , QVariant
 
 }
 
+QString GWSNeuralNetwork::getIOName( QString key, QVariant value){
+
+    if( value.type() == QVariant::String ){
+        return key + ":" + value.toString();
+    }
+    return key;
+}
+
+double GWSNeuralNetwork::normalizeIO(QVariant value, QString hash , QMap< QString , double >* maximums , QMap< QString , double >* minimums){
+
+    double value_double;
+
+    if( value.type() == QVariant::String ){
+        value_double = 1;
+    } else if ( value != 0.0 ){
+        value_double = value.toDouble();
+        double min = minimums->value( hash );
+        double max = maximums->value( hash );
+
+        // To normalize in [ 0 , 1 ] range
+        value_double = ( value_double - min ) / ( max - min );
+
+        // To normalize in [ -1 , 1 ] range
+        //value_double = ((value_double - min )/(max - min) - 0.5 ) *2;
+        //value_double = 2.0 * ( ( value_double - min ) / ( max - min ) ) - 1.0;
+    }
+
+
+    return value_double;
+}
+
+
+double GWSNeuralNetwork::denormalizeIO( double normalized_value , int position ){
+
+    double denormalized_value;
+
+    double min = this->output_minimums->value( this->output_positions->key( position ) );
+    double max = this->output_maximums->value( this->output_positions->key( position ) );
+
+    // Denormalize from [ 0 , 1 ] range:
+    denormalized_value = normalized_value * ( max - min) + min;
+
+
+    // Denormalize from [ -1 , 1 ] range:
+    //denormalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
+    return normalized_value;
+
+}
