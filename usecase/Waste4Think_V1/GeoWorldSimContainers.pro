@@ -107,7 +107,9 @@ HEADERS += \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
-    ../../util/neural_network/NeuralNetwork.h
+    ../../util/neural_network/NeuralNetwork.h \
+    ../../util/ai/Intelligence.h \
+    ../../util/svm/Svm.h
             ## TRANSPORT LINE
 
 
@@ -194,7 +196,9 @@ SOURCES += mainlauncher.cpp \
     ../../util/distributed/ExternalListener.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
-    ../../util/neural_network/NeuralNetwork.cpp
+    ../../util/neural_network/NeuralNetwork.cpp \
+    ../../util/ai/Intelligence.cpp \
+    ../../util/svm/Svm.cpp
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon
