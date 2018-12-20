@@ -94,6 +94,8 @@ HEADERS += \
     ../../environment/EnvironmentsGroup.h \
     ../../environment/agent_environment/AgentEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
+    ../../environment/social_environment/SocialEnvironment.h \
+    ../../environment/social_environment/SocialEdge.h \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
@@ -173,8 +175,8 @@ SOURCES += mainEmpty.cpp \
     ../../environment/EnvironmentsGroup.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
-    #../../environment/social_environment/SocialEnvironment.cpp \
-    #../../environment/social_environment/Message.cpp \
+    ../../environment/social_environment/SocialEnvironment.cpp \
+    ../../environment/social_environment/SocialEdge.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
@@ -185,6 +187,7 @@ SOURCES += mainEmpty.cpp \
     ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/agent/FindRandomAgentBehaviour.cpp
+
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon

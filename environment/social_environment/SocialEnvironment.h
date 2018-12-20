@@ -2,6 +2,7 @@
 #define GWSSOCIALENVIRONMENT_H
 
 #include "../../environment/Environment.h"
+#include "SocialEdge.h"
 
 
 class GWSSocialEnvironment : public GWSEnvironment

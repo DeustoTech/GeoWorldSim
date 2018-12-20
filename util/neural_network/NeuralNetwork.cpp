@@ -48,9 +48,7 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
     for ( int i = 0 ; i < input_train_dataset.size() ; i++ ){ // Columns that represent the inputs of the dataset
 
         // Init all positions to 0
-        for(int j = 0 ; j < this->input_positions->keys().size() ; j++ ){
-            data->input[i][j] = 0;
-        }
+        for(int j = 0 ; j < this->input_positions->keys().size() ; j++ ){ data->input[i][j] = 0; }
 
         // Go row by row setting the inputs
         // Scaling rule:  x_new = (x - x1_min) / (x1_max - x1_min)
@@ -77,9 +75,7 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
     for ( int i = 0 ; i < output_train_dataset.size() ; i++ ){  // Columns tha represent the outputs of the dataset
 
         // Init all positions to 0
-        for(int j = 0 ; j < this->output_positions->keys().size() ; j++ ){
-            data->output[i][j] = 0;
-        }
+        for(int j = 0 ; j < this->output_positions->keys().size() ; j++ ){ data->output[i][j] = 0; }
 
         // Go row by row setting the inputs
         // Scaling rule:  x_new = (x - x1_min) / (x1_max - x1_min)
@@ -104,8 +100,6 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
     this->train_data = FANN::training_data();
     this->train_data.set_train_data( data->num_data , data->num_input , data->input , data->num_output , data->output );
 
-    //this->net.create_standard( 2 , this->input_positions->size(),  this->output_positions->size());
-
     // Crash when using create_standard method if total layers > 3. Using create_standard_array instead:
     unsigned int layers[4] = { (unsigned int)this->input_positions->keys().size() ,  74 , 32 , (unsigned int)this->output_positions->keys().size() };
     this->net.create_standard_array(4, layers);
@@ -123,19 +117,14 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
     qDebug() << endl << "Training network." << endl;
 
     // Train the network with the training dataset:
-    //this->net.init_weights( this->train_data );
-
     this->net.randomize_weights( -1 , 1 );
     this->net.train_on_data( this->train_data , this->max_iterations , this->iterations_between_reports , this->desired_error );
-    //this->net.save( "/home/maialen/Escritorio/WorkSpace/FannExamples/XOR_QJsonInput/network.net" );
 
     this->net.print_parameters();
-    //this->net.print_connections();
 }
 
 
 /*  Save the network to given file name  */
-
 
 void GWSNeuralNetwork::save(const QString fann_trained_network_filename, const QString gws_neural_network_filename){
 

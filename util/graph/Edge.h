@@ -9,6 +9,9 @@ class GWSEdge : public GWSObject
 public:
 
     GWSEdge();
+
+    // GETTERS
+
 };
 
 #endif // GWSEDGE_H

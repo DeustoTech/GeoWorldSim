@@ -14,13 +14,14 @@ public:
     ~GWSSvm();
 
     // METHODS
-    virtual void train( QList< QList< QPair< QString , QVariant> > > input_train_dataset, QList< QList< QPair< QString , QVariant> > >  output_train_dataset ) = 0;
-    virtual QJsonObject run(  QList<QPair <QString, QVariant> > inputs ) = 0;
-
-
-
+    virtual void train( QList< QList< QPair< QString , QVariant> > > input_train_dataset, QList< QList< QPair< QString , QVariant> > >  output_train_dataset );
+    virtual QJsonObject run(  QList<QPair <QString, QVariant> > inputs );
 
 private:
+
+    svm_parameter parameters;
+    svm_model *model = Q_NULLPTR;
+
 };
 
 #endif // GWSSVM_H

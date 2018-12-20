@@ -48,7 +48,7 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor,
 QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
-    lemon::FullGraph* distance_matrix = new FullGraph( visit_coordinates.size() );
+    lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
 
     // Distance matrix graph costs
     lemon::FullGraph::EdgeMap<double>* distance_matrix_weights = new lemon::FullGraph::EdgeMap<double>( *distance_matrix );
