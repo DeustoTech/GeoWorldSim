@@ -124,6 +124,16 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         file.close();
     }
 
+    this->input_positions = new QMap<QString , int>();
+    this->input_maximums = new QMap<QString , double>();
+    this->input_minimums = new QMap<QString , double>();
+    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
+
+    this->output_positions = new QMap<QString , int>();
+    this->output_maximums = new QMap<QString , double>();
+    this->output_minimums = new QMap<QString , double>();
+    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
+
     this->train( inputs , outputs );
 }
 

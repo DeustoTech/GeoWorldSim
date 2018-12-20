@@ -76,7 +76,7 @@ void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset,
         for( int j = 0 ; j < row.size() ; j++ ) {
 
             QPair< QString , QVariant > pair = row.at( j );
-            QString hash = pair.first;
+            QString hash( pair.first );
             QVariant value_variant = pair.second;
             hash = this->getIOName( hash , value_variant );
 
@@ -92,9 +92,9 @@ void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset,
         problem.x[i][ input_train_dataset.at( i ).size() ].index = -1;
     }
 
-    this->model = svm_train(&problem_, &this->parameters);
+    this->model = svm_train(&problem, &this->parameters);
 }
 
-QJsonObject GWSSvm::run(QList<QPair<QString, QVariant> > inputs){
-
+QJsonObject GWSSvm::run( QList<QPair <QString, QVariant> > inputs ){
+    return QJsonObject();
 }

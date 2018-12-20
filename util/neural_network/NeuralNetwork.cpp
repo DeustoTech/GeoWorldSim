@@ -31,16 +31,6 @@ void GWSNeuralNetwork::train(QList< QList< QPair< QString , QVariant> > > input_
 
     Q_ASSERT( input_train_dataset.size() == output_train_dataset.size() );
 
-    this->input_positions = new QMap<QString , int>();
-    this->input_maximums = new QMap<QString , double>();
-    this->input_minimums = new QMap<QString , double>();
-    this->generatePositions( input_train_dataset  , this->input_positions , this->input_maximums , this->input_minimums );
-
-    this->output_positions = new QMap<QString , int>();
-    this->output_maximums = new QMap<QString , double>();
-    this->output_minimums = new QMap<QString , double>();
-    this->generatePositions( output_train_dataset , this->output_positions , this->output_maximums , this->output_minimums );
-
     // Create training_data
     struct fann_train_data* data = fann_create_train( input_train_dataset.size() , this->input_positions->keys().size() , this->output_positions->keys().size() );
 

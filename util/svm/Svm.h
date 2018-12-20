@@ -4,6 +4,7 @@
 #include "../../../GeoWorldSim/util/ai/Intelligence.h"
 
 #include <libsvm/svm.h>
+#include <QJsonObject>
 
 class GWSSvm : public GWSIntelligence
 {
