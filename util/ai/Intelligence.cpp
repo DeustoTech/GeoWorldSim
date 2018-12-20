@@ -25,7 +25,7 @@ GWSIntelligence::~GWSIntelligence(){
 
 void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_file_path) {
 
-    QList< QList< QPair< QString , QVariant> > > inputs;
+    QList< QList< QPair< std::string , QVariant> > > inputs;
     {
         QFile file( inputs_file_path );
 
@@ -53,7 +53,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
                 // Next reads are data
             } else {
 
-                QList< QPair< QString, QVariant > > row;
+                QList< QPair< std::string, QVariant > > row;
                 QStringList columns = line.split(';');
                 for(int i = 0; i < columns.size() ; i++ ){
 
@@ -65,7 +65,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
                     QVariant value = string_value.toDouble( &ok );
                     if( !ok ){ value = string_value; }
 
-                    row.append( QPair< QString, QVariant>( headers.key( i ) , value ) );
+                    row.append( QPair< std::string, QVariant>( headers.key( i ).toStdString() , value ) );
                 }
 
                 inputs.insert( 0 , row );
@@ -76,7 +76,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
     }
 
 
-    QList< QList< QPair< QString , QVariant> > > outputs;
+    QList< QList< QPair< std::string , QVariant> > > outputs;
     {
         QFile file( outputs_file_path );
 
@@ -102,7 +102,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
                 // Next reads are data
             } else {
 
-                QList< QPair< QString, QVariant > > row;
+                QList< QPair< std::string, QVariant > > row;
                 QStringList columns = line.split(';');
                 for(int i = 0; i < columns.size() ; i++ ){
 
@@ -114,7 +114,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
                     QVariant value = string_value.toDouble( &ok );
                     if( !ok ){ value = string_value; }
 
-                    row.append( QPair< QString, QVariant>( headers.key( i ) , value ) );
+                    row.append( QPair< std::string, QVariant>( headers.key( i ).toStdString() , value ) );
                 }
 
                 outputs.insert( 0 , row );
@@ -124,14 +124,14 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         file.close();
     }
 
-    this->input_positions = new QMap<QString , int>();
-    this->input_maximums = new QMap<QString , double>();
-    this->input_minimums = new QMap<QString , double>();
+    this->input_positions = new QMap< std::string , int>();
+    this->input_maximums = new QMap< std::string , double>();
+    this->input_minimums = new QMap< std::string , double>();
     this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
 
-    this->output_positions = new QMap<QString , int>();
-    this->output_maximums = new QMap<QString , double>();
-    this->output_minimums = new QMap<QString , double>();
+    this->output_positions = new QMap< std::string , int>();
+    this->output_maximums = new QMap< std::string , double>();
+    this->output_minimums = new QMap< std::string , double>();
     this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
 
     this->train( inputs , outputs );
@@ -140,22 +140,23 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
 
 void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray output_train_dataset ){
 
-    QList< QList< QPair< QString , QVariant> > > inputs;
+    QList< QList< QPair< std::string , QVariant> > > inputs;
     foreach( QJsonValue r , input_train_dataset ){
         QJsonObject row = r.toObject();
-        QList< QPair< QString , QVariant> > qpair_list;
+        QList< QPair< std::string , QVariant> > qpair_list;
         foreach( QString key , row.keys() ){
-            qpair_list.append( QPair<QString , QVariant>( key , row.value( key ).toVariant() ) );
+            std::string str = key.toLocal8Bit().data();
+            qpair_list.append( QPair< std::string , QVariant>( str , row.value( key ).toVariant() ) );
         }
         inputs.insert( 0 , qpair_list );
     }
 
-    QList< QList< QPair< QString , QVariant> > >  outputs;
+    QList< QList< QPair< std::string , QVariant> > >  outputs;
     foreach( QJsonValue r , output_train_dataset ){
         QJsonObject row = r.toObject();
-        QList< QPair< QString , QVariant> > qpair_list;
+        QList< QPair< std::string , QVariant> > qpair_list;
         foreach( QString key , row.keys() ){
-            qpair_list.append( QPair<QString , QVariant>( key , row.value( key ).toVariant() ) );
+            qpair_list.append( QPair< std::string , QVariant>( key.toLocal8Bit().data() , row.value( key ).toVariant() ) );
         }
         outputs.insert( 0 , qpair_list );
     }
@@ -172,17 +173,17 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
 /*  Allocate positions to input fields and get maximum and minimum values
     for eventual normalization (FANN data formatting requirement)        */
 
-void GWSIntelligence::generatePositions(QList< QList< QPair< QString , QVariant> > > data_rows, QMap<QString, int> *positions, QMap<QString, double> *maximums, QMap<QString, double> *minimums){
+void GWSIntelligence::generatePositions(QList< QList< QPair< std::string , QVariant> > > data_rows, QMap< std::string , int> *positions, QMap< std::string , double> *maximums, QMap< std::string , double> *minimums){
 
     // Give positions to the outputs
     for( int i = 0 ; i < data_rows.size() ; i ++ ) {
 
-        QList< QPair< QString , QVariant> > row = data_rows.at(i);
+        QList< QPair< std::string , QVariant> > row = data_rows.at(i);
 
         for( int j = 0 ; j < row.size() ; j ++ ){
 
-            QPair< QString , QVariant > pair = row.at( j );
-            QString hash = pair.first;
+            QPair< std::string , QVariant > pair = row.at( j );
+            std::string hash = pair.first;
             QVariant value_variant = pair.second;
             hash = this->getIOName( hash , value_variant );
             double value_double = 0;
@@ -214,15 +215,15 @@ void GWSIntelligence::generatePositions(QList< QList< QPair< QString , QVariant>
 
 }
 
-QString GWSIntelligence::getIOName( QString key, QVariant value){
+std::string GWSIntelligence::getIOName( std::string key, QVariant value){
 
     if( value.type() == QVariant::String ){
-        return key + ":" + value.toString();
+        return key + ':' + value.toString().toStdString();
     }
     return key;
 }
 
-double GWSIntelligence::normalizeIO(QVariant value, QString hash , QMap< QString , double >* maximums , QMap< QString , double >* minimums){
+double GWSIntelligence::normalizeIO(QVariant value, std::string hash , QMap< std::string , double >* maximums , QMap< std::string , double >* minimums){
 
     double value_double = 0;
 

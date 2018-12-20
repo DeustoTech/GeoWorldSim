@@ -41,7 +41,7 @@ GWSSvm::~GWSSvm(){
 
 /* Train SVM on given files */
 
-void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset, QList<QList<QPair<QString, QVariant> > > output_train_dataset){
+void GWSSvm::train(QList<QList<QPair< std::string, QVariant> > > input_train_dataset, QList<QList<QPair< std::string, QVariant> > > output_train_dataset){
 
     Q_ASSERT( input_train_dataset.size() == output_train_dataset.size() );
 
@@ -56,8 +56,8 @@ void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset,
 
         //! WARNING, SVM ONLY ALLOWS SINGLE OUTPUT, WE ARE GOING TO GET ONLY THE FIRST OUTPUT
 
-        QPair< QString , QVariant > pair = output_train_dataset.at( i ).at( 0 );
-        QString hash = pair.first;
+        QPair< std::string , QVariant > pair = output_train_dataset.at( i ).at( 0 );
+        std::string hash = pair.first;
         QVariant value_variant = pair.second;
         hash = this->getIOName( hash , value_variant );
 
@@ -72,11 +72,11 @@ void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset,
 
         problem.x[i] = new svm_node[ input_train_dataset.at( i ).size() + 1 ];
 
-        QList< QPair< QString , QVariant> > row = input_train_dataset.at( i );
+        QList< QPair< std::string , QVariant> > row = input_train_dataset.at( i );
         for( int j = 0 ; j < row.size() ; j++ ) {
 
-            QPair< QString , QVariant > pair = row.at( j );
-            QString hash( pair.first );
+            QPair< std::string , QVariant > pair = row.at( j );
+            std::string hash = pair.first;
             QVariant value_variant = pair.second;
             hash = this->getIOName( hash , value_variant );
 
@@ -95,6 +95,6 @@ void GWSSvm::train(QList<QList<QPair<QString, QVariant> > > input_train_dataset,
     this->model = svm_train(&problem, &this->parameters);
 }
 
-QJsonObject GWSSvm::run( QList<QPair <QString, QVariant> > inputs ){
+QJsonObject GWSSvm::run( QList<QPair < std::string, QVariant> > inputs ){
     return QJsonObject();
 }

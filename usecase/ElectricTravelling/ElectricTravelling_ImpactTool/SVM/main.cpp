@@ -17,15 +17,6 @@
 #include "../../../../util/svm/Svm.h"
 
 
-
-
-#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
-
-struct svm_parameter param;     // set by parse_command_line
-struct svm_problem prob;        // set by read_problem
-struct svm_model *model;
-struct svm_node *x_space;
-
 int main(int argc, char **argv)
 {
     GWSSvm* svm = new GWSSvm();
@@ -34,10 +25,7 @@ int main(int argc, char **argv)
     if (argc < 2) {
           qDebug() << "Input or output files missing! Cannot execute. ";
           return 0;
-    }
-
-
-    else{
+    } else {
 
           QString inputs_file = argv[1];
           QString outputs_file = argv[2];
