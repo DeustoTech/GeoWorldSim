@@ -201,12 +201,13 @@ void GWSIntelligence::generatePositions(QList<QMap<QString, QVariant> > data_row
 
 }
 
-QString GWSIntelligence::getIOName( QString key, QVariant value){
+QString GWSIntelligence::getIOName( QString key , QVariant value){
 
     if( value.type() == QVariant::String ){
-        return key + ':' + value.toString();
+        return QString("%1:%2").arg( key ).arg( value.toString() );
     }
-    return key;
+
+    return QString("%1").arg( key );
 }
 
 double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, double> maximums, QMap<QString, double> minimums){
@@ -242,7 +243,9 @@ double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
     //denormalized_value = normalized_value * ( max - min) + min;
 
     // Denormalize from [ -1 , 1 ] range:
+    qDebug() << normalized_value << min << max << this->output_positions.keys();
     denormalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
+    qDebug() << denormalized_value;
     return normalized_value;
 
 }

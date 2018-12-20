@@ -20,7 +20,7 @@ public:
     void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
 
     // METHODS
-    virtual void train( QList< QMap< QString , QVariant> > input_train_dataset, QList< QMap< QString , QVariant> >  output_train_dataset ) = 0;
+    virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset ) = 0;
     virtual QJsonObject run(  QMap< QString, QVariant> inputs ) = 0;
 
 protected:

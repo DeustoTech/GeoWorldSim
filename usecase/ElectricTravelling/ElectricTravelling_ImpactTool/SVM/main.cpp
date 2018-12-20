@@ -33,15 +33,23 @@ int main(int argc, char **argv)
           svm->trainFromFile( inputs_file, outputs_file);
 
 
-          QList<QPair < QString, QVariant> > test_input;
+          //QList<QPair < QString, QVariant> > test_input;
          /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
                          QPair<QString , QVariant>("Gradient" , 0) , QPair<QString , QVariant>("Subsegment" , "MC 4S 251-750cc Euro-5") ,
                          QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
             */
 
+
+          // HC	RUR/MW/80/Freeflow	0	MC 4S >750cc Euro-5	90,022644043	0	0
+
           QMap<QString , QVariant> input;
-          input.insert("val1" , -1);
-          input.insert("val2" , 1);
+          input.insert("Component" , "HC");
+          input.insert("TrafficSit" , "RUR/MW/80/Freeflow");
+          input.insert( "Gradient" , 0);
+          input.insert("Subsegment" , "MC 4S >750cc Euro-5");
+          input.insert("V" , 90.022644043);
+          input.insert("V_0" , 0);
+          input.insert("V_100" , 0);
           svm->run( input );
           return 0;
     }

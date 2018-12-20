@@ -2,6 +2,17 @@ TEMPLATE = app
 QT = core
 QT += network
 
+
+# ACTIVATE QT-COMPILER OPTIMIZATION
+# march=native
+# 02 -> Optimizations level 2
+# pipe
+QMAKE_CXXFLAGS += -march=native -O2 -pipe
+QMAKE_CFLAGS += -march=native -O2 -pipe
+
+# FORCE C++11
+QMAKE_CXXFLAGS += -std=c++14
+
 SOURCES += main.cpp \
     ../../../../util/ai/Intelligence.cpp \
     ../../../../util/svm/Svm.cpp

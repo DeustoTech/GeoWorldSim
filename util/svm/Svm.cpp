@@ -2,13 +2,15 @@
 
 #include <QDebug>
 #include <QHash>
+#include <QStringList>
+
 GWSSvm::GWSSvm() : GWSIntelligence (){
 
     // set some defaults
     this->parameters.svm_type = C_SVC;
     this->parameters.kernel_type = RBF;
     this->parameters.degree = 3;
-    this->parameters.gamma = 0;	// 1/num_features
+    this->parameters.gamma = 0.5;	// 1/num_features
     this->parameters.coef0 = 0;
     this->parameters.nu = 0.5;
     this->parameters.cache_size = 100;
@@ -20,6 +22,7 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
     this->parameters.nr_weight = 0;
     this->parameters.weight_label = Q_NULLPTR;
     this->parameters.weight = Q_NULLPTR;
+
 
 }
 
@@ -41,7 +44,9 @@ GWSSvm::~GWSSvm(){
 
 /* Train SVM on given files */
 
-void GWSSvm::train( const QList< QMap< QString, QVariant> > input_train_dataset , const QList<QMap<QString, QVariant> > output_train_dataset){
+void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset , const QList< QMap<QString, QVariant> > &output_train_dataset){
+
+    qDebug() << "PASO";
 
     Q_ASSERT( input_train_dataset.size() == output_train_dataset.size() );
 
@@ -66,31 +71,32 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > input_train_dataset 
     }
 
     // Set inputs
-    std::vector< svm_node* > x;
 
+    problem.x = new svm_node*[ problem.l ];
     for( int i = 0 ; i < input_train_dataset.size() ; i++ ){
 
-        x[i] = new svm_node[ input_train_dataset.at( i ).keys().size() + 1 ];
+        int size = input_train_dataset[ i ].size();
+        problem.x[i] = new svm_node[ size + 1 ];
 
         const QMap< QString , QVariant> row = input_train_dataset.at( i );
-        foreach( QString key , row.keys() ) {
+        for(int j = 0 ; j < row.keys().size() ; j++ ){
 
-            QString hash = key;
-            QVariant value_variant = row.value( key );
+            QString hash = row.keys().at( j );
+            QVariant value_variant = row.value( hash );
             hash = this->getIOName( hash , value_variant );
 
             double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
 
             int position = this->input_positions.value( hash , -1 );
             if( position > -1 ){
-                problem.x[i][position].index = position;
-                problem.x[i][position].value = value_double;
+                problem.x[i][j].index = position;
+                problem.x[i][j].value = value_double;
             }
         }
 
-        x[i][ row.size() ].index = -1;
+        problem.x[i][ row.size() ].index = -1;
     }
-    problem.x = x.data();
+
     this->model = svm_train(&problem, &this->parameters);
     svm_save_model( "/home/maialen/test" , this->model );
 }
@@ -121,5 +127,8 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
     // Predict SVM result on test input:
     QJsonObject result;
     result.insert(  this->output_positions.keys().at(0) , svm_predict( this->model , x ) );
+
+    double normResult = svm_predict( this->model , x );
+    double denormResult =  this->denormalizeIO( normResult , 0 );
     return result;
 }

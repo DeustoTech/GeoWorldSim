@@ -15,7 +15,7 @@ public:
     ~GWSSvm();
 
     // METHODS
-    virtual void train( const QList< QMap< QString , QVariant> > input_train_dataset, const QList< QMap< QString , QVariant> >  output_train_dataset );
+    virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset );
     virtual QJsonObject run(  QMap< QString, QVariant> inputs );
 
 private:
