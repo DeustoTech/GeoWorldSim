@@ -31,6 +31,18 @@ int main(int argc, char **argv)
           QString outputs_file = argv[2];
 
           svm->trainFromFile( inputs_file, outputs_file);
+
+
+          QList<QPair < QString, QVariant> > test_input;
+         /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
+                         QPair<QString , QVariant>("Gradient" , 0) , QPair<QString , QVariant>("Subsegment" , "MC 4S 251-750cc Euro-5") ,
+                         QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
+            */
+
+          QMap<QString , QVariant> input;
+          input.insert("val1" , -1);
+          input.insert("val2" , 1);
+          svm->run( input );
           return 0;
     }
 
