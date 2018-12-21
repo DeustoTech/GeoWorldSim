@@ -7,10 +7,10 @@
 GWSSvm::GWSSvm() : GWSIntelligence (){
 
     // set some defaults
-    this->parameters.svm_type = C_SVC;
+    this->parameters.svm_type = EPSILON_SVR;
     this->parameters.kernel_type = RBF;
     this->parameters.degree = 3;
-    this->parameters.gamma = 0.5;	// 1/num_features
+    this->parameters.gamma = 0.5; // 1/num_features
     this->parameters.coef0 = 0;
     this->parameters.nu = 0.5;
     this->parameters.cache_size = 100;
@@ -45,8 +45,6 @@ GWSSvm::~GWSSvm(){
 /* Train SVM on given files */
 
 void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset , const QList< QMap<QString, QVariant> > &output_train_dataset){
-
-    qDebug() << "PASO";
 
     Q_ASSERT( input_train_dataset.size() == output_train_dataset.size() );
 
@@ -97,6 +95,8 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
         problem.x[i][ row.size() ].index = -1;
     }
 
+    this->parameters.gamma = 1 / this->input_positions.keys().size(); // 1/num_features!!!
+
     this->model = svm_train(&problem, &this->parameters);
     svm_save_model( "/home/maialen/test" , this->model );
 }
@@ -106,18 +106,18 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
     svm_node* x = new svm_node[ inputs.size() + 1 ];
 
     // Loop over test input pairs:
-    foreach( QString key , inputs.keys() ){
+    for(int i = 0 ; i < inputs.keys().size() ; i++ ){
 
-        QString hash = key;
-        QVariant value_variant = inputs.value( key );
+        QString hash = inputs.keys().at( i );
+        QVariant value_variant = inputs.value( hash );
         hash = this->getIOName( hash , value_variant );
 
         double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
 
         int position = this->input_positions.value( hash , -1 );
         if( position > -1 ){
-            x[ position ].index = position;
-            x[ position ].value = value_double;
+            x[ i ].index = position;
+            x[ i ].value = value_double;
         }
     }
 
