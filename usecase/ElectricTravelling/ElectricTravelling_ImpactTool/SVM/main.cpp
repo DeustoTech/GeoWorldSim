@@ -39,17 +39,14 @@ int main(int argc, char **argv)
                          QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
             */
 
-
-          // HC	RUR/MW/80/Freeflow	0	MC 4S >750cc Euro-5	90,022644043	0	0
-
+         // 0;4;"HC";0;76.9705657958984;"URB/MW-Nat./80/Heavy"
           QMap<QString , QVariant> input;
-          input.insert("Component" , "HC");
-          input.insert("TrafficSit" , "RUR/MW/80/Freeflow");
-          input.insert( "Gradient" , 0);
-          input.insert("Subsegment" , "MC 4S >750cc Euro-5");
-          input.insert("V" , 90.022644043);
-          input.insert("V_0" , 0);
           input.insert("V_100" , 0);
+          input.insert("Gradient" , 4);
+          input.insert( "Component" , "HC");
+          input.insert("V_0" , 0);
+          input.insert("V" , 5.9705657958984);
+          input.insert("TrafficSit" , 1);
           svm->run( input );
           return 0;
     }

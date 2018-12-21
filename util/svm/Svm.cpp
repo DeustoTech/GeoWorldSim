@@ -7,8 +7,8 @@
 GWSSvm::GWSSvm() : GWSIntelligence (){
 
     // set some defaults
-    this->parameters.svm_type = EPSILON_SVR;
-    this->parameters.kernel_type = RBF;
+    this->parameters.svm_type = C_SVC;
+    this->parameters.kernel_type = LINEAR;
     this->parameters.degree = 3;
     this->parameters.gamma = 0.5; // 1/num_features
     this->parameters.coef0 = 0;
@@ -89,6 +89,8 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
             if( position > -1 ){
                 problem.x[i][j].index = position;
                 problem.x[i][j].value = value_double;
+            } else {
+                qWarning() << QString("Input %1 not contained in training data").arg( hash );
             }
         }
 
@@ -118,6 +120,8 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
         if( position > -1 ){
             x[ i ].index = position;
             x[ i ].value = value_double;
+        } else {
+            qWarning() << QString("Input %1 not contained in training data").arg( hash );
         }
     }
 

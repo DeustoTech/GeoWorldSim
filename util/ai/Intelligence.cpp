@@ -25,7 +25,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         QFile file( inputs_file_path );
 
         if(!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "NO FILE";
+            qWarning() << "NO VALID INPUT FILE";
             return;
         }
 
@@ -76,7 +76,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         QFile file( outputs_file_path );
 
         if(!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "NO FILE";
+            qWarning() << "NO VALID OUTPUT FILE";
             return;
         }
 
@@ -221,11 +221,10 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
         double max = maximums.value( hash );
 
         // To normalize in [ 0 , 1 ] range
-        //value_double = ( value_double - min ) / ( max - min );
+        value_double = ( value_double - min ) / ( max - min );
 
         // To normalize in [ -1 , 1 ] range
-        value_double = ((value_double - min )/(max - min) - 0.5 ) *2;
-        //value_double = 2.0 * ( ( value_double - min ) / ( max - min ) ) - 1.0;
+        //value_double = ((value_double - min )/(max - min) - 0.5 ) *2;
     }
 
     return value_double;
@@ -234,18 +233,16 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
 
 double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
 
-    double denormalized_value;
-
     double min = this->output_minimums.value( this->output_positions.key( position ) );
     double max = this->output_maximums.value( this->output_positions.key( position ) );
 
     // Denormalize from [ 0 , 1 ] range:
-    //denormalized_value = normalized_value * ( max - min) + min;
+    normalized_value = normalized_value * ( max - min) + min;
 
     // Denormalize from [ -1 , 1 ] range:
-    qDebug() << normalized_value << min << max << this->output_positions.keys();
-    denormalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
-    qDebug() << denormalized_value;
+    //qDebug() << normalized_value << min << max << this->output_positions.keys();
+    //normalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
+    qDebug() << normalized_value;
     return normalized_value;
 
 }

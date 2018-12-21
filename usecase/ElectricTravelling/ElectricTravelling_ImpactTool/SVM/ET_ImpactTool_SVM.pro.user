@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.8.0, 2018-12-20T14:58:10. -->
+<!-- Written by QtCreator 4.8.0, 2018-12-21T10:42:28. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -297,7 +297,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/ElectricTravelling/ElectricTravelling_ImpactTool/SVM/ET_ImpactTool_SVM.pro</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">ET_ImpactTool_SVM.pro</value>
-    <value type="QString" key="RunConfiguration.Arguments">/home/maialen/Descargas/INPUTS_50.csv /home/maialen/Descargas/OUTPUTS_50.csv</value>
+    <value type="QString" key="RunConfiguration.Arguments">/home/maialen/Descargas/MC_2S_150cc_Euro-1_INPUT.csv /home/maialen/Descargas/MC_2S_150cc_Euro-1_OUT.csv</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
