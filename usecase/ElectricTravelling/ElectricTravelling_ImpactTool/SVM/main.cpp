@@ -1,5 +1,3 @@
-
-
 #include <ios>
 #include <iostream>
 #include <iomanip>
@@ -31,7 +29,7 @@ int main(int argc, char **argv)
           QString outputs_file = argv[2];
 
           svm->trainFromFile( inputs_file, outputs_file);
-
+          svm->saveTrained( "/home/maialen/test_svm" , "/home/maialen/test_parameters");
 
           //QList<QPair < QString, QVariant> > test_input;
          /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
@@ -39,15 +37,13 @@ int main(int argc, char **argv)
                          QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
             */
 
-         // 0;4;"HC";0;76.9705657958984;"URB/MW-Nat./80/Heavy"
+
+         // 0;98.7671890259;RUR/Semi-MW/110/Freeflow
           QMap<QString , QVariant> input;
-          input.insert("V_100" , 0);
-          input.insert("Gradient" , 4);
-          input.insert( "Component" , "HC");
-          input.insert("V_0" , 0);
-          input.insert("V" , 5.9705657958984);
-          input.insert("TrafficSit" , 1);
-          svm->run( input );
+          input.insert("Gradient" , 0);
+          input.insert("V" , 98.7671890259);
+          input.insert("TrafficSit" , "RUR/Semi-MW/110/Freeflow");
+          qDebug() << svm->run( input );
           return 0;
     }
 

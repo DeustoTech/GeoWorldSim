@@ -152,6 +152,79 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
 
 }
 
+void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path){
+
+    // Save Input / output positions
+    QFile out( ios_file_path );
+       if( out.open(QIODevice::ReadWrite) ) {
+           QTextStream stream(&out);
+
+           // Input positions
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += this->input_positions.key( i );
+               }
+               stream << str << endl;
+           }
+
+           // Input maximums
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_maximums.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Input minimums
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_minimums.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output positions
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += this->output_positions.key( i );
+               }
+               stream << str << endl;
+           }
+
+           // Output maximums
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_maximums.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output minimums
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_minimums.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+       }
+
+
+    // Call specific library
+    this->saveModel( model_file_path );
+}
+
 
 /**********************************************************************
   PROTECTED
@@ -216,7 +289,8 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
 
     if( value.type() == QVariant::String ){
         value_double = 1;
-    } else if ( value != 0.0 ){
+    } else {
+
         double min = minimums.value( hash );
         double max = maximums.value( hash );
 
@@ -237,7 +311,7 @@ double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
     double max = this->output_maximums.value( this->output_positions.key( position ) );
 
     // Denormalize from [ 0 , 1 ] range:
-    normalized_value = normalized_value * ( max - min) + min;
+    normalized_value = normalized_value * ( max - min ) + min;
 
     // Denormalize from [ -1 , 1 ] range:
     //qDebug() << normalized_value << min << max << this->output_positions.keys();
