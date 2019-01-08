@@ -95,7 +95,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
                 if( v != agent->getId() ){ new_inside_agent_ids.append( v ); }
             }
             starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
-
+            starting_current_edge->setProperty( "color" , "Red" );
             // Have completed the edge coordinates, so remove the edge too (if exists)
             this->pending_route.removeAt( 0 );
             move_to = current_coor;

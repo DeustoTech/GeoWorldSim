@@ -10,7 +10,7 @@ GWSExternalListener::GWSExternalListener( QString socket_id ) : GWSExternalCommu
     Q_ASSERT( socket_id != GWSApp::globalInstance()->getAppId() );
 
     this->websocket.connect( &this->websocket , &QWebSocket::textMessageReceived , [this](const QString message){
-        QJsonObject json = QJsonDocument::fromJson( message.toLatin1() ).object();
+        QJsonObject json = QJsonDocument::fromJson( message.toUtf8() ).object();
         emit this->dataReceivedSignal( json );
     });
 }

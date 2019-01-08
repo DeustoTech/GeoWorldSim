@@ -71,7 +71,6 @@ int main(int argc, char **argv)
 
                     GWSSvm* svm = new GWSSvm();
                     svm->trainFromFile( inputs_file_path , outputs_file_path );
-                    //svm->saveModel( component.absoluteFilePath() + "/out" );
                     svm->saveTrained( component.absoluteFilePath() + "/svm_model" , component.absoluteFilePath() + "/model_params");
                     svm->deleteLater();
 
@@ -81,15 +80,7 @@ int main(int argc, char **argv)
 
     }
 
-
-
-
-         // svm->trainFromFile( inputs_file_path, outputs_file_path);
-         // svm->saveTrained( "/home/maialen/test_svm" , "/home/maialen/test_parameters");
-
-
-
-          //QList<QPair < QString, QVariant> > test_input;
+         //QList<QPair < QString, QVariant> > test_input;
          /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
                          QPair<QString , QVariant>("Gradient" , 0) , QPair<QString , QVariant>("Subsegment" , "MC 4S 251-750cc Euro-5") ,
                          QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};

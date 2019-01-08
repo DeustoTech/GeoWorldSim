@@ -19,7 +19,7 @@ public:
 
 protected slots:
 
-    virtual QStringList behave();
+    virtual QJsonArray behave();
 
 };
 

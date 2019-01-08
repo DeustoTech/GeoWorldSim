@@ -24,13 +24,12 @@ DriveBehaviour::~DriveBehaviour(){
 }
 
 
-QStringList DriveBehaviour::behave(){
+QJsonArray DriveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QStringList nexts_if_stopped;
-    QStringList nexts_if_moving = this->getProperty( NEXTS_IF_MOVE ).toStringList();
+    QJsonArray nexts_if_moving = this->getProperty( NEXTS_IF_MOVE ).toArray();
 
     Q_ASSERT( !agent_geom.isNull() );
 
@@ -47,7 +46,7 @@ QStringList DriveBehaviour::behave(){
      if ( current_road_id.isEmpty() ){
          // Move at slow speed
          agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , 40 );
-         return nexts_if_moving;
+        return nexts_if_moving;
      }
 
      // ------------------------------------
@@ -80,7 +79,7 @@ QStringList DriveBehaviour::behave(){
 
     // Get agent from road ID:
     QSharedPointer<GWSAgent> current_edge_agent = GWSAgentEnvironment::globalInstance()->getById( current_road_id );
-    QStringList agents_id_inside_current_edge = current_edge_agent->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toStringList();
+    QJsonArray agents_id_inside_current_edge = current_edge_agent->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
     QList< QSharedPointer<GWSAgent> > agents_inside_current_edge = GWSAgentEnvironment::globalInstance()->getByIds( agents_id_inside_current_edge );
     QSharedPointer<GWSAgent> agent_in_front_of_me = Q_NULLPTR;
     GWSLengthUnit agent_in_fron_of_me_distance;
@@ -129,7 +128,7 @@ QStringList DriveBehaviour::behave(){
 
             agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , GWSSpeedUnit( 0 ) );
             agent->setProperty( "color" , "Red" );
-            return this->getProperty( NEXTS_IF_STOP ).toStringList();
+            return this->getProperty( NEXTS_IF_STOP ).toArray();
         }
     }
 

@@ -48,6 +48,9 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    ../../behaviour/electricTravelling/DriveBehaviour.h \
+    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
+    ../../behaviour/execution/StopAgentBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -57,18 +60,16 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalListener.h \
+    ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.h \
     ../../util/routing/GraphEdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
-    ../../util/graph/GraphEdge.h \
-            ## GRID
-    ../../util/grid/Grid.h \
-    ../../util/grid/AgentGrid.h \
-    ../../util/grid/GridCoordinatesConversor.h \
+    ../../util/graph/Edge.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
             ## DATASOURCES
@@ -77,16 +78,15 @@ HEADERS += \
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
     ../../environment/agent_environment/AgentEnvironment.h \
+    ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
+    ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-    ../../behaviour/electricTravelling/DriveBehaviour.h \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
-    ../../behaviour/execution/StopAgentBehaviour.h
         # AGENTS
             ## TRANSPORT LINES
+    HumanAgent.h
 
 
 
@@ -108,11 +108,16 @@ SOURCES += main.cpp \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/electricTravelling/DriveBehaviour.cpp \
+    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
+    ../../behaviour/execution/StopAgentBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
+    ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalListener.cpp \
+    ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/Routing.cpp \
@@ -125,31 +130,21 @@ SOURCES += main.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
-    ../../util/graph/GraphEdge.cpp \
-    #../../util/graph/Graph.cpp \
-    #../../util/graph/GraphUtils.cpp \
-            ## GRID
-    ../../util/grid/Grid.cpp \
-    #../../util/grid/NumberGrid.cpp \
-    ../../util/grid/AgentGrid.cpp \
-    ../../util/grid/GridCoordinatesConversor.cpp \
+    ../../util/graph/Edge.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
+    ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
-    #../../environment/social_environment/SocialEnvironment.cpp \
-    #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
+    ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    ../../environment/grid_environment/GridEnvironment.cpp \
-    ../../behaviour/electricTravelling/DriveBehaviour.cpp \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp
         # AGENTS
+    HumanAgent.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

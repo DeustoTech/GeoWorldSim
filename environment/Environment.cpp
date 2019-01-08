@@ -8,7 +8,6 @@
 
 GWSEnvironment::GWSEnvironment() : GWSAgent(){
     emit this->environmentCreatedSignal();
-    this->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
 }
 
 GWSEnvironment::~GWSEnvironment(){

@@ -32,6 +32,7 @@ public:
 
     QSharedPointer<GWSAgent> getById( QString id ) const;
     QList< QSharedPointer<GWSAgent> > getByIds( QStringList ids ) const;
+    QList< QSharedPointer<GWSAgent> > getByIds( QJsonArray ids ) const;
 
     QSharedPointer<GWSAgent> getByName(QString name) const; // Get one agent by its name
     template <class T> QSharedPointer<T> getByName(QString name) const; // Get one agent by its name
