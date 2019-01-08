@@ -71,8 +71,8 @@ int main(int argc, char **argv)
 
                     GWSSvm* svm = new GWSSvm();
                     svm->trainFromFile( inputs_file_path , outputs_file_path );
-                    svm->saveModel( component.absoluteFilePath() + "/out" );
-                    svm->saveTrained( component.absoluteFilePath() + "/test_out" , component.absoluteFilePath() + "/test_params");
+                    //svm->saveModel( component.absoluteFilePath() + "/out" );
+                    svm->saveTrained( component.absoluteFilePath() + "/svm_model" , component.absoluteFilePath() + "/model_params");
                     svm->deleteLater();
 
                 }
