@@ -3,6 +3,9 @@
 
 #include "../../skill/move/MoveSkill.h"
 
+QString VehiclePolluteSkill::SKILL_VEHICLE_TYPE_PROP = "vehicle_type";
+
+
 VehiclePolluteSkill::VehiclePolluteSkill() : PolluteSkill()
 {
 

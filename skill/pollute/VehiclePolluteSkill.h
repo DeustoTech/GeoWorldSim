@@ -14,7 +14,7 @@ public:
     ~VehiclePolluteSkill();
 
     // PROPERTIES
-    static QString VEHICLE_TYPE_PROP;
+    static QString SKILL_VEHICLE_TYPE_PROP;
 
     virtual GWSMassUnit pollute(  GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit );
 
