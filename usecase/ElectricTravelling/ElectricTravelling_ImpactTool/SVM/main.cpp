@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
     // Vehicle subtype level:
     QFileInfoList vehicleSubsegmentsInfo = directory.entryInfoList( QDir::NoDotAndDotDot | QDir::Dirs );
-    foreach( QFileInfo subsegment, vehicleSubsegmentsInfo) {
+    /*foreach( QFileInfo subsegment, vehicleSubsegmentsInfo) {
 
         if ( subsegment.isDir() ){
 
@@ -72,15 +72,19 @@ int main(int argc, char **argv)
                     GWSSvm* svm = new GWSSvm();
                     svm->trainFromFile( inputs_file_path , outputs_file_path );
                     svm->saveTrained( component.absoluteFilePath() + "/svm_model" , component.absoluteFilePath() + "/model_params");
+
                     svm->deleteLater();
 
                 }
             }
         }
 
-    }
+    }*/
 
-         //QList<QPair < QString, QVariant> > test_input;
+
+         GWSSvm* svm = new GWSSvm();
+         svm->loadTrained( "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/MC 2S <=150cc Euro-3/CO/svm_model" , "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/MC 2S <=150cc Euro-3/CO/model_params" );
+        //QList<QPair < QString, QVariant> > test_input;
          /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
                          QPair<QString , QVariant>("Gradient" , 0) , QPair<QString , QVariant>("Subsegment" , "MC 4S 251-750cc Euro-5") ,
                          QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
@@ -88,10 +92,11 @@ int main(int argc, char **argv)
 
 
          // 0;98.7671890259;RUR/Semi-MW/110/Freeflow
-         /* QMap<QString , QVariant> input;
+         QMap<QString , QVariant> input;
           input.insert("Gradient" , 0);
           input.insert("V" , 98.7671890259);
-          input.insert("TrafficSit" , "RUR/Semi-MW/110/Freeflow");
+          input.insert( "Road_type" , "MW");
+          input.insert("Traffic_sit" , 0.66);
           qDebug() << svm->run( input );
           return 0;
     //}*/

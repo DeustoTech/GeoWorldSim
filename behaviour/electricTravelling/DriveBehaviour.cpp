@@ -28,16 +28,29 @@ QJsonArray DriveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    Q_ASSERT( !agent_geom.isNull() );
 
     QJsonArray nexts_if_moving = this->getProperty( NEXTS_IF_MOVE ).toArray();
-
-    Q_ASSERT( !agent_geom.isNull() );
 
     // ------------------------
     // Get current road ID
     // ------------------------
 
     QString current_road_id = agent->getProperty( MoveThroughRouteSkill::AGENT_CURRENT_ROAD_ID_PROP ).toString();
+  //  qDebug() << "Current road id" << current_road_id;
+
+    // ------------------------------------
+    // Check if already moving towards direction
+    //-------------------------------------
+
+    // Check if agent has a MoveSkill, otherwise create it
+    QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
+    if( move_skill.isNull() ){
+        move_skill = QSharedPointer<MoveSkill>( new MoveSkill() );
+        agent->addSkill( move_skill );
+    }
+    GWSCoordinate direction = move_skill->getMovingTowardsCoordinate();
+
 
      // ------------------------------------
      // Cannot decide speed without info about road
@@ -49,17 +62,6 @@ QJsonArray DriveBehaviour::behave(){
         return nexts_if_moving;
      }
 
-     // ------------------------------------
-     // Check if already moving towards direction
-     //-------------------------------------
-
-     // Check if agent has a MoveSkill, otherwise create it and set its max_speed
-     QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
-     if( move_skill.isNull() ){
-         move_skill = QSharedPointer<MoveSkill>( new MoveSkill() );
-         agent->addSkill( move_skill );
-     }
-     GWSCoordinate direction = move_skill->getMovingTowardsCoordinate();
 
     // -------------------------
     // Get current road maxSpeed
@@ -79,7 +81,7 @@ QJsonArray DriveBehaviour::behave(){
 
     // Get agent from road ID:
     QSharedPointer<GWSAgent> current_edge_agent = GWSAgentEnvironment::globalInstance()->getById( current_road_id );
-    QJsonArray agents_id_inside_current_edge = current_edge_agent->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
+    QJsonArray agents_id_inside_current_edge = current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
     QList< QSharedPointer<GWSAgent> > agents_inside_current_edge = GWSAgentEnvironment::globalInstance()->getByIds( agents_id_inside_current_edge );
     QSharedPointer<GWSAgent> agent_in_front_of_me = Q_NULLPTR;
     GWSLengthUnit agent_in_fron_of_me_distance;
@@ -113,7 +115,7 @@ QJsonArray DriveBehaviour::behave(){
   if ( !agent_in_front_of_me ){ // No other agent apart from the agent itself
 
          agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , road_maxSpeed );
-         agent->setProperty( "color" , "Blue" );
+         agent->setProperty( "color" , "Green" );
 
     } else {
 

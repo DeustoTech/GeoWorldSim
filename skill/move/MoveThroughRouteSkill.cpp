@@ -3,6 +3,10 @@
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
+#include "../../skill/pollute/VehiclePolluteSkill.h"
+
+QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
+QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
 
 QString MoveThroughRouteSkill::SKILL_NETWORK_TYPE_PROP = "network_type";
 QString MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP = "route_destination_x";
@@ -89,13 +93,12 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , QJsonValue() );
 
             // Remove agent from road
-            QJsonArray inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
+            QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
             QJsonArray new_inside_agent_ids;
             foreach (QJsonValue v, inside_agent_ids ) {
                 if( v != agent->getId() ){ new_inside_agent_ids.append( v ); }
             }
-            starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
-            starting_current_edge->setProperty( "color" , "Red" );
+            starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
             // Have completed the edge coordinates, so remove the edge too (if exists)
             this->pending_route.removeAt( 0 );
             move_to = current_coor;
@@ -120,12 +123,12 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
         // First look if edge has a capacity and therefore we can enter edge
         double edge_capacity = -1;
-        if( !starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_CAPACITY_PROP ).isNull() ){
-            edge_capacity = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_CAPACITY_PROP ).toDouble();
+        if( !starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_CAPACITY_PROP ).isNull() ){
+            edge_capacity = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_CAPACITY_PROP ).toDouble();
         }
 
         if( edge_capacity >= 0 ){
-            int edge_inside_agents_amount = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray().size();
+            int edge_inside_agents_amount = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray().size();
             if( edge_capacity <= edge_inside_agents_amount ){
                 // Wait for edge to liberate, that is, do not move
                 MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , destination_coor );
@@ -142,14 +145,22 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , starting_current_edge_max_speed );
 
         // Add agent to road
-        QJsonArray inside_agent_ids = starting_current_edge->getProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
+        QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
         inside_agent_ids.append( agent->getId() );
-        starting_current_edge->setProperty( GWSNetworkEnvironment::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
-
+        starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
         QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
     }
 
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
-    
+
+    QSharedPointer<VehiclePolluteSkill> vehiclePollute_skill = agent->getSkill( VehiclePolluteSkill::staticMetaObject.className() ).dynamicCast<VehiclePolluteSkill>();
+    if( vehiclePollute_skill.isNull() ){
+        qDebug() << "Creating Vehicle Pollute Skill";
+        vehiclePollute_skill = QSharedPointer<VehiclePolluteSkill>( new VehiclePolluteSkill() );
+        agent->addSkill( vehiclePollute_skill );
+    }
+    GWSMassUnit pollution = vehiclePollute_skill->pollute( 74.5 , 2.0 , "MW" , 0.66);
+
+
 }

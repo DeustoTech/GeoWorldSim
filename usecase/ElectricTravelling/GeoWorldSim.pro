@@ -56,6 +56,8 @@ HEADERS += \
     ../../util/io/log/Logger.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
+    ../../util/ai/Intelligence.h \
+    ../../util/svm/Svm.h \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
@@ -86,7 +88,9 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
         # AGENTS
             ## TRANSPORT LINES
-    HumanAgent.h
+    HumanAgent.h \
+    ../../skill/pollute/PolluteSkill.h \
+    ../../skill/pollute/VehiclePolluteSkill.h
 
 
 
@@ -131,6 +135,8 @@ SOURCES += main.cpp \
     ../../util/geometry/Quadtree.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
+    ../../util/ai/Intelligence.cpp \
+    ../../util/svm/Svm.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
         # ENVIRONMENT
@@ -144,7 +150,9 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
-    HumanAgent.cpp
+    HumanAgent.cpp \
+    ../../skill/pollute/PolluteSkill.cpp \
+    ../../skill/pollute/VehiclePolluteSkill.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

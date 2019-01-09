@@ -107,9 +107,15 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
     this->model = svm_train(&problem, &this->parameters);
 }
 
-void GWSSvm::saveModel(QString model_file_path){
+void GWSSvm::saveModel( QString model_file_path ){
     if( this->model ){
         svm_save_model( model_file_path.toUtf8() , this->model );
+    }
+}
+
+void GWSSvm::loadModel( QString model_file_path ){
+    if ( !model_file_path.isNull() ){
+        this->model = svm_load_model( model_file_path.toUtf8() );
     }
 }
 

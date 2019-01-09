@@ -1,0 +1,20 @@
+#ifndef POLLUTESKILL_H
+#define POLLUTESKILL_H
+
+#include "../../util/units/Units.h"
+#include "../../skill/Skill.h"
+
+class PolluteSkill : public GWSSkill
+{
+    Q_OBJECT
+
+    // PROPERTIES
+    static QString POLLUTANT_TYPE_PROP;
+
+    GWSMassUnit pollute(  );
+
+public:
+    PolluteSkill();
+};
+
+#endif // POLLUTESKILL_H

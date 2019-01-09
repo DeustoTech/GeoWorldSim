@@ -4,6 +4,7 @@
 #include <QObject>
 #include "../../environment/network_environment/NetworkEdge.h"
 #include "../../skill/move/MoveSkill.h"
+#include "../../skill/pollute/VehiclePolluteSkill.h"
 
 class MoveThroughRouteSkill : public MoveSkill
 {
@@ -14,6 +15,8 @@ public:
     ~MoveThroughRouteSkill();
 
     //- PROPERTIES
+    static QString EDGE_CAPACITY_PROP;
+    static QString EDGE_INSIDE_AGENT_IDS_PROP;
     static QString SKILL_NETWORK_TYPE_PROP;
     static QString SKILL_ROUTE_DESTINATION_X_PROP;
     static QString SKILL_ROUTE_DESTINATION_Y_PROP;

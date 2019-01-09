@@ -18,6 +18,7 @@
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 #include "../../skill/move/drive/DriveSkill.h"
+#include "../../skill/pollute/VehiclePolluteSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
@@ -45,6 +46,8 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
+#include "../../util/ai/Intelligence.h"
+#include "../../util/svm/Svm.h"
 
 #include <time.h>
 #include <iostream>

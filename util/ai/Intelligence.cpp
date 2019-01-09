@@ -226,6 +226,83 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
 }
 
 
+
+
+/* Load trained network */
+void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_path ){
+
+    // Load trained:
+    this->loadModel( model_file_path );
+
+    QFile in( ios_file_path );
+    if( in.open(QIODevice::ReadWrite) ) {
+
+        QTextStream stream(&in);
+
+        // First line = input_positions
+        {
+            QString line = stream.readLine();
+            foreach( QString key , line.split(";") ){
+                this->input_positions.insert( key , this->input_positions.size() );
+            }
+
+        }
+
+        // Second line = input_maximums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_maximums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Third line = input_minimums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_minimums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Fourth line = output_positions
+        {
+            QString line = stream.readLine();
+            foreach( QString key , line.split(";") ){
+                this->output_positions.insert( key , this->output_positions.size() );
+            }
+        }
+
+        // Fifth line = output_maximums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_maximums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Sixth line = output_minimums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_minimums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+    }
+}
+
+
+
+
+
+
 /**********************************************************************
   PROTECTED
 **********************************************************************/

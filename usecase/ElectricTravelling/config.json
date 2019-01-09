@@ -5,49 +5,44 @@
 	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "running" : true , 
 					   "@behaviours": [  { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1, "x_value": "<from_x>", "y_value": "<from_y>", "nexts" : ["DISPLAY"] }, 
 							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
-                                                             { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<to_x>", "y_value": "<to_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
+                                  { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<to_x>", "y_value": "<to_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
 							     { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
-							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
+							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] } , 
 			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/ca8b68a4-99a8-4e29-88f8-9f28f889308e/read" }, 
 
 
 
-	"residentialroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 40  , "running" : true , 
-				"@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-						 { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" } , 
 
-
-	"residentialroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Footway","Road"] , "color" : "Blue" , "maxspeed" : 40 , "running" : true ,  
+	"residentialroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 40 , "running" : true , 
 				"@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-						 { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,
+						 { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" ,  "capacity_property" : 5 , "container_property" : "agents_inside_edge_ids" , "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" }, 
 
 
 
-	"footwayroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Footway"] , "color" : "Blue" , "maxspeed" : 4 , "running" : true , 
+	"footwayroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : true ,   
 			    "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,  
+				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" ,  "capacity_property" : 5 , "container_property" : "agents_inside_edge_ids" , "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,  
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" }, 
 
 
 
-	"pedestrianroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Footway","Road"] , "color" : "Blue" , "maxspeed" : 20 , "running" : true , 
+	"pedestrianroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 20 , "running" : true , 
 				    "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-				                     { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,    
+				                     { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" ,  "capacity_property" : 5 , "container_property" : "agents_inside_edge_ids" , "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,    
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" }, 
 
 
-	"primaryroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  , "running" : true , 
+	"primaryroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  , "running" : true ,  
 			    "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,   
+				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" ,  "capacity_property" : 5 , "container_property" : "agents_inside_edge_ids" , "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,   
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/0ba1bc0d-4873-4a9a-9313-04730b90793f/read" }, 
 
 
-	"unclassifiedroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  , "running" : true , 
+	"unclassifiedroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSNetworkEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  , "running" : true ,  
 				    "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 10 ,  "nexts" : ["CHANGE_COLOR"] } ,
-				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "min_capacity" : 0 , "max_capacity": 10 ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,   
+				             { "@type": "ChangeColorRangeBehaviour" ,   "@id": "CHANGE_COLOR" , "capacity_property" : 5 , "container_property" : "agents_inside_edge_ids" ,  "duration" : 1 , "nexts" : ["DISPLAY"]}] } ,   
                             "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/54494e43-56e6-45e7-8090-441143f839dc/read" }
 
 	

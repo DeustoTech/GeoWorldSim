@@ -19,6 +19,7 @@ public:
     void trainFromFile( QString inputs_file_path , QString outputs_file_path );
     void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
     void saveTrained( QString model_file_path , QString ios_file_path );
+    void loadTrained( QString model_file_path , QString ios_file_path );
 
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset ) = 0;
@@ -42,6 +43,7 @@ protected:
     double normalizeIO( QVariant value , QString hash , QMap< QString , double > maximums , QMap< QString , double > minimums );
     double denormalizeIO( double normalized_value , int position );
     virtual void saveModel( QString model_file_path ) = 0;
+    virtual void loadModel( QString model_file_path ) = 0;
 };
 
 #endif // GWSINTELLIGENCE_H

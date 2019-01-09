@@ -13,8 +13,8 @@ public:
     Q_INVOKABLE explicit ChangeColorRangeBehaviour();
 
     // PARAMETERS
-    static QString MIN_EDGE_CAPACITY;
-    static QString MAX_EDGE_CAPACITY;
+    static QString CAPACITY_PROP;
+    static QString CONTAINER_PROP;
     static QString NEXTS;
 
 protected slots:
