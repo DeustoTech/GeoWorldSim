@@ -155,11 +155,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
 
     QSharedPointer<VehiclePolluteSkill> vehiclePollute_skill = agent->getSkill( VehiclePolluteSkill::staticMetaObject.className() ).dynamicCast<VehiclePolluteSkill>();
-    if( vehiclePollute_skill.isNull() ){
-        qDebug() << "Creating Vehicle Pollute Skill";
-        vehiclePollute_skill = QSharedPointer<VehiclePolluteSkill>( new VehiclePolluteSkill() );
-        agent->addSkill( vehiclePollute_skill );
-    }
     GWSMassUnit pollution = vehiclePollute_skill->pollute( 74.5 , 2.0 , "MW" , 0.66);
 
 
