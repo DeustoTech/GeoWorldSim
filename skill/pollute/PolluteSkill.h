@@ -21,7 +21,7 @@ public:
     static QString POLLUTANT_TYPE_PROP;
     static QString VEHICLE_TYPE_PROP;
 
-    virtual GWSMassUnit pollute(  GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit );
+    virtual GWSMassUnit pollute(  QString vehicle_type , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit );
 
 private:
     GWSSvm* svm = Q_NULLPTR;

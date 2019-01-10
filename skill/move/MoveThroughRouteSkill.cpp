@@ -154,14 +154,23 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
 
-    QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
-    if( vehiclePollute_skill.isNull() ){
-        vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
-        agent->addSkill( vehiclePollute_skill );
-    }
 
-    vehiclePollute_skill->pollute(  destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
-    // GWSMassUnit pollution = vehiclePollute_skill->pollute( 74.5 , 2.0 , "MW" , 0.66);
+    // If you are a vehicle, pollute:
+    if ( !agent->getProperty( "vehicleSubtype" ).isNull() ){
+        QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
+        if( vehiclePollute_skill.isNull() ){
+            vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
+            agent->addSkill( vehiclePollute_skill );
+        }
+
+        QString vehicle_subtype = agent->getProperty( "vehicleSubtype" ).toString();
+
+        // Pollute skill for each pollutant of choice:
+        vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
+        vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
+
+
+    }
 
 
 }
