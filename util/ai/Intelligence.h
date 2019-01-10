@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QMap>
 #include <QJsonArray>
+#include <QMutex>
 
 class GWSIntelligence : public QObject
 {
@@ -44,6 +45,9 @@ protected:
     double denormalizeIO( double normalized_value , int position );
     virtual void saveModel( QString model_file_path ) = 0;
     virtual void loadModel( QString model_file_path ) = 0;
+
+    // Mutex, for avoiding concurrency
+    mutable QMutex mutex;
 };
 
 #endif // GWSINTELLIGENCE_H

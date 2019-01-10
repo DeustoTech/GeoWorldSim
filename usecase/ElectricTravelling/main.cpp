@@ -18,7 +18,8 @@
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 #include "../../skill/move/drive/DriveSkill.h"
-#include "../../skill/pollute/VehiclePolluteSkill.h"
+#include "../../skill/pollute/PolluteSkill.h"
+//#include "../../skill/pollute/VehiclePolluteSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"

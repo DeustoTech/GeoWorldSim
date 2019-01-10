@@ -3,7 +3,7 @@
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
-#include "../../skill/pollute/VehiclePolluteSkill.h"
+#include "../../skill/pollute/PolluteSkill.h"
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
@@ -139,7 +139,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         // We can enter, so increment or maintain speed
         destination_speed = qMin( starting_current_edge_max_speed.number() , destination_speed.number() + 10 );
 
-        // Store road information in agent
+        // Store road infoVehiclermation in agent
         agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , starting_current_edge_agent->getId() );
         agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , starting_current_edge_agent->getProperty( "highway") );
         agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , starting_current_edge_max_speed );
@@ -154,8 +154,14 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     MoveSkill::move( movement_duration , destination_speed , destination_coor );
 
-    QSharedPointer<VehiclePolluteSkill> vehiclePollute_skill = agent->getSkill( VehiclePolluteSkill::staticMetaObject.className() ).dynamicCast<VehiclePolluteSkill>();
-    GWSMassUnit pollution = vehiclePollute_skill->pollute( 74.5 , 2.0 , "MW" , 0.66);
+    QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
+    if( vehiclePollute_skill.isNull() ){
+        vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
+        agent->addSkill( vehiclePollute_skill );
+    }
+
+    vehiclePollute_skill->pollute(  destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
+    // GWSMassUnit pollution = vehiclePollute_skill->pollute( 74.5 , 2.0 , "MW" , 0.66);
 
 
 }

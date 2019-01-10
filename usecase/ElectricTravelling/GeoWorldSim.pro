@@ -89,8 +89,8 @@ HEADERS += \
         # AGENTS
             ## TRANSPORT LINES
     HumanAgent.h \
-    ../../skill/pollute/PolluteSkill.h \
-    ../../skill/pollute/VehiclePolluteSkill.h
+    ../../skill/pollute/PolluteSkill.h
+    #../../skill/pollute/VehiclePolluteSkill.h
 
 
 
@@ -151,8 +151,8 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../skill/pollute/PolluteSkill.cpp \
-    ../../skill/pollute/VehiclePolluteSkill.cpp
+    ../../skill/pollute/PolluteSkill.cpp
+    #../../skill/pollute/VehiclePolluteSkill.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

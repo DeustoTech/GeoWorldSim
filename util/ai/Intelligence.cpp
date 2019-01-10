@@ -226,16 +226,16 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
 }
 
 
-
-
 /* Load trained network */
 void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_path ){
+
 
     // Load trained:
     this->loadModel( model_file_path );
 
+
     QFile in( ios_file_path );
-    if( in.open(QIODevice::ReadWrite) ) {
+    if( in.open(QIODevice::ReadOnly) ) {
 
         QTextStream stream(&in);
 
@@ -295,7 +295,9 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
                 this->output_minimums.insert( key , values.at( i ).toDouble() );
             }
         }
+
     }
+
 }
 
 

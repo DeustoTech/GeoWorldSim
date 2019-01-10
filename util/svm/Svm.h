@@ -24,6 +24,11 @@ private:
 
     svm_parameter parameters;
     svm_model *model = Q_NULLPTR;
+
+    // Mutex, for avoiding concurrency
+    mutable QMutex mutex;
 };
+
+
 
 #endif // GWSSVM_H

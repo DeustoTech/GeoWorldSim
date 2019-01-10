@@ -4,6 +4,8 @@
 #include "../../util/units/Units.h"
 #include "../../skill/Skill.h"
 
+#include "../../util/svm/Svm.h"
+
 class PolluteSkill : public GWSSkill
 {
     Q_OBJECT
@@ -17,12 +19,12 @@ public:
 
     // PROPERTIES
     static QString POLLUTANT_TYPE_PROP;
-
-    GWSMassUnit pollute(  );
+    static QString VEHICLE_TYPE_PROP;
 
     virtual GWSMassUnit pollute(  GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit );
 
-
+private:
+    GWSSvm* svm = Q_NULLPTR;
 };
 
 #endif // POLLUTESKILL_H
