@@ -49,12 +49,10 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
         input.insert("Traffic_sit" , 0.36);
 
         QJsonObject result = this->svm->run( input );
-
         double polluted_amount = result.value( "EFA" ).toDouble();
 
         // Save polluted amount:
         agent->setProperty( "total"+ pollutant +"amount" , agent->getProperty( "total"+ pollutant +"amount").toDouble() + polluted_amount );
-
         return GWSMassUnit();
 
 }

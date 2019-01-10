@@ -9,7 +9,7 @@
 							     { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
 							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] } , 
-			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/b0bf5142-f65b-4b08-af84-19bc63bb1c12/read" }, 
+			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/45f1469f-0bd5-4388-8da0-f122a4fb320b/read" }, 
 
 
 

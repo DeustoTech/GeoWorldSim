@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QHash>
 
+QMutex GWSIntelligence::mutex;
+
 GWSIntelligence::GWSIntelligence() : QObject() {
 
 }
@@ -231,12 +233,12 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
 
 
     // Load trained:
+    GWSIntelligence::mutex.lock(); // Generate single mutex regardless of the number of calls
     this->loadModel( model_file_path );
-
+    GWSIntelligence::mutex.unlock();
 
     QFile in( ios_file_path );
     if( in.open(QIODevice::ReadOnly) ) {
-
         QTextStream stream(&in);
 
         // First line = input_positions
@@ -295,8 +297,8 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
                 this->output_minimums.insert( key , values.at( i ).toDouble() );
             }
         }
-
     }
+
 
 }
 

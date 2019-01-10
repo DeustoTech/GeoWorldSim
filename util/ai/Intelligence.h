@@ -46,8 +46,8 @@ protected:
     virtual void saveModel( QString model_file_path ) = 0;
     virtual void loadModel( QString model_file_path ) = 0;
 
-    // Mutex, for avoiding concurrency
-    mutable QMutex mutex;
+    // Unique mutex, for avoiding concurrency
+    static QMutex mutex;
 };
 
 #endif // GWSINTELLIGENCE_H
