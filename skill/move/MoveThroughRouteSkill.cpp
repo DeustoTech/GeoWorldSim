@@ -156,7 +156,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
 
     // If you are a vehicle, pollute:
-    if ( !agent->getProperty( "vehicleSubtype" ).isNull() ){
+   /* if ( !agent->getProperty( "vehicleSubtype" ).isNull() ){
         QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
         if( vehiclePollute_skill.isNull() ){
             vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
@@ -170,7 +170,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
 
 
-    }
+    }*/
 
 
 }

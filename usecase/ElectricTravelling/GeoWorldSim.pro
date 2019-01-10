@@ -89,7 +89,9 @@ HEADERS += \
         # AGENTS
             ## TRANSPORT LINES
     HumanAgent.h \
-    ../../skill/pollute/PolluteSkill.h
+    ../../skill/pollute/PolluteSkill.h \
+    ../../skill/move/MoveThroughRouteInVehicleSkill.h \
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -151,7 +153,9 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../skill/pollute/PolluteSkill.cpp
+    ../../skill/pollute/PolluteSkill.cpp \
+    ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

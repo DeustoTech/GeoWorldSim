@@ -5,7 +5,7 @@
 	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "running" : true , 
 					   "@behaviours": [  { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1, "x_value": "<from_x>", "y_value": "<from_y>", "nexts" : ["DISPLAY"] }, 
 							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
-                                  { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<to_x>", "y_value": "<to_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
+                                  { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<to_x>", "y_value": "<to_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
 							     { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
 							     { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] } , 

@@ -17,6 +17,7 @@
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/MoveThroughRouteInVehicleSkill.h"
 #include "../../skill/move/drive/DriveSkill.h"
 #include "../../skill/pollute/PolluteSkill.h"
 //#include "../../skill/pollute/VehiclePolluteSkill.h"
@@ -25,7 +26,7 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
 #include "../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h"
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
@@ -76,7 +77,7 @@ int main(int argc, char* argv[])
     // Behaviours
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ChangeColorRangeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
