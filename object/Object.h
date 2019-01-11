@@ -52,6 +52,11 @@ public:
 
     bool deleted = true; // IMPORTANT
 
+protected:
+
+    // HOOKS
+    virtual void initialize(){};
+
 private:
 
     QSharedPointer<GWSObject> self_shared_pointer;

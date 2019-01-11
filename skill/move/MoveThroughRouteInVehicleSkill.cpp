@@ -6,7 +6,7 @@ MoveThroughRouteInVehicleSkill::MoveThroughRouteInVehicleSkill() : MoveThroughRo
 }
 
 
-void MoveThroughRouteInVehicleSkill::moveAndPollute( GWSTimeUnit movement_duration ){
+void MoveThroughRouteInVehicleSkill::move( GWSTimeUnit movement_duration ){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -19,11 +19,15 @@ void MoveThroughRouteInVehicleSkill::moveAndPollute( GWSTimeUnit movement_durati
     }
 
     QString vehicle_subtype = agent->getProperty( "vehicleSubtype" ).toString();
-
+    QString road_type = agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString();
 
     // Pollute skill for each pollutant of choice:
-    vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble() , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
-    vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble(), 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
+
+    if ( !road_type.isEmpty() ){
+        vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
+        vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
+    }
+
 
 
 

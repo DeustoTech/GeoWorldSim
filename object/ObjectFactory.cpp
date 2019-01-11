@@ -94,6 +94,9 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     // Call deserialize for further population
     obj->deserialize( json , parent );
 
+    // Call initalize hook
+    obj->initialize();
+
     // Return object
     return obj;
 }

@@ -52,5 +52,5 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
         //qDebug() << new_agent_geom->getCentroid().toString();
 
     }
-    return this->getProperty( NEXTS ).toArray();
+   return this->getProperty( NEXTS ).toArray();
 }

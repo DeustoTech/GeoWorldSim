@@ -11,7 +11,7 @@ public:
     Q_INVOKABLE explicit MoveThroughRouteInVehicleSkill();
 
     // METHODS
-    virtual void moveAndPollute(  GWSTimeUnit movement_duration  );
+    virtual void move(  GWSTimeUnit movement_duration  );
 };
 
 
