@@ -2,7 +2,7 @@
 
 "population" : {
 
-	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "running" : false , 
+	"citizens" 	: { "template" : { "@type": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "running" : true , 
 					   "@behaviours": [  { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY_AT_HOME"] }, 
                                   { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_AT_HOME" , "agent_to_send_id" : "<@id>" , "duration": 1 ,  "nexts" : ["WASTE"] } ,
                                   { "@type": "GenerateWasteZamudioModelBehaviour", "@id": "WASTE", "duration": 1, "waste_type1" : "resto" , "store_waste_type1_as": "resto", "nexts" : ["FIND"] }, 
