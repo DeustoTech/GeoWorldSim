@@ -22,18 +22,55 @@ QJsonArray CheckPropertyValueBehaviour::behave(){
     QJsonValue agent_property_value = agent->getProperty( property_name.toString() );
 
     double total = 0;
-    double valueDouble = 0;
 
-    QJsonObject existing_object = agent_property_value.toObject();
-    foreach( QString key , existing_object.keys() ){
-            QJsonValue value = existing_object.value( key );
-            valueDouble = value.toDouble();
-            total += valueDouble;
-            qDebug() << valueDouble << total;
+    switch ( agent_property_value.type() ) {
+    case QJsonValue::Double : {
+        total = agent_property_value.toDouble();
+        break;
+    }
+    case QJsonValue::Array : {
+
+        QJsonArray valueArray = agent_property_value.toArray();
+        for ( int i = 0 ; i < valueArray.size() ; i++){
+            total += valueArray.at(i).toDouble();
+        }
+        break;
+    }
+    case QJsonValue::Object : {
+
+        QJsonArray valueArray;
+        QJsonObject existing_object = agent_property_value.toObject();
+        foreach( QString key , existing_object.keys() ){
+                QJsonValue value = existing_object.value( key );
+                double valueDouble = value.toDouble();
+                valueArray.append(valueDouble);
+            }
+
+        for ( int i = 0 ; i < valueArray.size() ; i++){
+            total += valueArray.at(i).toDouble();
         }
 
+        break;
+    }
+    case QJsonValue::Null : {
+        break;
+    }
+    }
 
-    bool comparison_success = threshold_value == agent_property_value;
+
+
+    //
+
+
+
+
+
+
+
+
+    qDebug() << total;
+
+    bool comparison_success = threshold_value == total;
 
     if( comparison_success ){
          return this->getProperty( NEXTS_IF_TRUE ).toArray();
