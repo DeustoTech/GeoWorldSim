@@ -134,16 +134,27 @@ int main(int argc, char* argv[])
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
 
-        if ( !population.value("template").isNull() && !population.value("datasource_url").isNull() ){
+        if ( !population.value("template").isNull() && !population.value("datasource_urls").isNull() ){
             pending_population++;
-            GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() , population.value("datasource_url").toString() );
-            ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ds,&pending_population](){
-                pending_population--;
-                ds->deleteLater();
-                if( pending_population <= 0 ){
-                    GWSExecutionEnvironment::globalInstance()->run();
-                }
-            });
+
+            QJsonArray datasources = population.value("datasource_urls").toArray();
+
+            for ( int i = 0; i <  datasources.size(); ++i){
+
+                QString ds_url = datasources.at(i).toString();
+
+                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() ,  ds_url );
+                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ds,&pending_population](){
+                    pending_population--;
+                    ds->deleteLater();
+                    if( pending_population <= 0 ){
+                        GWSExecutionEnvironment::globalInstance()->run();
+                    }
+                });
+
+            }
+
+
         }
 
         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){

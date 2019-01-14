@@ -7,6 +7,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 
 QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
 QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
@@ -83,6 +84,14 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
     QJsonArray existing_log = receiver->getProperty( logname ).toArray();
     existing_log.append( log_entry );
     receiver->setProperty( logname , existing_log );
+
+    QJsonObject transaction;
+    transaction.insert( GWS_ID_PROP , emitter->getId() + receiver->getId() );
+    transaction.insert( GWS_TYPE_PROP , "WasteTransaction" );
+    transaction.insert( "refEmitter" , emitter->getId() );
+    transaction.insert( "refReceiver" , receiver->getId() );
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+
 
     return this->getProperty( NEXTS ).toArray();
 

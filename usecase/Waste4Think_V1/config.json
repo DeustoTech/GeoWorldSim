@@ -15,37 +15,31 @@
                                  { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] }  , 
 
-			    "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/071fdb10-faba-4bfa-88fb-6941466ccffc/read" }, 
+			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/071fdb10-faba-4bfa-88fb-6941466ccffc/read"] }, 
 
 
 	"containers" 	: { "template" : { "@type": "GWSAgent", "weight": 5 , "geometry" : { "@type" : "GWSGeometry" } , "@family": [ "ContainerAgent", "Container" ] , "running" : true , 
 				"@behaviours" : [{  "@type": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "@id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
 						 {  "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 30 , "nexts" : ["LOOP"] }  ] }  , 
-		            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" }, 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/efd5cf54-d737-4866-9ff3-c82d129ea44b/read" ]}, 
 
 
 
-	"residentialroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway","Road"] , "color" : "Blue" , "maxspeed" : 40  , 
+	"mixedroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway","Road"] , "color" : "Blue" , "maxspeed" : 40  , "running" : false , 
 				"@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] } ,
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" }, 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/92101b3d-faf6-46a0-97b6-ef48747c07ef/read" , "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" ]}, 
 
 
 
-	"footwayroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway"] , "color" : "Blue" , "maxspeed" : 4 }  , 
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read" }, 
+	"footways" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/5623ec42-56a3-46b2-afd6-27a74613bbde/read"] }, 
 
 
 
-	"pedestrianroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway","Road"] , "color" : "Blue" , "maxspeed" : 20  }  , 
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/0204533e-104e-4878-ac56-79c8960da545/read" }, 
 
+	"roads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/0ba1bc0d-4873-4a9a-9313-04730b90793f/read" , "http://datasources.geoworldsim.com/api/datasource/54494e43-56e6-45e7-8090-441143f839dc/read" ]}, 
 
-	"primaryroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  }  , 
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/0ba1bc0d-4873-4a9a-9313-04730b90793f/read" }, 
-
-
-	"unclassifiedroads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120  }  , 
-                            "datasource_url" : "http://datasources.geoworldsim.com/api/datasource/54494e43-56e6-45e7-8090-441143f839dc/read" }, 
 
 	
 	"recyclingPlant": { "template" : { "@type": "RecyclingPlantAgent", "@id" : "RecyclingPlant" , "color" : "Orange" ,  "weight": 8 , "running" : false , "geometry" : { "@type" : "GWSGeometry" ,  "type" :  "Point" , "coordinates" : [ -2.86390 , 43.28509 , 0 ] }  , "@family": [ "GWSAgent" ]  ,
@@ -63,7 +57,7 @@
                        { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_STAGES" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<x_dest>", "y_value": "<y_dest>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
                        { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
                        { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_STAGES"] } ,
-                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<closest_container_id>", "property_name" : "color" , "nexts": [ "TSP" ] }, 
+                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<closest_container_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] }, 
                        { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER_CONTAINER_TO_TRUCK", "property_name_to_transfer": "resto", "emitting_agent_id": "<closest_container_id>" , "receiving_agent_id":  "<@id>", "nexts" : ["CHECK_WASTE"] } ,
                         { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : ["MOVE_PLANT"] , "nexts_if_false" : ["TSP"] } ,
                         { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["TRANSFER_PLANT"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
