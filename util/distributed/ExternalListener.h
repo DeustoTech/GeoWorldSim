@@ -12,10 +12,9 @@ class GWSExternalListener : public GWSExternalCommunicator
 public:
     GWSExternalListener( QString socket_id );
 
+
 signals:
     void dataReceivedSignal( QJsonObject json_data );
-
-public slots:
 
 };
 

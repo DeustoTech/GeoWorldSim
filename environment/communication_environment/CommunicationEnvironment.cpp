@@ -17,6 +17,7 @@ GWSCommunicationEnvironment::GWSCommunicationEnvironment() : GWSEnvironment(){
     this->publishers.insert( socket_id , new GWSExternalPublisher( socket_id ) );
 
     // Connect signals and slots
+    this->connect( this , &GWSCommunicationEnvironment::listenSocket , this , &GWSCommunicationEnvironment::connectExternalSocket );
     this->connect( this , &GWSCommunicationEnvironment::sendAgentSignal , this , &GWSCommunicationEnvironment::sendAgent );
     this->connect( this , &GWSCommunicationEnvironment::sendMessageSignal , this , &GWSCommunicationEnvironment::sendMessage );
 
@@ -37,19 +38,20 @@ void GWSCommunicationEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agen
     Q_UNUSED(agent);
 }
 
-void GWSCommunicationEnvironment::connectExternalEnvironment(QString socket_id){
+void GWSCommunicationEnvironment::connectExternalSocket(QString socket_id){
     GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
     if( !listener ){
+        qDebug() << QString("Creating external listener %1").arg( socket_id );
         listener = new GWSExternalListener( socket_id );
         this->listeners.insert( socket_id , listener );
-        listener->connect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::externalEnvironmentReceived );
-    }
+        listener->connect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::dataReceivedFromSocket );
+        }
 }
 
-void GWSCommunicationEnvironment::disconnectExternalEnvironment(QString socket_id){
+void GWSCommunicationEnvironment::disconnectExternalSocket(QString socket_id){
     GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
     if( listener ){
-        listener->disconnect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::externalEnvironmentReceived );
+        listener->disconnect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::dataReceivedFromSocket );
     }
 }
 
@@ -57,7 +59,10 @@ void GWSCommunicationEnvironment::disconnectExternalEnvironment(QString socket_i
  LISTENERS
 **********************************************************************/
 
-void GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_data){
+/*void GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_data){
+
+    qDebug() << "MESSAGE RECEIVED";
+    emit this->dataReceivedSignal( json_data , "demo" );
 
     // RECEIVED AN AGENT
     if( json_data.value("signal") == "entity" ){
@@ -88,10 +93,11 @@ void GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_d
         }
 
     }
-}
+}*/
+
 
 /**********************************************************************
- PUBLISHERS
+ DATA
 **********************************************************************/
 
 void GWSCommunicationEnvironment::sendAgent(QJsonObject agent_json, QString socket_id){
@@ -111,4 +117,17 @@ void GWSCommunicationEnvironment::sendData(QString signal , QJsonObject data , Q
     }
     publisher->sendMessage( signal , data );
 
+}
+
+void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
+
+
+    // Dynamic cast sender() method to convert a QObject* into a GWSExternalListener*
+    GWSExternalListener* listener = dynamic_cast<GWSExternalListener*>( sender() );
+
+    // Get socketID corresponding to listener from listener QMap
+    QString socketID =  this->listeners.key( listener );
+
+
+    emit this->dataReceivedSignal( data ,  socketID );
 }

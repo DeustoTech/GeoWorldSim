@@ -111,7 +111,8 @@ HEADERS += \
     ContainerAgent.h \
     HumanAgent.h \
     TruckAgent.h \
-    RecyclingPlantAgent.h
+    RecyclingPlantAgent.h \
+    ../../behaviour/information/ListenToMessagesBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -202,7 +203,8 @@ SOURCES += mainlauncher.cpp \
     ContainerAgent.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
-    RecyclingPlantAgent.cpp
+    RecyclingPlantAgent.cpp \
+    ../../behaviour/information/ListenToMessagesBehaviour.cpp
 
 
 

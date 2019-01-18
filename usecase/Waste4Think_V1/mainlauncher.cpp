@@ -43,6 +43,7 @@
 #include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
+#include "../../behaviour/information/ListenToMessagesBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -108,6 +109,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
     GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
+
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -173,7 +176,7 @@ int main(int argc, char* argv[])
 
 
     // LISTEN TO EXTERNAL SIMULATIONS
-    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    /*QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
@@ -181,7 +184,7 @@ int main(int argc, char* argv[])
             new GWSExternalListener( json_external_listeners[ key ].toString() );
         }
         qDebug() << QString("Creating external listener %1").arg( key );
-     }
+     }*/
 
 
 
