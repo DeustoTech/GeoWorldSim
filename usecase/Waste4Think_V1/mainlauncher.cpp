@@ -176,7 +176,8 @@ int main(int argc, char* argv[])
 
 
     // LISTEN TO EXTERNAL SIMULATIONS
-    /*QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
+    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
@@ -184,7 +185,7 @@ int main(int argc, char* argv[])
             new GWSExternalListener( json_external_listeners[ key ].toString() );
         }
         qDebug() << QString("Creating external listener %1").arg( key );
-     }*/
+     }
 
 
 

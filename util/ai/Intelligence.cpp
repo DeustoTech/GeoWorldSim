@@ -150,6 +150,9 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
         outputs.insert( 0 , qpair_list );
     }
 
+    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
+    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
+
     this->train( inputs , outputs );
 
 }
