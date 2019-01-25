@@ -39,11 +39,11 @@
 #include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
-#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 #include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
+#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -105,11 +105,11 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( GatherAgentPropertyBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
     GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

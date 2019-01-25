@@ -207,7 +207,6 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp
 
 
-
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
 unix|win32: LIBS += -llemon
 
