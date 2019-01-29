@@ -25,7 +25,7 @@ bool GWSDatasourceReader::downloadedFinished(){
 }
 
 void GWSDatasourceReader::requestPaginated(int page){
-    QString paginated_url = this->datasource_url + QString("?offset=%1&limit=%2").arg( page * this->page_size ).arg( this->page_size );
+    QString paginated_url = this->datasource_url + (this->datasource_url.contains('?') ? "&" : "?") + QString("offset=%1&limit=%2").arg( page * this->page_size ).arg( this->page_size );
 
     QNetworkReply* reply = this->api_driver.GET( paginated_url );
     reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
@@ -36,7 +36,7 @@ void GWSDatasourceReader::dataReceived(){
     QJsonObject json = QJsonDocument::fromJson( reply->readAll() ).object();
     reply->deleteLater();
 
-    foreach(QJsonValue j , json.value("data").toArray() ) {
+    foreach(QJsonValue j , json.value("entities").toArray() ) {
         QJsonObject data_received = j.toObject();
         if( this->downloaded_total < this->download_limit ){
             emit this->dataValueReadSignal( data_received );
@@ -46,6 +46,8 @@ void GWSDatasourceReader::dataReceived(){
     }
 
     unsigned int count = json.value( "count" ).toInt();
+    qDebug() << QString("Received datasource %1, amount %2 of total %3").arg( this->datasource_url ).arg( this->downloaded_total ).arg( count );
+
     if( count > (this->last_paginated+1) * this->page_size && this->downloaded_total < this->download_limit ){
         this->requestPaginated( ++this->last_paginated );
     } else {

@@ -130,15 +130,14 @@ int main(int argc, char* argv[])
     }
 
     // CREATE POPULATION
-    int pending_population = 0;
+    QList<GWSAgentGeneratorDatasource*> pending_datasources;
     QJsonObject json_population = json_configuration.value("population").toObject();
-    foreach( QString key , json_population.keys() ) {
+     foreach( QString key , json_population.keys() ) {
 
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
 
         if ( !population.value("template").isNull() && !population.value("datasource_urls").isNull() ){
-            pending_population++;
 
             QJsonArray datasources = population.value("datasource_urls").toArray();
 
@@ -147,10 +146,12 @@ int main(int argc, char* argv[])
                 QString ds_url = datasources.at(i).toString();
 
                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() ,  ds_url );
-                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ds,&pending_population](){
-                    pending_population--;
+                pending_datasources.append( ds );
+
+                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                    pending_datasources.removeAll( ds );
                     ds->deleteLater();
-                    if( pending_population <= 0 ){
+                    if( pending_datasources.isEmpty() ){
                         GWSExecutionEnvironment::globalInstance()->run();
                     }
                 });
@@ -168,7 +169,7 @@ int main(int argc, char* argv[])
         }
        qDebug() << QString("Creating population %1").arg( key );
     }
-    if( pending_population <= 0 ){
+    if( pending_datasources.isEmpty() ){
         GWSExecutionEnvironment::globalInstance()->run();
     }
 
