@@ -23,10 +23,10 @@ void MoveThroughRouteInVehicleSkill::move( GWSTimeUnit movement_duration ){
 
     // Pollute skill for each pollutant of choice:
 
-    if ( !road_type.isEmpty() ){
+    /*if ( !road_type.isEmpty() ){
         vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
         vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
-    }
+    }*/
 
 
 

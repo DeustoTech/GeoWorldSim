@@ -26,7 +26,7 @@
 
 
 
-	"footways" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+	"footways" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
                             "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_footways/read", "http://datasources.geoworldsim.com/api/datasource/zamudio_residential/read"] }, 
                             
                             
@@ -41,14 +41,14 @@
 
 
 
-	"truck" 	: { "template" : { "@type" : "TruckAgent" , "weight": 30 , "home_x" :  -2.86590, "home_y" :  43.28309,  "@family": [ "GWSAgent" ], "color" : "Black" , "running" : true  , "vehicleSubtype" : "TTAT >28-34t Euro-IV EGR" ,
+	"truck" 	: { "template" : { "@type" : "TruckAgent" , "weight": 30 , "home_x" :  -2.86590, "home_y" :  43.28309,  "@family": [ "GWSAgent" ], "color" : "Black" , "running" : true  , "vehicleSubtype" : "MC_4S_151-250cc_Euro-3" ,
 					   "@behaviours" : [ { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 60 , "x_value": "<home_x>" ,  "y_value": "<home_y>", "nexts" : ["DISPLAY"] }, 
                         { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["TSP"] } ,
                        { "@type": "CalculateTSPRouteBehaviour" , "@id" : "TSP" , "duration" : 1 , "tsp_agent_type" : "ContainerAgent" , "transport_network_type": "Road",  "store_tsp_route_as" : "tsp_route" , "store_closest_id_as" : "closest_container_id" , "store_tsp_route_stage_x_as" : "x_dest", "store_tsp_route_stage_y_as" : "y_dest" , "nexts_if_no_tsp_route" : ["TSP"] , "nexts_if_tsp_route" : ["MOVE_STAGES"] } , 
                        { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_STAGES" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<x_dest>", "y_value": "<y_dest>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
                        { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
                        { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_STAGES"] } ,
-                       { "SET_DURATION@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<closest_container_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] }, 
+                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<closest_container_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] }, 
                        { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER_CONTAINER_TO_TRUCK", "property_name_to_transfer": "resto", "emitting_agent_id": "<closest_container_id>" , "receiving_agent_id":  "<@id>", "nexts" : ["CHECK_WASTE"] } ,
                         { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : ["MOVE_PLANT"] , "nexts_if_false" : ["TSP"] } ,
                         { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["TRANSFER_PLANT"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
