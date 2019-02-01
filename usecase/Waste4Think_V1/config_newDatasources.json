@@ -16,24 +16,27 @@
                                  { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } ,
 							     { "@type": "StopAgentBehaviour" ,   "@id" : "STOP" , "duration" : 1 }  ] }  , 
 
-			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/ca7a0113-50ab-50d0-9dae-115bc5aea6d0-db203698-8c02-4f25-bafa-a48308ee9b8b/read"] }, 
+			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/zamudio_census/read"] }, 
 
 
 	"containers" 	: { "template" : { "@type": "GWSAgent", "weight": 5 , "geometry" : { "@type" : "GWSGeometry" } , "@family": [ "ContainerAgent", "Container" ] , "running" : true , 
 				"@behaviours" : [{  "@type": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "@id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
 						 {  "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 30 , "nexts" : ["LOOP"] }  ] }  , 
-		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/545b694b-af38-55ca-bb94-cebd61d1e9a3-e94a9ff7-518d-4a33-8636-ca18b5f27903/read" ]}, 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers/read" ]}, 
 
 
 
 	"footways" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Footway"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
-                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/545b694b-af38-55ca-bb94-cebd61d1e9a3-4028abf3-f035-42a1-8e86-0756d05a5ff2/read"] }, 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_footways/read", "http://datasources.geoworldsim.com/api/datasource/zamudio_residential/read"] }, 
+                            
+                            
+                            
 
 
 
 
 	"roads" 	: { "template" : { "@type": "GWSAgent" , "weight" : 5 , "edge" : { "@type" : "GWSGraphEdge" } , "@family" : ["Road"] , "color" : "Blue" , "maxspeed" : 120 , "running" : false , "@behaviours" : [{  "start" : true , "@type": "SendAgentSnapshotBehaviour" ,   "@id": "LOOP" , "agent_to_send_id" : "<@id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
-                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/545b694b-af38-55ca-bb94-cebd61d1e9a3-23d0dc60-eaf7-4940-940b-5f2f1e8b4a48/read" ]}, 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/545b694b-af38-55ca-bb94-cebd61d1e9a3-8aae5597-0573-48b2-9eeb-d489911c2428/read" ]}, 
 
 
 	

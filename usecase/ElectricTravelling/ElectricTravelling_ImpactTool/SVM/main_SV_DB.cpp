@@ -37,13 +37,13 @@ int main(int argc, char **argv)
         QString component;
 
         // List of subsegments of interest:
-        QStringList subsegmentList = {
+        QStringList subsegmentList1 = {
                                         // DIESEL CARS
                                        "PC diesel <1,4L Euro-1",
                                        "PC diesel <1,4L Euro-2",
                                        "PC diesel <1,4L Euro-3",
                                        "PC diesel <1,4L Euro-4",
-                                       "PC diesel <1,4L Euro-5",
+                                       "PC diesel <1,4L Euro-5 DPF",
                                        "PC diesel <1,4L Euro-6 DPF",
                                        "PC diesel 1,4-<2L Euro-1",
                                        "PC diesel 1,4-<2L Euro-2",
@@ -95,9 +95,16 @@ int main(int argc, char **argv)
                                         "MC 4S 251-750cc Euro-1",
                                         "MC 4S 251-750cc Euro-2",
                                         "MC 4S 251-750cc Euro-3",
-                                        "MC 4S 251-750cc Euro-4"
+                                        "MC 4S 251-750cc Euro-4",
+                                        "121.000000inductionLiIon",
+                                        "121.000000synchronousLiIon",
+                                        "51.250000inductionLiIon",
+                                        "51.250000synchronousLiIon",
+                                        "76.280000inductionLiIon",
+                                        "76.280000synchronousLiIon"
                                         } ;
 
+        QStringList subsegmentList = { "PC diesel <1,4L Euro-5 DPF" };
 
         // SQL query to extract the distinct pollutant components:
         QStringList componentList;
@@ -106,6 +113,7 @@ int main(int argc, char **argv)
         while ( query.next() ){
             componentList.append( query.value(0).toString() );
         }
+
 
         // Iterate over each subsegment and component to train the SVM:
         foreach(QString subsegment , subsegmentList){

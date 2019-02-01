@@ -77,7 +77,11 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     foreach( QString property_name , json.keys() ){
         // Avoid @ starting keywords
         if( property_name.contains('@') ){ continue; }
-        this->setProperty( property_name , json.value( property_name ) );
+        QJsonValue propert_value = json.value( property_name );
+        if( propert_value.isObject() && propert_value.toObject().keys().contains("value") ){
+            propert_value = propert_value.toObject().value( "value" );
+        }
+        this->setProperty( property_name , propert_value );
     }
 }
 

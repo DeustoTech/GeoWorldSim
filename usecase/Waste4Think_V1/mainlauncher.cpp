@@ -44,6 +44,8 @@
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
+#include "../../behaviour/property/SetAgentPropertyBehaviour.h"
+#include "../../behaviour/property/IncrementPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -110,6 +112,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

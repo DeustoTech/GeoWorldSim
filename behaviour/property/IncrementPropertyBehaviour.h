@@ -11,6 +11,7 @@ public:
     Q_INVOKABLE explicit IncrementPropertyBehaviour();
 
     // PROPERTIES
+    static QString AGENT_ID;
     static QString PROPERTY_NAME_PROP;
     static QString INCREMENT_VALUE_PROP;
     static QString MAX_VALUE_PROP;

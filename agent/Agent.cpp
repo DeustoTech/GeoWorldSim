@@ -208,7 +208,7 @@ QList< QSharedPointer<GWSBehaviour> > GWSAgent::getCurrentlyExecutingBehaviours(
     return this->to_be_executed_behaviours;
 }
 
-QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const{
+QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const {
     return this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ).dynamicCast<GWSBehaviour>();
 }
 
@@ -314,6 +314,7 @@ void GWSAgent::behave(){
         QSharedPointer<GWSBehaviour> behaviour = this->getBehaviour( id );
         if( behaviour.isNull() ){
             qWarning() << QString("Agent %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getId() ).arg( id );
+            GWSApp::exit( -1 );
         } else {
             next_execute_behaviours.append( behaviour );
         }

@@ -66,6 +66,8 @@ HEADERS += \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/electricTravelling/DriveBehaviour.h \
+    ../../behaviour/property/SetAgentPropertyBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -152,6 +154,8 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
     ../../behaviour/electricTravelling/DriveBehaviour.cpp \
+    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
