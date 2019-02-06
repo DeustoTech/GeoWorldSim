@@ -37,13 +37,13 @@ int main(int argc, char **argv)
         QString component;
 
         // List of subsegments of interest:
-        QStringList subsegmentList = {
+        QStringList subsegmentList1 = {
                                         // DIESEL CARS
                                        "PC diesel <1,4L Euro-1",
                                        "PC diesel <1,4L Euro-2",
                                        "PC diesel <1,4L Euro-3",
                                        "PC diesel <1,4L Euro-4",
-                                       "PC diesel <1,4L Euro-5",
+                                       "PC diesel <1,4L Euro-5 DPF",
                                        "PC diesel <1,4L Euro-6 DPF",
                                        "PC diesel 1,4-<2L Euro-1",
                                        "PC diesel 1,4-<2L Euro-2",
@@ -95,9 +95,49 @@ int main(int argc, char **argv)
                                         "MC 4S 251-750cc Euro-1",
                                         "MC 4S 251-750cc Euro-2",
                                         "MC 4S 251-750cc Euro-3",
-                                        "MC 4S 251-750cc Euro-4"
+                                        "MC 4S 251-750cc Euro-4",
+                                        "121.000000inductionLiIon",
+                                        "121.000000synchronousLiIon",
+                                        "51.250000inductionLiIon",
+                                        "51.250000synchronousLiIon",
+                                        "76.280000inductionLiIon",
+                                        "76.280000synchronousLiIon",
+                                        "UBus Midi <=15t Euro-V EGR",
+                                       "UBus Artic >18t CNG EEV",
+                                       "UBus Artic >18t Euro-V SCR",
+                                       "UBus Midi <=15t Euro-IV EGR",
+                                       "UBus Std >15-18t Euro-V SCR",
+                                       "UBus Artic >18t Euro-III",
+                                       "UBus Std >15-18t CNG Euro-III",
+                                       "UBus Midi <=15t Euro-IV SCR",
+                                       "UBus Artic >18t Euro-V EGR",
+                                       "UBus Midi <=15t Euro-III",
+                                       "UBus Std >15-18t Euro-IV SCR",
+                                       "UBus Midi <=15t Euro-V SCR",
+                                       "UBus Midi <=15t Euro-VI",
+                                       "UBus Std >15-18t Euro-II",
+                                       "UBus Std >15-18t Euro-VI",
+                                       "UBus Std >15-18t Euro-V EGR",
+                                       "UBus Artic >18t Euro-IV EGR",
+                                       "UBus Artic >18t CNG Euro-III",
+                                       "UBus Artic >18t CNG Euro-II",
+                                       "UBus Std >15-18t Euro-IV EGR",
+                                       "UBus Std >15-18t CNG EEV",
+                                       "UBus Artic >18t Euro-II",
+                                       "UBus Midi <=15t Euro-II",
+                                       "UBus Artic >18t Euro-VI",
+                                       "UBus Std >15-18t CNG Euro-II",
+                                       "UBus Std >15-18t Euro-III",
+                                       "UBus Artic >18t Euro-IV SCR",
+                                       "renfe463"
                                         } ;
 
+        QStringList subsegmentList = {  "121.000000inductionLiIon",
+                                        "121.000000synchronousLiIon",
+                                        "51.250000inductionLiIon",
+                                        "51.250000synchronousLiIon",
+                                        "76.280000inductionLiIon",
+                                        "76.280000synchronousLiIon"};
 
         // SQL query to extract the distinct pollutant components:
         QStringList componentList;
@@ -106,6 +146,7 @@ int main(int argc, char **argv)
         while ( query.next() ){
             componentList.append( query.value(0).toString() );
         }
+
 
         // Iterate over each subsegment and component to train the SVM:
         foreach(QString subsegment , subsegmentList){
@@ -116,7 +157,7 @@ int main(int argc, char **argv)
 
                 qDebug() << subsegment << component;
 
-                QSqlQuery query(  QString( "SELECT gradient, velocity, \"roadType\" , \"trafficSit\" , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2' " ).arg( subsegment ).arg( component ) );
+                QSqlQuery query(  QString( "SELECT gradient, velocity , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2'" ).arg( subsegment ).arg( component ) );
 
                 QSqlError error = query.lastError();
 
@@ -136,14 +177,14 @@ int main(int argc, char **argv)
 
                         int gradient = query.value(0).toInt();
                         double velocity = query.value(1).toDouble();
-                        QString roadType = query.value(2).toString();
-                        double trafficSit = query.value(3).toDouble();
-                        double efa = query.value(4).toDouble();
+                        //QString roadType = query.value(2).toString();
+                        //double trafficSit = query.value(2).toDouble();
+                        double efa = query.value(2).toDouble();
 
                         input.insert( "gradient" , gradient);
                         input.insert( "velocity" , velocity);
-                        input.insert( "roadType" , roadType);
-                        input.insert( "trafficSit" , trafficSit);
+                        //input.insert( "roadType" , roadType);
+                        //input.insert( "trafficSit" , trafficSit);
                         input_list.append( input);
 
                         output.insert( "EFA", efa );

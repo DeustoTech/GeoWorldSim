@@ -13,8 +13,8 @@ public:
 
     // PROPERTIES
     static QString MAX_SPEED_PROP;
-    static QString X_VALUE;
-    static QString Y_VALUE;
+    static QString MOVE_TO_X_VALUE;
+    static QString MOVE_TO_Y_VALUE;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
 

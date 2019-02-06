@@ -31,7 +31,7 @@
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
-#include "../../behaviour/waste4think/FollowTSPRouteBehaviour.h"
+#include "../../behaviour/move/SetNextTSPDestinationBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
@@ -44,6 +44,8 @@
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
+#include "../../behaviour/property/SetAgentPropertyBehaviour.h"
+#include "../../behaviour/property/IncrementPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -98,7 +100,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( FollowTSPRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetNextTSPDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
@@ -110,6 +112,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

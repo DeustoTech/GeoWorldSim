@@ -1,7 +1,9 @@
 #include "IncrementPropertyBehaviour.h"
 
 #include "../../app/App.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
 
+QString IncrementPropertyBehaviour::AGENT_ID = "agent_to_increment_id";
 QString IncrementPropertyBehaviour::PROPERTY_NAME_PROP = "property";
 QString IncrementPropertyBehaviour::INCREMENT_VALUE_PROP = "increment";
 QString IncrementPropertyBehaviour::MAX_VALUE_PROP = "max";
@@ -23,7 +25,9 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 
 QJsonArray IncrementPropertyBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QString agent_id = this->getProperty( AGENT_ID ).toString();
+
+    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
     double value = agent->getProperty( property_name ).toDouble();
     QJsonValue max_value = this->getProperty( MAX_VALUE_PROP );

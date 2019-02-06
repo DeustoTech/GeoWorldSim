@@ -26,27 +26,40 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
 
             this->svm = new GWSSvm();
 
-            // Path to HBEFA files:
-            QString hbefa_file_path = "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/";
-            QString svm_model = "svm_model";
-            QString svm_parameters = "model_params";
+            // Path to SVM trained files:
+            QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
 
-            // Total paths:
-            QString totalPath_model = hbefa_file_path + vehicle_type + "/" + pollutant + "/" + svm_model;
-            QString totalPath_params = hbefa_file_path + vehicle_type + "/" + pollutant  + "/" + svm_parameters;
 
-           // Load trained SVM model and parameters:
-            this->svm->loadTrained( totalPath_model , totalPath_params );
+            QDir dir( svm_path );
+            if ( dir.exists() ){
+
+                QString svm_model = "svm_model";
+                QString svm_parameters = "params_model";
+
+                // Total paths:
+                QString totalPath_model = svm_path + "/" + svm_model;
+                QString totalPath_params = svm_path +  "/" + svm_parameters;
+
+
+                qDebug() << totalPath_model;
+               // Load trained SVM model and parameters:
+                this->svm->loadTrained( totalPath_model , totalPath_params );
+
+            }
+
+            else { qDebug() << "No SVM for selected subsegment and/or pollutant!";}
+
+
 
         }
 
         QMap<QString , QVariant> input;
 
         // Extract current speed from agent:
-        input.insert( "V" , speed.value );
-        input.insert("Gradient" , gradient );
-        input.insert( "Road_type" , roadType);
-        input.insert("Traffic_sit" , 0.36);
+        input.insert( "velocity" , speed.value );
+        input.insert( "gradient" , gradient );
+        input.insert( "roadType" , roadType);
+        input.insert( "trafficSit" , 0.36);
 
         QJsonObject result = this->svm->run( input );
         double polluted_amount = result.value( "EFA" ).toDouble();

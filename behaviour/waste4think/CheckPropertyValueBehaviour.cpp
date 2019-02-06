@@ -41,10 +41,10 @@ QJsonArray CheckPropertyValueBehaviour::behave(){
         QJsonArray valueArray;
         QJsonObject existing_object = agent_property_value.toObject();
         foreach( QString key , existing_object.keys() ){
-                QJsonValue value = existing_object.value( key );
-                double valueDouble = value.toDouble();
-                valueArray.append(valueDouble);
-            }
+            QJsonValue value = existing_object.value( key );
+            double valueDouble = value.toDouble();
+            valueArray.append(valueDouble);
+        }
 
         for ( int i = 0 ; i < valueArray.size() ; i++){
             total += valueArray.at(i).toDouble();
@@ -56,24 +56,10 @@ QJsonArray CheckPropertyValueBehaviour::behave(){
         break;
     }
     }
-
-
-
-    //
-
-
-
-
-
-
-
-
-    qDebug() << total;
-
     bool comparison_success = threshold_value == total;
 
     if( comparison_success ){
-         return this->getProperty( NEXTS_IF_TRUE ).toArray();
+        return this->getProperty( NEXTS_IF_TRUE ).toArray();
     } else {
         return this->getProperty( NEXTS_IF_FALSE ).toArray();
     }
