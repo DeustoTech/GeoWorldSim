@@ -29,7 +29,7 @@
 	var query = new URLSearchParams( window.location.search );
         var simulation_id = query.get( 'simulation_id' );
         if( !simulation_id ){
-            scenario_id = prompt('Simulation ID');
+            simulation_id = prompt('Simulation ID');
         }
        
         if( !simulation_id ){

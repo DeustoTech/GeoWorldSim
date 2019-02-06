@@ -1,6 +1,6 @@
 #include "MoveThroughRouteInVehicleSkill.h"
 
-MoveThroughRouteInVehicleSkill::MoveThroughRouteInVehicleSkill() : MoveThroughRouteSkill ()
+MoveThroughRouteInVehicleSkill::MoveThroughRouteInVehicleSkill() : MoveThroughRouteSkill()
 {
 
 }

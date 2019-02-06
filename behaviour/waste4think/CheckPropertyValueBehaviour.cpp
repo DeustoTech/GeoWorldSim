@@ -15,7 +15,7 @@ CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
 QJsonArray CheckPropertyValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QJsonValue threshold_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE);
+    QJsonValue threshold_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE );
 
     // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
     QJsonValue property_name = this->getProperty( PROPERTY_TO_COMPARE_NAME );

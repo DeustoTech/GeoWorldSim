@@ -54,8 +54,10 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
 
     QJsonValue x_destination = this->getProperty( SET_DESTINATION_X_VALUE );
     QJsonValue y_destination = this->getProperty( SET_DESTINATION_Y_VALUE );
-    agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_X_PROP , x_destination );
-    agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_Y_PROP , y_destination );
+    if( !x_destination.isNull() && !y_destination.isNull() ){
+        agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_X_PROP , x_destination );
+        agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_Y_PROP , y_destination );
+    }
 
     GWSCoordinate destination_coor = movethroughroute_skill->getRouteDestination();
     if( !destination_coor.isValid() ){

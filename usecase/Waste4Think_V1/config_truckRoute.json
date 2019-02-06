@@ -40,13 +40,13 @@
                        
                        { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : [ "MOVE_NEXT_TSP_DESTINATION" ] } ,
                        
-                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<next_tsp_agent_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] },
+                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<next_tsp_agent_id>", "property_name" : "color" , "nexts": [ "TRANSFER" ] },
                        
                        { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER", "property_name_to_transfer": "resto" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<next_tsp_agent_id>" , "receiving_agent_id": "<@id>" , "nexts" : [ "CHECK_WASTE" ] }  ,                     
                     
-                       { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : [ "MOVE_PLANT" ] , "nexts_if_false" : [ "SET_NEXT_TSP_DESTINATION" ] } ,
+                       { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : [ "SET_NEXT_TSP_DESTINATION" ] , "nexts_if_false" : [ "SET_NEXT_TSP_DESTINATION" ] } ,
                         
-                        { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : [ "TRANSFER_PLANT" ] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
+                        { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : [ "TRANSFER_PLANT" ] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
                         
                         { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING_TO_PLANT" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_PLANT"] } ,
                         
