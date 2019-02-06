@@ -59,23 +59,17 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
 
          // Compare the coordinates of the ordered route and those in the initial QPair QList of coors and IDs to extract
          // the ID of the ordered coors and generate a new QList of QPairs:
-         QList< QPair< GWSCoordinate , QString > > ordered_agents_to_visit_tsp_route_coord_id_array;
          QJsonArray ordered_agents_to_visit_tsp_route_id_array;
 
-         foreach (GWSCoordinate c, ordered_agents_to_visit_tsp_route_coord_array) {
-             ordered_agents_to_visit_tsp_route_coord_id_array.append( qMakePair( c , agents_to_visit_coord_id_array.key( c ) ) );
-         }
-
          // Extract array of ordered nodes IDs:
-         QPair<GWSCoordinate, QString> pair;
-         foreach ( pair , ordered_agents_to_visit_tsp_route_coord_id_array ){
-             QString id = pair.second;
+         foreach( GWSCoordinate coor , ordered_agents_to_visit_tsp_route_coord_array ){
+             QString id = agents_to_visit_coord_id_array.key( coor );
              ordered_agents_to_visit_tsp_route_id_array.append( id );
          }
 
          agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS_PROPERTY_NAME ).toString() , ordered_agents_to_visit_tsp_route_id_array );
          //agent->setProperty( TSP_ROUTE_STAGE , QJsonValue() );
-         routing->deleteLater();
+         //TODO routing->deleteLater();
          return this->getProperty( NEXTS ).toArray();
 
        /* else {

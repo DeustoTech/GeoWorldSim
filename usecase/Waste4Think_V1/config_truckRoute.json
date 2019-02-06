@@ -27,18 +27,30 @@
 
 	"truck" 	: { "template" : { "@type" : "TruckAgent" , "weight": 30 , "home_x" :  -2.86590, "home_y" :  43.28309,  "@family": [ "GWSAgent" ], "color" : "Black" , "running" : true  , "vehicleSubtype" : "MC_4S_151-250cc_Euro-3" ,
 					   "@behaviours" : [ { "@type": "GenerateAgentGeometryBehaviour", "start" : true , "@id": "GEOM", "duration": 1 , "x_value": "<home_x>" ,  "y_value": "<home_y>", "nexts" : ["DISPLAY"] }, 
+					   
                         { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["CALCULATE_TSP"] } ,
-                       { "@type": "CalculateTSPRouteBehaviour" , "@id" : "CALCULATE_TSP" , "duration" : 1 , "tsp_agent_type" : "ContainerAgent" , "transport_network_type": "Road",  "store_tsp_route_as" : "tsp_route" , "nexts" : ["MOVE_STAGES"] } , 
-                       { "@type": "SetNextTSPDestinationBehaviour" , "@id" : "SET_NEXT_TSP_DESTINATION", "duration" : 1 , "tsp_route" : "<tsp_route>", "store_next_tsp_agent_id_as" : "next_tsp_agent_id", "nexts_while_following_route" : [""], "nexts_if_finished" : [""]}
-                       { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_STAGES" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "x_value": "<x_dest>", "y_value": "<y_dest>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : ["DRIVE"] } , 
-                       { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : ["DISPLAY_MOVING"] , "nexts_if_stop" : ["DISPLAY_MOVING"] } , 
-                       { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_STAGES"] } ,
-                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<next_tsp_agent_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] }, 
-                       { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER_CONTAINER_TO_TRUCK", "property_name_to_transfer": "resto", "emitting_agent_id": "<next_tsp_agent_id>" , "receiving_agent_id":  "<@id>", "nexts" : ["CHECK_WASTE"] } ,
-                        { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : ["MOVE_PLANT"] , "nexts_if_false" : ["TSP"] } ,
-                        { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["TRANSFER_PLANT"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
+                        
+                       { "@type": "CalculateTSPRouteBehaviour" , "@id" : "CALCULATE_TSP" , "duration" : 1 , "tsp_agent_type" : "ContainerAgent" , "transport_network_type": "Road",  "store_tsp_route_as" : "tsp_route" , "nexts" : ["SET_NEXT_TSP_DESTINATION"] } , 
+                       
+                       { "@type": "SetNextTSPDestinationBehaviour" , "@id" : "SET_NEXT_TSP_DESTINATION", "duration" : 1 , "pending_tsp_route" : "<tsp_route>", "store_next_tsp_agent_id_as" : "next_tsp_agent_id", "nexts_while_following_route" : ["MOVE_NEXT_TSP_DESTINATION"], "nexts_if_finished" : [ "CALCULATE_TSP" ]},
+                       
+                       { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_NEXT_TSP_DESTINATION" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : [ "DRIVE" ] } , 
+                       
+                       { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : [ "DISPLAY_MOVING" ] , "nexts_if_stop" : [ "DISPLAY_MOVING" ] } , 
+                       
+                       { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : [ "MOVE_NEXT_TSP_DESTINATION" ] } ,
+                       
+                       { "@type": "CopyPropertyBehaviour", "duration": 0, "@id": "COPY", "agent_id_to_copy_from": "<next_tsp_agent_id>", "property_name" : "color" , "nexts": [ "TRANSFER_CONTAINER_TO_TRUCK" ] },
+                       
+                       { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER", "property_name_to_transfer": "resto" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<next_tsp_agent_id>" , "receiving_agent_id": "<@id>" , "nexts" : [ "CHECK_WASTE" ] }  ,                     
+                    
+                       { "@type": "CheckPropertyValueBehaviour", "duration": 1, "@id": "CHECK_WASTE", "property_to_compare": "resto", "threshold_value": "100000" , "nexts_if_true" : [ "MOVE_PLANT" ] , "nexts_if_false" : [ "SET_NEXT_TSP_DESTINATION" ] } ,
+                        
+                        { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_PLANT" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 40 , "x_value": -2.86390 , "y_value": 43.28509 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : [ "TRANSFER_PLANT" ] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_PLANT"] } , 
+                        
                         { "@type": "SendAgentSnapshotBehaviour" ,   "@id": "DISPLAY_MOVING_TO_PLANT" , "agent_to_send_id" : "<@id>" , "duration": 0 ,  "nexts" : ["MOVE_PLANT"] } ,
-                        { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER_PLANT", "property_name_to_transfer": "resto", "emitting_agent_id" : "<@id>" , "receiving_agent_id": "RecyclingPlant" , "nexts" : ["TSP"] } 
+                        
+                        { "@type": "TransferAgentPropertyBehaviour", "duration": 1, "@id": "TRANSFER_PLANT", "property_name_to_transfer": "resto", "emitting_agent_id" : "<@id>" , "receiving_agent_id": "RecyclingPlant" , "nexts" : [ "SET_NEXT_TSP_DESTINATION" ] } 
                                                            ] }  , 
                             "amount" : 1 } 
 },
