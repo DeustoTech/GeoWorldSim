@@ -54,7 +54,6 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/waste4think/DelayBehaviour.h \
     ../../behaviour/move/CalculateTSPRouteBehaviour.h \
-    ../../behaviour/waste4think/FollowTSPRouteBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
     ../../behaviour/property/CopyPropertyBehaviour.h \
@@ -63,6 +62,7 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
+    ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/electricTravelling/DriveBehaviour.h \
@@ -142,7 +142,6 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/waste4think/DelayBehaviour.cpp \
     ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
-    ../../behaviour/waste4think/FollowTSPRouteBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
     ../../behaviour/property/CopyPropertyBehaviour.cpp \
@@ -153,6 +152,7 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
+    ../../behaviour/move/SetNextTSPDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/DriveBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/IncrementPropertyBehaviour.cpp \

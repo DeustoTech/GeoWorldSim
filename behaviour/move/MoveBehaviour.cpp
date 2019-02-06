@@ -8,8 +8,8 @@
 #include "../../skill/move/MoveSkill.h"
 
 QString MoveBehaviour::MAX_SPEED_PROP = "maxspeed";
-QString MoveBehaviour::X_VALUE = "x_value";
-QString MoveBehaviour::Y_VALUE = "y_value";
+QString MoveBehaviour::MOVE_TO_X_VALUE = "move_to_x_value";
+QString MoveBehaviour::MOVE_TO_Y_VALUE = "move_to_y_value";
 QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
@@ -37,8 +37,8 @@ QJsonArray MoveBehaviour::behave(){
 
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QJsonValue x_destination = this->getProperty( X_VALUE );
-    QJsonValue y_destination = this->getProperty( Y_VALUE );
+    QJsonValue x_destination = this->getProperty( MOVE_TO_X_VALUE );
+    QJsonValue y_destination = this->getProperty( MOVE_TO_Y_VALUE );
     move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_X_PROP , x_destination );
     move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP , y_destination );
 

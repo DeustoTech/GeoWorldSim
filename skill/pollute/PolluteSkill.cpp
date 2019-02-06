@@ -34,7 +34,7 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
             if ( dir.exists() ){
 
                 QString svm_model = "svm_model";
-                QString svm_parameters = "model_params";
+                QString svm_parameters = "params_model";
 
                 // Total paths:
                 QString totalPath_model = svm_path + "/" + svm_model;

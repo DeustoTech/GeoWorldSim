@@ -43,6 +43,9 @@
 #include "../../util/svm/Svm.h"
 #include "../../util/parallelism/ParallelismController.h"
 
+#include "../../skill/pollute/PolluteSkill.h"
+#include "../../skill/move/drive/DriveSkill.h"
+
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"

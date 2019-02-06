@@ -9,8 +9,8 @@
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NETWORK_TYPE_PROP = "network_type";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_X_VALUE = "x_value";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_Y_VALUE = "y_value";
+QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_X_VALUE = "destination_x_value";
+QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_Y_VALUE = "destination_y_value";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
