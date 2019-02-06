@@ -16,8 +16,8 @@ public:
     // PROPERTIES
     static QString AGENT_MAX_SPEED_PROP;
     static QString AGENT_CURRENT_SPEED_PROP;
-    static QString SKILL_MOVING_TOWARDS_X_PROP;
-    static QString SKILL_MOVING_TOWARDS_Y_PROP;
+    static QString AGENT_MOVING_TOWARDS_X_PROP;
+    static QString AGENT_MOVING_TOWARDS_Y_PROP;
     static QString AGENT_ACCUMULATED_DISTANCE_PROP;
     static QString AGENT_ACCUMULATED_TIME_PROP;
 

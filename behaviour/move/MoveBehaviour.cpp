@@ -7,9 +7,9 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
-QString MoveBehaviour::MAX_SPEED_PROP = "maxspeed";
-QString MoveBehaviour::MOVE_TO_X_VALUE = "move_to_x_value";
-QString MoveBehaviour::MOVE_TO_Y_VALUE = "move_to_y_value";
+QString MoveBehaviour::SET_MAX_SPEED = "maxspeed";
+QString MoveBehaviour::SET_MOVE_TO_X_VALUE = "move_to_x_value";
+QString MoveBehaviour::SET_MOVE_TO_Y_VALUE = "move_to_y_value";
 QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
@@ -33,14 +33,18 @@ QJsonArray MoveBehaviour::behave(){
         move_skill = QSharedPointer<MoveSkill>( new MoveSkill() );
         agent->addSkill( move_skill );
     }
-    //move_skill->setProperty( MoveSkill::MAX_SPEED_PROP , this->getProperty( MoveBehaviour::MAX_SPEED_PROP ) );
+
+    // Set max speed if any
+    if( !this->getProperty( SET_MAX_SPEED ).isNull() ){
+        agent->setProperty( MoveSkill::AGENT_MAX_SPEED_PROP , this->getProperty( SET_MAX_SPEED ) );
+    }
 
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QJsonValue x_destination = this->getProperty( MOVE_TO_X_VALUE );
-    QJsonValue y_destination = this->getProperty( MOVE_TO_Y_VALUE );
-    move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_X_PROP , x_destination );
-    move_skill->setProperty( MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP , y_destination );
+    QJsonValue x_destination = this->getProperty( SET_MOVE_TO_X_VALUE );
+    QJsonValue y_destination = this->getProperty( SET_MOVE_TO_Y_VALUE );
+    agent->setProperty( MoveSkill::AGENT_MOVING_TOWARDS_X_PROP , x_destination );
+    agent->setProperty( MoveSkill::AGENT_MOVING_TOWARDS_Y_PROP , y_destination );
 
     GWSCoordinate destination_coor = move_skill->getMovingTowardsCoordinate();
     if( !destination_coor.isValid() ){

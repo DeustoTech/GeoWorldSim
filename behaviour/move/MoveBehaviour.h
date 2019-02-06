@@ -12,9 +12,9 @@ public:
     Q_INVOKABLE explicit MoveBehaviour();
 
     // PROPERTIES
-    static QString MAX_SPEED_PROP;
-    static QString MOVE_TO_X_VALUE;
-    static QString MOVE_TO_Y_VALUE;
+    static QString SET_MAX_SPEED;
+    static QString SET_MOVE_TO_X_VALUE;
+    static QString SET_MOVE_TO_Y_VALUE;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
 

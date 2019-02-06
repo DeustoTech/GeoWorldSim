@@ -13,11 +13,11 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // PROPERTIES
-    static QString BEHAVIOUR_DESTINATION_X_VALUE;
-    static QString BEHAVIOUR_DESTINATION_Y_VALUE;
-    static QString BEHAVIOUR_NEXTS_IF_ARRIVED;
-    static QString BEHAVIOUR_NEXTS_IF_NOT_ARRIVED;
-    static QString BEHAVIOUR_NETWORK_TYPE_PROP;
+    static QString SET_DESTINATION_X_VALUE;
+    static QString SET_DESTINATION_Y_VALUE;
+    static QString NEXTS_IF_ARRIVED;
+    static QString NEXTS_IF_NOT_ARRIVED;
+    static QString SET_NETWORK_TYPE;
 
 protected slots:
     virtual QJsonArray behave();

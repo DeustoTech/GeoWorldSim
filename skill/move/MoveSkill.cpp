@@ -8,8 +8,8 @@
 
 QString MoveSkill::AGENT_MAX_SPEED_PROP = "maxspeed";
 QString MoveSkill::AGENT_CURRENT_SPEED_PROP = "current_speed";
-QString MoveSkill::SKILL_MOVING_TOWARDS_X_PROP = "moving_towards_x";
-QString MoveSkill::SKILL_MOVING_TOWARDS_Y_PROP = "moving_towards_y";
+QString MoveSkill::AGENT_MOVING_TOWARDS_X_PROP = "agent_moving_towards_x";
+QString MoveSkill::AGENT_MOVING_TOWARDS_Y_PROP = "agent_moving_towards_y";
 QString MoveSkill::AGENT_ACCUMULATED_DISTANCE_PROP = "total_moved_distance";
 QString MoveSkill::AGENT_ACCUMULATED_TIME_PROP = "total_travel_time";
 
@@ -30,10 +30,10 @@ GWSSpeedUnit MoveSkill::getCurrentSpeed() {
 
 GWSCoordinate MoveSkill::getMovingTowardsCoordinate(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    if( this->getProperty( SKILL_MOVING_TOWARDS_X_PROP ).isNull() || this->getProperty( SKILL_MOVING_TOWARDS_Y_PROP ).isNull() ){
+    if( agent->getProperty( AGENT_MOVING_TOWARDS_X_PROP ).isNull() || agent->getProperty( AGENT_MOVING_TOWARDS_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
-    return GWSCoordinate( this->getProperty( SKILL_MOVING_TOWARDS_X_PROP ) .toDouble( ) , this->getProperty( SKILL_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
+    return GWSCoordinate( agent->getProperty( AGENT_MOVING_TOWARDS_X_PROP ) .toDouble( ) , agent->getProperty( AGENT_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
 }
 
 /**********************************************************************
@@ -70,8 +70,8 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     agent->setProperty( AGENT_CURRENT_SPEED_PROP , movement_speed );
-    this->setProperty( SKILL_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
-    this->setProperty( SKILL_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
+    agent->setProperty( AGENT_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
+    agent->setProperty( AGENT_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
 
     if( movement_duration == 0 ){
         // Not move operation

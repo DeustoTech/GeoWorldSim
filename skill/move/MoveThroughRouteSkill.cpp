@@ -8,9 +8,9 @@
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
 
-QString MoveThroughRouteSkill::SKILL_NETWORK_TYPE_PROP = "network_type";
-QString MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP = "route_destination_x";
-QString MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_Y_PROP = "route_destination_y";
+QString MoveThroughRouteSkill::AGENT_MOVE_NETWORK_TYPE_PROP = "route_network_type";
+QString MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_X_PROP = "route_destination_x";
+QString MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_Y_PROP = "route_destination_y";
 QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_ID_PROP = "current_road_id";
 QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_TYPE_PROP = "current_road_type";
 QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_MAXSPEED_PROP = "current_road_maxspeed";
@@ -28,10 +28,10 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
 
 GWSCoordinate MoveThroughRouteSkill::getRouteDestination() {
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    if( this->getProperty( SKILL_ROUTE_DESTINATION_X_PROP ).isNull() || this->getProperty( SKILL_ROUTE_DESTINATION_Y_PROP ).isNull() ){
+    if( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).isNull() || agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
-    return GWSCoordinate( this->getProperty( SKILL_ROUTE_DESTINATION_X_PROP ).toDouble( ) , this->getProperty( SKILL_ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
+    return GWSCoordinate( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).toDouble( ) , agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
 }
 
 /**********************************************************************
@@ -56,13 +56,17 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
     if( current_coor == destination_coor ){
         return;
     }
+
  //if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !route_found_borrame )
     if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty()  ){
+
         // Generate pending route
-        QString graph_type = this->getProperty( SKILL_NETWORK_TYPE_PROP ).toString();
+        QString graph_type = agent->getProperty( AGENT_MOVE_NETWORK_TYPE_PROP ).toString();
+
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
         //this->route_found_borrame = true;
+
     }
 
     // Assume we have reached route end OR not found route, move freely

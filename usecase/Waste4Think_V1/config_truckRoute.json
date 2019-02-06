@@ -32,9 +32,9 @@
                         
                        { "@type": "CalculateTSPRouteBehaviour" , "@id" : "CALCULATE_TSP" , "duration" : 1 , "tsp_agent_type" : "ContainerAgent" , "transport_network_type": "Road",  "store_tsp_route_as" : "tsp_route" , "nexts" : ["SET_NEXT_TSP_DESTINATION"] } , 
                        
-                       { "@type": "SetNextTSPDestinationBehaviour" , "@id" : "SET_NEXT_TSP_DESTINATION", "duration" : 1 , "pending_tsp_route" : "<tsp_route>", "store_next_tsp_agent_id_as" : "next_tsp_agent_id", "nexts_while_following_route" : ["MOVE_NEXT_TSP_DESTINATION"], "nexts_if_finished" : [ "CALCULATE_TSP" ]},
+                       { "@type": "SetNextTSPDestinationBehaviour" , "@id" : "SET_NEXT_TSP_DESTINATION", "duration" : 1 , "pending_tsp_route" : "<tsp_route>", "store_next_tsp_agent_id_as" : "next_tsp_agent_id", "nexts_while_pending_route" : ["MOVE_NEXT_TSP_DESTINATION"], "nexts_if_finished" : [ "CALCULATE_TSP" ]},
                        
-                       { "@type": "MoveThroughRouteInVehicleBehaviour" ,   "@id" : "MOVE_NEXT_TSP_DESTINATION" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : [ "DRIVE" ] } , 
+                       { "@type": "MoveThroughRouteBehaviour" ,   "@id" : "MOVE_NEXT_TSP_DESTINATION" , "duration" : 1 , "network_type" : "Road", "maxspeed" : 120 , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["COPY"] , "nexts_if_not_arrived" : [ "DRIVE" ] } , 
                        
                        { "@type" : "DriveBehaviour" , "@id" : "DRIVE" , "duration" : 1 ,  "vehicle_type" : "bus" , "vehicle_subtype" : "diesel" , "vehicle_load" : 50 , "speed_factor" : 0.5 , "security_distance" : 10 , "nexts_if_move" : [ "DISPLAY_MOVING" ] , "nexts_if_stop" : [ "DISPLAY_MOVING" ] } , 
                        

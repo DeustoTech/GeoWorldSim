@@ -1,14 +1,12 @@
 #include "CalculateTSPRouteBehaviour.h"
-#include "../../skill/move/GenerateOrderedTSPSkill.h"
+#include "../../skill/move/CalculateTSPSkill.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../util/routing/TSPRouting.h"
 
+QString CalculateTSPRouteBehaviour::SET_TSP_AGENT_TYPE = "tsp_agent_type"; // e.g. Glass Container
+QString CalculateTSPRouteBehaviour::SET_NETWORK_TYPE = "network_type";  // e.g. roads
 QString CalculateTSPRouteBehaviour::NEXTS = "nexts";
-QString CalculateTSPRouteBehaviour::TSP_AGENT_TYPE = "tsp_agent_type"; // e.g. Glass Container
-QString CalculateTSPRouteBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  // e.g. roads
-QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_AS_PROPERTY_NAME = "store_tsp_route_as";
-//QString CalculateTSPRouteBehaviour::STORE_CLOSEST_ID_AS = "store_closest_id_as";
-//QString CalculateTSPRouteBehaviour::TSP_ROUTE_STAGE = "tsp_route_stage";
-//QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_STAGE_X_AS = "store_tsp_route_stage_x_as";
-//QString CalculateTSPRouteBehaviour::STORE_TSP_ROUTE_STAGE_Y_AS = "store_tsp_route_stage_y_as";
 
 CalculateTSPRouteBehaviour::CalculateTSPRouteBehaviour() : GWSBehaviour(){
 
@@ -26,7 +24,7 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
         QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
         GWSCoordinate agent_position = agent_geom->getCentroid();
 
-        QString agent_type = this->getProperty( TSP_AGENT_TYPE ).toString();
+        QString agent_type = this->getProperty( SET_TSP_AGENT_TYPE ).toString();
 
          // Get agent class to visit depending on user input:
         QList< QSharedPointer<GWSAgent> > agents_to_visit = GWSAgentEnvironment::globalInstance()->getByClass( agent_type ) ;
@@ -49,7 +47,7 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
           }
 
          // Generate TSP algorithm with those edges
-         GWSTSPRouting* routing = new GWSTSPRouting( this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
+         GWSTSPRouting* routing = new GWSTSPRouting( this->getProperty( SET_NETWORK_TYPE ).toString() );
 
          // Get nearest neighbour given start coordinates and containers to visit
          QList< GWSCoordinate > agents_to_visit_route_coord_array = routing->nearestNeighborTsp( agent_position , agents_to_visit_coords , agent_position );
@@ -67,8 +65,7 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
              ordered_agents_to_visit_tsp_route_id_array.append( id );
          }
 
-         agent->setProperty( this->getProperty( STORE_TSP_ROUTE_AS_PROPERTY_NAME ).toString() , ordered_agents_to_visit_tsp_route_id_array );
-         //agent->setProperty( TSP_ROUTE_STAGE , QJsonValue() );
+         agent->setProperty( CalculateTSPSkill::AGENT_PENDING_TSP_ROUTE_ELEMENTS , ordered_agents_to_visit_tsp_route_id_array );
          //TODO routing->deleteLater();
          return this->getProperty( NEXTS ).toArray();
 

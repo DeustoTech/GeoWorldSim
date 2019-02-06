@@ -42,6 +42,7 @@ HEADERS += \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
+    ../../skill/move/CalculateTSPSkill.h \
     ../../skill/view/ViewSkill.h \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
@@ -53,7 +54,6 @@ HEADERS += \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/waste4think/DelayBehaviour.h \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
     ../../behaviour/property/CopyPropertyBehaviour.h \
@@ -63,6 +63,7 @@ HEADERS += \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
     ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/electricTravelling/DriveBehaviour.h \
@@ -133,15 +134,16 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
+    ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
     ../../behaviour/waste4think/FindClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/waste4think/DelayBehaviour.cpp \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
     ../../behaviour/property/CopyPropertyBehaviour.cpp \

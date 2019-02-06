@@ -8,11 +8,11 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
-QString MoveThroughRouteBehaviour::BEHAVIOUR_NETWORK_TYPE_PROP = "network_type";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_X_VALUE = "destination_x_value";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_DESTINATION_Y_VALUE = "destination_y_value";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_ARRIVED = "nexts_if_arrived";
-QString MoveThroughRouteBehaviour::BEHAVIOUR_NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
+QString MoveThroughRouteBehaviour::SET_NETWORK_TYPE = "network_type";
+QString MoveThroughRouteBehaviour::SET_DESTINATION_X_VALUE = "destination_x_value";
+QString MoveThroughRouteBehaviour::SET_DESTINATION_Y_VALUE = "destination_y_value";
+QString MoveThroughRouteBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
+QString MoveThroughRouteBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
 
 MoveThroughRouteBehaviour::MoveThroughRouteBehaviour() : GWSBehaviour(){
@@ -52,21 +52,18 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
 
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
-    QJsonValue x_destination = this->getProperty( BEHAVIOUR_DESTINATION_X_VALUE );
-    QJsonValue y_destination = this->getProperty( BEHAVIOUR_DESTINATION_Y_VALUE );
-    movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_X_PROP , x_destination );
-    movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_ROUTE_DESTINATION_Y_PROP , y_destination );
+    QJsonValue x_destination = this->getProperty( SET_DESTINATION_X_VALUE );
+    QJsonValue y_destination = this->getProperty( SET_DESTINATION_Y_VALUE );
+    agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_X_PROP , x_destination );
+    agent->setProperty( MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_Y_PROP , y_destination );
 
     GWSCoordinate destination_coor = movethroughroute_skill->getRouteDestination();
     if( !destination_coor.isValid() ){
-        return this->getProperty( BEHAVIOUR_NEXTS_IF_NOT_ARRIVED ).toArray();
+        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
     }
 
-    QSharedPointer<GWSGeometry> agent_geom_init = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    GWSCoordinate agent_position_init = agent_geom_init->getCentroid();
-
     // Move towards
-    movethroughroute_skill->setProperty( MoveThroughRouteSkill::SKILL_NETWORK_TYPE_PROP , this->getProperty( BEHAVIOUR_NETWORK_TYPE_PROP ) );
+    agent->setProperty( MoveThroughRouteSkill::AGENT_MOVE_NETWORK_TYPE_PROP , this->getProperty( SET_NETWORK_TYPE ) );
     movethroughroute_skill->move( duration_of_movement );
 
     QSharedPointer<GWSGeometry> agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
@@ -74,11 +71,11 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
 
     // Set NEXTS behaviour
     if ( agent_position_post.getDistance( destination_coor ) < GWSLengthUnit(1) ){
-        return this->getProperty( BEHAVIOUR_NEXTS_IF_ARRIVED ).toArray();
+        return this->getProperty( NEXTS_IF_ARRIVED ).toArray();
     }
 
     if ( agent_position_post != destination_coor ){
-        return this->getProperty( BEHAVIOUR_NEXTS_IF_NOT_ARRIVED ).toArray();
+        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
     }
 
 }
