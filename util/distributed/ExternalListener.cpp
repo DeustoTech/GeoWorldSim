@@ -9,8 +9,11 @@ GWSExternalListener::GWSExternalListener( QString socket_id ) : GWSExternalCommu
     // Listening to yourself would be a loop
     Q_ASSERT( socket_id != GWSApp::globalInstance()->getAppId() );
 
-    this->websocket.connect( &this->websocket , &QWebSocket::textMessageReceived , [this](const QString message){
-        QJsonObject json = QJsonDocument::fromJson( message.toLatin1() ).object();
+  this->websocket.connect( &this->websocket , &QWebSocket::textMessageReceived , [this](const QString message){
+        qDebug() << "Received message" << message.toUtf8();
+        QJsonObject json = QJsonDocument::fromJson( message.toUtf8() ).object();
         emit this->dataReceivedSignal( json );
     });
 }
+
+

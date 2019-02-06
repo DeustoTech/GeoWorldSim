@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QHash>
 
+QMutex GWSIntelligence::mutex;
+
 GWSIntelligence::GWSIntelligence() : QObject() {
 
 }
@@ -25,7 +27,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         QFile file( inputs_file_path );
 
         if(!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "NO FILE";
+            qWarning() << "NO VALID INPUT FILE";
             return;
         }
 
@@ -76,7 +78,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         QFile file( outputs_file_path );
 
         if(!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "NO FILE";
+            qWarning() << "NO VALID OUTPUT FILE";
             return;
         }
 
@@ -148,9 +150,164 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
         outputs.insert( 0 , qpair_list );
     }
 
+    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
+    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
+
     this->train( inputs , outputs );
 
 }
+
+void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path){
+
+    // Save Input / output positions
+    QFile out( ios_file_path );
+       if( out.open(QIODevice::ReadWrite) ) {
+           QTextStream stream(&out);
+
+           // Input positions
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += this->input_positions.key( i );
+               }
+               stream << str << endl;
+           }
+
+           // Input maximums
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_maximums.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Input minimums
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_minimums.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output positions
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += this->output_positions.key( i );
+               }
+               stream << str << endl;
+           }
+
+           // Output maximums
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_maximums.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output minimums
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_minimums.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+       }
+
+
+    // Call specific library
+    this->saveModel( model_file_path );
+}
+
+
+/* Load trained network */
+void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_path ){
+
+
+    // Load trained:
+    GWSIntelligence::mutex.lock(); // Generate single mutex regardless of the number of calls
+    this->loadModel( model_file_path );
+    GWSIntelligence::mutex.unlock();
+
+    QFile in( ios_file_path );
+    if( in.open(QIODevice::ReadOnly) ) {
+        QTextStream stream(&in);
+
+        // First line = input_positions
+        {
+            QString line = stream.readLine();
+            foreach( QString key , line.split(";") ){
+                this->input_positions.insert( key , this->input_positions.size() );
+            }
+
+        }
+
+        // Second line = input_maximums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_maximums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Third line = input_minimums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_minimums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Fourth line = output_positions
+        {
+            QString line = stream.readLine();
+            foreach( QString key , line.split(";") ){
+                this->output_positions.insert( key , this->output_positions.size() );
+            }
+        }
+
+        // Fifth line = output_maximums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_maximums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Sixth line = output_minimums
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_minimums.insert( key , values.at( i ).toDouble() );
+            }
+        }
+    }
+
+
+}
+
+
+
+
 
 
 /**********************************************************************
@@ -216,16 +373,16 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
 
     if( value.type() == QVariant::String ){
         value_double = 1;
-    } else if ( value != 0.0 ){
+    } else {
+
         double min = minimums.value( hash );
         double max = maximums.value( hash );
 
         // To normalize in [ 0 , 1 ] range
-        //value_double = ( value_double - min ) / ( max - min );
+        value_double = ( value_double - min ) / ( max - min );
 
         // To normalize in [ -1 , 1 ] range
-        value_double = ((value_double - min )/(max - min) - 0.5 ) *2;
-        //value_double = 2.0 * ( ( value_double - min ) / ( max - min ) ) - 1.0;
+        //value_double = ((value_double - min )/(max - min) - 0.5 ) *2;
     }
 
     return value_double;
@@ -234,18 +391,16 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
 
 double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
 
-    double denormalized_value;
-
     double min = this->output_minimums.value( this->output_positions.key( position ) );
     double max = this->output_maximums.value( this->output_positions.key( position ) );
 
     // Denormalize from [ 0 , 1 ] range:
-    //denormalized_value = normalized_value * ( max - min) + min;
+    normalized_value = normalized_value * ( max - min ) + min;
 
     // Denormalize from [ -1 , 1 ] range:
-    qDebug() << normalized_value << min << max << this->output_positions.keys();
-    denormalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
-    qDebug() << denormalized_value;
+    //qDebug() << normalized_value << min << max << this->output_positions.keys();
+    //normalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
+    qDebug() << normalized_value;
     return normalized_value;
 
 }

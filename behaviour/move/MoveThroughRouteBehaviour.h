@@ -22,6 +22,9 @@ public:
 protected slots:
     virtual QJsonArray behave();
 
+protected:
+    virtual void initialize();
+
 };
 
 #endif // GWSMOVETHROUGHROUTEBEHAVIOUR_H

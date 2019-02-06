@@ -21,6 +21,8 @@
 #include "../../skill/view/ViewSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/MoveThroughRouteInVehicleSkill.h"
+#include "../../skill/pollute/PolluteSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
@@ -32,14 +34,16 @@
 #include "../../behaviour/waste4think/FollowTSPRouteBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
-#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
-#include "../../behaviour/waste4think/PolluteBehaviour.h"
 #include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
+#include "../../behaviour/electricTravelling/DriveBehaviour.h"
+#include "../../behaviour/information/ListenToMessagesBehaviour.h"
+#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -48,6 +52,8 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
@@ -57,7 +63,8 @@
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
-#include "../../util/neural_network/NeuralNetwork.h"
+#include "../../util/ai/Intelligence.h"
+#include "../../util/svm/Svm.h"
 
 
 
@@ -76,6 +83,7 @@ int main(int argc, char* argv[])
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
+    GWSCommunicationEnvironment::globalInstance();
 
     // AVAILABLE AGENTS
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
@@ -91,15 +99,18 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FollowTSPRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GatherAgentPropertyBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
+    GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
+
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
@@ -119,23 +130,35 @@ int main(int argc, char* argv[])
     }
 
     // CREATE POPULATION
-    int pending_population = 0;
+    QList<GWSAgentGeneratorDatasource*> pending_datasources;
     QJsonObject json_population = json_configuration.value("population").toObject();
-    foreach( QString key , json_population.keys() ) {
+     foreach( QString key , json_population.keys() ) {
 
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
 
-        if ( !population.value("template").isNull() && !population.value("datasource_url").isNull() ){
-            pending_population++;
-            GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() , population.value("datasource_url").toString() );
-            ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ds,&pending_population](){
-                pending_population--;
-                ds->deleteLater();
-                if( pending_population <= 0 ){
-                    GWSExecutionEnvironment::globalInstance()->run();
-                }
-            });
+        if ( !population.value("template").isNull() && !population.value("datasource_urls").isNull() ){
+
+            QJsonArray datasources = population.value("datasource_urls").toArray();
+
+            for ( int i = 0; i <  datasources.size(); ++i){
+
+                QString ds_url = datasources.at(i).toString();
+
+                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() ,  ds_url );
+                pending_datasources.append( ds );
+
+                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                    pending_datasources.removeAll( ds );
+                    ds->deleteLater();
+                    if( pending_datasources.isEmpty() ){
+                        GWSExecutionEnvironment::globalInstance()->run();
+                    }
+                });
+
+            }
+
+
         }
 
         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
@@ -146,7 +169,7 @@ int main(int argc, char* argv[])
         }
        qDebug() << QString("Creating population %1").arg( key );
     }
-    if( pending_population <= 0 ){
+    if( pending_datasources.isEmpty() ){
         GWSExecutionEnvironment::globalInstance()->run();
     }
 
@@ -154,6 +177,7 @@ int main(int argc, char* argv[])
 
 
     // LISTEN TO EXTERNAL SIMULATIONS
+    // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
     QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
@@ -163,65 +187,6 @@ int main(int argc, char* argv[])
         }
         qDebug() << QString("Creating external listener %1").arg( key );
      }
-
-
-
-/*
-   NEURAL NETWORK:
-   Get NN training data from GWS DataSources from URL  */
-
-GWSDatasourceReader* idsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/fa6eeb69-b9c6-4293-9f6d-ceb66f64a72a/read" );
-GWSDatasourceReader* odsr = new GWSDatasourceReader( "http://datasources.geoworldsim.com/api/datasource/ae53c8d8-fcdb-40db-83cf-0cfbfd0b3e48/read" );
-
-// Create empty QJsonArray to store data from DataSource
-QJsonArray* train_json_inputs = new QJsonArray();
-QJsonArray* train_json_outputs = new QJsonArray();
-
-// Connect training input DSR to load data into QJsonArray:
-idsr->connect( idsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_inputs]( QJsonObject read_json ){
-       train_json_inputs->append( read_json );
-});
-
-idsr->connect( idsr , &GWSDatasourceReader::dataReadingFinishedSignal , [odsr , train_json_inputs , train_json_outputs ](){
-     if( odsr->downloadedFinished() ){
-
-        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
-        neural_network->train( *train_json_inputs , *train_json_outputs );
-
-        // 10448: HC	RUR/MW/130/Heavy	+2%	151-250cc	MC 4S Euro-0	124.2134170532
-        // 10276: HC	RUR/MW/130/Heavy	-6%	≤50cc	Moped-EU2	30
-
-        QJsonObject test_input = {
-                                 { "Component" , "HC" },
-                                 { "TrafficSit" , "RUR/MW/130/Heavy" } ,
-                                 { "Gradient" ,  "-6%" } ,
-                                 { "SizeClasse" , "≤50cc" },
-                                 { "EmConcept" , "Moped-EU2" },
-                                 { "V" , 30 }
-                                 };
-        qDebug() << test_input;
-        QJsonObject result = neural_network->run( test_input );
-        qDebug() << 2;
-
-    }
-});
-
-
-odsr->connect( odsr , &GWSDatasourceReader::dataValueReadSignal , [train_json_outputs]( QJsonObject read_json ){
-       train_json_outputs->append( read_json );
-});
-
-odsr->connect( odsr , &GWSDatasourceReader::dataReadingFinishedSignal , [idsr , train_json_inputs , train_json_outputs ](){
-    if( idsr->downloadedFinished() ){
-
-        GWSNeuralNetwork* neural_network = new GWSNeuralNetwork( 0.7, 0.001, 30000, 100 );
-        neural_network->train( *train_json_inputs , *train_json_outputs );
-    }
- });
-
-
-idsr->startReading();
-odsr->startReading();
 
 
 

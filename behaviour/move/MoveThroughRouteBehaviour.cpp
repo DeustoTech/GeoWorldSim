@@ -23,6 +23,23 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
 
 
 /**********************************************************************
+ INITIALIZE
+**********************************************************************/
+
+void MoveThroughRouteBehaviour::initialize(){
+
+    QSharedPointer<GWSAgent> agent = this->getAgent();
+
+    // Check if agent has a MoveSkill, otherwise create it and set its max_speed
+    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    if( movethroughroute_skill.isNull() ){
+        movethroughroute_skill = QSharedPointer<MoveThroughRouteSkill>( new MoveThroughRouteSkill() );
+        agent->addSkill( movethroughroute_skill );
+    }
+
+}
+
+/**********************************************************************
  METHODS
 **********************************************************************/
 
@@ -33,12 +50,7 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
 
-    // Check if agent has a MoveSkill, otherwise create it and set its max_speed
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    if( movethroughroute_skill.isNull() ){
-        movethroughroute_skill = QSharedPointer<MoveThroughRouteSkill>( new MoveThroughRouteSkill() );
-        agent->addSkill( movethroughroute_skill );
-    }
 
     QJsonValue x_destination = this->getProperty( BEHAVIOUR_DESTINATION_X_VALUE );
     QJsonValue y_destination = this->getProperty( BEHAVIOUR_DESTINATION_Y_VALUE );

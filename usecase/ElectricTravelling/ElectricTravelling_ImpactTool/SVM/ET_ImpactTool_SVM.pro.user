@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.5.2, 2018-12-21T08:36:27. -->
+=======
+<!-- Written by QtCreator 4.8.1, 2019-01-24T08:30:46. -->
+>>>>>>> be70376cef49082291e0867dd716a038c9c7488e
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -308,9 +312,13 @@
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">/home/ander/Descargas/INPUTS_10000.csv /home/ander/Descargas/OUTPUTS_10000.csv</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">ET_ImpactTool_SVM.pro</value>
+<<<<<<< HEAD
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default">/home/ander/Workspace/GeoWorldSim/build</value>
+=======
+    <value type="QString" key="RunConfiguration.Arguments">/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/CSV_SPLITTING/MC_2S_=150cc_Euro-1CH4_INPUT.csv /home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/CSV_SPLITTING/MC_2S_=150cc_Euro-1CH4_OUTPUT.csv</value>
+>>>>>>> be70376cef49082291e0867dd716a038c9c7488e
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>

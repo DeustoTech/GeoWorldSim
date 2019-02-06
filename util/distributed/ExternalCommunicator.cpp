@@ -33,5 +33,5 @@ void GWSExternalCommunicator::startSocket(){
 }
 
 void GWSExternalCommunicator::reconnectSocket(){
-    this->websocket.open( QUrl( "ws://sockets.geoworldsim.com/?scenario_id=" + this->socket_id ) );
+    this->websocket.open( QUrl( "wss://sockets.geoworldsim.com/?scenario_id=" + this->socket_id ) );
 }

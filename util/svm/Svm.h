@@ -17,11 +17,18 @@ public:
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset );
     virtual QJsonObject run(  QMap< QString, QVariant> inputs );
+    virtual void saveModel( QString model_file_path );
+    virtual void loadModel (QString model_file_path );
 
 private:
 
     svm_parameter parameters;
     svm_model *model = Q_NULLPTR;
+
+    // Mutex, for avoiding concurrency
+    mutable QMutex mutex;
 };
+
+
 
 #endif // GWSSVM_H

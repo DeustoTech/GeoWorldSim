@@ -1,6 +1,7 @@
 TEMPLATE = app
 QT = core
 QT += network
+QT += sql
 
 
 # ACTIVATE QT-COMPILER OPTIMIZATION

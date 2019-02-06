@@ -15,9 +15,11 @@ public:
 
     // PROPERTIES
     static QString PROPERTY_NAME_TO_TRANSFER;
+    static QString TRANSACTION_TYPE;
     static QString EMITTING_AGENT_ID;
     static QString RECEIVING_AGENT_ID;
     static QString NEXTS;
+
 protected slots:
     virtual QJsonArray behave();
 

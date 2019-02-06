@@ -7,7 +7,10 @@
 GWSSvm::GWSSvm() : GWSIntelligence (){
 
     // set some defaults
+    // NU_SVC fits to integer categories
+    // NU_SVR tries to fit to double precision
     this->parameters.svm_type = EPSILON_SVR;
+
     this->parameters.kernel_type = RBF;
     this->parameters.degree = 3;
     this->parameters.gamma = 0.5; // 1/num_features
@@ -15,7 +18,7 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
     this->parameters.nu = 0.5;
     this->parameters.cache_size = 100;
     this->parameters.C = 1;
-    this->parameters.eps = 1e-3;
+    this->parameters.eps = 1e-8;
     this->parameters.p = 0.1;
     this->parameters.shrinking = 1;
     this->parameters.probability = 0;
@@ -23,6 +26,9 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
     this->parameters.weight_label = Q_NULLPTR;
     this->parameters.weight = Q_NULLPTR;
 
+    svm_set_print_string_function( [](const char* msg){
+        qDebug() << msg;
+    });
 
 }
 
@@ -73,10 +79,9 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
     problem.x = new svm_node*[ problem.l ];
     for( int i = 0 ; i < input_train_dataset.size() ; i++ ){
 
-        int size = input_train_dataset[ i ].size();
-        problem.x[i] = new svm_node[ size + 1 ];
-
         const QMap< QString , QVariant> row = input_train_dataset.at( i );
+        problem.x[i] = new svm_node[ row.size() + 1 ];
+
         for(int j = 0 ; j < row.keys().size() ; j++ ){
 
             QString hash = row.keys().at( j );
@@ -89,17 +94,31 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
             if( position > -1 ){
                 problem.x[i][j].index = position;
                 problem.x[i][j].value = value_double;
+            } else {
+                qWarning() << QString("Input %1 not contained in training data").arg( hash );
             }
         }
 
         problem.x[i][ row.size() ].index = -1;
     }
 
-    this->parameters.gamma = 1 / this->input_positions.keys().size(); // 1/num_features!!!
+    this->parameters.gamma = 1.0 / this->input_positions.keys().size(); // 1/num_features!!!
 
     this->model = svm_train(&problem, &this->parameters);
-    svm_save_model( "/home/maialen/test" , this->model );
 }
+
+void GWSSvm::saveModel( QString model_file_path ){
+    if( this->model ){
+        svm_save_model( model_file_path.toUtf8() , this->model );
+    }
+}
+
+void GWSSvm::loadModel( QString model_file_path ){
+    if ( !model_file_path.isNull() ){
+        this->model = svm_load_model( model_file_path.toUtf8() );
+    }
+}
+
 
 QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
 
@@ -118,6 +137,8 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
         if( position > -1 ){
             x[ i ].index = position;
             x[ i ].value = value_double;
+        } else {
+            qWarning() << QString("Input %1 not contained in training data").arg( hash );
         }
     }
 
@@ -126,9 +147,11 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
 
     // Predict SVM result on test input:
     QJsonObject result;
-    result.insert(  this->output_positions.keys().at(0) , svm_predict( this->model , x ) );
 
     double normResult = svm_predict( this->model , x );
+
     double denormResult =  this->denormalizeIO( normResult , 0 );
+
+    result.insert( this->output_positions.keys().at(0) , denormResult );
     return result;
 }

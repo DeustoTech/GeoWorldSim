@@ -14,6 +14,7 @@ public:
 
     // PROPERTIES
     static QString STORE_RANDOM_VALUE_AS;
+    static QString MULTIPLIER;
     static QString NEXTS;
 
 

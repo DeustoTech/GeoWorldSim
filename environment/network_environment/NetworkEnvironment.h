@@ -19,8 +19,6 @@ public:
 
     // PROPERTIES
     static QString EDGE_PROP;
-    static QString EDGE_CAPACITY_PROP;
-    static QString EDGE_INSIDE_AGENT_IDS_PROP;
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

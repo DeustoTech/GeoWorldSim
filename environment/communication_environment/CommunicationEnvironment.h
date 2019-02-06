@@ -17,18 +17,23 @@ public:
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
-    void connectExternalEnvironment( QString socket_id );
-    void disconnectExternalEnvironment( QString socket_id );
-
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
+    void listenSocket( QString socket_id );
     void sendAgentSignal( QJsonObject agent_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
     void sendMessageSignal( QJsonObject message_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
+    void dataReceivedSignal( QJsonObject message_json , QString socket_id );
+
+
+public slots:
+    void dataReceivedFromSocket( QJsonObject data );
+
 
 private slots:
-    // LISTENERS
-    void externalEnvironmentReceived( QJsonObject json_data );
+    // SOCKETS
+    void connectExternalSocket( QString socket_id );
+    void disconnectExternalSocket( QString socket_id );
 
-    // PUBLISHERS
+    // SOCKET DATA
     void sendAgent( QJsonObject agent_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
     void sendMessage( QJsonObject message_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
     void sendData( QString signal , QJsonObject data , QString socket_id = GWSApp::globalInstance()->getAppId() );

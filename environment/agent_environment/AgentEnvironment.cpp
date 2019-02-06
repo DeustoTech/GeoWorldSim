@@ -50,6 +50,14 @@ QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByIds(QStringList ids)
     return agents;
 }
 
+QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByIds(QJsonArray json) const{
+    QStringList ids;
+    foreach(QJsonValue v , json){
+        ids.append( v.toString() );
+    }
+    return this->getByIds( ids );
+}
+
 QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
     return this->getByClassAndId<GWSAgent>( class_name , id );
 }
