@@ -25,7 +25,7 @@ public:
     // PROPERTIES
     static QString GWS_SIM_ID_PROP;
     static QString GWS_ID_PROP;
-    static QString GWS_TYPE_PROP;
+    static QString GWS_CLASS_PROP;
     static QString GWS_INHERITANCE_FAMILY_PROP;
     static QString GWS_PARENT_PROP;
 

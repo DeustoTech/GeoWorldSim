@@ -82,11 +82,11 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
     // Store transfers log
     QJsonObject transaction;
     transaction.insert( GWSObject::GWS_ID_PROP , emitter->getId() + receiver->getId() );
-    transaction.insert( GWSObject::GWS_TYPE_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+    transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "refEmitter" , emitter->getId() );
     transaction.insert( "refReceiver" , receiver->getId() );
     transaction.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
-    transaction.insert( "value" , values_sum );
+    transaction.insert( "value" , value_to_be_transferred );
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
     return this->getProperty( NEXTS ).toArray();

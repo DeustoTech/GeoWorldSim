@@ -33,7 +33,7 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
         QJsonArray coordinates;
         coordinates.append( destination_coor.getX() ); coordinates.append( destination_coor.getY() );
         geom_json.insert( "coordinates" , coordinates );
-        geom_json.insert( GWSObject::GWS_TYPE_PROP , GWSGeometry::staticMetaObject.className() );
+        geom_json.insert( GWSObject::GWS_CLASS_PROP , GWSGeometry::staticMetaObject.className() );
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
         GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
     }

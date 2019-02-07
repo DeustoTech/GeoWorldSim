@@ -52,7 +52,7 @@ const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
 
 QSharedPointer<GWSObject> GWSObjectFactory::fromType( QString type , QSharedPointer<GWSObject> parent ){
     QJsonObject json;
-    json.insert( GWSObject::GWS_TYPE_PROP , type );
+    json.insert( GWSObject::GWS_CLASS_PROP , type );
     return this->fromJSON( json , parent );
 }
 
@@ -64,20 +64,24 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromBytes(QByteArray json_bytes, QSh
 QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent ){
 
     if( json.isEmpty() ){
-        qDebug() << QString("Object Factory received empty JSON");
+        qWarning() << QString("Object Factory received empty JSON");
         return Q_NULLPTR;
     }
 
-    QString type = json.value( GWSObject::GWS_TYPE_PROP ).toString();
+    if( !json.keys().contains( GWSObject::GWS_CLASS_PROP ) ){
+        qWarning() << QString("Object Factory received json without %1").arg( GWSObject::GWS_CLASS_PROP );
+        return Q_NULLPTR;
+    }
 
-    if( !this->constructors.keys().contains( type ) ){
-        qWarning() << QString("Object type %1 not registered in the ObjectFactory.").arg( type );
-        qDebug() << type;
+    QString class_name = json.value( GWSObject::GWS_CLASS_PROP ).toString();
+
+    if( !this->constructors.keys().contains( class_name ) ){
+        qWarning() << QString("Object class %1 not registered in the ObjectFactory.").arg( class_name );
         return Q_NULLPTR;
     }
 
     // Create object
-    GWSObject* obj_raw = dynamic_cast<GWSObject*>( this->constructors.value( type ).newInstance() );
+    GWSObject* obj_raw = dynamic_cast<GWSObject*>( this->constructors.value( class_name ).newInstance() );
     if( !obj_raw ){
         return Q_NULLPTR;
     }
@@ -85,11 +89,11 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD
     QSharedPointer<GWSObject> obj = QSharedPointer<GWSObject>( obj_raw );
     obj_raw->self_shared_pointer = obj;
-    obj_raw->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( GWSApp::globalInstance()->getAppId() ).arg( type ).arg( ++GWSObject::counter ) );
+    obj_raw->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( GWSApp::globalInstance()->getAppId() ).arg( class_name ).arg( ++GWSObject::counter ) );
 
     // Set parent if any
     if( parent ){
-        obj->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( parent->getId() ).arg( type ).arg( ++GWSObject::counter ) );
+        obj->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( parent->getId() ).arg( class_name ).arg( ++GWSObject::counter ) );
     }
 
     // Call deserialize for further population
