@@ -12,7 +12,7 @@
 QString GWSObject::GWS_SIM_ID_PROP = "@simulation_id";
 QString GWSObject::GWS_ID_PROP = "id";
 QString GWSObject::GWS_CLASS_PROP = "@gwsclass";
-QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@family";
+QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@gwsgroups";
 QString GWSObject::GWS_PARENT_PROP = "parent";
 
 quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
@@ -56,7 +56,6 @@ QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
     for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
         QString property_name = this->dynamicPropertyNames().at( i );
-        if( property_name.startsWith("@") ){ continue; }
         json.insert( property_name , this->getProperty( property_name ) );
     }
     return json;

@@ -115,10 +115,10 @@
 	    
             if( signal == 'entity' ){
             
-                var id = body['@id'];
-                var type = body['@type'];
-		var family = body['@family'];
-		if( family && family.join ){ type = body['@family'].join() };
+                var id = body['id'];
+                var type = body['@gwsclass'];
+		var family = body['@gwsgroups'];
+		if( family && family.join ){ type = body['@gwsgroups'].join() };
                 
                 /* If new entity class */
                 if( !layers[type] ){

@@ -2,7 +2,7 @@
 
 "population" : {
 
-    "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@family": [ "GWSAgent", "Citizen" ], "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "running" : true , "@behaviours": [  
+    "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "running" : true , "@behaviours": [  
                                  { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY_AT_HOME"] }, 
                                  
                                   { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" :true ,   "id": "DISPLAY_AT_HOME" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["SET_DURATION"] } ,
@@ -53,21 +53,21 @@
 			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/zamudio_census/read"] }, 
 
 
-	"containersST1" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 , "color" : "brown" , "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType1", "Container" ] , "running" : true , 
+	"containersST1" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 , "color" : "brown" , "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType1", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] },  
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "brown" , "nexts" : ["LOOP"] }, 
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 300 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st1/read" ]}, 
 		            
-    "containersST2" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType2", "Container" ] , "running" : true , 
+    "containersST2" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType2", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] },  
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "darkgreen" , "nexts" : ["LOOP"] }, 
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 300 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st2/read" ]}, 
 		            
-    "containersST5" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType5", "Container" ] , "running" : true , 
+    "containersST5" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType5", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "yellow" , "nexts" : ["LOOP"] }, 
@@ -75,14 +75,14 @@
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st5/read" ]}, 
 		            
 		            
-    "containersST6" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType6", "Container" ] , "running" : true , 
+    "containersST6" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType6", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "darkblue" , "nexts" : ["LOOP"] }, 
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 300 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st6/read" ]}, 
 		            
-	"containersST7" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType7", "Container" ] , "running" : true , 
+	"containersST7" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType7", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "blue" , "nexts" : ["LOOP"] }, 
@@ -90,14 +90,14 @@
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st7/read" ]}, 
 		
 		
-    "containersST8" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType8", "Container" ] , "running" : true , 
+    "containersST8" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType8", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "green" , "nexts" : ["LOOP"] }, 
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 300 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st8/read" ]}, 
 		            
-	"containersST9" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@family": [ "SortingType9", "Container" ] , "running" : true , 
+	"containersST9" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType9", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "orange" , "nexts" : ["LOOP"] }, 
@@ -106,7 +106,7 @@
 
 
 
-	"footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "weight" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@family" : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+	"footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups" : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
                             "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_footways/read", "http://datasources.geoworldsim.com/api/datasource/zamudio_residential/read"] }
                             
 

@@ -46,7 +46,7 @@ void GWSDatasourceReader::dataReceived(){
     }
 
     unsigned int count = json.value( "count" ).toInt();
-    qDebug() << QString("Received datasource %1, amount %2 of total %3").arg( this->datasource_url ).arg( this->downloaded_total ).arg( count );
+    qDebug() << QString("Finished reading datasource %1, amount %2 of total %3").arg( this->datasource_url ).arg( this->downloaded_total ).arg( count );
 
     if( count > (this->last_paginated+1) * this->page_size && this->downloaded_total < this->download_limit ){
         this->requestPaginated( ++this->last_paginated );
