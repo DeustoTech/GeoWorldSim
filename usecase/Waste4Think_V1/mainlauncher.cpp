@@ -108,8 +108,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
-    GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );

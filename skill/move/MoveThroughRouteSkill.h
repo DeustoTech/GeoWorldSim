@@ -17,18 +17,15 @@ public:
     //- PROPERTIES
     static QString EDGE_CAPACITY_PROP;
     static QString EDGE_INSIDE_AGENT_IDS_PROP;
-    static QString AGENT_MOVE_NETWORK_TYPE_PROP;
-    static QString AGENT_ROUTE_DESTINATION_X_PROP;
-    static QString AGENT_ROUTE_DESTINATION_Y_PROP;
-    static QString AGENT_CURRENT_ROAD_ID_PROP;
-    static QString AGENT_CURRENT_ROAD_TYPE_PROP;
-    static QString AGENT_CURRENT_ROAD_MAXSPEED_PROP;
+    static QString STORE_CURRENT_ROAD_ID;
+    static QString STORE_CURRENT_ROAD_TYPE;
+    static QString STORE_CURRENT_ROAD_MAXSPEED;
 
     // GETTERS
-    GWSCoordinate getRouteDestination();
+    //GWSCoordinate getRouteDestination();
 
     // METHODS
-    virtual void move(GWSTimeUnit movement_duration);
+    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );
 
 protected:
 

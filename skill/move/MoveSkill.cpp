@@ -6,12 +6,12 @@
 #include "../../app/App.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
-QString MoveSkill::AGENT_MAX_SPEED_PROP = "maxspeed";
-QString MoveSkill::AGENT_CURRENT_SPEED_PROP = "current_speed";
-QString MoveSkill::AGENT_MOVING_TOWARDS_X_PROP = "agent_moving_towards_x";
-QString MoveSkill::AGENT_MOVING_TOWARDS_Y_PROP = "agent_moving_towards_y";
-QString MoveSkill::AGENT_ACCUMULATED_DISTANCE_PROP = "total_moved_distance";
-QString MoveSkill::AGENT_ACCUMULATED_TIME_PROP = "total_travel_time";
+QString MoveSkill::STORE_MAX_SPEED_PROP = "move_skill_maxspeed";
+QString MoveSkill::STORE_CURRENT_SPEED_PROP = "move_skill_current_speed";
+QString MoveSkill::STORE_MOVING_TOWARDS_X_PROP = "move_skill_moving_towards_x";
+QString MoveSkill::STORE_MOVING_TOWARDS_Y_PROP = "move_skill_moving_towards_y";
+QString MoveSkill::STORE_ACCUMULATED_DISTANCE_PROP = "move_skill_total_moved_distance";
+QString MoveSkill::STORE_ACCUMULATED_TIME_PROP = "move_skill_total_travel_time";
 
 MoveSkill::MoveSkill() : GWSSkill(){
 }
@@ -23,43 +23,31 @@ MoveSkill::~MoveSkill(){
  GETTERS
 **********************************************************************/
 
-GWSSpeedUnit MoveSkill::getCurrentSpeed() {
+/*GWSSpeedUnit MoveSkill::getCurrentSpeed() {
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    return GWSSpeedUnit( agent->getProperty( AGENT_CURRENT_SPEED_PROP ).toDouble() );
+    return GWSSpeedUnit( agent->getProperty( STORE_CURRENT_SPEED_PROP ).toDouble() );
 }
 
 GWSCoordinate MoveSkill::getMovingTowardsCoordinate(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    if( agent->getProperty( AGENT_MOVING_TOWARDS_X_PROP ).isNull() || agent->getProperty( AGENT_MOVING_TOWARDS_Y_PROP ).isNull() ){
+    if( agent->getProperty( STORE_MOVING_TOWARDS_X_PROP ).isNull() || agent->getProperty( STORE_MOVING_TOWARDS_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
-    return GWSCoordinate( agent->getProperty( AGENT_MOVING_TOWARDS_X_PROP ) .toDouble( ) , agent->getProperty( AGENT_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
-}
+    return GWSCoordinate( agent->getProperty( STORE_MOVING_TOWARDS_X_PROP ) .toDouble( ) , agent->getProperty( STORE_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
+}*/
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-GWSSpeedUnit MoveSkill::changeSpeed(double force){
+GWSSpeedUnit MoveSkill::calculateNewSpeed(GWSSpeedUnit current_speed , GWSSpeedUnit max_speed , double force){
     double normalized_force = qMax( -1.0 , qMin( 1.0 , force ) );
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-
-    GWSSpeedUnit current_speed = agent->getProperty( AGENT_CURRENT_SPEED_PROP ).toDouble();
-    GWSSpeedUnit max_speed = agent->getProperty( AGENT_MAX_SPEED_PROP ).toDouble();
+    if( max_speed == 0 ){ max_speed = 4; } // TODO
     GWSSpeedUnit variation = max_speed * normalized_force;
     GWSSpeedUnit new_speed = current_speed + variation;
     new_speed = qMax( GWSSpeedUnit( 0 ) , new_speed );
     new_speed = qMin( max_speed , new_speed );
-
-
-    if ( force < 0 ){
-        agent->setProperty( "color" , "Red" );
-    }
-    else {
-        agent->setProperty( "color" , "Blue" );
-    }
-    //this->skilled_agent->getStyle()->color = this->skilled_agent->getStyle()->border_color = QColor( 255 * (  ) , 255 , 128 );
 
     emit this->speedChangedSignal( new_speed );
     return new_speed;
@@ -69,9 +57,9 @@ GWSSpeedUnit MoveSkill::changeSpeed(double force){
 void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards ){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    agent->setProperty( AGENT_CURRENT_SPEED_PROP , movement_speed );
-    agent->setProperty( AGENT_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
-    agent->setProperty( AGENT_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
+    agent->setProperty( STORE_CURRENT_SPEED_PROP , movement_speed );
+    agent->setProperty( STORE_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
+    agent->setProperty( STORE_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
 
     if( movement_duration == 0 ){
         // Not move operation
@@ -115,7 +103,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
 
     }
 
-    agent->setProperty( AGENT_ACCUMULATED_DISTANCE_PROP , agent->getProperty( AGENT_ACCUMULATED_DISTANCE_PROP ).toDouble() + meters );
-    agent->setProperty( AGENT_ACCUMULATED_TIME_PROP , agent->getProperty( AGENT_ACCUMULATED_TIME_PROP ).toDouble() + movement_duration.number() );
+    agent->setProperty( STORE_ACCUMULATED_DISTANCE_PROP , agent->getProperty( STORE_ACCUMULATED_DISTANCE_PROP ).toDouble() + meters );
+    agent->setProperty( STORE_ACCUMULATED_TIME_PROP , agent->getProperty( STORE_ACCUMULATED_TIME_PROP ).toDouble() + movement_duration.number() );
 
 }

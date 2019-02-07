@@ -7,9 +7,10 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
-QString MoveBehaviour::SET_MAX_SPEED = "maxspeed";
-QString MoveBehaviour::SET_MOVE_TO_X_VALUE = "move_to_x_value";
-QString MoveBehaviour::SET_MOVE_TO_Y_VALUE = "move_to_y_value";
+QString MoveBehaviour::AGENT_MAX_SPEED = "maxspeed";
+QString MoveBehaviour::AGENT_CURRENT_SPEED = "current_speed";
+QString MoveBehaviour::AGENT_MOVE_TO_X_VALUE = "move_to_x_value";
+QString MoveBehaviour::AGENT_MOVE_TO_Y_VALUE = "move_to_y_value";
 QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
@@ -34,32 +35,27 @@ QJsonArray MoveBehaviour::behave(){
         agent->addSkill( move_skill );
     }
 
-    // Set max speed if any
-    if( !this->getProperty( SET_MAX_SPEED ).isNull() ){
-        agent->setProperty( MoveSkill::AGENT_MAX_SPEED_PROP , this->getProperty( SET_MAX_SPEED ) );
-    }
-
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QJsonValue x_destination = this->getProperty( SET_MOVE_TO_X_VALUE );
-    QJsonValue y_destination = this->getProperty( SET_MOVE_TO_Y_VALUE );
-    agent->setProperty( MoveSkill::AGENT_MOVING_TOWARDS_X_PROP , x_destination );
-    agent->setProperty( MoveSkill::AGENT_MOVING_TOWARDS_Y_PROP , y_destination );
-
-    GWSCoordinate destination_coor = move_skill->getMovingTowardsCoordinate();
+    QJsonValue x_destination = this->getProperty( AGENT_MOVE_TO_X_VALUE );
+    QJsonValue y_destination = this->getProperty( AGENT_MOVE_TO_Y_VALUE );
+    GWSCoordinate destination_coor = GWSCoordinate( x_destination.toDouble() , y_destination.toDouble() );
     if( !destination_coor.isValid() ){
         return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
     }
 
     // Calculate speed
-    GWSCoordinate agent_position = agent_geom->getCentroid();
-    GWSLengthUnit distance = agent_position.getDistance( destination_coor );
-    if( move_skill->getCurrentSpeed() == 0.0 ){
-        move_skill->changeSpeed( 1 );
+    GWSSpeedUnit current_speed = GWSSpeedUnit( this->getProperty( AGENT_CURRENT_SPEED ).toDouble() );
+    GWSSpeedUnit max_speed = GWSSpeedUnit( this->getProperty( AGENT_MAX_SPEED ).toDouble() );
+
+    if( current_speed == 0 ){
+        current_speed = move_skill->calculateNewSpeed( current_speed , max_speed , 1.4 );
+        this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
     }
 
     // Move towards
-    move_skill->move( duration_of_movement , 4 , destination_coor );
+    GWSCoordinate agent_position = agent_geom->getCentroid();
+    move_skill->move( duration_of_movement , current_speed , destination_coor );
 
     if ( agent_position == destination_coor ){
         return this->getProperty( NEXTS_IF_ARRIVED ).toArray();

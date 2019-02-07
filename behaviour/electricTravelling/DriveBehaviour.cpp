@@ -36,7 +36,7 @@ QJsonArray DriveBehaviour::behave(){
     // Get current road ID
     // ------------------------
 
-    QString current_road_id = agent->getProperty( MoveThroughRouteSkill::AGENT_CURRENT_ROAD_ID_PROP ).toString();
+    QString current_road_id = agent->getProperty( MoveThroughRouteSkill::STORE_CURRENT_ROAD_ID ).toString();
   //  qDebug() << "Current road id" << current_road_id;
 
     // ------------------------------------
@@ -58,7 +58,7 @@ QJsonArray DriveBehaviour::behave(){
 
      if ( current_road_id.isEmpty() ){
          // Move at slow speed
-         agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , 40 );
+         agent->setProperty( MoveSkill::STORE_CURRENT_SPEED_PROP , 40 );
         return nexts_if_moving;
      }
 
@@ -67,13 +67,13 @@ QJsonArray DriveBehaviour::behave(){
     // Get current road maxSpeed
     // -------------------------
 
-    GWSSpeedUnit road_maxSpeed = agent->getProperty( MoveThroughRouteSkill::AGENT_CURRENT_ROAD_MAXSPEED_PROP ).toDouble();
+    GWSSpeedUnit road_maxSpeed = agent->getProperty( MoveThroughRouteSkill::STORE_CURRENT_ROAD_MAXSPEED ).toDouble();
 
     // ---------------------------------------
     // Get vehicle speed
     // ---------------------------------------
 
-    GWSSpeedUnit speed = agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).toDouble();
+    GWSSpeedUnit speed = agent->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).toDouble();
 
     // ---------------------------------------
     // Get road occupation and nearest vehicle
@@ -114,7 +114,7 @@ QJsonArray DriveBehaviour::behave(){
 
   if ( !agent_in_front_of_me ){ // No other agent apart from the agent itself
 
-         agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , road_maxSpeed );
+         agent->setProperty( MoveSkill::STORE_CURRENT_SPEED_PROP , road_maxSpeed );
          agent->setProperty( "color" , "Green" );
 
     } else {
@@ -123,12 +123,12 @@ QJsonArray DriveBehaviour::behave(){
 
         if ( agent_in_fron_of_me_distance > security_distance ){
 
-            agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , road_maxSpeed );
+            agent->setProperty( MoveSkill::STORE_CURRENT_SPEED_PROP , road_maxSpeed );
             agent->setProperty( "color" , "Blue" );
 
         } else {
 
-            agent->setProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP , GWSSpeedUnit( 0 ) );
+            agent->setProperty( MoveSkill::STORE_CURRENT_SPEED_PROP , GWSSpeedUnit( 0 ) );
             agent->setProperty( "color" , "Red" );
             return this->getProperty( NEXTS_IF_STOP ).toArray();
         }

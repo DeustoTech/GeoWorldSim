@@ -11,7 +11,7 @@ public:
     Q_INVOKABLE explicit MoveThroughRouteInVehicleSkill();
 
     // METHODS
-    virtual void move(  GWSTimeUnit movement_duration  );
+    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );
 };
 
 
