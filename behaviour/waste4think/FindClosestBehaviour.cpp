@@ -61,10 +61,10 @@ QJsonArray FindClosestBehaviour::behave(){
     // Extract and store closest node ID and coordinates:
     QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
 
-    this->setProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString( "closest_agent_id" ) , closest_agent_id );
-    this->setProperty( this->getProperty( STORE_CLOSEST_X_AS ).toString( "closest_agent_x" ) , closest_coor_and_route.first.getX() );
-    this->setProperty( this->getProperty( STORE_CLOSEST_Y_AS ).toString( "closest_agent_y" ) , closest_coor_and_route.first.getY() );
-    this->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString("closest_agent_distance") , closest_route_distance.number() );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_ID_AS ).toString( "closest_agent_id" ) , closest_agent_id );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_X_AS ).toString( "closest_agent_x" ) , closest_coor_and_route.first.getX() );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_Y_AS ).toString( "closest_agent_y" ) , closest_coor_and_route.first.getY() );
+    agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString("closest_agent_distance") , closest_route_distance.number() );
 
     // Set next behaviours:
     return this->getProperty( NEXTS ).toArray();
