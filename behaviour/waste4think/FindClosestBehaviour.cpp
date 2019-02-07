@@ -26,7 +26,6 @@ QJsonArray FindClosestBehaviour::behave(){
 
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
     QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
-    qDebug() << agent_geom;
     GWSCoordinate agent_coor = agent_geom->getCentroid();
 
     // Set agent type to search
@@ -66,10 +65,10 @@ QJsonArray FindClosestBehaviour::behave(){
     QString save_closest_id_as = this->getProperty( STORE_CLOSEST_ID_AS ).toString("closest_agent_id");
     agent->setProperty( save_closest_id_as , closest_agent_id );
 
-    QString save_closest_x_as = this->getProperty( STORE_CLOSEST_X_AS ).toString("closest_agent_x");
+    QString save_closest_x_as = this->getProperty( STORE_CLOSEST_X_AS ).toString("destination_x_value");
     agent->setProperty( save_closest_x_as , closest_coor_and_route.first.getX() );
 
-    QString save_closest_y_as = this->getProperty( STORE_CLOSEST_Y_AS ).toString("closest_agent_y");
+    QString save_closest_y_as = this->getProperty( STORE_CLOSEST_Y_AS ).toString("destination_y_value");
     agent->setProperty( save_closest_y_as , closest_coor_and_route.first.getY() );
 
     agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString() , closest_route_distance );
