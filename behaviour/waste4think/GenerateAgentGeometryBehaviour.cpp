@@ -36,9 +36,6 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
         geom_json.insert( GWSObject::GWS_TYPE_PROP , GWSGeometry::staticMetaObject.className() );
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
         GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
-
-        qDebug() << 1 << agent->getId() << agent->getInheritanceFamily();
-        qDebug() << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->inner_geometry;
     }
 
     QJsonValue json_value = this->getProperty( SET_JSON_VALUE );
@@ -48,8 +45,6 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
         GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
 
-        qDebug() << 2 << agent->getId() << agent->getInheritanceFamily();
-        qDebug() << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->inner_geometry;
     }
 
    return this->getProperty( NEXTS ).toArray();

@@ -123,7 +123,7 @@ void GWSPhysicalEnvironment::setBounds(QSharedPointer<GWSGeometry> geom){
 
 void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
-    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( GEOMETRY_PROP ).isNull() ){
+    if( agent.isNull() || agent->getProperty( GEOMETRY_PROP ).isNull() ){
         return;
     }
 

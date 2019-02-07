@@ -48,9 +48,14 @@ GWSGeometry::~GWSGeometry(){
 void GWSGeometry::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     Q_UNUSED(parent)
 
-    if( this->inner_geometry ){ delete this->inner_geometry; }
+    if( this->inner_geometry ){
+        delete this->inner_geometry;
+        this->inner_geometry = Q_NULLPTR;
+    }
 
     QString geom_type = json.value("type").toString();
+    if( geom_type.isEmpty() ){ return; }
+
     const GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     QJsonArray coors = json.value("coordinates").toArray();
 
@@ -106,6 +111,8 @@ void GWSGeometry::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent
                 this->inner_geometry = factory->createPolygon( outer_ring , holes );
             }
 
+        } else {
+            qWarning() << "Unknown geometry type" << geom_type;
         }
 
     } catch ( std::exception &e ){
