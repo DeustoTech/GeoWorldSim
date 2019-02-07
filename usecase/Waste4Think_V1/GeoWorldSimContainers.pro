@@ -66,7 +66,6 @@ HEADERS += \
     ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/waste4think/SetRandomColorBehaviour.h \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
-    ../../behaviour/electricTravelling/DriveBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
     ../../behaviour/property/IncrementPropertyBehaviour.h \
         # UTILS
@@ -155,7 +154,6 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
     ../../behaviour/move/SetNextTSPDestinationBehaviour.cpp \
-    ../../behaviour/electricTravelling/DriveBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/IncrementPropertyBehaviour.cpp \
         # UTILS

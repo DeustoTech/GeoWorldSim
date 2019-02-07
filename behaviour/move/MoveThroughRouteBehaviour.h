@@ -1,9 +1,9 @@
 #ifndef GWSMOVETHROUGHROUTEBEHAVIOUR_H
 #define GWSMOVETHROUGHROUTEBEHAVIOUR_H
 
-#include "../../behaviour/Behaviour.h"
+#include "../../behaviour/move/MoveBehaviour.h"
 
-class MoveThroughRouteBehaviour : public GWSBehaviour
+class MoveThroughRouteBehaviour : public MoveBehaviour
 {
     Q_OBJECT
 
@@ -13,11 +13,11 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // PROPERTIES
-    static QString SET_DESTINATION_X_VALUE;
-    static QString SET_DESTINATION_Y_VALUE;
+    static QString AGENT_ROUTE_DESTINATION_X_VALUE;
+    static QString AGENT_ROUTE_DESTINATION_Y_VALUE;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
-    static QString SET_NETWORK_TYPE;
+    static QString AGENT_ROUTE_NETWORK_TYPE;
 
 protected slots:
     virtual QJsonArray behave();

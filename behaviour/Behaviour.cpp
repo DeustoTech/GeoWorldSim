@@ -89,18 +89,17 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
         return property_value;
     }
 }
+const void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){
 
-/*bool GWSBehaviour::canContinueToNext(){
-
-    int condition = this->getProperty( FINISH_CONDITION_PROP ).toInt();
-    if( condition <= 0 ){ condition = this->sub_behaviours.size(); }
-    int finished_amount = 0;
-
-    foreach (QSharedPointer<GWSBehaviour> sub, this->sub_behaviours){
-        finished_amount += sub->canContinueToNext() ? 1 : 0;
+    if( name.startsWith("<") && name.endsWith(">") ){
+        QSharedPointer<GWSAgent> agent = this->getAgent();
+        name = name.remove( 0 , 1 );
+        name = name.remove( name.length() - 1 , 1 );
+        agent->setProperty( name , value );
+    } else {
+        GWSObject::setProperty( name , value );
     }
-    return finished_amount >= condition;
-}*/
+}
 
 /**********************************************************************
  SETTERS

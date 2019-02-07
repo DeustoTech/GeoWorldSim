@@ -14,6 +14,8 @@ QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransferAgentPropertyBehaviour::TRANSACTION_TYPE = "transaction_type";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
+
+
 TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(){
 
 }
@@ -34,8 +36,6 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
     }
 
     QJsonValue property_name = this->getProperty( PROPERTY_NAME_TO_TRANSFER );
-    qDebug() << property_name;
-    qDebug() << emitter->getProperty( property_name.toString() );
     QJsonValue value_to_be_transferred = emitter->getProperty( property_name.toString() );
     QJsonValue existing_value = receiver->getProperty(  property_name.toString());
     QJsonValue values_sum;
@@ -80,26 +80,16 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
     emitter->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QJsonValue() );
 
     // Store transfers log
-    QString logname = this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() + "log";
-    QJsonObject log_entry;
-    log_entry.insert( "id" , emitter->getId() );
-    log_entry.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
-
-    QJsonArray existing_log = receiver->getProperty( logname ).toArray();
-    existing_log.append( log_entry );
-    receiver->setProperty( logname , existing_log );
-
     QJsonObject transaction;
-    transaction.insert( GWS_ID_PROP , emitter->getId() + receiver->getId() );
-    transaction.insert( GWS_TYPE_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+    transaction.insert( GWSObject::GWS_ID_PROP , emitter->getId() + receiver->getId() );
+    transaction.insert( GWSObject::GWS_TYPE_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "refEmitter" , emitter->getId() );
     transaction.insert( "refReceiver" , receiver->getId() );
     transaction.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
+    transaction.insert( "value" , values_sum );
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
-
     return this->getProperty( NEXTS ).toArray();
-
 }
 
 

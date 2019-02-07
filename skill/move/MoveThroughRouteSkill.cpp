@@ -8,12 +8,9 @@
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
 
-QString MoveThroughRouteSkill::AGENT_MOVE_NETWORK_TYPE_PROP = "route_network_type";
-QString MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_X_PROP = "route_destination_x";
-QString MoveThroughRouteSkill::AGENT_ROUTE_DESTINATION_Y_PROP = "route_destination_y";
-QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_ID_PROP = "current_road_id";
-QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_TYPE_PROP = "current_road_type";
-QString MoveThroughRouteSkill::AGENT_CURRENT_ROAD_MAXSPEED_PROP = "current_road_maxspeed";
+QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_ID = "current_road_id";
+QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_TYPE = "current_road_type";
+QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
     //this->setProperty( SKILL_NETWORK_TYPE_PROP , "GWSAgent" );
@@ -26,19 +23,19 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
  GETTERS
 **********************************************************************/
 
-GWSCoordinate MoveThroughRouteSkill::getRouteDestination() {
+/*GWSCoordinate MoveThroughRouteSkill::getRouteDestination() {
     QSharedPointer<GWSAgent> agent = this->getAgent();
     if( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).isNull() || agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).isNull() ){
         return GWSCoordinate( NAN , NAN , NAN );
     }
     return GWSCoordinate( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).toDouble( ) , agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
-}
+}*/
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
+void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type ){
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -50,29 +47,24 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
 
     // Extract destination coordinates
     GWSCoordinate current_coor = agent_geom->getCentroid();
-    GWSCoordinate destination_coor = this->getRouteDestination();
-    GWSSpeedUnit destination_speed = agent->getProperty( MoveSkill::AGENT_CURRENT_SPEED_PROP ).toDouble();
 
-    if( current_coor == destination_coor ){
+    if( current_coor == route_destination ){
         return;
     }
 
- //if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() && !route_found_borrame )
+
     if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty()  ){
 
         // Generate pending route
-        QString graph_type = agent->getProperty( AGENT_MOVE_NETWORK_TYPE_PROP ).toString();
-
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
-        this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , destination_coor , graph_type );
-        //this->route_found_borrame = true;
+        this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , route_destination , graph_type );
 
     }
 
     // Assume we have reached route end OR not found route, move freely
     if( this->pending_route.isEmpty() ){
-        GWSLengthUnit pending_distance = current_coor.getDistance( destination_coor );
-        MoveSkill::move( movement_duration , GWSSpeedUnit( qMin( 4.0 , pending_distance.number() ) ) , destination_coor );
+        GWSLengthUnit pending_distance = current_coor.getDistance( route_destination );
+        MoveSkill::move( movement_duration , GWSSpeedUnit( qMin( 4.0 , pending_distance.number() ) ) , route_destination );
         return;
     }
 
@@ -92,9 +84,9 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         if( this->pending_edge_coordinates.isEmpty() ){
 
             // Remove road information from agent
-            agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , QJsonValue() );
-            agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , QJsonValue() );
-            agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , QJsonValue() );
+            agent->setProperty( STORE_CURRENT_ROAD_ID , QJsonValue() );
+            agent->setProperty( STORE_CURRENT_ROAD_TYPE , QJsonValue() );
+            agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , QJsonValue() );
 
             // Remove agent from road
             QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
@@ -112,8 +104,8 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             move_to = next_coordinate;
         }
 
-        destination_coor = move_to;
-        destination_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble() , destination_speed.number()+ 10 );
+        route_destination = move_to;
+        movement_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble() , movement_speed.number()+ 10 );
     }
 
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
@@ -135,18 +127,18 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
             int edge_inside_agents_amount = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray().size();
             if( edge_capacity <= edge_inside_agents_amount ){
                 // Wait for edge to liberate, that is, do not move
-                MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , destination_coor );
+                MoveSkill::move( 0 , GWSSpeedUnit( 0 ) , route_destination );
                 return;
             }
         }
 
         // We can enter, so increment or maintain speed
-        destination_speed = qMin( starting_current_edge_max_speed.number() , destination_speed.number() + 10 );
+        movement_speed = qMin( starting_current_edge_max_speed.number() , movement_speed.number() + 10 );
 
         // Store road infoVehiclermation in agent
-        agent->setProperty( AGENT_CURRENT_ROAD_ID_PROP , starting_current_edge_agent->getId() );
-        agent->setProperty( AGENT_CURRENT_ROAD_TYPE_PROP , starting_current_edge_agent->getProperty( "highway") );
-        agent->setProperty( AGENT_CURRENT_ROAD_MAXSPEED_PROP , starting_current_edge_max_speed );
+        agent->setProperty( STORE_CURRENT_ROAD_ID , starting_current_edge_agent->getId() );
+        agent->setProperty( STORE_CURRENT_ROAD_TYPE , starting_current_edge_agent->getProperty( "highway") );
+        agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , starting_current_edge_max_speed );
 
         // Add agent to road
         QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
@@ -156,25 +148,6 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration ){
         this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
     }
 
-    MoveSkill::move( movement_duration , destination_speed , destination_coor );
-
-
-    // If you are a vehicle, pollute:
-   /* if ( !agent->getProperty( "vehicleSubtype" ).isNull() ){
-        QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
-        if( vehiclePollute_skill.isNull() ){
-            vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
-            agent->addSkill( vehiclePollute_skill );
-        }
-
-        QString vehicle_subtype = agent->getProperty( "vehicleSubtype" ).toString();
-
-        // Pollute skill for each pollutant of choice:
-        vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
-        vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   destination_speed , 2.0 , agent->getProperty( AGENT_CURRENT_ROAD_TYPE_PROP ).toString() , 0.66 );
-
-
-    }*/
-
+    MoveSkill::move( movement_duration , movement_speed , route_destination );
 
 }
