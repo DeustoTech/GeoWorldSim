@@ -90,8 +90,8 @@ int main(int argc, char* argv[])
     // AVAILABLE AGENTS
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( RecyclingPlantAgent::staticMetaObject);
+   // GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( RecyclingPlantAgent::staticMetaObject);
 
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
@@ -113,7 +113,6 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

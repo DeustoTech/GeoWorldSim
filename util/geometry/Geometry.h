@@ -62,6 +62,7 @@ protected:
     void transformIntersection( QSharedPointer<GWSGeometry> other );
 
     // INNER GEOMETRY
+public:
     geos::geom::Geometry* inner_geometry = Q_NULLPTR;
 };
 

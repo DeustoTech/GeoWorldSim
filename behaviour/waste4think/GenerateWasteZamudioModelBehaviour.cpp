@@ -86,16 +86,21 @@ QJsonArray GenerateWasteZamudioModelBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     QString waste_type1 = this->getProperty( WASTE_TYPE1 ).toString(); // e.g. fraccion resto
-    //QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
-    //QString waste_type3 = this->getProperty( WASTE_TYPE3 ).toString();
+    QString waste_type2 = this->getProperty( WASTE_TYPE2 ).toString();
+    QString waste_type3 = this->getProperty( WASTE_TYPE3 ).toString();
     //QString waste_type4 = this->getProperty( WASTE_TYPE4 ).toString();
 
     QJsonObject characObject = this->getProperty( "characterization" ).toObject();
-    QJsonValue restoObject = characObject[ waste_type1 ];
+    QJsonValue ST1Object = characObject[ waste_type1 ];
+    QJsonValue ST2Object = characObject[ waste_type1 ];
+    QJsonValue ST3Object = characObject[ waste_type1 ];
     //qDebug() << restoObject;
 
    //double total_amount_waste1 = restoObject[ waste_type1 ].toDouble() + agent->getProperty( waste_type1 ).toDouble();
-    agent->setProperty( waste_type1 , restoObject .toObject() );
+    agent->setProperty( waste_type1 , ST1Object .toObject() );
+    agent->setProperty( waste_type2 , ST2Object .toObject() );
+    agent->setProperty( waste_type3 , ST3Object .toObject() );
+
     //qDebug() << agent->getProperty( waste_type1 );
     // Your are full, go to next behaviour
     /*QStringList nexts;

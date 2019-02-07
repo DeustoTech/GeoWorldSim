@@ -72,6 +72,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
 
     if( !this->constructors.keys().contains( type ) ){
         qWarning() << QString("Object type %1 not registered in the ObjectFactory.").arg( type );
+        qDebug() << type;
         return Q_NULLPTR;
     }
 

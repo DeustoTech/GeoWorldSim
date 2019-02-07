@@ -26,6 +26,7 @@ QJsonArray FindClosestBehaviour::behave(){
 
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
     QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
+    qDebug() << agent_geom;
     GWSCoordinate agent_coor = agent_geom->getCentroid();
 
     // Set agent type to search

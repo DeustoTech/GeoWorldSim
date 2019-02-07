@@ -6,9 +6,9 @@
 
 
 QString GenerateAgentGeometryBehaviour::NEXTS = "nexts";
-QString GenerateAgentGeometryBehaviour::X_VALUE = "x_value";
-QString GenerateAgentGeometryBehaviour::Y_VALUE = "y_value";
-
+QString GenerateAgentGeometryBehaviour::SET_X_VALUE = "x_value";
+QString GenerateAgentGeometryBehaviour::SET_Y_VALUE = "y_value";
+QString GenerateAgentGeometryBehaviour::SET_JSON_VALUE = "json_value";
 
 GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(){
 
@@ -19,37 +19,38 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-    QJsonValue x_value = this->getProperty( X_VALUE );
-    QJsonValue y_value = this->getProperty( Y_VALUE );
+    if( agent_geom ){
+        GWSPhysicalEnvironment::globalInstance()->unregisterAgent( agent );
+    }
 
-    GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble() , y_value.toDouble() );
-    if( agent_geom.isNull() ){
+    QJsonValue x_value = this->getProperty( SET_X_VALUE );
+    QJsonValue y_value = this->getProperty( SET_Y_VALUE );
+    if( !x_value.isNull() && !y_value.isNull() ){
 
+        GWSCoordinate destination_coor = GWSCoordinate( x_value.toDouble() , y_value.toDouble() );
         QJsonObject geom_json;
-        geom_json.insert( GWSObject::GWS_TYPE_PROP , GWSGeometry::staticMetaObject.className() );
         geom_json.insert( "type" , "Point" );
         QJsonArray coordinates;
         coordinates.append( destination_coor.getX() ); coordinates.append( destination_coor.getY() );
         geom_json.insert( "coordinates" , coordinates );
+        geom_json.insert( GWSObject::GWS_TYPE_PROP , GWSGeometry::staticMetaObject.className() );
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
         GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
 
-    } else {
-
-        // Set the geometry of the agent through the TransferMove method within the physical environment:
-        GWSCoordinate current_coor = agent_geom->getCentroid();
-
-
-        // Displacement
-        double x_distance = destination_coor.getX() - current_coor.getX() ;
-        double y_distance = destination_coor.getY() - current_coor.getY() ;
-
-        // Set the agents position
-        GWSCoordinate apply_movement = GWSCoordinate( x_distance , y_distance );
-        GWSPhysicalEnvironment::globalInstance()->transformMove( agent , apply_movement );
-
-        //qDebug() << new_agent_geom->getCentroid().toString();
-
+        qDebug() << 1 << agent->getId() << agent->getInheritanceFamily();
+        qDebug() << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->inner_geometry;
     }
+
+    QJsonValue json_value = this->getProperty( SET_JSON_VALUE );
+    if( !json_value.isNull() ){
+
+        QJsonObject geom_json = json_value.toObject();
+        agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
+        GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
+
+        qDebug() << 2 << agent->getId() << agent->getInheritanceFamily();
+        qDebug() << GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->inner_geometry;
+    }
+
    return this->getProperty( NEXTS ).toArray();
 }

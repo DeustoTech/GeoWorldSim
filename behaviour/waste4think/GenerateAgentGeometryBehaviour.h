@@ -13,8 +13,9 @@ public:
 
     // PROPERTIES:
     static QString NEXTS;
-    static QString X_VALUE;
-    static QString Y_VALUE;
+    static QString SET_X_VALUE;
+    static QString SET_Y_VALUE;
+    static QString SET_JSON_VALUE;
 
 protected slots:
     virtual QJsonArray behave();

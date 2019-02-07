@@ -60,6 +60,9 @@ QJsonObject GWSAgentGeneratorDatasource::joinJSON(QJsonObject json_template, QJs
 
         QJsonValue value = json_data.value( key );
 
+        // Extract THE_REAL_VALUE from { type : "string|number|..." , metadata : {} , value : THE_REAL_VALUE }
+        if( value.toObject().keys().contains("value") ){ value = value.toObject().value("value"); }
+
         // IF Value is a complex object, recursively call joinJSON
         if( value.isObject() ){
             json_template.insert( key , this->joinJSON( json_template.value( key ).toObject() , value.toObject() ) );
