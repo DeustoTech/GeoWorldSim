@@ -43,7 +43,6 @@ QJsonArray FindClosestBehaviour::behave(){
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
     QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
-
     // Extract and store the route to nearest node it:
     QList< QSharedPointer<GWSNetworkEdge> > closest_route = closest_coor_and_route.second;
 

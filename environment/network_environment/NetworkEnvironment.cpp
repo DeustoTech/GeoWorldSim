@@ -135,7 +135,7 @@ QList< QList<QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShort
         this->mutex.lock();
         GWSCoordinate snapped_from_coor = this->getNearestNode( from_one , class_name );
         QList< GWSCoordinate > snapped_to_many_coors = QList< GWSCoordinate >();
-        foreach( GWSCoordinate c, to_many ) {
+        foreach( GWSCoordinate c , to_many ) {
             snapped_to_many_coors.append( this->getNearestNode( c , class_name ) );
         }
         this->mutex.unlock();

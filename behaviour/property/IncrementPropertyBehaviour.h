@@ -14,11 +14,13 @@ public:
     static QString AGENT_ID;
     static QString PROPERTY_NAME_PROP;
     static QString INCREMENT_VALUE_PROP;
-    static QString MAX_VALUE_PROP;
-    static QString MIN_VALUE_PROP;
-    static QString NEXTS_IF_MAX;
-    static QString NEXTS_IF_MIN;
-    static QString NEXTS_IF_WITHIN_THRESHOLD;
+    static QString MAX_THRESHOLD_VALUE_PROP;
+    static QString MIN_THRESHOLD_VALUE_PROP;
+    static QString MAX_LIMIT_VALUE_PROP;
+    static QString MIN_LIMIT_VALUE_PROP;
+    static QString NEXTS_IF_MAX_THRESHOLD_REACHED;
+    static QString NEXTS_IF_MIN_THRESHOLD_REACHED;
+    static QString NEXTS_ELSE;
 
 private slots:
     virtual QJsonArray behave();

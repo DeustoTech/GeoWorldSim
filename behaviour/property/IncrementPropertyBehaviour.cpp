@@ -6,12 +6,13 @@
 QString IncrementPropertyBehaviour::AGENT_ID = "agent_to_increment_id";
 QString IncrementPropertyBehaviour::PROPERTY_NAME_PROP = "property";
 QString IncrementPropertyBehaviour::INCREMENT_VALUE_PROP = "increment";
-QString IncrementPropertyBehaviour::MAX_VALUE_PROP = "max";
-QString IncrementPropertyBehaviour::MIN_VALUE_PROP = "min";
-QString IncrementPropertyBehaviour::NEXTS_IF_MAX = "nexts_if_max";
-QString IncrementPropertyBehaviour::NEXTS_IF_MIN = "nexts_if_min";
-QString IncrementPropertyBehaviour::NEXTS_IF_WITHIN_THRESHOLD = "nexts_if_within_threshold";
-
+QString IncrementPropertyBehaviour::MAX_THRESHOLD_VALUE_PROP = "max_threshold";
+QString IncrementPropertyBehaviour::MIN_THRESHOLD_VALUE_PROP = "min_threshold";
+QString IncrementPropertyBehaviour::MAX_LIMIT_VALUE_PROP = "max_limit";
+QString IncrementPropertyBehaviour::MIN_LIMIT_VALUE_PROP = "min_limit";
+QString IncrementPropertyBehaviour::NEXTS_IF_MAX_THRESHOLD_REACHED = "nexts_if_max_reached";
+QString IncrementPropertyBehaviour::NEXTS_IF_MIN_THRESHOLD_REACHED = "nexts_if_min_reached";
+QString IncrementPropertyBehaviour::NEXTS_ELSE = "nexts_else";
 
 
 IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
@@ -29,24 +30,29 @@ QJsonArray IncrementPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
+
     double value = agent->getProperty( property_name ).toDouble();
-    QJsonValue max_value = this->getProperty( MAX_VALUE_PROP );
-    QJsonValue min_value = this->getProperty( MIN_VALUE_PROP );
     double incremented = value + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
-    if( max_value.isDouble() ){ incremented = qMin( max_value.toDouble() , incremented ); }
-    if( min_value.isDouble() ){ incremented = qMax( min_value.toDouble() , incremented ); }
+
+    QJsonValue max_limit = this->getProperty( MAX_LIMIT_VALUE_PROP );
+    if( max_limit.isDouble() ){ incremented = qMin( max_limit.toDouble() , incremented ); }
+
+    QJsonValue min_limit = this->getProperty( MIN_LIMIT_VALUE_PROP );
+    if( min_limit.isDouble() ){ incremented = qMax( min_limit.toDouble() , incremented ); }
 
     agent->setProperty( property_name , incremented );
 
-    if ( max_value.isDouble() && incremented <= min_value.toDouble() ){
-        return this->getProperty( NEXTS_IF_MIN ).toArray();
+    QJsonValue max_threshold = this->getProperty( MAX_THRESHOLD_VALUE_PROP );
+    if ( max_threshold.isDouble() && incremented >= max_threshold.toDouble() ){
+        return this->getProperty( NEXTS_IF_MAX_THRESHOLD_REACHED ).toArray();
     }
 
-    if ( min_value.isDouble() && incremented >= max_value.toDouble() ){
-        return this->getProperty( NEXTS_IF_MAX ).toArray();
+    QJsonValue min_threshold = this->getProperty( MIN_THRESHOLD_VALUE_PROP );
+    if ( min_threshold.isDouble() && incremented <= min_threshold.toDouble() ){
+        return this->getProperty( NEXTS_IF_MIN_THRESHOLD_REACHED ).toArray();
     }
 
     // Else
-    return this->getProperty( NEXTS_IF_WITHIN_THRESHOLD ).toArray();
+    return this->getProperty( NEXTS_ELSE ).toArray();
 
 }

@@ -108,20 +108,17 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
             int yhash = this->createHash( coor.getY() , l);
             this->mutex.unlock();
 
-            if( !this->fast_compare_if_layers_created.contains( coor ) ){
-
-                this->mutex.lock();
-                if ( !this->geom_index_layers.value( l )->keys().contains( xhash ) ){
-                     this->geom_index_layers.value( l )->insert( xhash , new QMap< int , QStringList* >() );
-                }
-                this->mutex.unlock();
-
-                this->mutex.lock();
-                if ( !this->geom_index_layers.value( l )->value( xhash )->keys().contains( yhash ) ){
-                    this->geom_index_layers.value( l )->value( xhash )->insert( yhash , new QStringList() );
-                }
-                this->mutex.unlock();
+            this->mutex.lock();
+            if ( !this->geom_index_layers.value( l )->keys().contains( xhash ) ){
+                 this->geom_index_layers.value( l )->insert( xhash , new QMap< int , QStringList* >() );
             }
+            this->mutex.unlock();
+
+            this->mutex.lock();
+            if ( !this->geom_index_layers.value( l )->value( xhash )->keys().contains( yhash ) ){
+                this->geom_index_layers.value( l )->value( xhash )->insert( yhash , new QStringList() );
+            }
+            this->mutex.unlock();
 
             // If already here, remove old version
             this->mutex.lock();
@@ -141,7 +138,6 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
         }
 
         this->mutex.lock();
-        this->fast_compare_if_layers_created.append( coor );
         this->id_to_objects.insert( object_id , object );
         this->id_to_geometries.insert( object_id , geom );
         this->mutex.unlock();

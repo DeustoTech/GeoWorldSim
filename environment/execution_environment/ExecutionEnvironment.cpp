@@ -101,14 +101,11 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::registerAgent( agent );
     this->running_agents->add( agent );
 
-    //agent->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
-    //qDebug() << "Moving to thread";
-
     agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
     agent->decrementBusy();
     emit agent->agentStartedSignal();
 
-    qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
+    //qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
 
 void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
@@ -126,7 +123,7 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
     this->running_agents->remove( agent );
 
     // Stop agent
-    qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
+    //qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
 
     agent->decrementBusy();
     emit agent->agentEndedSignal();
