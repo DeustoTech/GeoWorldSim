@@ -8,7 +8,7 @@
                                   { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" :true , "id": "DISPLAY_AT_HOME" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["CREATE_INCREMENT"] } ,
                                   
                                   { "@gwsclass": "GenerateRandomValueBehaviour" , "id": "CREATE_INCREMENT" , "factor_to_multiply_random_value_with" : 20 , "store_random_value_as" : "increment" , "duration": 0 ,  "nexts" : ["INCREMENT_ST1"] } ,
-                                  
+
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_ST1", "duration": 1200, "agent_to_increment_id" : "<id>" ,"property" : "sortingtype1" , "increment" : "<increment>" , "max_threshold": 20, "nexts_if_max_reached": ["FIND_ST1"] , "nexts_else" : ["INCREMENT_ST2"] }, 
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_ST2", "duration": 1200, "agent_to_increment_id" : "<id>" ,"property" : "sortingtype2" , "increment" : "<increment>" , "max_threshold": 20, "nexts_if_max_reached": ["FIND_ST2"] , "nexts_else" : ["INCREMENT_ST3"] }, 
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_ST3", "duration": 1200, "agent_to_increment_id" : "<id>" ,"property" : "sortingtype3" , "increment" : "<increment>" , "max_threshold": 20, "nexts_if_max_reached": ["FIND_ST3"] , "nexts_else" : ["DISPLAY_AT_HOME"] }, 
@@ -27,9 +27,17 @@
                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_ST3" , "duration" : 1 , "transport_network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_container_x>" , "route_destination_y_value": "<closest_container_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST3"] ,  "nexts_if_not_arrived" : ["DISPLAY_MOVING_ST3"] } , 
                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_ST3" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_ST3"] } ,
                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST3", "property_name_to_transfer": "sortingtype3" , "transaction_type": "SortingType3Transaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["MOVE_BACK_HOME"] },
+
+
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST7", "closest_agent_type": "SortingType7", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST7_agent_id" , "store_closest_agent_x_as": "closest_ST7_agent_x", "store_closest_agent_y_as": "closest_ST7_agent_y" , "store_closest_route_distance_as": "closest_ST7_container_distance" , "nexts": [ "COPY_ST7" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                             
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST7", "agent_id_to_copy_from": "<closest_ST7_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST7_CONTAINER" ] },                                                                                                  
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST7_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST7_agent_x>" , "route_destination_y_value": "<closest_ST7_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST7"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST7_CONTAINER"] } , 
                                  
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST7_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST7_CONTAINER"] } ,
                                  
-                                 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST7", "property_name_to_transfer": "ST7" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST7_agent_id>" , "nexts" : ["FIND_ST8"] }, 
                                  
                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_BACK_HOME" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<X>" , "route_destination_y_value": "<Y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4 , "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["DISPLAY_AT_HOME"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_BACK_HOME"] } , 
                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } 
@@ -63,7 +71,6 @@
 	"footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups" : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
                             "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_footways/read","http://datasources.geoworldsim.com/api/datasource/zamudio_primary/read","http://datasources.geoworldsim.com/api/datasource/zamudio_service/read","http://datasources.geoworldsim.com/api/datasource/zamudio_tertiary/read", "http://datasources.geoworldsim.com/api/datasource/zamudio_residential/read"] }
                             
-
 
 },
 

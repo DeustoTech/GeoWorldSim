@@ -35,8 +35,8 @@ QJsonArray SetNextTSPDestinationBehaviour::behave(){
 
         double x = destination_agent_coor.getX();
         double y = destination_agent_coor.getY();
-        this->setProperty( STORE_NEXT_TSP_DESTINATION_X_VALUE , x );
-        this->setProperty( STORE_NEXT_TSP_DESTINATION_Y_VALUE , y );
+        agent->setProperty( this->getProperty( STORE_NEXT_TSP_DESTINATION_X_VALUE).toString() , x );
+        agent->setProperty( this->getProperty( STORE_NEXT_TSP_DESTINATION_Y_VALUE).toString() , y );
 
         return this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray();
 

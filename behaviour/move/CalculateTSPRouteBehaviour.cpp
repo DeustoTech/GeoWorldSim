@@ -39,7 +39,8 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
               QSharedPointer<GWSGeometry> a_geom = env->getGeometry( a );
               GWSCoordinate agent_to_visit_coord = a_geom->getCentroid();
 
-              QString agent_to_visit_id = a->getProperty("@id").toString();
+              //QString agent_to_visit_id = a->getProperty("@id").toString();
+              QString agent_to_visit_id = a->getId();
               agents_to_visit_coords.append( agent_to_visit_coord ) ;
               agents_to_visit_id_array.append( agent_to_visit_id );
               agents_to_visit_coord_id_array.insert( agent_to_visit_id , agent_to_visit_coord );
