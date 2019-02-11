@@ -38,7 +38,7 @@
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["CHOOSE"] }, 
 				{  "@gwsclass": "ChooseRandomValueFromSetBehaviour" ,   "id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 30 , "nexts" : ["LOOP"] }  ] }  , 
-		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st5/read" ]} , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st9/read" ]} , 
 		            
 		            
 	"roads" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups" : ["Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : true , 
