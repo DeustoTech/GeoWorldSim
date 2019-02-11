@@ -24,7 +24,7 @@ QJsonArray WaitUntilTimeBehaviour::behave(){
                 this->getProperty( WAIT_UNTIL_MINUTE ).toInt( current_datetime.time().minute() ),
                 this->getProperty( WAIT_UNTIL_SECOND ).toInt( current_datetime.time().second() )
                 );
-    QDateTime wait_until = QDateTime::currentDateTime();
+    QDateTime wait_until = QDateTime( current_datetime );
     wait_until.setTime( wait_until_time );
 
     // Wait until DAY has already past, so wait until next day's TIME
