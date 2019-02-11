@@ -46,6 +46,7 @@
 #include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
+#include "../../behaviour/property/MathAgentPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -113,6 +114,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MathAgentPropertyBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

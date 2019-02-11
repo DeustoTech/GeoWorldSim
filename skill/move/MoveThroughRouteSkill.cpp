@@ -53,12 +53,22 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     }
 
 
-    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty()  ){
+    if( this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
 
         // Generate pending route
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         this->pending_route = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , route_destination , graph_type );
 
+    }
+
+    // If calculated a route whose first point is even further than the destination, don¡t follow the route
+    // Avoids recalculating a route once finished routing and freeflowing to destination
+    if( !this->pending_route.isEmpty() ){
+        GWSLengthUnit distance_to_route_start = current_coor.getDistance( this->pending_route.at( 0 )->getFrom() );
+        GWSLengthUnit pending_distance = current_coor.getDistance( route_destination );
+        if( distance_to_route_start > pending_distance ){
+            this->pending_route.clear();
+        }
     }
 
     // Assume we have reached route end OR not found route, move freely

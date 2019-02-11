@@ -76,7 +76,7 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     GWSCoordinate agent_position_post = agent_geom_post->getCentroid();
 
     // Set NEXTS behaviour
-    if ( agent_position_post.getDistance( destination_coor ) < GWSLengthUnit(1) ){
+    if ( agent_position_post.getDistance( destination_coor ) < GWSLengthUnit( current_speed ) ){
         return this->getProperty( NEXTS_IF_ARRIVED ).toArray();
     }
 

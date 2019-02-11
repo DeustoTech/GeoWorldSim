@@ -114,7 +114,8 @@ HEADERS += \
     HumanAgent.h \
     TruckAgent.h \
     RecyclingPlantAgent.h \
-    ../../behaviour/information/ListenToMessagesBehaviour.h
+    ../../behaviour/information/ListenToMessagesBehaviour.h \
+    ../../behaviour/property/MathAgentPropertyBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -208,7 +209,8 @@ SOURCES += mainlauncher.cpp \
     HumanAgent.cpp \
     TruckAgent.cpp \
     RecyclingPlantAgent.cpp \
-    ../../behaviour/information/ListenToMessagesBehaviour.cpp
+    ../../behaviour/information/ListenToMessagesBehaviour.cpp \
+    ../../behaviour/property/MathAgentPropertyBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
