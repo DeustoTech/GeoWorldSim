@@ -18,12 +18,10 @@
 
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_RESIDUAL", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "RESIDUAL" , "increment" : "<incrRESIDUAL>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_RESIDUAL"] , "nexts_else" : ["INCREMENT_PACKAGING"] }, 
                                                                     
-                                 
-                                                                    
+                               
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_PACKAGING", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "PACKAGING" , "increment" : "<incrPACKAGING>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_PACKAGING"] , "nexts_else" : ["INCREMENT_GLASS"] }, 
                                   
-                                
-                                  
+
                                   { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_GLASS", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "GLASS" , "increment" : "<incrGLASS>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_GLASS"] , "nexts_else" : ["WAIT_TO_7AM"] },  
 
                                   
