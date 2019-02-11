@@ -27,7 +27,7 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/waste4think/DelayBehaviour.h"
+#include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( DelayBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( IncrementPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MathAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS

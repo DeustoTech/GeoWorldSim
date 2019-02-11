@@ -53,7 +53,6 @@ HEADERS += \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
-    ../../behaviour/waste4think/DelayBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
     ../../behaviour/property/CopyPropertyBehaviour.h \
@@ -115,7 +114,8 @@ HEADERS += \
     TruckAgent.h \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
-    ../../behaviour/property/MathAgentPropertyBehaviour.h
+    ../../behaviour/property/MathAgentPropertyBehaviour.h \
+    ../../behaviour/waste4think/WaitUntilTimeBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -143,7 +143,6 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
-    ../../behaviour/waste4think/DelayBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
     ../../behaviour/property/CopyPropertyBehaviour.cpp \
@@ -210,7 +209,8 @@ SOURCES += mainlauncher.cpp \
     TruckAgent.cpp \
     RecyclingPlantAgent.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp \
-    ../../behaviour/property/MathAgentPropertyBehaviour.cpp
+    ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
+    ../../behaviour/waste4think/WaitUntilTimeBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

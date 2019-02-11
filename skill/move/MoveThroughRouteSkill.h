@@ -31,7 +31,7 @@ protected:
 
     QList< QSharedPointer<GWSNetworkEdge> > pending_route;
     QList<GWSCoordinate> pending_edge_coordinates;
-    bool route_found_borrame = false;
+    GWSCoordinate last_route_started_from;
 
 };
 
