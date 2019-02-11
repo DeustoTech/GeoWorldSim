@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     // AVAILABLE AGENTS
     GWSObjectFactory::globalInstance()->registerType( ContainerAgent::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
-   // GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( TruckAgent::staticMetaObject );
     //GWSObjectFactory::globalInstance()->registerType( RecyclingPlantAgent::staticMetaObject);
 
     // AVAILABLE BEHAVIOURS
