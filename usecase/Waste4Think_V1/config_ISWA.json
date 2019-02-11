@@ -9,46 +9,99 @@
                                   
                                   { "@gwsclass": "GenerateRandomValueBehaviour" , "id": "SET_DURATION" ,      "factor_to_multiply_random_value_with" : 7200 , "store_random_value_as" : "duration" , "duration": 0 ,  "nexts" : ["GENERATE_WASTE"] } ,
                                   
-                                  { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "id": "GENERATE_WASTE", "duration": "<duration>", "waste_type1" : "resto" ,"waste_type2" : "ST2" , "waste_type3" : "ST5" , "store_waste_type1_as": "resto", "store_waste_type2_as": "ST2" , "store_waste_type3_as": "ST5" , "nexts" : ["FIND_ST1"] }, 
+                                  { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "id": "GENERATE_WASTE", "duration": "<duration>", "waste_type1" : "resto" ,"waste_type2" : "ST2" , "waste_type3" : "ST5" , "waste_type4" : "ST6", "waste_type5" : "ST7", "waste_type6" : "ST8", "waste_type7" : "ST9", "store_waste_type1_as": "resto", "store_waste_type2_as": "ST2" , "store_waste_type3_as": "ST5" , "store_waste_type4_as": "ST6" , "store_waste_type5_as": "ST7" , "store_waste_type6_as": "ST8" , "store_waste_type7_as": "ST9" ,"nexts" : ["FIND_ST1"] }, 
                                   
 
+                                 
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST1", "closest_agent_type": "SortingType1", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST1_agent_id" , "store_closest_agent_x_as": "closest_ST1_agent_x", "store_closest_agent_y_as": "closest_ST1_agent_y" , "store_closest_route_distance_as": "closest_ST1_container_distance" , "nexts": [ "COPY_ST1"]  , "nexts_if_no_closest_found" : ["STOP"] }, 
                                   
-                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST1", "closest_agent_type": "SortingType1", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST1_agent_id" , "store_closest_agent_x_as": "closest_ST1_agent_x", "store_closest_agent_y_as": "closest_ST1_agent_y" , "store_closest_route_distance_as": "closest_ST1_container_distance" , "nexts": [ "MOVE_TO_ST1_CONTAINER" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST1", "agent_id_to_copy_from": "<closest_ST1_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST1_CONTAINER" ] },
                                   
-                                 { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST1_CONTAINER" , "duration" : 1 , "transport_network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST1_agent_x>" , "route_destination_y_value": "<closest_ST1_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST1"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST1_CONTAINER"] } , 
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST1_CONTAINER" , "duration" : 1 , "transport_network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST1_agent_x>" , "route_destination_y_value": "<closest_ST1_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST1"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST1_CONTAINER"] } , 
+                                                     
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST1_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST1_CONTAINER"] } ,
                                  
-                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST1_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST1_CONTAINER"] } ,
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST1", "property_name_to_transfer": "resto" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST1_agent_id>" , "nexts" : ["FIND_ST2"] },
                                  
-                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST1", "property_name_to_transfer": "resto" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST1_agent_id>" , "nexts" : ["FIND_ST2"] },
                                  
-                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST2", "closest_agent_type": "SortingType2", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST2_agent_id" , "store_closest_agent_x_as": "closest_ST2_agent_x", "store_closest_agent_y_as": "closest_ST2_agent_y" , "store_closest_route_distance_as": "closest_ST2_container_distance" , "nexts": [ "MOVE_TO_ST2_CONTAINER" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
                                  
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST2", "closest_agent_type": "SortingType2", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST2_agent_id" , "store_closest_agent_x_as": "closest_ST2_agent_x", "store_closest_agent_y_as": "closest_ST2_agent_y" , "store_closest_route_distance_as": "closest_ST2_container_distance" , "nexts": [ "COPY_ST2" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                                
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST2", "agent_id_to_copy_from": "<closest_ST2_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST2_CONTAINER" ] },
+                                                                
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST2_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST2_agent_x>" , "route_destination_y_value": "<closest_ST2_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST2"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST2_CONTAINER"] } , 
+                                 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST2_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST2_CONTAINER"] } ,
+                                 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST2", "property_name_to_transfer": "ST2" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST2_agent_id>" , "nexts" : ["FIND_ST5"] }, 
                                  
 
-                                 { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST2_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST2_agent_x>" , "route_destination_y_value": "<closest_ST2_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST2"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST2_CONTAINER"] } , 
+                                    
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST5", "closest_agent_type": "SortingType5", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST5_agent_id" , "store_closest_agent_x_as": "closest_ST5_agent_x", "store_closest_agent_y_as": "closest_ST5_agent_y" , "store_closest_route_distance_as": "closest_ST5_container_distance" , "nexts": [ "COPY_ST5" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                              
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST5", "agent_id_to_copy_from": "<closest_ST5_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST5_CONTAINER" ] },                                                                
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST5_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST5_agent_x>" , "route_destination_y_value": "<closest_ST5_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST5"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST5_CONTAINER"] } , 
                                  
-                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST2_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST2_CONTAINER"] } ,
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST5_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST5_CONTAINER"] } ,
                                  
-                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST2", "property_name_to_transfer": "ST2" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST2_agent_id>" , "nexts" : ["FIND_ST5"] }, 
-                                 
-                                 
-                                 
-                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST5", "closest_agent_type": "SortingType5", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST5_agent_id" , "store_closest_agent_x_as": "closest_ST5_agent_x", "store_closest_agent_y_as": "closest_ST5_agent_y" , "store_closest_route_distance_as": "closest_ST5_container_distance" , "nexts": [ "MOVE_TO_ST5_CONTAINER" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
-                                 
-                                 { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST5_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST5_agent_x>" , "route_destination_y_value": "<closest_ST5_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST5"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST5_CONTAINER"] } , 
-                                 
-                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST5_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST5_CONTAINER"] } ,
-                                 
-                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST5", "property_name_to_transfer": "ST5" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST5_agent_id>" , "nexts" : ["MOVE_BACK_HOME"] }, 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST5", "property_name_to_transfer": "ST5" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST5_agent_id>" , "nexts" : ["FIND_ST6"] }, 
                                  
                                  
                                  
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST6", "closest_agent_type": "SortingType6", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST6_agent_id" , "store_closest_agent_x_as": "closest_ST6_agent_x", "store_closest_agent_y_as": "closest_ST6_agent_y" , "store_closest_route_distance_as": "closest_ST6_container_distance" , "nexts": [ "COPY_ST6" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                             
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST6", "agent_id_to_copy_from": "<closest_ST6_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST6_CONTAINER" ] },                                                                                                  
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST6_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST6_agent_x>" , "route_destination_y_value": "<closest_ST6_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST6"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST6_CONTAINER"] } , 
                                  
-                                 { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_BACK_HOME" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<X>" , "route_destination_y_value": "<Y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4 , "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_BACK_HOME"] } , 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST6_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST6_CONTAINER"] } ,
                                  
-                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } ,
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST6", "property_name_to_transfer": "ST6" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST6_agent_id>" , "nexts" : ["FIND_ST7"] }, 
                                  
-							     { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }  ] }  , 
+                                 
+                                  
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST7", "closest_agent_type": "SortingType7", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST7_agent_id" , "store_closest_agent_x_as": "closest_ST7_agent_x", "store_closest_agent_y_as": "closest_ST7_agent_y" , "store_closest_route_distance_as": "closest_ST7_container_distance" , "nexts": [ "COPY_ST7" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                             
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST7", "agent_id_to_copy_from": "<closest_ST7_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST7_CONTAINER" ] },                                                                                                  
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST7_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST7_agent_x>" , "route_destination_y_value": "<closest_ST7_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST7"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST7_CONTAINER"] } , 
+                                 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST7_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST7_CONTAINER"] } ,
+                                 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST7", "property_name_to_transfer": "ST7" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST7_agent_id>" , "nexts" : ["FIND_ST8"] }, 
+                                 
+                                 
+                                  
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST8", "closest_agent_type": "SortingType8", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST8_agent_id" , "store_closest_agent_x_as": "closest_ST8_agent_x", "store_closest_agent_y_as": "closest_ST8_agent_y" , "store_closest_route_distance_as": "closest_ST8_container_distance" , "nexts": [ "COPY_ST8" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                             
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST8", "agent_id_to_copy_from": "<closest_ST8_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST8_CONTAINER" ] },                                                                                                 
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST8_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST8_agent_x>" , "route_destination_y_value": "<closest_ST8_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST8"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST8_CONTAINER"] } , 
+                                 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST8_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST8_CONTAINER"] } ,
+                                 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST8", "property_name_to_transfer": "ST8" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST8_agent_id>" , "nexts" : ["FIND_ST9"] }, 
+                                 
+                                 
+                                  
+                                  { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ST9", "closest_agent_type": "SortingType9", "transport_network_type": "Footway", "store_closest_id_as": "closest_ST9_agent_id" , "store_closest_agent_x_as": "closest_ST9_agent_x", "store_closest_agent_y_as": "closest_ST9_agent_y" , "store_closest_route_distance_as": "closest_ST9_container_distance" , "nexts": [ "COPY_ST9" ]  , "nexts_if_no_closest_found" : ["STOP"] }, 
+                                                              
+                                  { "@gwsclass": "CopyPropertyBehaviour", "duration": 0, "id": "COPY_ST9", "agent_id_to_copy_from": "<closest_ST9_agent_id>", "property_name" : "color" , "nexts": [ "MOVE_TO_ST9_CONTAINER" ] },                                                                                                  
+                                  
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_TO_ST9_CONTAINER" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<closest_ST9_agent_x>" , "route_destination_y_value": "<closest_ST9_agent_y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4, "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["TRANSFER_ST9"] ,   "nexts_if_not_arrived" : ["DISPLAY_MOVING_TO_ST9_CONTAINER"] } , 
+                                 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_MOVING_TO_ST9_CONTAINER" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_TO_ST9_CONTAINER"] } ,
+                                 
+                                  { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ST9", "property_name_to_transfer": "ST9" , "transaction_type": "WasteTransaction" , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_ST9_agent_id>" , "nexts" : ["MOVE_BACK_HOME"] }, 
+                                 
+                                 
+                                                                   
+                                  { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE_BACK_HOME" , "duration" : 1 , "network_type" : "Footway", "maxspeed" : 50 , "route_destination_x_value": "<X>" , "route_destination_y_value": "<Y>" , "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "current_speed" : 4 , "store_current_road_type_as" : "current_road_type" , "store_current_road_maxspeed" : "current_road_maxspeed" , "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING_BACK_HOME"] } , 
+                                 
+                                  { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING_BACK_HOME" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE_BACK_HOME"] } ,
+                                 
+							      { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }  ] }  , 
 
 			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/zamudio_census/read"] }, 
 
@@ -85,7 +138,7 @@
 	"containersST7" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "SortingType7", "Container" ] , "running" : true , 
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
-				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "blue" , "nexts" : ["LOOP"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "lightblue" , "nexts" : ["LOOP"] }, 
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 300 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_st7/read" ]}, 
 		
