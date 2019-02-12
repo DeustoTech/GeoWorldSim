@@ -19,11 +19,16 @@ QJsonArray WaitUntilTimeBehaviour::behave(){
     qint64 current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
     QDateTime current_datetime = QDateTime::fromMSecsSinceEpoch( current_time );
 
-    QTime wait_until_time = QTime(
-                this->getProperty( WAIT_UNTIL_HOUR ).toInt( current_datetime.time().hour() ),
-                this->getProperty( WAIT_UNTIL_MINUTE ).toInt( current_datetime.time().minute() ),
-                this->getProperty( WAIT_UNTIL_SECOND ).toInt( current_datetime.time().second() )
-                );
+    int hour = this->getProperty( WAIT_UNTIL_HOUR ).toDouble( current_datetime.time().hour() );
+    hour = this->getProperty( WAIT_UNTIL_HOUR ).toInt( hour );
+
+    int minute = this->getProperty( WAIT_UNTIL_MINUTE ).toDouble( current_datetime.time().minute() );
+    minute = this->getProperty( WAIT_UNTIL_MINUTE ).toInt( minute );
+
+    int second = this->getProperty( WAIT_UNTIL_SECOND ).toDouble( current_datetime.time().second() );
+    second = this->getProperty( WAIT_UNTIL_SECOND ).toInt( second );
+
+    QTime wait_until_time = QTime( hour , minute , second );
     QDateTime wait_until = QDateTime( current_datetime );
     wait_until.setTime( wait_until_time );
 

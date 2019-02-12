@@ -38,8 +38,7 @@ QJsonArray MathAgentPropertyBehaviour::behave(){
     }
     if ( operation == "*" ){
         final_property_value = initial_property_value * operand_value.toDouble();
-}
-
+    }
 
     agent->setProperty( property_to_modify , final_property_value );
     return this->getProperty( NEXTS ).toArray();
