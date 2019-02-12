@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 
-#include "../environment/time_environment/TimeEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
 QString WaitUntilTimeBehaviour::WAIT_UNTIL_HOUR = "wait_until_hour";
 QString WaitUntilTimeBehaviour::WAIT_UNTIL_MINUTE = "wait_until_minute";
