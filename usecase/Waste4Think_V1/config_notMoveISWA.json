@@ -1,0 +1,129 @@
+{
+
+"population" : {
+
+    "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "incrORGANIC" : 0.00321, "incrRESIDUAL" : 2.00747, "incrPACKAGING" : 0.01899, "incrGLASS" : 0.04827, "incrPAPER" : 0.02554, "RESIDUAL" : 0 , "PACKAGING" : 0 , "GLASS" : 0 , "PAPER" : 0 , "ORGANIC" : 0 , "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "running" : true , 
+    "@behaviours": [  
+                                 { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["RAND_NUM1"] } ,
+                                 
+                                 { "@gwsclass": "GenerateRandomValueBehaviour", "id": "RAND_NUM1", "duration": 0, "store_random_value_as": "hour", "factor_to_multiply_random_value_with" : 12, "nexts" : ["RAND_NUM2"] } ,
+                                 { "@gwsclass": "GenerateRandomValueBehaviour", "id": "RAND_NUM2", "duration": 0, "store_random_value_as": "minute", "factor_to_multiply_random_value_with" : 60, "nexts" : ["SET_HOUR"] } ,
+                                 
+                                 { "@gwsclass": "MathAgentPropertyBehaviour", "id": "SET_HOUR", "duration": 0, "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "hour" , "math_operator": "+", "operand_value": 7, "nexts" : ["HOUSEHOLD_RESIDUAL"] } ,
+                                 
+                                  { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_RESIDUAL" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrRESIDUAL" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_PACKAGING"] } ,
+                                  
+                                   { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_PACKAGING" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrPACKAGING" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_GLASS"] } ,
+                                   
+                                    { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_GLASS" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrGLASS" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_PAPER"] } ,
+                                    
+                                    { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_PAPER" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrPAPER" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_ORGANIC"] } ,
+                                    
+                                    { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_ORGANIC" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrORGANIC" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["WAIT_TO_7AM"] } ,
+                                   
+                                   
+                                   
+                                  { "@gwsclass": "WaitUntilTimeBehaviour" ,  "id": "WAIT_TO_7AM" , "wait_until_hour" : "<hour>" , "wait_until_minute" : "<minute>" , "duration": 1 ,  "nexts" : ["INCREMENT_RESIDUAL"] } ,
+                                  
+                                 
+
+                                  { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_RESIDUAL", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "RESIDUAL" , "increment" : "<incrRESIDUAL>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_RESIDUAL"] , "nexts_else" : ["INCREMENT_PACKAGING"] }, 
+                                                                    
+                                  { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_PACKAGING", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "PACKAGING" , "increment" : "<incrPACKAGING>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_PACKAGING"] , "nexts_else" : ["INCREMENT_GLASS"] }, 
+                                  
+                                  { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_GLASS", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "GLASS" , "increment" : "<incrGLASS>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_GLASS"] , "nexts_else" : ["INCREMENT_PAPER"] }, 
+                                  
+                                  { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_PAPER", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "PAPER" , "increment" : "<incrPAPER>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_PAPER"] , "nexts_else" : ["INCREMENT_ORGANIC"] }, 
+                                  
+                                  { "@gwsclass": "IncrementPropertyBehaviour", "id": "INCREMENT_ORGANIC", "duration": 1, "agent_to_increment_id" : "<id>" ,"property" : "ORGANIC" , "increment" : "<incrORGANIC>" , "max_threshold": 10, "nexts_if_max_reached": ["FIND_ORGANIC"] , "nexts_else" : ["WAIT_TO_7AM"] },  
+
+                                  
+                                { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_RESIDUAL", "closest_agent_type": "RESIDUAL", "transport_network_type": "Footway", "store_closest_id_as": "closest_container_id" , "store_closest_agent_x_as": "closest_container_x", "store_closest_agent_y_as": "closest_container_y" , "store_closest_route_distance_as": "closest_container_distance" , "nexts": [ "TRANSFER_RESIDUAL" ]  , "nexts_if_no_closest_found" : ["WAIT_TO_7AM"] },
+                                
+                                 
+                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_RESIDUAL", "property_name_to_transfer": "RESIDUAL" , "transaction_type": "WasteTransaction" , "transaction_data" : { "emittedResources" : [ { "refSortingType" : "RESIDUAL" } ] } , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["WAIT_TO_7AM"] },
+                                 
+                                 
+                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_PACKAGING", "closest_agent_type": "PACKAGING", "transport_network_type": "Footway", "store_closest_id_as": "closest_container_id" , "store_closest_agent_x_as": "closest_container_x", "store_closest_agent_y_as": "closest_container_y" , "store_closest_route_distance_as": "closest_container_distance" , "nexts": [ "TRANSFER_PACKAGING" ]  , "nexts_if_no_closest_found" : ["WAIT_TO_7AM"] }, 
+                                 
+                                 
+                                 
+                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_PACKAGING", "property_name_to_transfer": "PACKAGING" , "transaction_type": "WasteTransaction" , "transaction_data" : { "emittedResources" : [ { "refSortingType" : "PACKAGING" } ] } , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["WAIT_TO_7AM"] },
+                                 
+                                 
+                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_GLASS", "closest_agent_type": "GLASS", "transport_network_type": "Footway", "store_closest_id_as": "closest_container_id" , "store_closest_agent_x_as": "closest_container_x", "store_closest_agent_y_as": "closest_container_y" , "store_closest_route_distance_as": "closest_container_distance" , "nexts": [ "TRANSFER_GLASS" ]  , "nexts_if_no_closest_found" : ["WAIT_TO_7AM"] }, 
+                                 
+                                
+                                 
+                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_GLASS", "property_name_to_transfer": "GLASS" , "transaction_type": "WasteTransaction" , "transaction_data" : { "emittedResources" : [ { "refSortingType" : "GLASS" } ] } , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["WAIT_TO_7AM"] },
+                                 
+                                 
+                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_PAPER", "closest_agent_type": "PAPER", "transport_network_type": "Footway", "store_closest_id_as": "closest_container_id" , "store_closest_agent_x_as": "closest_container_x", "store_closest_agent_y_as": "closest_container_y" , "store_closest_route_distance_as": "closest_container_distance" , "nexts": [ "TRANSFER_PAPER" ]  , "nexts_if_no_closest_found" : ["WAIT_TO_7AM"] }, 
+                                 
+                                 
+                                 
+                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_PAPER", "property_name_to_transfer": "PAPER" , "transaction_type": "WasteTransaction" , "transaction_data" : { "emittedResources" : [ { "refSortingType" : "PAPER" } ] } , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["WAIT_TO_7AM"] },
+                                 
+                                 
+                                 { "@gwsclass": "FindClosestBehaviour", "duration": 1, "id": "FIND_ORGANIC", "closest_agent_type": "ORGANIC", "transport_network_type": "Footway", "store_closest_id_as": "closest_container_id" , "store_closest_agent_x_as": "closest_container_x", "store_closest_agent_y_as": "closest_container_y" , "store_closest_route_distance_as": "closest_container_distance" , "nexts": [ "TRANSFER_ORGANIC" ]  , "nexts_if_no_closest_found" : ["WAIT_TO_7AM"] }, 
+                                 
+                                
+                                 
+                                 { "@gwsclass": "TransferAgentPropertyBehaviour", "duration": 1, "id": "TRANSFER_ORGANIC", "property_name_to_transfer": "ORGANIC" , "transaction_type": "WasteTransaction" , "transaction_data" : { "emittedResources" : [ { "refSortingType" : "ORGANIC" } ] } , "emitting_agent_id" : "<id>" , "receiving_agent_id": "<closest_container_id>" , "nexts" : ["WAIT_TO_7AM"] }
+                                 
+                                 
+                                
+                            ] }  , 
+
+			    "datasource_urls" : [ "http://datasources.geoworldsim.com/api/datasource/zamudio_census/read"] }, 
+
+		            
+    "containersRESIDUAL" 	: { "template" : { "@gwsclass": "GWSAgent", "radius": 5 , "name" : "RESIDUAL", "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "RESIDUAL", "Container" ] , "running" : true , 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] },  
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "darkgreen" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 86400 , "nexts" : ["LOOP"] }  ] }  , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_RESIDUAL/read" ]}, 
+		            
+    "containersPACKAGING" 	: { "template" : { "@gwsclass": "GWSAgent", "name" : "PACKAGING" , "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "PACKAGING", "Container" ] , "running" : true , 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "yellow" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 86400 , "nexts" : ["LOOP"] }  ] }  , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_PACKAGING/read" ]}, 
+		            
+    "containersGLASS" 	: { "template" : { "@gwsclass": "GWSAgent", "name" : "GLASS" , "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "GLASS", "Container" ] , "running" : true , 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "lime" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 86400 , "nexts" : ["LOOP"] }  ] }  , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_GLASS/read" ]}, 
+		            
+    "containersPAPER" 	: { "template" : { "@gwsclass": "GWSAgent", "name" : "PAPER" , "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "PAPER", "Container" ] , "running" : true , 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "blue" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 86400 , "nexts" : ["LOOP"] }  ] }  , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_PAPER/read" ]}, 
+		            
+    "containersORGANIC" : { "template" : { "@gwsclass": "GWSAgent", "name" : "ORGANIC" , "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "ORGANIC", "Container" ] , "running" : true , 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "brown" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 86400 , "nexts" : ["LOOP"] }  ] }  , 
+		            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_containers_ORGANIC/read" ]}, 
+
+
+
+	"footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups" : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 , "running" : false , "@behaviours" : [{  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+                            "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_footways2/read","http://datasources.geoworldsim.com/api/datasource/zamudio_pedestrian/read","http://datasources.geoworldsim.com/api/datasource/zamudio_footways/read","http://datasources.geoworldsim.com/api/datasource/zamudio_primary/read","http://datasources.geoworldsim.com/api/datasource/zamudio_service/read","http://datasources.geoworldsim.com/api/datasource/zamudio_tertiary/read", "http://datasources.geoworldsim.com/api/datasource/zamudio_residential/read"] }
+                            
+
+},
+
+"external_listeners" : {
+	"agent_injector" : "TESIS-injector"
+}
+
+
+}

@@ -13,6 +13,7 @@ QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_na
 QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
 QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransferAgentPropertyBehaviour::TRANSACTION_TYPE = "transaction_type";
+QString TransferAgentPropertyBehaviour::TRANSACTION_DATA = "transaction_data";
 QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
 
 
@@ -80,9 +81,10 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
     emitter->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QJsonValue() );
 
     // Store transfers log
-    QJsonObject transaction;
+    QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
     transaction.insert( GWSObject::GWS_ID_PROP , emitter->getId() + receiver->getId() );
     transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+    transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "refEmitter" , emitter->getId() );
     transaction.insert( "refReceiver" , receiver->getId() );
     transaction.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
