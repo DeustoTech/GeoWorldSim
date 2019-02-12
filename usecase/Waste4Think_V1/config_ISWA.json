@@ -4,7 +4,10 @@
 
     "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "st11_incr" : 0.00321, "incrRESIDUAL" : 2.00747, "incrPACKAGING" : 0.01899, "incrGLASS" : 0.04827, "st9_incr" : 0.02554, "RESIDUAL" : 0 , "PACKAGING" : 0 , "GLASS" : 0 , "sortingtype9" : 0 , "sortingtype11" : 0 , "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "running" : true , 
     "@behaviours": [  
-                                 { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["HOUSEHOLD_RESIDUAL"] } ,
+                                 { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["RAND_NUM"] } ,
+                                 
+                                 { "@gwsclass": "GenerateRandomValueBehaviour", "id": "RAND_NUM", "duration": 1, "store_random_value_as": "hour", "factor_to_multiply_random_value_with": "12", "nexts" : ["SET_HOUR"] } ,
+                                 { "@gwsclass": "MathAgentPropertyBehaviour", "id": "SET_HOUR", "duration": 1, "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "hour" , "math_operator": "+", "operand_value": "7", "nexts" : ["HOUSEHOLD_RESIDUAL"] } ,
                                  
                                   { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_RESIDUAL" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrRESIDUAL" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_PACKAGING"] } ,
                                   
@@ -13,7 +16,7 @@
                                       { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_GLASS" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrGLASS" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["WAIT_TO_7AM"] } ,
                                    
                                    
-                                  { "@gwsclass": "WaitUntilTimeBehaviour" ,  "id": "WAIT_TO_7AM" , "wait_until_hour" : 7 , "wait_until_minute" : 0 , "duration": 1 ,  "nexts" : ["INCREMENT_RESIDUAL"] } ,
+                                  { "@gwsclass": "WaitUntilTimeBehaviour" ,  "id": "WAIT_TO_7AM" , "wait_until_hour" : "<hour>" , "wait_until_minute" : 0 , "duration": 1 ,  "nexts" : ["INCREMENT_RESIDUAL"] } ,
                                   
                                  
 
