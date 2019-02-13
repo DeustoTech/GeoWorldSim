@@ -40,7 +40,7 @@
         var lon = localStorage.getItem('lon') || 0;
         var zoom = localStorage.getItem('zoom') || 1;
         
-        var map = L.map('map').setView([lat,lon], zoom);
+        var map = L.map('map' , { zoomDelta : 0.25 , zoomSnap : 0.5 }).setView([lat,lon], zoom);
         
         map.on('moveend', function(e) {
             localStorage.setItem( 'lat' , map.getCenter().lat );
