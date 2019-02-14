@@ -89,7 +89,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD
     QSharedPointer<GWSObject> obj = QSharedPointer<GWSObject>( obj_raw );
     obj_raw->self_shared_pointer = obj;
-    obj_raw->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( GWSApp::globalInstance()->getAppId() ).arg( class_name ).arg( ++GWSObject::counter ) );
+    obj_raw->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2").arg( class_name ).arg( ++GWSObject::counter ) );
 
     // Set parent if any
     if( parent ){

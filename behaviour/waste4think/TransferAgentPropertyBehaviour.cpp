@@ -82,7 +82,8 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
 
     // Store transfers log
     QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
-    transaction.insert( GWSObject::GWS_ID_PROP , emitter->getId() + receiver->getId() );
+    QString id = QString("%1%2%3").arg(emitter->getId()).arg(receiver->getId()).arg(GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ));
+    transaction.insert( GWSObject::GWS_ID_PROP , id );
     transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "refEmitter" , emitter->getId() );
