@@ -113,6 +113,7 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
            QTextStream stream(&csv);
            stream << person.id <<";" << sex << endl;
        }
+    csv.close();
 
     return SUCCESS;
 
@@ -268,7 +269,7 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
                    QTextStream stream(&csv);
                    stream << it->id <<";" << it->age << ";" << sex << endl;
                }
-
+            csv.close();
 
 
         }
@@ -558,6 +559,7 @@ int GeneratePopulationBehaviour::checkBirth()
                        QTextStream stream(&csv);
                        stream << f.id <<";" << f.age << ";" << 101 << endl;
                    }
+                csv.close();
             }
             else
             {
@@ -576,6 +578,7 @@ int GeneratePopulationBehaviour::checkBirth()
                        QTextStream stream(&csv);
                        stream << m.id <<";" << m.age << ";" << 100 << endl;
                    }
+                csv.close();
 
 
 
