@@ -4,7 +4,8 @@
 
     "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent",  "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : 57582 , "death" : 50000000000, 
                     "@behaviours": [  
-                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1, "years_to_simulate": 500, "next" : ["STOP"] },
+                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1, "years_to_simulate": 500, "set_first_males_age": 25 , 
+                                    "set_first_females_age" : 25, "next" : ["STOP"] },
                                     { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                                     ] 
                                  } , 

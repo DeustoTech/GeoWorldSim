@@ -4,6 +4,8 @@
 
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
+QString GeneratePopulationBehaviour::INITIAL_MALE_AGE = "set_first_males_age";
+QString GeneratePopulationBehaviour::INITIAL_FEMALE_AGE = "set_first_females_age";
 QString GeneratePopulationBehaviour::NEXT = "next";
 
 GeneratePopulationBehaviour::GeneratePopulationBehaviour() : GWSBehaviour()
@@ -20,9 +22,6 @@ QJsonArray GeneratePopulationBehaviour::behave(){
 
     int retval = 0;
     int yearsToAdvance = this->getProperty( SIMULATION_LENGTH_YEARS ).toInt();
-
-    QString path =  "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv";
-    QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
 
     /* Initialize global parameters */
     retval = this->launch();
@@ -69,9 +68,12 @@ int GeneratePopulationBehaviour::launch(){
     person_t f1;
 
     m1.id = 1;
-    m1.age = globalParam.marryAgeMale;
+
+    //m1.age = globalParam.marryAgeMale;
+    m1.age = this->getProperty( INITIAL_MALE_AGE ).toInt();
     f1.id = 1;
-    f1.age = globalParam.marryAgeFemale;
+    //f1.age = globalParam.marryAgeFemale;
+    f1.age = this->getProperty( INITIAL_FEMALE_AGE ).toInt();
 
     this->addPerson(MALE, m1);
     this->addPerson(FEMALE, f1);
@@ -111,7 +113,7 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
     QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
     if( csv.open( QIODevice::ReadWrite ) ) {
            QTextStream stream(&csv);
-           stream << person.id <<";" << sex << endl;
+           stream << person.id <<";" << sex  <<";" << person.age << endl;
        }
     csv.close();
 

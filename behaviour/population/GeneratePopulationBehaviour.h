@@ -32,7 +32,13 @@ public:
 
     // PROPERTIES
     static QString SIMULATION_LENGTH_YEARS;
+    static QString INITIAL_MALE_AGE;
+    static QString INITIAL_FEMALE_AGE;
     static QString NEXT;
+
+
+
+
     /* GLOBALS */
 
     /* Parameters */
