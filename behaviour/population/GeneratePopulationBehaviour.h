@@ -32,7 +32,7 @@ public:
 
     // PROPERTIES
     static QString SIMULATION_LENGTH_YEARS;
-
+    static QString NEXT;
     /* GLOBALS */
 
     /* Parameters */
@@ -108,6 +108,7 @@ protected:
     virtual int checkBirth();
     virtual int simulate(int yearsToAdvance);
     unsigned int generateRandom(int min, int max);
+    QFile csv;
 };
 
 #endif // GENERATEPOPULATIONBEHAVIOUR_H

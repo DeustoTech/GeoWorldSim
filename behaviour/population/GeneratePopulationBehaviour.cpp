@@ -1,7 +1,10 @@
 #include "GeneratePopulationBehaviour.h"
+#include <QFile>
+#include <QTextStream>
+
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
-
+QString GeneratePopulationBehaviour::NEXT = "next";
 
 GeneratePopulationBehaviour::GeneratePopulationBehaviour() : GWSBehaviour()
 {
@@ -18,9 +21,12 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     int retval = 0;
     int yearsToAdvance = this->getProperty( SIMULATION_LENGTH_YEARS ).toInt();
 
+    QString path =  "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv";
+    QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
+
     /* Initialize global parameters */
-    retval = launch();
-    retval = simulate(yearsToAdvance);
+    retval = this->launch();
+    retval = this->simulate(yearsToAdvance);
 
     if ( retval != SUCCESS )
     {
@@ -28,7 +34,7 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     }
 
 
-    return QJsonArray();
+    return this->getProperty( NEXT ).toArray();
 }
 
 
@@ -67,10 +73,12 @@ int GeneratePopulationBehaviour::launch(){
     f1.id = 1;
     f1.age = globalParam.marryAgeFemale;
 
-    addPerson(MALE, m1);
-    addPerson(FEMALE, f1);
+    this->addPerson(MALE, m1);
+    this->addPerson(FEMALE, f1);
 
+    qDebug() << "Example" << globalParam.marryAgeMale;
 
+    return SUCCESS;
 }
 
 
@@ -99,7 +107,17 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
         globalStats.totalFemaleAge =+ person.age;
     }
 
+    // MAIALEN: write added people to .csv file
+    QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
+    if( csv.open( QIODevice::ReadWrite ) ) {
+           QTextStream stream(&csv);
+           stream << person.id <<";" << sex << endl;
+       }
+
     return SUCCESS;
+
+
+
 }
 
 
@@ -110,24 +128,24 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
   @param
   @return
 *************************************************************************************************************************************/
-int GeneratePopulationBehaviour::updateIndividualList(QList<person_t> *lst, int sex)
+int GeneratePopulationBehaviour::updateIndividualList( QList<person_t> *lst, int sex )
 {
     QList<person_t>::iterator it;
 
-    if ((*lst).size() == 0)
+    if ( (*lst).size() == 0 )
     {
-        //debug_print(("DEBUG: %s No person in list\n", __FUNCTION__));
+        //debug_print(("DEBUG: %s No person in list", __FUNCTION__));
         return SUCCESS;
     }
 
     it = (*lst).begin();
 
-    while (it != (*lst).end())
+    while ( it != (*lst).end() )
     {
-        (it->age)++;
+        ( it->age )++;
 
         /* Update Stats */
-        if (sex == MALE)
+        if ( sex == MALE )
         {
             globalStats.totalMaleAge++;
         }
@@ -153,19 +171,19 @@ int GeneratePopulationBehaviour::updateCoupleList(){
 
     QList<couple_t>::iterator it;
 
-    if (cpList.size() == 0)
+    if ( cpList.size() == 0 )
     {
-        //debug_print(("DEBUG: %s No person in couple list\n", __FUNCTION__));
+        //debug_print(("DEBUG: %s No person in couple list", __FUNCTION__));
         return SUCCESS;
     }
 
     it = cpList.begin();
 
-    while (it != cpList.end())
+    while ( it != cpList.end() )
     {
         if (!it->mDead)
         {
-            (it->mAge)++;
+            ( it->mAge )++;
             globalStats.totalMaleAge++;
         }
 
@@ -177,7 +195,7 @@ int GeneratePopulationBehaviour::updateCoupleList(){
 
         (it->lastChildDuration)++;
 
-        if ((it->fAge > globalParam.maxFemaleFertilityAge) || (it->mAge > globalParam.maxMaleFertilityAge))
+        if ( (it->fAge > globalParam.maxFemaleFertilityAge) || (it->mAge > globalParam.maxMaleFertilityAge) )
         {
             it->isDormant = true;
         }
@@ -208,7 +226,7 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
 
     if ((*lst).size() == 0)
     {
-        //debug_print(("DEBUG: No person in list\n"));
+        //debug_print(("DEBUG: No person in list"));
         return EMPTY_LIST;
     }
 
@@ -224,7 +242,7 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
                So clearing is done after this.*/
             if (sex == MALE)
             {
-                qDebug() << QString("# M-%d died at the age of %d\n").arg( it->id, it->age);
+                qDebug() << QString("# M-%1 died at the age of %2").arg( it->id).arg( it->age);
                 globalStats.totalMaleAge = globalStats.totalMaleAge - it->age;
                 globalStats.totalMales--;
                 globalStats.totalMaleDeath++;
@@ -234,7 +252,7 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
             }
             else
             {
-                qDebug() << QString("# F-%d died at the age of %d\n").arg( it->id, it->age);
+                qDebug() << QString("# F-%1 died at the age of %2").arg( it->id).arg( it->age);
                 globalStats.totalFemaleAge = globalStats.totalFemaleAge - it->age;
                 globalStats.totalFemales--;
                 globalStats.totalFemaleDeath++;
@@ -243,6 +261,15 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
                 died = true;
 
             }
+            // MAIALEN: write added people to .csv file
+            QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
+
+            if( csv.open( QIODevice::ReadWrite ) ) {
+                   QTextStream stream(&csv);
+                   stream << it->id <<";" << it->age << ";" << sex << endl;
+               }
+
+
 
         }
 
@@ -274,7 +301,7 @@ int GeneratePopulationBehaviour::checkCoupleDeath()
 
     if ( cpList.empty() )
     {
-        //debug_print(("DEBUG: No person in list\n"));
+        //debug_print(("DEBUG: No person in list"));
         return EMPTY_LIST;
     }
 
@@ -288,7 +315,7 @@ int GeneratePopulationBehaviour::checkCoupleDeath()
         testAge = this->generateRandom(min, max);
         if ((it->mDead == false) && (it->mAge >= testAge))
         {
-            qDebug() << QString("# M-%d died at the age of %d\n").arg( it->mId, it->mAge );
+            qDebug() << QString("# M-%1 died at the age of %2").arg( it->mId ).arg( it->mAge );
             it->mDead = true;
             it->isPartnerDead = true;
             globalStats.totalMaleAge = globalStats.totalMaleAge - it->mAge;
@@ -302,7 +329,7 @@ int GeneratePopulationBehaviour::checkCoupleDeath()
         testAge = this->generateRandom(min, max);
         if ((it->fDead == false) && (it->fAge >= testAge))
         {
-            qDebug() << QString("# F-%d died at the age of %d\n").arg( it->fId, it->fAge );
+            qDebug() << QString("# F-%1 died at the age of %2").arg( it->fId ).arg( it->fAge );
             it->fDead = true;
             it->isPartnerDead = true;
             globalStats.totalFemaleAge = globalStats.totalFemaleAge - it->fAge;
@@ -349,7 +376,7 @@ int GeneratePopulationBehaviour::checkMarriage()
 
     if (mList.size() == 0)
     {
-        //debug_print(("DEBUG: No person in couple list\n"));
+        //debug_print(("DEBUG: No person in couple list"));
         return SUCCESS;
     }
 
@@ -395,7 +422,7 @@ int GeneratePopulationBehaviour::checkMarriage()
                     person_t m = *it;
                     person_t f = *it2;
 
-                    qDebug() << QString("# M-%d [%d] marries to F-%d [%d]\n").arg( it->id).arg( it->age).arg( it2->id ).arg(it2->age );
+                    qDebug() << QString("# M-%1 [%2] marries to F-%3 [%4]").arg( it->id).arg( it->age).arg( it2->id ).arg(it2->age );
 
                     /* Remove from individual list */
                     mList.erase(it++);
@@ -416,7 +443,7 @@ int GeneratePopulationBehaviour::checkMarriage()
 
         if ( married == false )
         {
-            //debug_print(("No partner found for M-%d.\n", it->id));
+            //debug_print(("No partner found for M-%d.", it->id));
             it++;
         }
     }
@@ -470,7 +497,7 @@ int GeneratePopulationBehaviour::checkBirth()
 
     if (cpList.empty())
     {
-        //debug_print(("No couple present\n"));
+        //debug_print(("No couple present"));
         return FAILURE;
     }
 
@@ -482,21 +509,21 @@ int GeneratePopulationBehaviour::checkBirth()
         if (it->isDormant)
         {
             it++;
-            //debug_print(("DEBUG: Cannot reproduce. Dormant.\n"));
+            //debug_print(("DEBUG: Cannot reproduce. Dormant."));
             continue;
         }
 
         if (it->lastChildDuration < globalParam.nextChildGap)
         {
             it++;
-            //debug_print(("DEBUG: Cannot reproduce. Child gap not attained\n"));
+            //debug_print(("DEBUG: Cannot reproduce. Child gap not attained"));
             continue;
         }
 
         if (it->children >= globalParam.tfr)
         {
             it++;
-            //debug_print(("DEBUG: Cannot reproduce. TFR exceeded!\n"));
+            //debug_print(("DEBUG: Cannot reproduce. TFR exceeded!"));
             continue;
         }
 
@@ -522,8 +549,15 @@ int GeneratePopulationBehaviour::checkBirth()
                 f.age = 0;
                 f.id = globalStats.fIndex;
                 fList.push_back(f);
-                qDebug() << QString( "# M-%1 [%2] and F-%3 [%4] gave birth to a baby girl F-%5\n" ).arg( it->mId ).arg( it->mAge ).arg( it->fId ).arg( it->fAge ).arg( f.id );
+                qDebug() << QString( "# M-%1 [%2] and F-%3 [%4] gave birth to a baby girl F-%5" ).arg( it->mId ).arg( it->mAge ).arg( it->fId ).arg( it->fAge ).arg( f.id );
 
+
+                // MAIALEN: write added people to .csv file
+                QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
+                if( csv.open( QIODevice::ReadWrite ) ) {
+                       QTextStream stream(&csv);
+                       stream << f.id <<";" << f.age << ";" << 101 << endl;
+                   }
             }
             else
             {
@@ -534,10 +568,24 @@ int GeneratePopulationBehaviour::checkBirth()
                 m.age = 0;
                 m.id = globalStats.mIndex;
                 mList.push_back(m);
-                qDebug() << QString( "# M-%d [%d] and F-%d [%d] gave birth to a baby boy M-%d \n" ).arg( it->mId ).arg( it->mAge ).arg( it->fId ).arg( it->fAge ).arg( m.id );
+                qDebug() << QString( "# M-%1 [%2] and F-%3 [%4] gave birth to a baby boy M-%5" ).arg( it->mId ).arg( it->mAge ).arg( it->fId ).arg( it->fAge ).arg( m.id );
+
+                // MAIALEN: write added people to .csv file
+                QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
+                if( csv.open( QIODevice::ReadWrite ) ) {
+                       QTextStream stream(&csv);
+                       stream << m.id <<";" << m.age << ";" << 100 << endl;
+                   }
+
+
+
             }
 
             globalStats.birthsThisYear++;
+
+
+
+
 
             /* Update couple details */
             it->children++;
@@ -584,12 +632,12 @@ int GeneratePopulationBehaviour::simulate(int yearsToAdvance)
         int categoryCount = 0;
         if ( ( mList.empty() ) || ( globalStats.totalMales == 0 ) )
         {
-            //debug_print(("# No males present \n"));
+            //debug_print(("# No males present"));
             categoryCount++;
         }
         if ( ( fList.empty() ) || ( globalStats.totalFemales == 0 ) )
         {
-            //debug_print(("# No females present \n"));
+            //debug_print(("# No females present"));
             categoryCount++;
         }
         if ( ( cpList.empty() ) || ( globalStats.totalCouples == 0) )
@@ -599,7 +647,7 @@ int GeneratePopulationBehaviour::simulate(int yearsToAdvance)
 
         if ( categoryCount >= 3 )
         {
-            qDebug() << "# Population Wiped out.\n";
+            qDebug() << "# Population Wiped out.";
 
             /* Update elapsed time counter */
             globalStats.totalYears++;

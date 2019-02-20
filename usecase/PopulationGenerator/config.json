@@ -2,9 +2,10 @@
 
 "population" : {
 
-    "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : 57582 , "death" : 50000000000, 
+    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent",  "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : 57582 , "death" : 50000000000, 
                     "@behaviours": [  
-                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1, "years_to_simulate": 100, "nexts" : ["POP"] } 
+                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1, "years_to_simulate": 500, "next" : ["STOP"] },
+                                    { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                                     ] 
                                  } , 
                     "amount" : 1 }

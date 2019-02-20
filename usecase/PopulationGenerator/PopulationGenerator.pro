@@ -44,7 +44,7 @@ SOURCES += \
        # functions.cpp \
         #utils.cpp \
         ../../app/App.cpp \
-        ../../usecase/Waste4Think_V1/HumanAgent.cpp \
+        PopulationGeneratorAgent.cpp \
         ../../object/ObjectFactory.cpp \
         ../../object/Object.cpp \
         ../../util/storage/ObjectStorage.cpp \
@@ -73,6 +73,7 @@ SOURCES += \
         ../../util/datasource/AgentGeneratorDatasource.cpp \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.cpp \
+        ../../behaviour/execution/StopAgentBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
@@ -92,7 +93,7 @@ SOURCES += \
 HEADERS += \
         #header.h \
         ../../app/App.h \
-        ../../usecase/Waste4Think_V1/HumanAgent.h \
+        PopulationGeneratorAgent.h \
         ../../object/ObjectFactory.h \
         ../../object/Object.h \
         ../../util/storage/ObjectStorage.h \
@@ -121,6 +122,7 @@ HEADERS += \
         ../../util/datasource/AgentGeneratorDatasource.h \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.h \
+        ../../behaviour/execution/StopAgentBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \

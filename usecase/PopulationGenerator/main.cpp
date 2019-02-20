@@ -8,7 +8,7 @@
 // Include PopulationGenerator files:
 //#include "header.h"
 
-#include "../../usecase/Waste4Think_V1/HumanAgent.h"
+#include "PopulationGeneratorAgent.h"
 
 // Include GWS files:
 #include "../../app/App.h"
@@ -19,6 +19,7 @@
 
 // Behaviours:
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
+#include "../../behaviour/execution/StopAgentBehaviour.h"
 
 // Utils:
 #include "../../util/routing/Routing.h"
@@ -53,7 +54,10 @@ int main( int argc, char* argv[] )
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
-    GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
+    // INIT BEHAVIOURS
+    GWSObjectFactory::globalInstance()->registerType( PopulationGeneratorAgent::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
