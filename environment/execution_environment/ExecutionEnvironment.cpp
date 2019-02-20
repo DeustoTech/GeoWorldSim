@@ -12,7 +12,8 @@
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../util/parallelism/ParallelismController.h"
 
-QString GWSExecutionEnvironment::RUNNING_PROP = "running";
+QString GWSExecutionEnvironment::BIRTH_PROP = "birth";
+QString GWSExecutionEnvironment::DEATH_PROP = "death";
 QString GWSExecutionEnvironment::STARTED_SIMULATION_TIME = "started_simulation_time";
 QString GWSExecutionEnvironment::STARTED_REAL_TIME = "started_real_time";
 QString GWSExecutionEnvironment::ENDED_SIMULATION_TIME = "ended_simulation_time";
@@ -84,26 +85,27 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 
 void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
-    // Not running
-    if( !agent->getProperty( RUNNING_PROP ).toBool() ){
-        this->unregisterAgent( agent );
-        return;
-    }
-
     // If already registered
     if( agent.isNull() || agent->getEnvironments().contains( this ) ){
         return;
     }
 
-    agent->incrementBusy();
+    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+   //qDebug() << current_datetime;
+   //qDebug() << agent->getProperty( GWSExecutionEnvironment::BIRTH_PROP ).toInt( -1 );
 
-    // Store as running
-    GWSEnvironment::registerAgent( agent );
-    this->running_agents->add( agent );
+    if ( !agent->getProperty( GWSExecutionEnvironment::BIRTH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::BIRTH_PROP ).toDouble( -1 )){
+        agent->incrementBusy();
+        qDebug() << "Here";
+        // Store as running
+        GWSEnvironment::registerAgent( agent );
+        this->running_agents->add( agent );
 
-    agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , true );
-    agent->decrementBusy();
-    emit agent->agentStartedSignal();
+        agent->decrementBusy();
+        emit agent->agentStartedSignal();
+    }
+
+
 
     //qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
@@ -114,19 +116,26 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
         return;
     }
 
-    agent->setProperty( GWSExecutionEnvironment::ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
-    agent->incrementBusy();
-    agent->setProperty( GWSExecutionEnvironment::RUNNING_PROP , false );
+    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
 
-    // Remove from running lists
-    GWSEnvironment::unregisterAgent( agent );
-    this->running_agents->remove( agent );
+    if ( !agent->getProperty( GWSExecutionEnvironment::DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::DEATH_PROP ).toInt( -1 )){
 
-    // Stop agent
-    //qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
+        agent->setProperty( GWSExecutionEnvironment::ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) );
+        agent->incrementBusy();
 
-    agent->decrementBusy();
-    emit agent->agentEndedSignal();
+        // Remove from running lists
+        GWSEnvironment::unregisterAgent( agent );
+        this->running_agents->remove( agent );
+
+        // Stop agent
+        //qDebug() << QString("Agent %1 %2 stopped").arg( agent->metaObject()->className() ).arg( agent->getId() );
+
+        agent->decrementBusy();
+        emit agent->agentEndedSignal();
+
+    }
+
+
 }
 
 /**********************************************************************
@@ -188,6 +197,13 @@ void GWSExecutionEnvironment::behave(){
             // If agent_tick is 0, set to now
             if( agent_next_tick <= 0 ){
                 GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , min_tick );
+            }
+
+            if ( !agent->getProperty( GWSExecutionEnvironment::DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::DEATH_PROP ).toDouble() ){
+                qDebug() << "Dying!";
+                qDebug() << agent->getProperty( GWSExecutionEnvironment::DEATH_PROP ).toDouble();
+                this->unregisterAgent( agent );
+                continue;
             }
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){

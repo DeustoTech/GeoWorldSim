@@ -22,7 +22,7 @@ QJsonArray  StopAgentBehaviour::behave(){
 
     QJsonObject json = agent->serialize();
     json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , false );
-    json.insert( GWSExecutionEnvironment::RUNNING_PROP , false );
+    json.insert( GWSExecutionEnvironment::BIRTH_PROP , false );
 
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
 

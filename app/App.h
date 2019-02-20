@@ -7,7 +7,7 @@
 #include <QtWebSockets/QWebSocket>
 #include <QJsonObject>
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
+#include <QtNetwork/QNetworkReply>
 
 class GWSApp : public QCoreApplication
 {
