@@ -81,7 +81,6 @@ int main( int argc, char* argv[] )
     }
 
     // CREATE POPULATION
-    QList<GWSAgentGeneratorDatasource*> pending_datasources;
     QJsonObject json_population = json_configuration.value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
@@ -96,8 +95,7 @@ int main( int argc, char* argv[] )
         }
        qDebug() << QString("Creating population %1").arg( key );
     }
-    if( pending_datasources.isEmpty() ){
-        GWSExecutionEnvironment::globalInstance()->run();
-    }
+    GWSExecutionEnvironment::globalInstance()->run();
+
     app->exec();
 }
