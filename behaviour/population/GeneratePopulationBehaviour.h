@@ -53,8 +53,8 @@ public:
         int marry_ageMale;
         int marry_ageFemale;
         int marry_age_margin;
-        int life_expectency;
-        int life_expectency_margin;
+        int life_expectancy;
+        int life_expectancy_margin;
         int next_child_gap;
         int total_fertility_rate; /* Total Fertility Rate */
         int max_male_fertility_age;
@@ -113,7 +113,7 @@ protected:
     virtual int addPerson( int sex, person_t person );
     virtual int updateIndividualList( QList<person_t> *lst, int sex );
     virtual int updateCoupleList();
-    virtual int checkDeath(QList<person_t> *lst, int sex);
+    virtual int checkDeath( quint64 age );
     virtual int checkCoupleDeath();
     virtual int checkMarriage();
     virtual int addToCoupleList(person_t m, person_t f);

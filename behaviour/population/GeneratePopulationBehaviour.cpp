@@ -2,10 +2,18 @@
 #include <QFile>
 #include <QTextStream>
 
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
 QString GeneratePopulationBehaviour::INITIAL_MALE_AGE = "set_first_males_age";
 QString GeneratePopulationBehaviour::INITIAL_FEMALE_AGE = "set_first_females_age";
+QString GeneratePopulationBehaviour::MARRY_AGE = "set_marriage_age";
+QString GeneratePopulationBehaviour::MARRY_AGE_MARGIN = "set_marriage_age_margin";
+QString GeneratePopulationBehaviour::LIFE_EXPECTANCY = "set_life_expectancy_years";
+QString GeneratePopulationBehaviour::NEXT_CHILD_GAP = "set_next_child_gap_years";
+QString GeneratePopulationBehaviour::TOTAL_FERTILITY_RATE = "set_fertility_rate";
+QString GeneratePopulationBehaviour::MAX_FERTILITY_AGE = "set_max_fertility_age";
 QString GeneratePopulationBehaviour::NEXT = "next";
 
 GeneratePopulationBehaviour::GeneratePopulationBehaviour() : GWSBehaviour()
@@ -21,7 +29,11 @@ GeneratePopulationBehaviour::GeneratePopulationBehaviour() : GWSBehaviour()
 QJsonArray GeneratePopulationBehaviour::behave(){
 
     // Get this agent's details
-    quint64 birth_date =    this->getProperty( "" ).toDouble();
+    quint64 birth_date = this->getProperty( GWSExecutionEnvironment::BIRTH_PROP ).toDouble();
+    quint64 current_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime(); //milliseconds
+    quint64 current_year = QDate::currentDate().year();
+    quint64 agent_age = current_year - birth_date;
+
     int marry_age =         this->getProperty( MARRY_AGE ).toInt();
     int marry_age_margin =  this->getProperty( MARRY_AGE_MARGIN ).toInt();
     int life_expectancy =   this->getProperty( LIFE_EXPECTANCY ).toInt();
@@ -34,8 +46,10 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     int yearsToAdvance = this->getProperty( SIMULATION_LENGTH_YEARS ).toInt();
 
     /* Initialize global parameters */
-    retval = this->launch();
-    retval = this->simulate(yearsToAdvance);
+    //retval = this->launch();
+    //retval = this->simulate(yearsToAdvance);
+
+    this->checkDeath( agent_age );
 
     if ( retval != SUCCESS )
     {
@@ -47,14 +61,24 @@ QJsonArray GeneratePopulationBehaviour::behave(){
 }
 
 
+
+
+
+/*************************************************************************************************************************************
+  @name         :
+  @description  :
+  @param
+  @return
+*************************************************************************************************************************************/
+
 int GeneratePopulationBehaviour::launch(){
 
     /* Parameters */
     globalParam.marry_ageMale = 21;
     globalParam.marry_ageFemale = 18;
     globalParam.marry_age_margin = 15;
-    globalParam.life_expectency = 85;
-    globalParam.life_expectency_margin = 20;
+    globalParam.life_expectancy = 85;
+    globalParam.life_expectancy_margin = 20;
     globalParam.next_child_gap = 3;
     globalParam.total_fertility_rate = 6;
     globalParam.max_male_fertility_age = 60;
@@ -100,23 +124,23 @@ int GeneratePopulationBehaviour::launch(){
   @param
   @return
 *************************************************************************************************************************************/
-int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
+int GeneratePopulationBehaviour::addPerson( int sex, person_t person  )
 {
     int retval = 0;
 
-    if (sex == MALE)
+    if ( sex == MALE )
     {
         mList.push_back(person);
-        globalStats.mIndex++;
-        globalStats.totalMales++;
-        globalStats.totalMaleAge =+ person.age;
+        //globalStats.mIndex++;
+        //globalStats.totalMales++;
+        //globalStats.totalMaleAge =+ person.age;
     }
     else
     {
         fList.push_back(person);
-        globalStats.fIndex++;
-        globalStats.totalFemales++;
-        globalStats.totalFemaleAge =+ person.age;
+       // globalStats.fIndex++;
+        //globalStats.totalFemales++;
+        //globalStats.totalFemaleAge =+ person.age;
     }
 
     // MAIALEN: write added people to .csv file
@@ -132,162 +156,33 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
 }
 
 
+
 /*************************************************************************************************************************************
   @name         :
-  @description  : Updates Male/Female list by 1 year advancement.
+  @description  : Checks if an individual has reached his life expectancy. Handle death scenario and counters.
   @param
   @return
 *************************************************************************************************************************************/
-int GeneratePopulationBehaviour::updateIndividualList( QList<person_t> *lst, int sex )
+int GeneratePopulationBehaviour::checkDeath( quint64 age )
 {
-    QList<person_t>::iterator it;
+    QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    if ( (*lst).size() == 0 )
-    {
-        //debug_print(("DEBUG: %s No person in list", __FUNCTION__));
-        return SUCCESS;
-    }
-
-    it = (*lst).begin();
-
-    while ( it != (*lst).end() )
-    {
-        ( it->age )++;
-
-        /* Update Stats */
-        if ( sex == MALE )
-        {
-            globalStats.totalMaleAge++;
-        }
-        else
-        {
-            globalStats.totalFemaleAge++;
-        }
-        it++;
-    }
-
-    return SUCCESS;
-}
-
-
-
-/*************************************************************************************************************************************
-  @name         :
-  @description  : Updates Male/Female list by 1 year advancement.
-  @param
-  @return
-*************************************************************************************************************************************/
-int GeneratePopulationBehaviour::updateCoupleList(){
-
-    QList<couple_t>::iterator it;
-
-    if ( cpList.size() == 0 )
-    {
-        //debug_print(("DEBUG: %s No person in couple list", __FUNCTION__));
-        return SUCCESS;
-    }
-
-    it = cpList.begin();
-
-    while ( it != cpList.end() )
-    {
-        if (!it->mDead)
-        {
-            ( it->mAge )++;
-            globalStats.totalMaleAge++;
-        }
-
-        if (!it->fDead)
-        {
-            (it->fAge)++;
-            globalStats.totalFemaleAge++;
-        }
-
-        (it->lastChildDuration)++;
-
-        if ( (it->fAge > globalParam.max_female_fertility_age) || (it->mAge > globalParam.max_male_fertility_age) )
-        {
-            it->isDormant = true;
-        }
-
-        it++;
-    }
-
-    return SUCCESS;
-}
-
-
-
-/*************************************************************************************************************************************
-  @name         :
-  @description  : Checks if an individual has reached his life expectency. Handle death scenario and counters.
-  @param
-  @return
-*************************************************************************************************************************************/
-int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
-{
-    QList<person_t>::iterator it;
-    int testAge = 0;
+    quint64 testAge = 0;
     bool died = false;
-    int min = globalParam.life_expectency - globalParam.life_expectency_margin;
-    int max = globalParam.life_expectency + globalParam.life_expectency_margin;
 
-    globalStats.deathsThisYear = 0;
+    int min = globalParam.life_expectancy - globalParam.life_expectancy_margin;
+    int max = globalParam.life_expectancy + globalParam.life_expectancy_margin;
+    testAge = this->generateRandom( min, max );
 
-    if ((*lst).size() == 0)
-    {
-        //debug_print(("DEBUG: No person in list"));
-        return EMPTY_LIST;
-    }
-
-    it = (*lst).begin();
-
-    while (it != (*lst).end())
-    {
-        died = false;
-        testAge = this->generateRandom(min, max);
-        if (it->age > testAge)
+    if ( age > testAge )
         {
-            /* Update Stats. We need the data of the person to update stats.
-               So clearing is done after this.*/
-            if (sex == MALE)
-            {
-                qDebug() << QString("# M-%1 died at the age of %2").arg( it->id).arg( it->age);
-                globalStats.totalMaleAge = globalStats.totalMaleAge - it->age;
-                globalStats.totalMales--;
-                globalStats.totalMaleDeath++;
-                globalStats.deathsThisYear++;
-                mList.erase(it++);
-                died = true;
-            }
-            else
-            {
-                qDebug() << QString("# F-%1 died at the age of %2").arg( it->id).arg( it->age);
-                globalStats.totalFemaleAge = globalStats.totalFemaleAge - it->age;
-                globalStats.totalFemales--;
-                globalStats.totalFemaleDeath++;
-                globalStats.deathsThisYear++;
-                fList.erase(it++);
-                died = true;
-
-            }
-            // MAIALEN: write added people to .csv file
-            QFile csv( "/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/PopulationGenerator/census.csv" );
-
-            if( csv.open( QIODevice::ReadWrite ) ) {
-                   QTextStream stream(&csv);
-                   stream << it->id <<";" << it->age << ";" << sex << endl;
-               }
-            csv.close();
-
-
+        agent->setProperty( GWSExecutionEnvironment::DEATH_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime());
+        died = true;
         }
-
-        if (died == false)
+     else
         {
-            it++;
+        died == false;
         }
-    }
 
     return TRUE;
 }
@@ -306,8 +201,8 @@ int GeneratePopulationBehaviour::checkCoupleDeath()
     QList<couple_t>::iterator it;
     int testAge = 0;
     bool died = false;
-    int min = globalParam.life_expectency - globalParam.life_expectency_margin;
-    int max = globalParam.life_expectency + globalParam.life_expectency_margin;
+    int min = globalParam.life_expectancy - globalParam.life_expectancy_margin;
+    int max = globalParam.life_expectancy + globalParam.life_expectancy_margin;
 
     if ( cpList.empty() )
     {
