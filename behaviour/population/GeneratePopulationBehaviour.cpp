@@ -20,6 +20,16 @@ GeneratePopulationBehaviour::GeneratePopulationBehaviour() : GWSBehaviour()
 
 QJsonArray GeneratePopulationBehaviour::behave(){
 
+    // Get this agent's details
+    quint64 birth_date =    this->getProperty( "" ).toDouble();
+    int marry_age =         this->getProperty( MARRY_AGE ).toInt();
+    int marry_age_margin =  this->getProperty( MARRY_AGE_MARGIN ).toInt();
+    int life_expectancy =   this->getProperty( LIFE_EXPECTANCY ).toInt();
+    int life_expectancy_margin = this->getProperty( LIFE_EXPECTANCY_MARGIN ).toInt();
+    int next_child_gap =    this->getProperty( NEXT_CHILD_GAP ).toInt();
+    int total_fertility_rate =  this->getProperty( TOTAL_FERTILITY_RATE ).toInt();
+    int max_fertility_age =     this->getProperty( MAX_FERTILITY_AGE ).toInt();
+
     int retval = 0;
     int yearsToAdvance = this->getProperty( SIMULATION_LENGTH_YEARS ).toInt();
 
@@ -40,15 +50,15 @@ QJsonArray GeneratePopulationBehaviour::behave(){
 int GeneratePopulationBehaviour::launch(){
 
     /* Parameters */
-    globalParam.marryAgeMale = 21;
-    globalParam.marryAgeFemale = 18;
-    globalParam.marryAgeMargin = 15;
-    globalParam.lifeExpectency = 85;
-    globalParam.lifeExpectencyMargin = 20;
-    globalParam.nextChildGap = 3;
-    globalParam.tfr = 6;
-    globalParam.maxMaleFertilityAge = 60;
-    globalParam.maxFemaleFertilityAge = 45;
+    globalParam.marry_ageMale = 21;
+    globalParam.marry_ageFemale = 18;
+    globalParam.marry_age_margin = 15;
+    globalParam.life_expectency = 85;
+    globalParam.life_expectency_margin = 20;
+    globalParam.next_child_gap = 3;
+    globalParam.total_fertility_rate = 6;
+    globalParam.max_male_fertility_age = 60;
+    globalParam.max_female_fertility_age = 45;
 
     /* Statistics */
     globalStats.mIndex = 0;
@@ -78,7 +88,7 @@ int GeneratePopulationBehaviour::launch(){
     this->addPerson(MALE, m1);
     this->addPerson(FEMALE, f1);
 
-    qDebug() << "Example" << globalParam.marryAgeMale;
+    qDebug() << "Example" << globalParam.marry_ageMale;
 
     return SUCCESS;
 }
@@ -119,10 +129,7 @@ int GeneratePopulationBehaviour::addPerson(int sex, person_t person)
 
     return SUCCESS;
 
-
-
 }
-
 
 
 /*************************************************************************************************************************************
@@ -198,7 +205,7 @@ int GeneratePopulationBehaviour::updateCoupleList(){
 
         (it->lastChildDuration)++;
 
-        if ( (it->fAge > globalParam.maxFemaleFertilityAge) || (it->mAge > globalParam.maxMaleFertilityAge) )
+        if ( (it->fAge > globalParam.max_female_fertility_age) || (it->mAge > globalParam.max_male_fertility_age) )
         {
             it->isDormant = true;
         }
@@ -222,8 +229,8 @@ int GeneratePopulationBehaviour::checkDeath( QList<person_t> *lst, int sex )
     QList<person_t>::iterator it;
     int testAge = 0;
     bool died = false;
-    int min = globalParam.lifeExpectency - globalParam.lifeExpectencyMargin;
-    int max = globalParam.lifeExpectency + globalParam.lifeExpectencyMargin;
+    int min = globalParam.life_expectency - globalParam.life_expectency_margin;
+    int max = globalParam.life_expectency + globalParam.life_expectency_margin;
 
     globalStats.deathsThisYear = 0;
 
@@ -299,8 +306,8 @@ int GeneratePopulationBehaviour::checkCoupleDeath()
     QList<couple_t>::iterator it;
     int testAge = 0;
     bool died = false;
-    int min = globalParam.lifeExpectency - globalParam.lifeExpectencyMargin;
-    int max = globalParam.lifeExpectency + globalParam.lifeExpectencyMargin;
+    int min = globalParam.life_expectency - globalParam.life_expectency_margin;
+    int max = globalParam.life_expectency + globalParam.life_expectency_margin;
 
     if ( cpList.empty() )
     {
@@ -390,15 +397,15 @@ int GeneratePopulationBehaviour::checkMarriage()
         married = false;
 
         /* Check if he has reached his legal marriage age */
-        if (it->age < globalParam.marryAgeMale)
+        if (it->age < globalParam.marry_ageMale)
         {
             it++;
             continue;
         }
 
         int testAge = 0;
-        int min = globalParam.marryAgeMale;
-        int max = globalParam.marryAgeMale + globalParam.marryAgeMargin;
+        int min = globalParam.marry_ageMale;
+        int max = globalParam.marry_ageMale + globalParam.marry_age_margin;
         testAge = this->generateRandom(min, max);
 
         if (it->age > testAge)
@@ -408,15 +415,15 @@ int GeneratePopulationBehaviour::checkMarriage()
             while (it2 != fList.end())
             {
                 /* Check if she has reached his legal marriage age */
-                if (it2->age < globalParam.marryAgeFemale)
+                if (it2->age < globalParam.marry_ageFemale)
                 {
                     it2++;
                     continue;
                 }
 
                 int testAge2 = 0;
-                int min2 = globalParam.marryAgeFemale;
-                int max2 = globalParam.marryAgeFemale + globalParam.marryAgeMargin;
+                int min2 = globalParam.marry_ageFemale;
+                int max2 = globalParam.marry_ageFemale + globalParam.marry_age_margin;
                 testAge2 = this->generateRandom(min2, max2);
 
                 if (it2->age < testAge2)
@@ -516,14 +523,14 @@ int GeneratePopulationBehaviour::checkBirth()
             continue;
         }
 
-        if (it->lastChildDuration < globalParam.nextChildGap)
+        if (it->lastChildDuration < globalParam.next_child_gap)
         {
             it++;
             //debug_print(("DEBUG: Cannot reproduce. Child gap not attained"));
             continue;
         }
 
-        if (it->children >= globalParam.tfr)
+        if (it->children >= globalParam.total_fertility_rate)
         {
             it++;
             //debug_print(("DEBUG: Cannot reproduce. TFR exceeded!"));
@@ -531,8 +538,8 @@ int GeneratePopulationBehaviour::checkBirth()
         }
 
         int testAge = 0;
-        int min = globalParam.marryAgeFemale;
-        int max = globalParam.maxFemaleFertilityAge ;
+        int min = globalParam.marry_ageFemale;
+        int max = globalParam.max_female_fertility_age ;
         testAge = this->generateRandom(min, max);
 
         if ( it->fAge > testAge )
@@ -596,7 +603,7 @@ int GeneratePopulationBehaviour::checkBirth()
             it->children++;
             globalStats.totalChildren++;
             it->lastChildDuration = 0;
-            if ( it->children >= globalParam.tfr )
+            if ( it->children >= globalParam.total_fertility_rate )
             {
                 it->isDormant = true;
             }

@@ -31,12 +31,18 @@ public:
     Q_INVOKABLE explicit GeneratePopulationBehaviour();
 
     // PROPERTIES
+    static QString MARRY_AGE;
+    static QString MARRY_AGE_MARGIN;
+    static QString LIFE_EXPECTANCY;
+    static QString LIFE_EXPECTANCY_MARGIN;
+    static QString NEXT_CHILD_GAP;
+    static QString TOTAL_FERTILITY_RATE;
+    static QString MAX_FERTILITY_AGE;
+
     static QString SIMULATION_LENGTH_YEARS;
     static QString INITIAL_MALE_AGE;
     static QString INITIAL_FEMALE_AGE;
     static QString NEXT;
-
-
 
 
     /* GLOBALS */
@@ -44,15 +50,15 @@ public:
     /* Parameters */
     typedef struct globalParam_tag
     {
-        int marryAgeMale;
-        int marryAgeFemale;
-        int marryAgeMargin;
-        int lifeExpectency;
-        int lifeExpectencyMargin;
-        int nextChildGap;
-        int tfr; /* Total Fertility Rate */
-        int maxMaleFertilityAge;
-        int maxFemaleFertilityAge;
+        int marry_ageMale;
+        int marry_ageFemale;
+        int marry_age_margin;
+        int life_expectency;
+        int life_expectency_margin;
+        int next_child_gap;
+        int total_fertility_rate; /* Total Fertility Rate */
+        int max_male_fertility_age;
+        int max_female_fertility_age;
     }globalParam_t;
 
     /* Stats */
