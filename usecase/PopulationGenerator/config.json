@@ -2,13 +2,16 @@
 
 "population" : {
 
-    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "marry_age" : 25 , "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : 57582 , "death" : 50000000000, 
+    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,    
                     "@behaviours": [  
-                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1, "years_to_simulate": 500, "set_first_males_age": 25 , 
-                                    "set_first_females_age" : 25, "next" : ["STOP"] },
+                                    { "@gwsclass": "GeneratePopulationBehaviour", "start" : true , "id": "POP", "duration": 1,   "set_marriage_age" : "marry_age", "set_marriage_age_margin" : "marry_age_mar" , "set_life_expectancy_years" : "life_exp",
+                                    "set_life_expectancy_margin" : "life_exp_margin",  "store_couple_id_as" : "couple_id", "store_children_as" : "offspring" , "set_next_child_gap_years" : 3 , "set_fertility_rate" : 5 , "set_max_fertility_age" : 45 ,  "next" : ["POP"] },
                                     { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                                     ] 
                                  } , 
-                    "amount" : 1 }
+
+			    "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_census_popgen/read"]
                 }
+                
+}
 }

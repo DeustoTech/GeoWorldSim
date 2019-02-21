@@ -70,19 +70,37 @@ QJsonObject GWSObject::serialize() const{
 void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     Q_UNUSED( parent );
 
+    // Required properties
     if( json.keys().contains( GWS_SIM_ID_PROP ) ){ this->setProperty( GWS_SIM_ID_PROP , json.value( GWS_SIM_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_CLASS_PROP ) ){ this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
-    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) ){ this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() ); }
+    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
+        QJsonArray arr;
+        arr.append( json.value( GWS_INHERITANCE_FAMILY_PROP ).toString() );
+        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , arr );
+    }
+    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isArray() ){
+        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
+    }
 
-    // Set properties
+    // Remaining properties
     foreach( QString property_name , json.keys() ){
+        if( !this->getProperty( property_name ).isNull() ){
+            continue; // Already inserted
+        }
+
+        // Get the value to be inserted
         QJsonValue propert_value = json.value( property_name );
+
+        // If is complex JSON (with value, metadata, etc)
         if( propert_value.isObject() && propert_value.toObject().keys().contains("value") ){
             propert_value = propert_value.toObject().value( "value" );
         }
+
+        // Set Property
         this->setProperty( property_name , propert_value );
     }
+
 }
 
 /**********************************************************************
@@ -107,6 +125,8 @@ QJsonArray GWSObject::getInheritanceFamily() const{
         }
         mobj = mobj->superClass();
     }
+
+    // GWSGROUPS ARRAY
     foreach(QJsonValue s , this->getProperty( GWSObject::GWS_INHERITANCE_FAMILY_PROP ).toArray() ){
         if( !inheritance_family.contains( s ) ){
             inheritance_family.append( s );
@@ -125,7 +145,7 @@ const QJsonValue GWSObject::getProperty( QString name ) const{
     }
 
     this->mutex.lock();
-    const QVariant variant = QObject::property( name.toLatin1() );
+    const QVariant variant = QObject::property( name.toUtf8() );
     QJsonValue value = QJsonValue::fromVariant( variant );
     this->mutex.unlock();
     return value;
