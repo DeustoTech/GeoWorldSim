@@ -17,8 +17,8 @@ public:
     static GWSExecutionEnvironment* globalInstance();
 
     // PROPERTIES
-    static QString BIRTH_PROP;
-    static QString DEATH_PROP;
+    static QString AGENT_BIRTH_PROP;
+    static QString AGENT_DEATH_PROP;
     static QString STARTED_SIMULATION_TIME;
     static QString STARTED_REAL_TIME;
     static QString ENDED_SIMULATION_TIME;
