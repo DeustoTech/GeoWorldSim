@@ -260,12 +260,11 @@ void GWSAgent::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> beha
 **********************************************************************/
 
 void GWSAgent::run(){
-    this->setProperty( GWSExecutionEnvironment::BIRTH_PROP , true );
+    this->setProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP , -1 ); // Birth date -1 will be always started
     GWSExecutionEnvironment::globalInstance()->registerAgent( this->getSharedPointer() );
 }
 
 void GWSAgent::stop(){
-    this->setProperty( GWSExecutionEnvironment::BIRTH_PROP , false );
     GWSExecutionEnvironment::globalInstance()->unregisterAgent( this->getSharedPointer() );
 }
 
