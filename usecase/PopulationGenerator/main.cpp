@@ -62,6 +62,8 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
+    GWSPhysicalEnvironment::globalInstance();
+    GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
     GWSCommunicationEnvironment::globalInstance();
 
