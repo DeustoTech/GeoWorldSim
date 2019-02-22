@@ -5,11 +5,12 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../object/ObjectFactory.h"
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
 QString GeneratePopulationBehaviour::LOOKING_FOR = "looking_for";
 QString GeneratePopulationBehaviour::MARRY_AGE = "set_marriage_age";
-QString GeneratePopulationBehaviour::COUPLE_ID = "store_couple_id_as";
+QString GeneratePopulationBehaviour::COUPLE_ID = "couple_id";
 QString GeneratePopulationBehaviour::MARRY_AGE_MARGIN = "set_marriage_age_margin";
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY = "set_life_expectancy_years";
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY_MARGIN = "set_life_expectancy_margin";
@@ -17,9 +18,9 @@ QString GeneratePopulationBehaviour::NEXT_CHILD_GAP = "set_next_child_gap_years"
 QString GeneratePopulationBehaviour::TOTAL_FERTILITY_RATE = "set_fertility_rate";
 QString GeneratePopulationBehaviour::MAX_FERTILITY_AGE = "set_max_fertility_age";
 QString GeneratePopulationBehaviour::NEXT = "next";
-QString GeneratePopulationBehaviour::CHILDREN_IDS = "store_children_as";
-QString GeneratePopulationBehaviour::PARENT1;
-QString GeneratePopulationBehaviour::PARENT2;
+QString GeneratePopulationBehaviour::CHILDREN_IDS = "children";
+QString GeneratePopulationBehaviour::PARENT1 = "parent1";
+QString GeneratePopulationBehaviour::PARENT2 = "parent2";
 
 
 
@@ -76,30 +77,30 @@ QJsonArray GeneratePopulationBehaviour::behave(){
 bool GeneratePopulationBehaviour::checkDeath( int age )
 {
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    int life_expectancy = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt();
 
     quint64 testAge = 0;
     bool died = false;
 
-    int min = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt() - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
-    int max = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt() + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
+    int min = life_expectancy - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
+    int max = life_expectancy + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
     testAge = this->generateRandom( min, max );
 
-    // Check for couple:
+     //qDebug() << age << testAge;
+    // Check for couple:"store_couple_id_as" : "couple_id",
     QString couple_id = agent->getProperty( COUPLE_ID ).toString();
     QSharedPointer<GWSAgent> couple;
 
-    if ( !couple_id.isNull() ){
-        couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
-    }
-
-    if ( age > testAge )
+  if ( age >= testAge )
         {
 
-        if ( !couple.isNull() ){
+        if ( !couple_id.isNull() ){
+            couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
             couple->setProperty( COUPLE_ID, QJsonValue() );
         }
         GWSExecutionEnvironment::globalInstance()->unregisterAgent( agent );
         died = true;
+        qDebug() << age << "You die!";
         }
      else
         {
@@ -121,26 +122,38 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
 *************************************************************************************************************************************/
 bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
+    // Increase marriage randomness:
+    double marriages_per_year = 250;
+    double population = GWSAgentEnvironment::globalInstance()->getAmount();
+    double marriage_ratio = 3.3 * population / 1000.0;
+
     QSharedPointer<GWSAgent> me = this->getAgent();
     int my_marrying_age = me->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
+    int my_marrying_margin = me->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString()  ).toInt();
     QString looking_for = me->getProperty( LOOKING_FOR ).toString();
     QString couple_id = me->getProperty( this->getProperty( COUPLE_ID ).toString() ).toString();
 
     bool married = false;
 
+    if ( my_age < my_marrying_age ){
+        married = false;
+        return married;
+    }
+
     /* Check if agent already has a couple */
     if ( !couple_id.isNull() ){
         married = true;
+        return married;
     }
-    else {
 
-        /* Check if agent has reached his legal marriage age */
-        if ( my_age < my_marrying_age){
-            married = false;
-            return married;
-        }
 
-        else { /* Suitable single male candidate, now search a partner for him. */
+    int testAge = 0;
+    int min = my_marrying_age;
+    int max = my_marrying_age + my_marrying_margin;
+    testAge = generateRandom(min, max);
+
+
+    if ( my_age >= testAge ) {  /* Suitable single candidate, now search a partner */
 
              // Get total GWSAgents
              QList<QSharedPointer<GWSAgent>> candidates = GWSAgentEnvironment::globalInstance()->getByClass( looking_for );
@@ -150,14 +163,22 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
                     int candidate_age = this->getAge( candidate );
                     int candidate_marriage_age = candidate->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
+                    int candidate_marriage_age_margin = candidate->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString() ).toInt();
+
                     QString candidates_couple_id = candidate->getProperty( this->getProperty( COUPLE_ID ).toString()).toString();
                     QString other_looking_for = candidate->getProperty( LOOKING_FOR ).toString();
                     bool i_am_candidate = me->getInheritanceFamily().contains( other_looking_for );
 
-                    if ( candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate ){
+                    int candidatetestAge = 0;
+                    int min = candidate_marriage_age;
+                    int max = candidate_marriage_age + candidate_marriage_age_margin;
+                    candidatetestAge = generateRandom(min, max);
+
+                    if ( qrand() > marriage_ratio  && candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate ){
                         me->setProperty( this->getProperty( COUPLE_ID ).toString(), candidate->getId() );
                         candidate->setProperty( this->getProperty( COUPLE_ID ).toString() , me->getId() );
                         married = true;
+                        qDebug() << "Married";
                         break;
                     }
                     else {
@@ -166,7 +187,7 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
              }
           }
 
-       }
+
 
 return married;
 
@@ -181,6 +202,11 @@ return married;
 *************************************************************************************************************************************/
 bool GeneratePopulationBehaviour::checkBirth( int age  )
 {
+
+    // Increase birth randomness:
+    double births_per_year = 120;
+    double population = GWSAgentEnvironment::globalInstance()->getAmount();
+    double birth_ratio = 7.44 * population / 1000.;
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -206,13 +232,18 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
     int max_fertility_age = this->getProperty( MAX_FERTILITY_AGE ).toInt();
     bool birth = false;
 
+    int testAge = 0;
+    int min = agent->getProperty( MARRY_AGE ).toInt();
+    int max = max_fertility_age;
+    testAge = generateRandom(min, max);
+
+
     if ( age > max_fertility_age || couple_age > max_fertility_age ){
             // Too old to reproduce
             birth = false;
         }
 
-    else {
-            if ( last_birth <= child_gap && children.size() <= fertility_rate ){
+    if ( qrand() > birth_ratio && age < testAge && last_birth <= child_gap && children.size() <= fertility_rate  ){
 
                     /* Reproduce */
 
@@ -221,25 +252,32 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
                     int max = 10 ;
                     testSample = this->generateRandom(min, max);
 
-                    QSharedPointer<GWSAgent> new_born;
-                    new_born->setProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP, GWSTimeEnvironment::globalInstance()->getCurrentDateTime());
+                    // Pass parent information as basic characteristics:
+                    QJsonObject new_born_json = agent->serialize();
+                    QDateTime next_year = QDateTime::fromMSecsSinceEpoch( GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) ).addYears( 1 );
+                    new_born_json.insert( GWSExecutionEnvironment::AGENT_BIRTH_PROP , next_year.toMSecsSinceEpoch());
+                    new_born_json.insert( GWSAgent::GWS_ID_PROP , QJsonValue() );
+                    new_born_json.insert( "@behaviours" , QJsonValue() );
+                    new_born_json.insert( GeneratePopulationBehaviour::COUPLE_ID , QString() );
 
-                    GWSExecutionEnvironment::globalInstance()->registerAgent( new_born );
+                    new_born_json.insert( GeneratePopulationBehaviour::PARENT1, agent->getId() );
+                    new_born_json.insert( GeneratePopulationBehaviour::PARENT2, couple_id );
+                    new_born_json.insert( GeneratePopulationBehaviour::CHILDREN_IDS , QJsonArray() );
+
+                    // Add behaviours
+                    QList< QSharedPointer<GWSBehaviour> > behaviours = agent->getBehaviours( GWSBehaviour::staticMetaObject.className() );
+                    if ( !behaviours.isEmpty() ) {
+                        QJsonArray arr;
+                        foreach ( QSharedPointer<GWSBehaviour> o , behaviours ){
+                                arr.append( o->serialize() );
+                        }
+                        new_born_json.insert( "@behaviours" , arr );
+                    }
+
+                    // Register through object factory:
+                    QSharedPointer<GWSAgent> new_born = GWSObjectFactory::globalInstance()->fromJSON( new_born_json ).dynamicCast<GWSAgent>();
                     birth = true;
-                   // new_born->setProperty( GeneratePopulationBehaviour::PARENT1, agent->getId() );
-                    new_born->setProperty( GeneratePopulationBehaviour::PARENT2, agent->getProperty( COUPLE_ID ).toString());
-
-                    if ( testSample <= 5 )
-                    {
-                        /* Baby girl */
-                        new_born->setProperty( this->LOOKING_FOR, "MALE" );
-                    }
-                    else {
-                        /* Baby boy*/
-                        new_born->setProperty( this->LOOKING_FOR, "FEMALE" );
-                    }
-
-
+                    qDebug() << "Birth";
                     QJsonArray children_ids;
                     foreach( QSharedPointer<GWSAgent> child , children ){
                         children_ids.append( child->getId() );
@@ -248,7 +286,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
                     agent->setProperty( GeneratePopulationBehaviour::CHILDREN_IDS , children_ids );
                     couple->setProperty( GeneratePopulationBehaviour::CHILDREN_IDS , children_ids );
             }
-        }
+
 
     return birth;
 }

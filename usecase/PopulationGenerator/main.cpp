@@ -20,6 +20,7 @@
 // Behaviours:
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
+#include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
 
 // Utils:
 #include "../../util/routing/Routing.h"
@@ -54,9 +55,8 @@ int main( int argc, char* argv[] )
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
-    // INIT BEHAVIOURS
+    // INIT OBJECT FACTORY
     GWSObjectFactory::globalInstance()->registerType( PopulationGeneratorAgent::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
 
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
@@ -69,6 +69,8 @@ int main( int argc, char* argv[] )
 
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GeneratePopulationBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
 
 
     // READ CONFIGURATION

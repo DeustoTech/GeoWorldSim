@@ -61,7 +61,7 @@ protected:
     QHash<QString, QHash< QString , QSharedPointer<GWSObject> >* > object_ids;  // QMAP< QMAP< ID , OBJECT>>
     QHash<QString, QHash< QString , QSharedPointer<GWSObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
 
-    QMutex mutex;
+    mutable QMutex mutex;
 };
 
 #endif // GWSOBJECTSTORAGE_H

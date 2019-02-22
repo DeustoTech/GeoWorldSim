@@ -92,16 +92,18 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
 
-    if ( !agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 )){
-        agent->incrementBusy();
-        qDebug() << "Here";
-        // Store as running
-        GWSEnvironment::registerAgent( agent );
-        this->running_agents->add( agent );
+    // Whichever its BIRTH_DATE is, register it,
+    // however if it needs to be executed in the future, set its INTERNAL_TIME to that future
+    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , qMax( (double)current_datetime , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
+    agent->incrementBusy();
 
-        agent->decrementBusy();
-        emit agent->agentStartedSignal();
-    }
+    // Store as running
+    GWSEnvironment::registerAgent( agent );
+    this->running_agents->add( agent );
+
+    agent->decrementBusy();
+    emit agent->agentStartedSignal();
+
 
 
 
@@ -193,8 +195,6 @@ void GWSExecutionEnvironment::behave(){
             }
 
             if ( !agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).toDouble() ){
-                qDebug() << "Dying!";
-                qDebug() << agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).toDouble();
                 this->unregisterAgent( agent );
                 continue;
             }

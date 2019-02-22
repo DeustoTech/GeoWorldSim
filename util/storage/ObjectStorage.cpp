@@ -76,9 +76,11 @@ QSharedPointer<T> GWSObjectStorage::getByClassAndName( QString class_name , QStr
 QList< QSharedPointer<GWSObject> > GWSObjectStorage::getByClass( QString class_name ) const{
     QList< QSharedPointer<GWSObject> > list;
     if( this->classes_stored.contains( class_name ) ){
+        this->mutex.lock();
         foreach (QSharedPointer<GWSObject> o, *this->objects.value( class_name ) ) {
             list.append( o );
         }
+        this->mutex.unlock();
     }
     return list;
 }

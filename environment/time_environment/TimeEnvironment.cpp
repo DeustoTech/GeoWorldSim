@@ -56,7 +56,7 @@ double GWSTimeEnvironment::getTimeSpeed() const{
 }
 
 qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
-    return this->agent_internal_times.value( agent->getId() , this->getCurrentDateTime() );
+    return this->agent_internal_times.value( agent->getId() , -1 );
 }
 
 /**********************************************************************
@@ -94,8 +94,13 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     GWSEnvironment::registerAgent( agent );
 
     // INTERNAL TIME
-    quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toInt();
-    this->agent_internal_times.insert( agent->getId() , init_internal_time );
+    if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
+        quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble();
+        this->agent_internal_times.insert( agent->getId() , init_internal_time );
+    } else {
+        this->agent_internal_times.insert( agent->getId() , this->getCurrentDateTime() );
+    }
+
 }
 
 void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
