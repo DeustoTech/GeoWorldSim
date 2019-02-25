@@ -164,7 +164,7 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
     if ( my_age >= testAge ) {  /* Suitable single candidate, now search a partner */
 
-         GWSPhysicalEnvironment::globalInstance()->transformBuffer( me , 20 );
+         GWSPhysicalEnvironment::globalInstance()->transformBuffer( me , 0.002 );
 
          GWSCoordinate myCoordinates = GWSPhysicalEnvironment::globalInstance()->getGeometry( me )->getCentroid();
 

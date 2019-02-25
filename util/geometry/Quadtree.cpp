@@ -28,37 +28,45 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double 
     QList< QSharedPointer<GWSObject> > objects;
 
     // See the decimal value where min and max diverge
-    QString x_decimals = QString::number( qAbs( minX - maxX ) );
+    QString x_max = QString::number( maxX );
+    QString x_min = QString::number( minX );
 
     // Count how many 0 it has from the beginning until reaching first number
     int x_decimal_count = 0;
-    for( int c = 0 ; c < x_decimals.length() ; c++ ){
-        if( x_decimals[c] == '0' ){
-            x_decimal_count++;
-        } else if( x_decimals[c] == '.' ){
+    for( int c = 0 ; c < x_max.length() ; c++ ){
+        if( x_max[c] == '.' || x_min[c] == '.' ){
             x_decimal_count = 0;
+            continue;
+        }
+
+        if( x_max[c] == x_min[c] ){
+            x_decimal_count++;
         } else {
             break;
         }
     }
 
     // See the decimal value where min and max diverge
-    QString y_decimals = QString::number( qAbs( minY - maxY ) );
+    QString y_max = QString::number( maxY );
+    QString y_min = QString::number( minY );
 
     // Count how many 0 it has from the beginning until reaching first number
     int y_decimal_count = 0;
-    for( int c = 0 ; c < y_decimals.length() ; c++ ){
-        if( y_decimals[c] == '0' ){
-            y_decimal_count++;
-        } else if( y_decimals[c] == '.' ){
+    for( int c = 0 ; c < y_max.length() ; c++ ){
+        if( y_max[c] == '.' || y_min[c] == '.' ){
             y_decimal_count = 0;
+            continue;
+        }
+
+        if( y_max[c] == y_min[c] ){
+            y_decimal_count++;
         } else {
             break;
         }
     }
 
-    int x_hash = this->createHash( ( minX + maxX ) / 2 , qMin( x_decimal_count , y_decimal_count ) );
-    int y_hash = this->createHash( ( minY + maxY ) / 2  , qMin( x_decimal_count , y_decimal_count ) );
+    int x_hash = this->createHash( ( minX + maxX ) / 2.0 , qMin( x_decimal_count , y_decimal_count ) );
+    int y_hash = this->createHash( ( minY + maxY ) / 2.0  , qMin( x_decimal_count , y_decimal_count ) );
 
     if( !this->geom_index_layers.keys().contains( qMin( x_decimal_count , y_decimal_count ) ) ){
         return objects;
@@ -72,10 +80,12 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double 
         return objects;
     }
 
+    this->mutex.lock();
     QStringList* ids = this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash );
     foreach(QString id , *ids ) {
         objects.append( this->id_to_objects.value( id ) );
     }
+    this->mutex.unlock();
 
     return objects;
 }
@@ -209,8 +219,9 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
         int xhash = this->createHash( object_geom->getCentroid().getX() , l );
         int yhash = this->createHash( object_geom->getCentroid().getY() , l );
 
+        this->mutex.lock();
         this->geom_index_layers.value( l )->value( xhash )->value( yhash )->removeAll( object_id );
-
+        this->mutex.unlock();
     }
     this->id_to_objects.remove( object_id );
     this->id_to_geometries.remove( object_id );
