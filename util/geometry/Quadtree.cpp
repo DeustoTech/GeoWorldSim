@@ -27,6 +27,56 @@ QSharedPointer<GWSGeometry> GWSQuadtree::getGeometry( QString object_id ){
 QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
     QList< QSharedPointer<GWSObject> > objects;
 
+    // See the decimal value where min and max diverge
+    QString x_decimals = QString::number( qAbs( minX - maxX ) );
+
+    // Count how many 0 it has from the beginning until reaching first number
+    int x_decimal_count = 0;
+    for( int c = 0 ; c < x_decimals.length() ; c++ ){
+        if( x_decimals[c] == '0' ){
+            x_decimal_count++;
+        } else if( x_decimals[c] == '.' ){
+            x_decimal_count = 0;
+        } else {
+            break;
+        }
+    }
+
+    // See the decimal value where min and max diverge
+    QString y_decimals = QString::number( qAbs( minY - maxY ) );
+
+    // Count how many 0 it has from the beginning until reaching first number
+    int y_decimal_count = 0;
+    for( int c = 0 ; c < y_decimals.length() ; c++ ){
+        if( y_decimals[c] == '0' ){
+            y_decimal_count++;
+        } else if( y_decimals[c] == '.' ){
+            y_decimal_count = 0;
+        } else {
+            break;
+        }
+    }
+
+    int x_hash = this->createHash( ( minX + maxX ) / 2 , qMin( x_decimal_count , y_decimal_count ) );
+    int y_hash = this->createHash( ( minY + maxY ) / 2  , qMin( x_decimal_count , y_decimal_count ) );
+
+    if( !this->geom_index_layers.keys().contains( qMin( x_decimal_count , y_decimal_count ) ) ){
+        return objects;
+    }
+
+    if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->keys().contains( x_hash ) ){
+        return objects;
+    }
+
+    if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->keys().contains( y_hash ) ){
+        return objects;
+    }
+
+    QStringList* ids = this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash );
+    foreach(QString id , *ids ) {
+        objects.append( this->id_to_objects.value( id ) );
+    }
+
     return objects;
 }
 
