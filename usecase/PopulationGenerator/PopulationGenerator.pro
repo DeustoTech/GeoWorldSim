@@ -13,7 +13,7 @@ QT          += xml
 QT          += network
 QT          += multimedia # For video exporter sudo apt-get install qtmultimedia5-dev
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 TARGET = PopulationGenerator
 TEMPLATE = app

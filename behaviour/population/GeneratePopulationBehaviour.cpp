@@ -89,13 +89,13 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
 
     int min = life_expectancy - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
     int max = life_expectancy + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
-    testAge = QRandomGenerator::global()->bounded( min, max );
+    testAge = (qrand() % ( max-min )) + min;
 
     QString couple_id = agent->getProperty( COUPLE_ID ).toString();
     QSharedPointer<GWSAgent> couple;
 
     // Introduce additional randomness for death. Age is not the only cause of death.
-     double illness = QRandomGenerator::global()->generateDouble();
+     double illness = (qrand() % ( 100000 )) / 100000;
    // qDebug() << illness;
 
 
@@ -158,7 +158,7 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
     int testAge = 0;
     int min = my_marrying_age;
     int max = my_marrying_age + my_marrying_margin;
-    testAge = QRandomGenerator::global()->bounded( min, max );
+    testAge = (qrand() % ( max-min )) + min;
 
 
 
@@ -196,10 +196,10 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
                 int max = candidate_marriage_age + candidate_marriage_age_margin;
 
                 //candidatetestAge = this->generateRandom(min, max);
-                candidatetestAge = QRandomGenerator::global()->bounded( min, max );
+                candidatetestAge = (qrand() % ( max-min )) + min;
 
                 //double random_number = qrand();
-                double value = QRandomGenerator::global()->generateDouble();
+                double value = (qrand() % ( 100000 )) / 100000;
                 //qDebug() << value;
 
                 if ( value <= marriage_ratio  && candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate  ){
@@ -264,7 +264,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
     int min = agent->getProperty( MARRY_AGE ).toInt();
     int max = max_fertility_age;
    // testAge = this->generateRandom(min, max);
-    testAge = QRandomGenerator::global()->bounded( min, max );
+    testAge = (qrand() % ( max-min )) + min;
 
 
     if ( age > max_fertility_age || couple_age > max_fertility_age ){
@@ -272,7 +272,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
             birth = false;
         }
 
-    double value = QRandomGenerator::global()->generateDouble();
+    double value = (qrand() % ( 1000000 )) / 1000000;
     //qDebug() << value;
     if ( value <= birth_ratio && age < testAge && last_birth <= child_gap && children.size() <= fertility_rate  ){
 
