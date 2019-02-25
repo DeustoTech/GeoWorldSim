@@ -160,7 +160,10 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        this->environment_agent_indexes.value( family )->remove( agent );
+        if( this->environment_agent_indexes.value( family , Q_NULLPTR ) ){
+            this->environment_agent_indexes.value( family )->remove( agent );
+        }
+
     }
     this->agent_ids.removeAll( agent_id );
 }

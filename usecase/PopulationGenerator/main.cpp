@@ -22,7 +22,7 @@
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-
+#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 // Utils:
 #include "../../util/routing/Routing.h"
 #include "../../util/routing/GraphEdgeVisitor.h"
@@ -73,6 +73,7 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
 
 
     // READ CONFIGURATION

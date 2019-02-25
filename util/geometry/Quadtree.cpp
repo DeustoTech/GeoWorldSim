@@ -212,14 +212,19 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
     }
 
     QString object_id = object->getId();
+
+    if( !this->id_to_objects.value( object_id , Q_NULLPTR ) ){
+        return;
+    }
+
     QSharedPointer<GWSGeometry> object_geom = this->id_to_geometries.value( object_id );
 
     for( int l = this->layer_amount ; l > 0 ; l-- ){
 
+        this->mutex.lock();
         int xhash = this->createHash( object_geom->getCentroid().getX() , l );
         int yhash = this->createHash( object_geom->getCentroid().getY() , l );
 
-        this->mutex.lock();
         this->geom_index_layers.value( l )->value( xhash )->value( yhash )->removeAll( object_id );
         this->mutex.unlock();
     }

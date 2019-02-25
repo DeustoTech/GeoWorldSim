@@ -19,8 +19,8 @@ quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
 
 GWSObject::GWSObject() : QObject() , deleted(false) {
     QString generated_id = QString("GWSObject::%1").arg( ++GWSObject::counter );
-    this->setProperty( GWS_ID_PROP ,  generated_id );
-    this->setProperty( GWS_SIM_ID_PROP ,  GWSApp::globalInstance()->getAppId() );
+    this->setProperty( GWSObject::GWS_ID_PROP ,  generated_id );
+    this->setProperty( GWSObject::GWS_SIM_ID_PROP ,  GWSApp::globalInstance()->getAppId() );
 }
 
 GWSObject::GWSObject(const GWSObject &other) : QObject(){
@@ -57,8 +57,8 @@ QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
     for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
         QString property_name = this->dynamicPropertyNames().at( i );
-        if ( property_name.startsWith( "@" ) ){ continue;}
-        json.insert( property_name , this->getProperty( property_name ) );
+        if ( property_name.startsWith( "@" ) ){ continue; }
+        json.insert( property_name , GWSObject::getProperty( property_name ) );
     }
     return json;
 }
