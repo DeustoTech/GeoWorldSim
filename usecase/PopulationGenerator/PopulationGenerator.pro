@@ -75,6 +75,7 @@ SOURCES += \
         ../../behaviour/population/GeneratePopulationBehaviour.cpp \
         ../../behaviour/execution/StopAgentBehaviour.cpp \
         ../../behaviour/waste4think/WaitUntilTimeBehaviour.cpp \
+        ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
@@ -125,6 +126,7 @@ HEADERS += \
         ../../behaviour/population/GeneratePopulationBehaviour.h \
         ../../behaviour/execution/StopAgentBehaviour.h \
         ../../behaviour/waste4think/WaitUntilTimeBehaviour.h \
+        ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \

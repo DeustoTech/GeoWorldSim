@@ -21,6 +21,7 @@
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
+#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 
 // Utils:
 #include "../../util/routing/Routing.h"
@@ -71,6 +72,7 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( GeneratePopulationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
 
 
     // READ CONFIGURATION

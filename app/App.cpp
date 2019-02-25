@@ -62,7 +62,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
 }
 
 GWSApp::~GWSApp(){
-    this->setProperty( "id" , QVariant() ); // Set to null
+    this->setProperty( "id" , QVariant() ); // Set to nu2ll
 }
 
 /**********************************************************************

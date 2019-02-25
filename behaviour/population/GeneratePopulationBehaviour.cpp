@@ -5,7 +5,12 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../object/ObjectFactory.h"
+
+#include "../../util/units/Units.h"
+
+#include "../../usecase/PopulationGenerator/PopulationGeneratorAgent.h"
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
 QString GeneratePopulationBehaviour::LOOKING_FOR = "looking_for";
@@ -79,19 +84,22 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
     QSharedPointer<GWSAgent> agent = this->getAgent();
     int life_expectancy = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt();
 
-    quint64 testAge = 0;
+    int testAge = 0;
     bool died = false;
 
     int min = life_expectancy - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
     int max = life_expectancy + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
-    testAge = this->generateRandom( min, max );
+    testAge = QRandomGenerator::global()->bounded( min, max );
 
-     //qDebug() << age << testAge;
-    // Check for couple:"store_couple_id_as" : "couple_id",
     QString couple_id = agent->getProperty( COUPLE_ID ).toString();
     QSharedPointer<GWSAgent> couple;
 
-  if ( age >= testAge )
+    // Introduce additional randomness for death. Age is not the only cause of death.
+     double illness = QRandomGenerator::global()->generateDouble();
+   // qDebug() << illness;
+
+
+    if ( age >= testAge ||  illness <= 0.01 )
         {
 
         if ( !couple_id.isNull() ){
@@ -122,18 +130,18 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
 *************************************************************************************************************************************/
 bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
+    bool married = false;
+
     // Increase marriage randomness:
-    double marriages_per_year = 250;
     double population = GWSAgentEnvironment::globalInstance()->getAmount();
-    double marriage_ratio = 3.3 * population / 1000.0;
+    double marriage_ratio = 3.3 * population / 1000.0 / 100.0 ; // According to data from 2016 EUSTAT
 
     QSharedPointer<GWSAgent> me = this->getAgent();
     int my_marrying_age = me->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
     int my_marrying_margin = me->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString()  ).toInt();
+
     QString looking_for = me->getProperty( LOOKING_FOR ).toString();
     QString couple_id = me->getProperty( this->getProperty( COUPLE_ID ).toString() ).toString();
-
-    bool married = false;
 
     if ( my_age < my_marrying_age ){
         married = false;
@@ -150,42 +158,62 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
     int testAge = 0;
     int min = my_marrying_age;
     int max = my_marrying_age + my_marrying_margin;
-    testAge = generateRandom(min, max);
+    testAge = QRandomGenerator::global()->bounded( min, max );
+
 
 
     if ( my_age >= testAge ) {  /* Suitable single candidate, now search a partner */
 
-             // Get total GWSAgents
-             QList<QSharedPointer<GWSAgent>> candidates = GWSAgentEnvironment::globalInstance()->getByClass( looking_for );
+         GWSPhysicalEnvironment::globalInstance()->transformBuffer( me , 20 );
 
-             // Loop over agents to find suitable companion to breed:
-             foreach ( QSharedPointer<GWSAgent> candidate , candidates ){
+         GWSCoordinate myCoordinates = GWSPhysicalEnvironment::globalInstance()->getGeometry( me )->getCentroid();
 
-                    int candidate_age = this->getAge( candidate );
-                    int candidate_marriage_age = candidate->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
-                    int candidate_marriage_age_margin = candidate->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString() ).toInt();
+         // Get total GWSAgents
+         QList< QSharedPointer<GWSAgent> > closestCandidates = GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( GWSPhysicalEnvironment::globalInstance()->getGeometry( me ) , looking_for );
 
-                    QString candidates_couple_id = candidate->getProperty( this->getProperty( COUPLE_ID ).toString()).toString();
-                    QString other_looking_for = candidate->getProperty( LOOKING_FOR ).toString();
-                    bool i_am_candidate = me->getInheritanceFamily().contains( other_looking_for );
+         /*QList<GWSCoordinate> candidateCoors;
+         foreach ( QSharedPointer<GWSAgent> candidate , candidates ){
+            GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( candidate )->getCentroid();
+            candidateCoors.append( coor );
+         }
 
-                    int candidatetestAge = 0;
-                    int min = candidate_marriage_age;
-                    int max = candidate_marriage_age + candidate_marriage_age_margin;
-                    candidatetestAge = generateRandom(min, max);
+         QList<QSharedPointer<GWSAgent>> closestCandidates = GWSPhysicalEnvironment::globalInstance()->getNearestAgents( candidateCoors, looking_for );
+        */
 
-                    if ( qrand() > marriage_ratio  && candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate ){
-                        me->setProperty( this->getProperty( COUPLE_ID ).toString(), candidate->getId() );
-                        candidate->setProperty( this->getProperty( COUPLE_ID ).toString() , me->getId() );
-                        married = true;
-                        qDebug() << "Married";
-                        break;
-                    }
-                    else {
-                        continue;
-                    }
-             }
-          }
+         // Loop over agents to find suitable companion to breed:
+         foreach ( QSharedPointer<GWSAgent> candidate , closestCandidates ){
+
+                int candidate_age = this->getAge( candidate );
+                int candidate_marriage_age = candidate->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
+                int candidate_marriage_age_margin = candidate->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString() ).toInt();
+
+                QString candidates_couple_id = candidate->getProperty( this->getProperty( COUPLE_ID ).toString()).toString();
+                QString other_looking_for = candidate->getProperty( LOOKING_FOR ).toString();
+                bool i_am_candidate = me->getInheritanceFamily().contains( other_looking_for );
+
+                int candidatetestAge = 0;
+                int min = candidate_marriage_age;
+                int max = candidate_marriage_age + candidate_marriage_age_margin;
+
+                //candidatetestAge = this->generateRandom(min, max);
+                candidatetestAge = QRandomGenerator::global()->bounded( min, max );
+
+                //double random_number = qrand();
+                double value = QRandomGenerator::global()->generateDouble();
+                //qDebug() << value;
+
+                if ( value <= marriage_ratio  && candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate  ){
+                    me->setProperty( this->getProperty( COUPLE_ID ).toString(), candidate->getId() );
+                    candidate->setProperty( this->getProperty( COUPLE_ID ).toString() , me->getId() );
+                    married = true;
+                    qDebug() << "Married";
+                    break;
+                }
+                else {
+                    continue;
+                }
+         }
+      }
 
 
 
@@ -204,9 +232,9 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 {
 
     // Increase birth randomness:
-    double births_per_year = 120;
+   // double births_per_year = 120;
     double population = GWSAgentEnvironment::globalInstance()->getAmount();
-    double birth_ratio = 7.44 * population / 1000.;
+    double birth_ratio = 7.44 * population / 1000. / 100.0; // Bizkaia data from EUSTAT
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -235,7 +263,8 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
     int testAge = 0;
     int min = agent->getProperty( MARRY_AGE ).toInt();
     int max = max_fertility_age;
-    testAge = generateRandom(min, max);
+   // testAge = this->generateRandom(min, max);
+    testAge = QRandomGenerator::global()->bounded( min, max );
 
 
     if ( age > max_fertility_age || couple_age > max_fertility_age ){
@@ -243,14 +272,9 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
             birth = false;
         }
 
-    if ( qrand() > birth_ratio && age < testAge && last_birth <= child_gap && children.size() <= fertility_rate  ){
-
-                    /* Reproduce */
-
-                    int testSample = 0;
-                    int min = 1;
-                    int max = 10 ;
-                    testSample = this->generateRandom(min, max);
+    double value = QRandomGenerator::global()->generateDouble();
+    //qDebug() << value;
+    if ( value <= birth_ratio && age < testAge && last_birth <= child_gap && children.size() <= fertility_rate  ){
 
                     // Pass parent information as basic characteristics:
                     QJsonObject new_born_json = agent->serialize();
@@ -299,7 +323,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 @param
 @return
 **********************************************************************/
-double GeneratePopulationBehaviour::generateRandom(int min, int max)
+/*double GeneratePopulationBehaviour::generateRandom(int min, int max)
 {
     unsigned int num = 0;
     unsigned int tmp = 0;
@@ -309,10 +333,10 @@ double GeneratePopulationBehaviour::generateRandom(int min, int max)
     srand(tp.tv_usec);
     num = rand();
 
-    /* restirict within min and max */
+    // restirict within min and max
     tmp = (num % max) + min;
 
-    /* Wrap around */
+    // Wrap around
     if (tmp > max)
     {
         num = min + (tmp - max);
@@ -323,7 +347,7 @@ double GeneratePopulationBehaviour::generateRandom(int min, int max)
     }
 
     return num;
-}
+} */
 
 
 
