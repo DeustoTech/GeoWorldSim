@@ -25,9 +25,12 @@ public:
     static QString COUPLE_ID;
     static QString MARRY_AGE;
     static QString MARRY_AGE_MARGIN;
+    static QString MARRIAGE_RATE;
     static QString LIFE_EXPECTANCY;
     static QString LIFE_EXPECTANCY_MARGIN;
+    static QString ILLNESS_RATE;
     static QString NEXT_CHILD_GAP;
+    static QString BIRTH_RATE;
     static QString TOTAL_FERTILITY_RATE;
     static QString MAX_FERTILITY_AGE;
     static QString CHILDREN_IDS;

@@ -15,11 +15,14 @@
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
 QString GeneratePopulationBehaviour::LOOKING_FOR = "looking_for";
 QString GeneratePopulationBehaviour::MARRY_AGE = "set_marriage_age";
-QString GeneratePopulationBehaviour::COUPLE_ID = "couple_id";
 QString GeneratePopulationBehaviour::MARRY_AGE_MARGIN = "set_marriage_age_margin";
+QString GeneratePopulationBehaviour::MARRIAGE_RATE = "marriage_rate";
+QString GeneratePopulationBehaviour::COUPLE_ID = "couple_id";
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY = "set_life_expectancy_years";
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY_MARGIN = "set_life_expectancy_margin";
+QString GeneratePopulationBehaviour::ILLNESS_RATE = "illness_rate";
 QString GeneratePopulationBehaviour::NEXT_CHILD_GAP = "set_next_child_gap_years";
+QString GeneratePopulationBehaviour::BIRTH_RATE = "set_birth_rate";
 QString GeneratePopulationBehaviour::TOTAL_FERTILITY_RATE = "set_fertility_rate";
 QString GeneratePopulationBehaviour::MAX_FERTILITY_AGE = "set_max_fertility_age";
 QString GeneratePopulationBehaviour::CHILDREN_IDS = "children";
@@ -103,13 +106,17 @@ QJsonArray GeneratePopulationBehaviour::behave(){
 bool GeneratePopulationBehaviour::checkDeath( int age )
 {
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    int life_expectancy = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt();
+   // int life_expectancy = agent->getProperty( this->getProperty( LIFE_EXPECTANCY ).toString() ).toInt();
+    int life_expectancy = this->getProperty( LIFE_EXPECTANCY ).toInt();
 
     int testAge = 0;
     bool died = false;
 
-    int min = life_expectancy - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
-    int max = life_expectancy + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
+    /*int min = life_expectancy - agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();
+    int max = life_expectancy + agent->getProperty( this->getProperty( LIFE_EXPECTANCY_MARGIN ).toString() ).toInt();*/
+    int min = life_expectancy - this->getProperty( LIFE_EXPECTANCY_MARGIN ).toInt();
+    int max = life_expectancy + this->getProperty( LIFE_EXPECTANCY_MARGIN ).toInt();
+
     testAge = (qrand() % ( max-min + 1) ) + min;
 
     QString couple_id = agent->getProperty( COUPLE_ID ).toString();
@@ -117,8 +124,9 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
 
     // Introduce additional randomness for death. Age is not the only cause of death.
      double illness = ( qrand() % ( 100000 )) / 100000.0;
+     double illness_rate = this->getProperty( ILLNESS_RATE ).toDouble();
 
-    if ( age >= testAge ||  illness <= 0.01 ) {
+    if ( age >= testAge ||  illness <= illness_rate ) {
         if ( !couple_id.isNull() ){
             couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
             couple->setProperty( COUPLE_ID, QJsonValue() );
@@ -151,11 +159,18 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
     // Increase marriage randomness:
     double population = GWSAgentEnvironment::globalInstance()->getAmount();
-    double marriage_ratio = 3.3 * population / 1000.0 / 100.0 ; // According to data from 2016 EUSTAT
+    //double marriage_rate = 3.3;
+    double marriage_rate = this->getProperty( MARRIAGE_RATE ).toDouble();
+
+    double marriage_ratio = marriage_rate * population / 1000.0 / 100.0 ; // According to data from 2016 EUSTAT
 
     QSharedPointer<GWSAgent> me = this->getAgent();
-    int my_marrying_age = me->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
-    int my_marrying_margin = me->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString()  ).toInt();
+   // int my_marrying_age = me->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
+   // int my_marrying_margin = me->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString()  ).toInt();
+
+    int my_marrying_age = this->getProperty( MARRY_AGE ).toInt();
+    int my_marrying_margin = this->getProperty( MARRY_AGE_MARGIN ).toInt();
+
 
     QString looking_for = me->getProperty( LOOKING_FOR ).toString();
     QString couple_id = me->getProperty( this->getProperty( COUPLE_ID ).toString() ).toString();
@@ -283,14 +298,18 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 
     // Otherwise, select random threshold age:
     int testAge = 0;
-    int min = agent->getProperty( MARRY_AGE ).toInt();
+    //int min = agent->getProperty( MARRY_AGE ).toInt();
+    int min = this->getProperty( MARRY_AGE ).toInt();
+
     int max = max_fertility_age;
     testAge = ( qrand() % ( max-min  + 1 )) + min;
 
 
     // Increase birth randomness:
     double population = GWSAgentEnvironment::globalInstance()->getAmount();
-    double birth_ratio = 7.44 * population / 1000. / 100.0; // Bizkaia data from EUSTAT
+    //double birth_rate = 7.44; // Per 1000 inhabitants
+    double birth_rate = this->getProperty( BIRTH_RATE ).toDouble();
+    double birth_ratio = birth_rate * population / 1000. / 100.0; // Bizkaia data from EUSTAT
     double value = ( qrand() % ( 1000000 ) ) / 1000000.;
 
     if ( value <= birth_ratio && age < testAge && last_birth <= child_gap && children.size() <= fertility_rate  ){

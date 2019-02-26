@@ -1,30 +1,25 @@
-{
+{ "population" : {
 
-"population" : {
-
-    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,    
-                    "@behaviours": [  
-                                     { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
+                                    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,    
+                                    "@behaviours": [  
                                      
-                                      { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
+                                    { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
+                                     
+                                    { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
                                       
-                                    { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "marry_age", "set_marriage_age_margin" : "marry_age_mar" , "set_life_expectancy_years" : "life_exp", "set_life_expectancy_margin" : "life_exp_margin",  "set_next_child_gap_years" : 1 , "set_fertility_rate" : 4 , "set_max_fertility_age" : 50 ,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["MOVE"], "next_if_else" : ["DISPLAY1"] },
+                                    { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "<marry_age>", "set_marriage_age_margin" : "<marry_age_mar>" , "marriage_rate" : 3.3 , "set_life_expectancy_years" : "<life_exp>", "set_life_expectancy_margin" : "<life_exp_margin>", "illness_rate" : 0.01,  "birth_rate" : 7.44 ,  "set_next_child_gap_years" : 3 , "set_fertility_rate" : 3 , "set_max_fertility_age" : 50,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["STOP"], "next_if_else" : ["DISPLAY1"] },
                                     
                                     { "@gwsclass": "CreateChildBehaviour" ,  "id": "CHILD" ,  "duration": 1 ,  "nexts" : ["DISPLAY1"] },
                                     
-                                     { "@gwsclass": "MoveBehaviour" ,   "id" : "MOVE" , "duration" : 1 , "move_to_x_value" : -2.83411 , "move_to_y_value" : 43.27484 , "nexts_if_arrived" : ["STOP"] ,  "nexts_if_not_arrived" : ["DISPLAY2"] } , 
-                                    
                                     { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY1" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["WAIT_TO_JAN1"] },
                                     
-                                    { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY2" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["MOVE"] },
-                                    
-                                     { "@gwsclass": "WaitUntilTimeBehaviour" ,  "id": "WAIT_TO_JAN1" , "wait_until_month" : 1 , "wait_until_day" : 1, "wait_until_hour": 0, "wait_until_minute" : 0 , "wait_until_second" : 0 , "duration": 1 ,  "nexts" : ["DISPLAY"] } ,
+                                    { "@gwsclass": "WaitUntilTimeBehaviour" ,  "id": "WAIT_TO_JAN1" , "wait_until_month" : 1 , "wait_until_day" : 1, "wait_until_hour": 0, "wait_until_minute" : 0 , "wait_until_second" : 0 , "duration": 1 ,  "nexts" : ["DISPLAY"] } ,
                                      
                                     { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
                                     ] 
                                  } , 
 
-			    "datasource_urls" : ["http://datasources.geoworldsim.com/api/datasource/zamudio_census_popgen/read"]
+			    "datasource_urls" :  ["http://datasources.geoworldsim.com/api/datasource/zamudio_census_popgen/read" ]
                 }
                 
 }
