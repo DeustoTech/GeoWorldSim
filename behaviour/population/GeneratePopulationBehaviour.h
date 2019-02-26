@@ -34,7 +34,10 @@ public:
     static QString SIMULATION_LENGTH_YEARS;
     static QString PARENT1;
     static QString PARENT2;
-    static QString NEXT;
+    static QString NEXT_IF_DIED;
+    static QString NEXT_IF_BIRTH;
+    static QString NEXT_IF_MIGRATE;
+    static QString NEXT_IF_ELSE;
 
 private slots:
     virtual QJsonArray behave();
@@ -43,6 +46,7 @@ protected:
     virtual bool checkDeath( int age );
     virtual bool checkMarriage( int age );
     virtual bool checkBirth( int age );
+    virtual bool checkMigration( int age );
     virtual void initialize();
     int getAge( QSharedPointer<GWSAgent> agent );
     double generateRandom(int min, int max);

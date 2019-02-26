@@ -23,6 +23,8 @@
 #include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
+#include "../../behaviour/population/CreateChildBehaviour.h"
+
 // Utils:
 #include "../../util/routing/Routing.h"
 #include "../../util/routing/GraphEdgeVisitor.h"
@@ -56,6 +58,9 @@ int main( int argc, char* argv[] )
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
+    // INIT RANDOM NUMBERS
+    qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
+
     // INIT OBJECT FACTORY
     GWSObjectFactory::globalInstance()->registerType( PopulationGeneratorAgent::staticMetaObject );
 
@@ -74,6 +79,7 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CreateChildBehaviour::staticMetaObject );
 
 
     // READ CONFIGURATION

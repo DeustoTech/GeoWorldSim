@@ -77,6 +77,7 @@ SOURCES += \
         ../../behaviour/waste4think/WaitUntilTimeBehaviour.cpp \
         ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
         ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+        ../../behaviour/population/CreateChildBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
@@ -129,6 +130,7 @@ HEADERS += \
         ../../behaviour/waste4think/WaitUntilTimeBehaviour.h \
         ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
         ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+        ../../behaviour/population/CreateChildBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \
