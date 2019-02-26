@@ -170,13 +170,30 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
          // Loop over agents to find suitable companion to breed:
          foreach ( QSharedPointer<GWSAgent> candidate , closestCandidates ){
 
-                int candidate_age = this->getAge( candidate );
-                int candidate_marriage_age = candidate->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
-                int candidate_marriage_age_margin = candidate->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString() ).toInt();
+                // Check we are not siblings:
+                QString myParent1 = me->getProperty( PARENT1 ).toString();
+                QString myParent2 = me->getProperty( PARENT2 ).toString();
 
+                QString candidateParent1 = candidate->getProperty( PARENT1 ).toString();
+                QString candidateParent2 = candidate->getProperty( PARENT2 ).toString();
+
+                if ( !myParent1.isNull() && !myParent2.isNull() && !candidateParent1.isNull() && !candidateParent2.isNull() ){
+                    if ( ( ( myParent1 == candidateParent1 ) && ( myParent2 == candidateParent2 ) ) || ( ( myParent1 == candidateParent2 ) && ( myParent2 == candidateParent1 ) ) ) {
+                        continue;
+                    }
+                }
+
+
+
+                // Chek we are suitable for breeding:
                 QString candidates_couple_id = candidate->getProperty( this->getProperty( COUPLE_ID ).toString()).toString();
                 QString other_looking_for = candidate->getProperty( LOOKING_FOR ).toString();
                 bool i_am_candidate = me->getInheritanceFamily().contains( other_looking_for );
+
+                // Check candidate age:
+                int candidate_age = this->getAge( candidate );
+                int candidate_marriage_age = candidate->getProperty( this->getProperty( MARRY_AGE ).toString() ).toInt();
+                int candidate_marriage_age_margin = candidate->getProperty( this->getProperty( MARRY_AGE_MARGIN ).toString() ).toInt();
 
                 int candidatetestAge = 0;
                 int min = candidate_marriage_age;
