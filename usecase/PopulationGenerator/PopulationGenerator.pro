@@ -52,6 +52,7 @@ SOURCES += \
         ../../behaviour/Behaviour.cpp \
         # SKILLS
         ../../skill/Skill.cpp \
+        ../../skill/move/MoveSkill.cpp \
         # UTILS
         ../../util/parallelism/ParallelismController.cpp \
         ../../util/io/log/Logger.cpp \
@@ -78,6 +79,7 @@ SOURCES += \
         ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
         ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
         ../../behaviour/population/CreateChildBehaviour.cpp \
+        ../../behaviour/move/MoveBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
@@ -105,6 +107,7 @@ HEADERS += \
         ../../behaviour/Behaviour.h \
         # SKILLS
         ../../skill/Skill.h \
+        ../../skill/move/MoveSkill.h \
         # UTILS
         ../../util/parallelism/ParallelismController.h \
         ../../util/io/log/Logger.h \
@@ -131,6 +134,7 @@ HEADERS += \
         ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
         ../../behaviour/information/SendAgentSnapshotBehaviour.h \
         ../../behaviour/population/CreateChildBehaviour.h \
+        ../../behaviour/move/MoveBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \

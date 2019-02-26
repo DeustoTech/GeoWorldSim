@@ -17,6 +17,9 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../agent/Agent.h"
 
+// Skills:
+#include "../../skill/move/MoveSkill.h"
+
 // Behaviours:
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
@@ -24,6 +27,7 @@
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/population/CreateChildBehaviour.h"
+#include "../../behaviour/move/MoveBehaviour.h"
 
 // Utils:
 #include "../../util/routing/Routing.h"
@@ -80,6 +84,7 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CreateChildBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
 
 
     // READ CONFIGURATION
