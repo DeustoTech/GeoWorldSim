@@ -96,9 +96,13 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
         quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble();
+        this->mutex.lock();
         this->agent_internal_times.insert( agent->getId() , init_internal_time );
+        this->mutex.unlock();
     } else {
+        this->mutex.lock();
         this->agent_internal_times.insert( agent->getId() , this->getCurrentDateTime() );
+        this->mutex.unlock();
     }
 
 }

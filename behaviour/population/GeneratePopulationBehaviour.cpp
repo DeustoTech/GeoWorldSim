@@ -57,6 +57,10 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     // Get agent age:
     int agent_age = this->getAge( agent );
 
+    // Color gradient
+    int gradient = agent_age / 100 * 255;
+    agent->setProperty( "color" , QString( "rgb(%1,128,%2)" ).arg( gradient ).arg( 255 - gradient ) );
+
     // Check if the person lives or dies:
     bool died = this->checkDeath( agent_age );
     if( died ){
@@ -100,8 +104,7 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
     // Introduce additional randomness for death. Age is not the only cause of death.
      double illness = ( qrand() % ( 100000 )) / 100000.0;
 
-    if ( age >= testAge ||  illness <= 0.01 )
-        {
+    if ( age >= testAge ||  illness <= 0.01 ) {
         if ( !couple_id.isNull() ){
             couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
             couple->setProperty( COUPLE_ID, QJsonValue() );
@@ -287,12 +290,8 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 
                     QJsonArray arr = new_born->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
                     arr.append( "CHILD" );
-
                     new_born->setProperty( GWS_INHERITANCE_FAMILY_PROP , arr );
-                    new_born->setProperty( "color" , "Red");
-                    new_born->setProperty( "weight" , 10 );
 
-                    qDebug() << new_born->serialize();
                     QJsonArray children_ids;
                     foreach( QSharedPointer<GWSAgent> child , children ){
                         children_ids.append( child->getId() );
@@ -301,10 +300,8 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
                     children_ids.append( new_born->getId() );
 
                     agent->setProperty( GeneratePopulationBehaviour::CHILDREN_IDS , children_ids );
-                    agent->setProperty( "color" , "green" );
 
                     couple->setProperty( GeneratePopulationBehaviour::CHILDREN_IDS , children_ids );
-                    couple->setProperty( "color" , "yellow" );
             }
 
 
