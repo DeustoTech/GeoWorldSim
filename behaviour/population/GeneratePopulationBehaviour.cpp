@@ -309,8 +309,6 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 }
 
 
-
-
 /*************************************************************************************************************************************
   @name         : GeneratePopulationBehaviour::getAge
   @description  : get age from executing agent
