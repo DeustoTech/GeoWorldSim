@@ -20,7 +20,7 @@
                                     ] 
                                  } , 
 
-			    "datasource_urls" :  ["http://datasources.geoworldsim.com/api/datasource/zamudio_census_popgen/read"] 
+			    "datasource_urls" :  ["https://history.geoworldsim.com/api/scenario/add2059e-8d5c-4ccd-8a30-008b61b7e032-545b694b-af38-55ca-bb94-ce/entities"] 
                 }
                 
                 }

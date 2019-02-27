@@ -31,7 +31,7 @@ private:
     GWSAPIDriver api_driver;
     QString datasource_url;
     unsigned int last_paginated = 0;
-    unsigned int page_size = 10000;
+    unsigned int page_size = 1000;
 
     unsigned int downloaded_total = 0;
     unsigned int download_limit;

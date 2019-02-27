@@ -26,7 +26,7 @@ bool GWSDatasourceReader::downloadedFinished(){
 
 void GWSDatasourceReader::requestPaginated(int page){
     QString paginated_url = this->datasource_url + (this->datasource_url.contains('?') ? "&" : "?") + QString("offset=%1&limit=%2").arg( page * this->page_size ).arg( this->page_size );
-    qDebug() << QString("Requesting datasource %1, from %2 to %3").arg( this->datasource_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
+    qDebug() << QString("Requesting datasource %1, from %2 to %3").arg( paginated_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 
     QNetworkReply* reply = this->api_driver.GET( paginated_url );
     reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
