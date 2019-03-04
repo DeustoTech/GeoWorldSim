@@ -7,7 +7,7 @@
                                      
                                     { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
                                       
-                                   { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "<marry_age>", "set_marriage_age_margin" : "<marry_age_margin>" , "marriage_rate" : 7.33 , "set_life_expectancy_years" : "<life_exp>", "set_life_expectancy_margin" : "<life_exp_margin>", "illness_rate" : 0.01 ,  "birth_rate" : 7.44  ,  "set_next_child_gap_years" : 3 , "set_fertility_rate" : 1 , "set_max_fertility_age" : 5,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["STOP"], "next_if_else" : ["DISPLAY1"] },
+                                   { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "<marry_age>", "set_marriage_age_margin" : "<marry_age_margin>" , "marriage_rate" : 7.33 , "set_life_expectancy_years" : "<life_exp>", "set_life_expectancy_margin" : "<life_exp_margin>", "illness_rate" : 0 ,  "birth_rate" : 7.44  ,  "set_next_child_gap_years" : 3 , "set_fertility_rate" : 1 , "set_max_fertility_age" : 5,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["STOP"], "next_if_else" : ["DISPLAY1"] },
                                
                                     
                                      { "@gwsclass": "CreateChildBehaviour" ,  "id": "CHILD" ,  "duration": 1 ,  "nexts" : ["DISPLAY1"] },
