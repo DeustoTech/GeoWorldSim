@@ -137,6 +137,9 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
 
     QString agent_id = agent->getId();
 
+    if ( agent_id.isEmpty() ){
+        return;
+    }
     // Add the new agents geometry
     if( !this->agent_ids.contains( agent_id ) ){
         this->agent_ids.append( agent_id );

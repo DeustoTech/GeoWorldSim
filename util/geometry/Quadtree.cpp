@@ -217,7 +217,11 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
         return;
     }
 
-    QSharedPointer<GWSGeometry> object_geom = this->id_to_geometries.value( object_id );
+    QSharedPointer<GWSGeometry> object_geom = this->id_to_geometries.value( object_id , Q_NULLPTR );
+
+    if( !object_geom ){
+        return;
+    }
 
     for( int l = this->layer_amount ; l > 0 ; l-- ){
 

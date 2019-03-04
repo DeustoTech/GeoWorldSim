@@ -25,16 +25,22 @@ public:
     static QString COUPLE_ID;
     static QString MARRY_AGE;
     static QString MARRY_AGE_MARGIN;
+    static QString MARRIAGE_RATE;
     static QString LIFE_EXPECTANCY;
     static QString LIFE_EXPECTANCY_MARGIN;
+    static QString ILLNESS_RATE;
     static QString NEXT_CHILD_GAP;
+    static QString BIRTH_RATE;
     static QString TOTAL_FERTILITY_RATE;
     static QString MAX_FERTILITY_AGE;
     static QString CHILDREN_IDS;
     static QString SIMULATION_LENGTH_YEARS;
     static QString PARENT1;
     static QString PARENT2;
-    static QString NEXT;
+    static QString NEXT_IF_DIED;
+    static QString NEXT_IF_BIRTH;
+    static QString NEXT_IF_MIGRATE;
+    static QString NEXT_IF_ELSE;
 
 private slots:
     virtual QJsonArray behave();
@@ -43,6 +49,7 @@ protected:
     virtual bool checkDeath( int age );
     virtual bool checkMarriage( int age );
     virtual bool checkBirth( int age );
+    virtual bool checkMigration( int age );
     virtual void initialize();
     int getAge( QSharedPointer<GWSAgent> agent );
     double generateRandom(int min, int max);

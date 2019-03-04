@@ -6,7 +6,7 @@
 
 GWSAPIDriver::GWSAPIDriver(QObject *parent) : QObject( parent ){
 
-    QNetworkProxyQuery npq( QUrl( "http://www.google.com" ) );
+    QNetworkProxyQuery npq( QUrl( "https://www.google.com" ) );
     QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
 
     if( proxies_list.isEmpty() ){

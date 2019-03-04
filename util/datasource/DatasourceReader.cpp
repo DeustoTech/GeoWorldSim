@@ -5,8 +5,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-GWSDatasourceReader::GWSDatasourceReader(QString datasource_url , int limit ) : QObject(){
-    this->datasource_url = datasource_url;
+GWSDatasourceReader::GWSDatasourceReader(QString scenario_id , QString entity_type, int limit ) : QObject(){
+    this->scenario_id = scenario_id;
+    this->entity_type = entity_type;
     this->download_limit = limit;
 }
 
@@ -25,8 +26,8 @@ bool GWSDatasourceReader::downloadedFinished(){
 }
 
 void GWSDatasourceReader::requestPaginated(int page){
-    QString paginated_url = this->datasource_url + (this->datasource_url.contains('?') ? "&" : "?") + QString("offset=%1&limit=%2").arg( page * this->page_size ).arg( this->page_size );
-    qDebug() << QString("Requesting datasource %1, from %2 to %3").arg( this->datasource_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
+    QString paginated_url = QString("http://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4").arg( this->scenario_id ).arg( this->entity_type ).arg( page * this->page_size ).arg( this->page_size );
+    qDebug() << QString("Requesting entities %1 from scenario %2, from %3 to %4").arg( this->entity_type ).arg( paginated_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 
     QNetworkReply* reply = this->api_driver.GET( paginated_url );
     reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
@@ -47,7 +48,7 @@ void GWSDatasourceReader::dataReceived(){
     }
 
     unsigned int count = json.value( "count" ).toInt();
-    qDebug() << QString("Downloaded datasource %1, amount %2 of total %3").arg( this->datasource_url ).arg( this->downloaded_total ).arg( count );
+    qDebug() << QString("Downloaded datasource %1, amount %2 of total %3").arg( this->scenario_id ).arg( this->downloaded_total ).arg( count );
 
     if( count > (this->last_paginated+1) * this->page_size && this->downloaded_total < this->download_limit ){
         this->requestPaginated( ++this->last_paginated );

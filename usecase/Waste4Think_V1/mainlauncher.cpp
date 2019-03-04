@@ -143,27 +143,32 @@ int main(int argc, char* argv[])
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
 
-        if ( !population.value("template").isNull() && !population.value("datasource_urls").isNull() ){
+        if ( !population.value("template").isNull() && !population.value("datasource_ids").isNull() ){
 
-            QJsonArray datasources = population.value("datasource_urls").toArray();
+            QJsonArray scenario_ids = population.value( "datasource_ids" ).toArray();
+            QJsonArray entity_types = population.value( "datasource_entities" ).toArray();
 
-            for ( int i = 0; i <  datasources.size(); ++i){
+            for ( int i = 0; i <  scenario_ids.size(); ++i){
+                for( int j = 0; j < entity_types.size() ; j++ ){
 
-                QString ds_url = datasources.at(i).toString();
+                    QString scenario_id = scenario_ids.at(i).toString();
+                    QString entity_type = entity_types.at(j).toString();
 
-                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() ,  ds_url );
-                pending_datasources.append( ds );
+                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id, entity_type );
+                    pending_datasources.append( ds );
 
-                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
-                    pending_datasources.removeAll( ds );
-                    ds->deleteLater();
-                    if( pending_datasources.isEmpty() ){
-                        GWSExecutionEnvironment::globalInstance()->run();
-                    }
-                });
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                        pending_datasources.removeAll( ds );
+                        ds->deleteLater();
+                        if( pending_datasources.isEmpty() ){
+                            GWSExecutionEnvironment::globalInstance()->run();
+                        }
+                    });
 
             }
 
+
+        }
 
         }
 

@@ -8,15 +8,13 @@ class DeleteAgentBehaviour : public GWSBehaviour
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit DeleteBehaviour();
+    Q_INVOKABLE explicit DeleteAgentBehaviour();
 
-    virtual bool canContinueToNext(); // Behaviour finished check
 
 private slots:
-    virtual bool behave();
+    virtual QJsonArray behave();
 
-private:
-    bool deleted = false;
+
 };
 
 #endif // DELETEAGENTBEHAVIOUR_H
