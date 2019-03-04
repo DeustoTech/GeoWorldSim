@@ -228,8 +228,12 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
         this->geom_index_layers.value( l )->value( xhash )->value( yhash )->removeAll( object_id );
         this->mutex.unlock();
     }
+
+    this->mutex.lock();
     this->id_to_objects.remove( object_id );
     this->id_to_geometries.remove( object_id );
+    this->mutex.unlock();
+
 }
 
 

@@ -85,9 +85,11 @@ SOURCES += \
         ../../environment/time_environment/TimeEnvironment.cpp \
         ../../environment/grid_environment/GridEnvironment.cpp\
         ../../environment/network_environment/NetworkEnvironment.cpp \
+        ../../environment/social_environment/SocialEnvironment.cpp \
         ../../environment/execution_environment/ExecutionEnvironment.cpp \
         ../../environment/communication_environment/CommunicationEnvironment.cpp \
-        ../../environment/network_environment/NetworkEdge.cpp
+        ../../environment/network_environment/NetworkEdge.cpp \
+    ../../environment/social_environment/SocialRelation.cpp
 
 
 
@@ -136,10 +138,12 @@ HEADERS += \
         ../../environment/physical_environment/PhysicalEnvironment.h \
         ../../environment/time_environment/TimeEnvironment.h \
         ../../environment/network_environment/NetworkEnvironment.h \
+        ../../environment/social_environment/SocialEnvironment.h \
         ../../environment/execution_environment/ExecutionEnvironment.h \
         ../../environment/communication_environment/CommunicationEnvironment.h \
         ../../environment/grid_environment/GridEnvironment.h \
-        ../../environment/network_environment/NetworkEdge.h
+        ../../environment/network_environment/NetworkEdge.h \
+    ../../environment/social_environment/SocialRelation.h
 
 
 

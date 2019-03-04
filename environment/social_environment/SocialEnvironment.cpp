@@ -1,6 +1,5 @@
-#include <QDebug>
-
 #include "SocialEnvironment.h"
+#include "../../environment/EnvironmentsGroup.h"
 
 GWSSocialEnvironment* GWSSocialEnvironment::globalInstance(){
     static GWSSocialEnvironment instance;
@@ -9,8 +8,13 @@ GWSSocialEnvironment* GWSSocialEnvironment::globalInstance(){
 
 GWSSocialEnvironment::GWSSocialEnvironment() : GWSEnvironment(){
     qInfo() << "SocialEnvironment created";
+    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
 GWSSocialEnvironment::~GWSSocialEnvironment(){
 }
 
+
+/**********************************************************************
+ GETTERS
+**********************************************************************/

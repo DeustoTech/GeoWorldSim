@@ -3,7 +3,8 @@
 
 #include "../../environment/Environment.h"
 #include "SocialEdge.h"
-
+#include "../../util/geometry/Coordinate.h"
+#include "../../util/geometry/Quadtree.h"
 
 class GWSSocialEnvironment : public GWSEnvironment
 {
@@ -17,7 +18,7 @@ private:
     GWSSocialEnvironment(GWSSocialEnvironment const&);
     ~GWSSocialEnvironment();
 
-    //QMap<QString, GWSGraph*> spatial_graph; // Social graphs
+    QMap< QString , QMap < QString , QList< GWSSocialEdge > > > agent_relations;
 
 };
 

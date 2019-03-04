@@ -20,7 +20,7 @@ public:
     ~GWSRouting();
 
     // GETTERS
-    QList<QSharedPointer<GWSNetworkEdge> > getShortestPath( GWSCoordinate from, GWSCoordinate to );
+    QList<QSharedPointer< GWSNetworkEdge > > getShortestPath( GWSCoordinate from, GWSCoordinate to );
     QList<QList<QSharedPointer< GWSNetworkEdge > > > getShortestPath(QList< GWSCoordinate > ordered_coors );
     QList<QList<QSharedPointer< GWSNetworkEdge > > > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many );
 

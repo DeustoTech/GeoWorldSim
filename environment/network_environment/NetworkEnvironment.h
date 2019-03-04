@@ -47,7 +47,7 @@ private:
     GWSNetworkEnvironment(GWSNetworkEnvironment const&);
     ~GWSNetworkEnvironment();
 
-    QMap< QSharedPointer<GWSAgent> , QSharedPointer<GWSNetworkEdge> > agent_to_edge;
+    QMap< QSharedPointer< GWSAgent > , QSharedPointer< GWSNetworkEdge > > agent_to_edge;
     QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
     QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 
