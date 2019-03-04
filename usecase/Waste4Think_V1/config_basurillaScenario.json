@@ -81,7 +81,7 @@
 				"@behaviours" : [
 				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] },  
 				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "darkgreen" , "nexts" : ["LOOP"] }, 
-				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 864000 , "nexts" : ["LOOP"] }  ] }  , 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 864000 , "nexts" : ["LOOP"] }  ] }  , WAIT_TO_JAN1
 		            
 			    "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
@@ -126,7 +126,7 @@
 				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 864000 , "nexts" : ["LOOP"] }  ] }  , 
 		            "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
-                        "entities" : ["SortingType:11"] }, 
+                        "entities" : ["SortingType:11"] } 
 
             ]}, 
 

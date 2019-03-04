@@ -17,7 +17,7 @@
                                    
                                     { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_GLASS" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrGLASS" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_PAPER"] } ,
                                     
-                                    { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_PAPER" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrPAPER" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_ORGANIC"] } ,
+                                    { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_PAPER" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrPAPER" , "operand_value" : newDatasources"<TOTAL>", "math_operator" : "*" , "nexts" : ["HOUSEHOLD_ORGANIC"] } ,
                                     
                                     { "@gwsclass": "MathAgentPropertyBehaviour" ,  "id": "HOUSEHOLD_ORGANIC" , "duration" : 0,  "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "incrORGANIC" , "operand_value" : "<TOTAL>", "math_operator" : "*" , "nexts" : ["WAIT_TO_7AM"] } ,
                                    

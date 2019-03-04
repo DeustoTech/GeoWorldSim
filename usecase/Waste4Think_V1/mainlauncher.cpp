@@ -151,21 +151,28 @@ int main(int argc, char* argv[])
 
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString datasource_id = datasource.value("id").toString();
-                QString entities_type = datasource.value("entities").toString();
-                if( !datasource_id || !entities_type ){
+                QJsonArray entities_type = datasource.value("entities").toArray();
+                if( datasource_id.isEmpty() || entities_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entities type";
                 }
 
-                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id, entities_type );
-                pending_datasources.append( ds );
+                for ( int j = 0; j < entities_type.size() ; ++j ){
 
-                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
-                    pending_datasources.removeAll( ds );
-                    ds->deleteLater();
-                    if( pending_datasources.isEmpty() ){
-                        GWSExecutionEnvironment::globalInstance()->run();
-                    }
-                });
+                    QString entity = entities_type.at( j ).toString();
+
+                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity );
+                    pending_datasources.append( ds );
+
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                        pending_datasources.removeAll( ds );
+                        ds->deleteLater();
+                        if( pending_datasources.isEmpty() ){
+                            GWSExecutionEnvironment::globalInstance()->run();
+                        }
+                    });
+                }
+
+
 
             }
         }
