@@ -12,7 +12,7 @@ class GWSDatasourceReader : public QObject
     Q_OBJECT
 
 public:
-    explicit GWSDatasourceReader( QString datasource_url , int limit = 9999999999);
+    explicit GWSDatasourceReader( QString scenario_id , QString entity_type ,  int limit = 9999999999);
 
     // METHODS
     void startReading();
@@ -29,7 +29,8 @@ private slots:
 
 private:
     GWSAPIDriver api_driver;
-    QString datasource_url;
+    QString scenario_id;
+    QString entity_type;
     unsigned int last_paginated = 0;
     unsigned int page_size = 1000;
 
