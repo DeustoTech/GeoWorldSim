@@ -1,0 +1,50 @@
+{ "population" : {
+
+                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , 
+                "@behaviours": [  
+                    { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
+                    
+                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_CLOSESTS"] },
+                    
+                { "@gwsclass": "DetermineAccessibilityBehaviour", "duration": 1, "id": "FIND_CLOSESTS", "facility_to_access" : "PACKAGING" , "maximum_accessible_distance" : 300 , "network" : "Road" ,  "next": [ "DISPLAY" ]   } , 
+                
+                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_CLOSEST"] },
+                
+                { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
+                ] 
+                } , 
+
+			    "datasources" :  [
+                                    { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
+                                    "entities" : ["Citizen"] }
+                ]
+                } , 
+                
+                 "containersPACKAGING" 	: { "template" : { "@gwsclass": "GWSAgent", "name" : "PACKAGING" , "radius": 5 ,  "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "PACKAGING", "Container" ] , "birth" : -1 ,
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_COLOR"] }, 
+				{ "@gwsclass": "SetAgentPropertyBehaviour",  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "yellow" , "nexts" : ["LOOP"] }, 
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 864000 , "nexts" : ["LOOP"] }  ] }  , 
+				
+				
+                "datasources" :  [
+                                    { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
+                                    "entities" : ["SortingType:6"] }  ]
+                } , 
+                
+                
+                
+                "footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups"  : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 ,  
+                    "@behaviours" : [
+                                    {  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+                    "datasources" :  [
+                                      { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
+                                        "entities" : ["Road"] }
+                        ]}
+                
+                }  
+                
+                
+                
+                
+}                
