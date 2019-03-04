@@ -1,14 +1,14 @@
-#ifndef DETERMINEACCESIBILITYBEHAVIOUR_H
-#define DETERMINEACCESIBILITYBEHAVIOUR_H
+#ifndef DETERMINEACCESSIBILITYBEHAVIOUR_H
+#define DETERMINEACCESSIBILITYBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
 
-class DetermineAccesibilityBehaviour : GWSBehaviour
+class DetermineAccessibilityBehaviour : GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    explicit Q_INVOKABLE DetermineAccesibilityBehaviour();
+    explicit Q_INVOKABLE DetermineAccessibilityBehaviour();
 
     // PARAMETERS
     static QString FACILITY_TO_ACCESS;
@@ -21,4 +21,4 @@ protected slots:
     virtual QJsonArray behave();
 };
 
-#endif // DETERMINEACCESIBILITYBEHAVIOUR_H
+#endif // DETERMINEACCESSIBILITYBEHAVIOUR_H

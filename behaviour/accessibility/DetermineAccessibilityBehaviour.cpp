@@ -1,14 +1,14 @@
-#include "DetermineAccesibilityBehaviour.h"
+#include "DetermineAccessibilityBehaviour.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
-QString DetermineAccesibilityBehaviour::FACILITY_TO_ACCESS = "facility_to_access";
-QString DetermineAccesibilityBehaviour::MAXIMUM_ACCESSIBILITY_DISTANCE = "maximum_accessible_distance";
-QString DetermineAccesibilityBehaviour::NETWORK_TO_ACCESS = "network";
-QString DetermineAccesibilityBehaviour::NEXT = "next";
+QString DetermineAccessibilityBehaviour::FACILITY_TO_ACCESS = "facility_to_access";
+QString DetermineAccessibilityBehaviour::MAXIMUM_ACCESSIBILITY_DISTANCE = "maximum_accessible_distance";
+QString DetermineAccessibilityBehaviour::NETWORK_TO_ACCESS = "network";
+QString DetermineAccessibilityBehaviour::NEXT = "next";
 
-DetermineAccesibilityBehaviour::DetermineAccesibilityBehaviour() : GWSBehaviour ()
+DetermineAccessibilityBehaviour::DetermineAccessibilityBehaviour() : GWSBehaviour ()
 {
 
 }
@@ -19,7 +19,7 @@ DetermineAccesibilityBehaviour::DetermineAccesibilityBehaviour() : GWSBehaviour 
  * SLOTS
  ***********************************************************/
 
-QJsonArray DetermineAccesibilityBehaviour::behave(){
+QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
