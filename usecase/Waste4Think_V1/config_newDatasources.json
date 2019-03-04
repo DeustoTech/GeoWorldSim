@@ -20,10 +20,12 @@
                "datasource_entities" : ["Citizen"] }, 
 
 
-	"containers" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 , "geometry" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "ContainerAgent", "Container" ] ,  
-				"@behaviours" : [{  "@gwsclass": "ChooseRandomValueFromSetBehaviour" ,  "start" : true ,  "id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
-						 {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 30 , "nexts" : ["LOOP"] }  ] }  , 
-		            "datasource_ids" :  ["4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"],
+	"containers" 	: { "template" : { "@gwsclass": "GWSAgent", "weight": 5 , "location" : { "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "ContainerAgent", "Container" ] ,  "birth" : -1, 
+				"@behaviours" : [
+				{ "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>" , "nexts" : ["CHOOSE"] } , 
+				{  "@gwsclass": "ChooseRandomValueFromSetBehaviour" ,  "id": "CHOOSE" , "property_to_assign_random_value" : "color" , "set_to_choose_from" : [ "antiquewhite", "beige", "blue", "blueviolet", "brown", "chocolate", "firebrick", "forestgreen", "fuchsia", "gold", "green", "indianred", "indigo", "lawngreen", "lime", "magenta", "maroon", "midnightblue", "mistyrose", "navy", "olive", "olivedrab", "orange", "orangered", "orchid", "peachpuff", "peru", "pink", "plum", "purple", "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "sienna", "springgreen", "steelblue", "teal", "thistle", "tomato", "turquoise", "violet", "yellow", "yellowgreen"] , "duration": 1  , "nexts" : ["LOOP"]} ,
+				{  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  , 
+               "datasource_ids" :  ["4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"],
                "datasource_entities" : ["Container"]}, 
 
 
