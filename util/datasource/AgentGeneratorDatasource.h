@@ -9,7 +9,7 @@ class GWSAgentGeneratorDatasource : public QObject
     Q_OBJECT
 
 public:
-    GWSAgentGeneratorDatasource( QJsonObject json, QString scenario_id , QString entity_type, int amount = 9999999 );
+    GWSAgentGeneratorDatasource( QJsonObject json, QString scenario_id , QString entities_type, int amount = 9999999 );
 
 signals:
     void dataReadingFinishedSignal();

@@ -125,28 +125,31 @@ int main(int argc, char* argv[])
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
 
-        if ( !population.value("template").isNull() && !population.value("datasource_urls").isNull() ){
+        if ( !population.value( "template" ).isNull() && !population.value( "datasources" ).isNull() ){
 
-            QJsonArray datasources = population.value("datasource_urls").toArray();
+                    QJsonArray datasources = population.value( "datasources" ).toArray();
 
-            for ( int i = 0; i <  datasources.size(); ++i){
+                    for ( int i = 0; i <  datasources.size() ; ++i ){
 
-                QString ds_url = datasources.at(i).toString();
+                        QJsonObject datasource = datasources.at( i ).toObject();
+                        QString datasource_id = datasource.value("id").toString();
+                        QString entities_type = datasource.value("entities").toString();
+                        if( !datasource_id || !entities_type ){
+                            qWarning() << "Asked to download from scenario without ID or entities type";
+                        }
 
-                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value("template").toObject() ,  ds_url );
-                pending_datasources.append( ds );
+                        GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id, entities_type );
+                        pending_datasources.append( ds );
 
-                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
-                    pending_datasources.removeAll( ds );
-                    ds->deleteLater();
-                    if( pending_datasources.isEmpty() ){
-                        GWSExecutionEnvironment::globalInstance()->run();
+                        ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                            pending_datasources.removeAll( ds );
+                            ds->deleteLater();
+                            if( pending_datasources.isEmpty() ){
+                                GWSExecutionEnvironment::globalInstance()->run();
+                            }
+                        });
+
                     }
-                });
-
-            }
-
-
         }
 
         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){

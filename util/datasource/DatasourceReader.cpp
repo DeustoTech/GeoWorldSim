@@ -5,9 +5,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-GWSDatasourceReader::GWSDatasourceReader(QString scenario_id , QString entity_type, int limit ) : QObject(){
+GWSDatasourceReader::GWSDatasourceReader(QString scenario_id , QString entities_type, int limit ) : QObject(){
     this->scenario_id = scenario_id;
-    this->entity_type = entity_type;
+    this->entities_type = entities_type;
     this->download_limit = limit;
 }
 
@@ -26,8 +26,8 @@ bool GWSDatasourceReader::downloadedFinished(){
 }
 
 void GWSDatasourceReader::requestPaginated(int page){
-    QString paginated_url = QString("http://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4").arg( this->scenario_id ).arg( this->entity_type ).arg( page * this->page_size ).arg( this->page_size );
-    qDebug() << QString("Requesting entities %1 from scenario %2, from %3 to %4").arg( this->entity_type ).arg( paginated_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
+    QString paginated_url = QString("http://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4").arg( this->scenario_id ).arg( this->entities_type ).arg( page * this->page_size ).arg( this->page_size );
+    qDebug() << QString("Requesting entities %1 from scenario %2, from %3 to %4").arg( this->entities_type ).arg( paginated_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 
     QNetworkReply* reply = this->api_driver.GET( paginated_url );
     reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );

@@ -1,9 +1,9 @@
-#include "SocialEdge.h"
+#include "SocialRelation.h"
 
-GWSSocialEdge::GWSSocialEdge() : GWSEdge() {
+GWSSocialRelation::GWSSocialRelation() : GWSEdge() {
 
 }
 
-GWSSocialEdge::~GWSSocialEdge(){
+GWSSocialRelation::~GWSSocialRelation(){
 
 }
