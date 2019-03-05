@@ -1,0 +1,70 @@
+{ "population" : {
+
+                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : -1 , 
+                "@behaviours": [  
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_DIRECT_CLOSEST"] },
+                    
+                                { "@gwsclass": "FindDirectClosestBehaviour", "duration": 1, "id": "FIND_DIRECT_CLOSEST", "facility_type": "RESIDUAL", "store_direct_closest_id_as": "direct_closest_id" , "store_direct_closest_x_as": "direct_closest_x", "store_direct_closest_y_as": "direct_closest_y" , "store_direct_closest_distance_as": "direct_closest_distance" , "next": [ "DISPLAY_DIRECT_CLOSEST" ]  , "nexts_if_no_direct_closest_found" : ["FIND_ROUTING_CLOSEST"] },
+                 
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_DIRECT_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_ROUTING_CLOSEST"] },
+                 
+                 
+                                { "@gwsclass": "FindRoutingClosestBehaviour", "duration": 1, "id": "FIND_ROUTING_CLOSEST", "facility_type": "RESIDUAL", "transport_network_type" : "Road" , "store_routing_closest_id_as": "routing_closest_id" , "store_routing_closest_agent_x_as": "routing_closest_x", "store_routing_closest_agent_y_as": "routing_closest_y" , "store_closest_route_distance_as": "routing_closest_distance" , "next": [ "DISPLAY_ROUTING_CLOSEST" ]  , "nexts_if_no_routing_closest_found" : ["CHECK_ROUTING_CLOSEST"] },
+                
+                                
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_ROUTING_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["CHECK_ROUTING_CLOSEST"] },
+                                
+                                { "@gwsclass": "CompareAgentPropertyBehaviour" ,  "id": "CHECK_ROUTING_CLOSEST" ,  "agent_property_to_compare" : "routing_closest_distance" , "comparison_operator" : "<=" , "comparison_value" : 300 , "duration": 1 ,  "nexts_if_true" : ["SET_TO_GREEN"] , "nexts_if_false" : ["CHECK_DIRECT_CLOSEST"] },
+                                
+                                { "@gwsclass": "CompareAgentPropertyBehaviour" ,  "id": "CHECK_DIRECT_CLOSEST" , "agent_property_to_compare" : "direct_closest_distance" , "comparison_operator" : ">" , "comparison_value" : 300 , "duration": 1 ,  "nexts_if_true" : ["SET_TO_RED"] , "nexts_if_false" : ["SET_TO_ORANGE"] },
+                                
+                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_GREEN" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "green" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                
+                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_RED" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "red" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                
+                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_ORANGE" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "orange" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                
+                
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                
+                                { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
+                ] 
+                } , 
+
+			    "datasources" :  [
+                                    { "id" : "8163d28a-19f5-4de9-912e-b7b6ffb59340-ca7a0113-50ab-50d0-9dae-11" , 
+                                    "entities" : ["Citizen"] }
+                ]
+                } , 
+                
+                 "containers" 	: { "template" : { "@gwsclass": "GWSAgent", "name" : "RESIDUAL" , "radius": 5 ,  
+                                                    "location" : {      "@gwsclass" : "GWSGeometry" } , "@gwsgroups": [ "RESIDUAL", "Container" ] , "birth" : -1 ,
+                                                    "@behaviours" : [
+                                                        { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 1, "json_value": "<location>", "nexts" : ["SET_TO_BROWN"] },
+                                                        
+                                                        { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_BROWN" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "brown" , "duration": 1 ,  "nexts" : ["DISPLAY"] },
+                                                        
+                                                        {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 864000 , "nexts" : ["DISPLAY"] }  ] }  , 
+				
+				
+                                    "datasources" :  [
+                                                        { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", 
+                                                        "entities" : ["SortingType:5"] }  ]
+                } , 
+                
+                
+                
+                "roads" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups"  : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 ,   
+                    "@behaviours" : [
+                                    {  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
+                    "datasources" :  [
+                                      { "id" : "273589aa-3365-49ef-98aa-606e6e3f8337-ca7a0113-50ab-50d0-9dae-11" , 
+                                        "entities" : ["Road"] }
+                        ]}
+                
+                }  
+                
+                
+                
+                
+}                
