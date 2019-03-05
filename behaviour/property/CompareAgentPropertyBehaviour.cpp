@@ -76,15 +76,13 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
         }
     }
 
-
     // Evaluate the according to boolean:
+    QJsonArray next;
     if ( comparison_fulfilled ) {
-        QJsonArray next = this->getProperty( NEXTS_IF_TRUE ).toArray();
-        return next;
+        next = this->getProperty( NEXTS_IF_TRUE ).toArray();
     } else {
-        QJsonArray next = this->getProperty( NEXTS_IF_FALSE ).toArray();
-        return next;
+        next = this->getProperty( NEXTS_IF_FALSE ).toArray();
     }
-
+    return next;
 
 }
