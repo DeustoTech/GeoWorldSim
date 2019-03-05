@@ -1,10 +1,8 @@
 { "population" : {
 
-                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , 
+                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : -1 , 
                 "@behaviours": [  
-                                { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
-                                
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_DIRECT_CLOSEST"] },
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_DIRECT_CLOSEST"] },
                     
                                 { "@gwsclass": "FindDirectClosestBehaviour", "duration": 1, "id": "FIND_DIRECT_CLOSEST", "facility_type": "RESIDUAL", "store_direct_closest_id_as": "direct_closest_id" , "store_direct_closest_x_as": "direct_closest_x", "store_direct_closest_y_as": "direct_closest_y" , "store_direct_closest_distance_as": "direct_closest_distance" , "next": [ "DISPLAY_DIRECT_CLOSEST" ]  , "nexts_if_no_direct_closest_found" : ["FIND_ROUTING_CLOSEST"] },
                  
@@ -34,7 +32,7 @@
                 } , 
 
 			    "datasources" :  [
-                                    { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
+                                    { "id" : "8163d28a-19f5-4de9-912e-b7b6ffb59340-ca7a0113-50ab-50d0-9dae-11" , 
                                     "entities" : ["Citizen"] }
                 ]
                 } , 
@@ -51,17 +49,17 @@
 				
                                     "datasources" :  [
                                                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", 
-                                                        "entities" : ["SortingType:5"] }  ]
+                                                        "entities" : ["SortingType:6"] }  ]
                 } , 
                 
                 
                 
-                "footways" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups"  : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 ,   
+                "roads" 	: { "template" : { "@gwsclass": "GWSAgent" , "radius" : 5 , "edge" : { "@gwsclass" : "GWSNetworkEdge" } , "@gwsgroups"  : ["Footway", "Road"] , "color" : "Blue" , "maxspeed" : 4 ,   
                     "@behaviours" : [
                                     {  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
                     "datasources" :  [
-                                      { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
-                                        "entities" : ["Road"] }
+                                      { "id" : "273589aa-3365-49ef-98aa-606e6e3f8337-ca7a0113-50ab-50d0-9dae-11" , 
+                                        "entities" : ["Entity"] }
                         ]}
                 
                 }  

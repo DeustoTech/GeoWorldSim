@@ -97,11 +97,11 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
             continue;
         }
         GWSCoordinate centroid = geom->getCentroid();
-        if( nearest.isNull() ){
+        if( nearest_distance < GWSLengthUnit( 0 ) || nearest.isNull() ){
             nearest = agent;
             nearest_distance = centroid.getDistance( coor );
         }
-        if( centroid.getDistance( coor ) < nearest_distance ){
+        if( nearest_distance < GWSLengthUnit( 0 ) || centroid.getDistance( coor ) < nearest_distance ){
             nearest = agent;
             nearest_distance = centroid.getDistance( coor );
         }

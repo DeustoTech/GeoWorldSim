@@ -20,16 +20,20 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_to_compare = this->getProperty( AGENT_PROPERTY_TO_COMPARE ).toString();
     QString comparison_operator = this->getProperty( COMPARISON_OPERATOR ).toString();
-    QVariant comparison_value = this->getProperty( COMPARISON_VALUE );
-
-    qDebug() << agent->getProperty( property_to_compare );
+    QJsonValue comparison_value = this->getProperty( COMPARISON_VALUE );
 
     // Set boolean depending on comparison operator:
     bool comparison_fulfilled = false;
 
+    QJsonValue property = agent->getProperty( property_to_compare );
+    if( property.isNull() ){
+        QJsonArray next = this->getProperty( NEXTS_IF_FALSE ).toArray();
+        return next;
+    }
+
     if ( comparison_operator == "==" ){
 
-        if ( agent->getProperty( property_to_compare ) == comparison_value ){
+        if ( property == comparison_value ){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;
@@ -37,7 +41,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     if ( comparison_operator == "!=" ){
-        if ( agent->getProperty( property_to_compare ) != comparison_value ){
+        if ( property != comparison_value ){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;
@@ -45,7 +49,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     if ( comparison_operator == ">=" ){
-        if ( agent->getProperty( property_to_compare ).toDouble() >= comparison_value.toDouble() ){
+        if ( property.toDouble() >= comparison_value.toDouble() ){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;
@@ -53,7 +57,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     if ( comparison_operator == "<=" ){
-        if ( agent->getProperty( property_to_compare ).toDouble() <= comparison_value.toDouble()){
+        if ( property.toDouble() <= comparison_value.toDouble()){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;
@@ -61,7 +65,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     if ( comparison_operator == ">" ){
-        if ( agent->getProperty( property_to_compare ).toDouble() > comparison_value.toDouble() ){
+        if ( property.toDouble() > comparison_value.toDouble() ){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;
@@ -69,7 +73,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     if ( comparison_operator == "<" ){
-        if ( agent->getProperty( property_to_compare ).toDouble() < comparison_value.toDouble() ){
+        if ( property.toDouble() < comparison_value.toDouble() ){
             comparison_fulfilled = true;
         } else {
              comparison_fulfilled = false;

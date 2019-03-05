@@ -37,12 +37,15 @@ QJsonArray FindDirectClosestBehaviour::behave(){
     QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
 
     // Obtain direct closest agent parameters:
-    QSharedPointer<GWSAgent> nearestAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor, agents_to_access );
+    QSharedPointer<GWSAgent> nearestAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor , agents_to_access );
+    if( !nearestAgent ){
+        return this->getProperty( NEXTS_IF_NO_DIRECT_CLOSEST_FOUND ).toArray();
+    }
+
+    qDebug() << nearestAgent->serialize();
     QString nearestAgentId = nearestAgent->getId();
     GWSCoordinate nearestAgentCoors = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearestAgent )->getCentroid();
     GWSLengthUnit distanceToNearestAgent = agent_coor.getDistance( nearestAgentCoors );
-
-   // agent->setProperty( "color", nearestAgent->getProperty( "color" ));
 
     // Store in agent:
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_agent_id" ) , nearestAgentId );
@@ -50,7 +53,5 @@ QJsonArray FindDirectClosestBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_Y_AS ).toString( "direct_closest_agent_y" ) , nearestAgentCoors.getY() );
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_DISTANCE_AS ).toString("direct_closest_agent_distance") , distanceToNearestAgent.number() );
 
-
     return this->getProperty( NEXT ).toArray();
-
 }
