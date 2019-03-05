@@ -41,13 +41,16 @@ HEADERS += \
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/waste4think/FindClosestBehaviour.h \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
-    ../../behaviour/property/CopyPropertyBehaviour.h \
+    ../../behaviour/property/CompareAgentPropertyBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
+    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.h \
+    ../../behaviour/accessibility/FindDirectClosestBehaviour.h \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -92,8 +95,9 @@ HEADERS += \
     ../../environment/network_environment/NetworkEdge.h \
         # AGENTS
     #agent/person/Person.h \
-    HumanAgent.h \
-    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.h
+    HumanAgent.h
+
+
 
 SOURCES += mainAccesibility.cpp \
         # BASICS
@@ -106,13 +110,16 @@ SOURCES += mainAccesibility.cpp \
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/waste4think/FindClosestBehaviour.cpp \
     ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
-    ../../behaviour/property/CopyPropertyBehaviour.cpp \
+    ../../behaviour/property/CompareAgentPropertyBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp \
+    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.cpp \
+    ../../behaviour/accessibility/FindDirectClosestBehaviour.cpp \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
+    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -158,8 +165,7 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
-    HumanAgent.cpp \
-    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.cpp
+    HumanAgent.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

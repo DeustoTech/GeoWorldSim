@@ -20,13 +20,15 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/waste4think/FindClosestBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
-#include "../../behaviour/property/CopyPropertyBehaviour.h"
+#include "../../behaviour/property/CompareAgentPropertyBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
 #include "../../behaviour/accessibility/DetermineAccessibilityBehaviour.h"
+#include "../../behaviour/accessibility/FindDirectClosestBehaviour.h"
+#include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
+#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -73,13 +75,15 @@ int main(int argc, char* argv[])
 
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( FindDirectClosestBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( CopyPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CompareAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( DetermineAccessibilityBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject );
 
 
     // INIT RANDOM NUMBERS
