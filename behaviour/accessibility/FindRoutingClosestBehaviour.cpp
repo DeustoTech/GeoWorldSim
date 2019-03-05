@@ -53,8 +53,18 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     // Extract and store the distance of the route:
     GWSLengthUnit closest_route_distance = 0;
-    foreach ( QSharedPointer<GWSNetworkEdge> edge , closest_route ){
-        closest_route_distance = closest_route_distance + edge->getLength();
+
+    {
+        // From Agent to route start
+        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 )->getFrom() );
+
+        // During route start til route end
+        foreach ( QSharedPointer<GWSNetworkEdge> edge , closest_route ){
+            closest_route_distance = closest_route_distance + edge->getLength();
+        }
+
+        // From route end to nearest_agent
+        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 )->getTo() );
     }
 
     // Extract and store closest node ID and coordinates:

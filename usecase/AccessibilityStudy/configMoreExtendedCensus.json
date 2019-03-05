@@ -25,14 +25,14 @@
                                 { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_ORANGE" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "orange" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                                 
                 
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["STOP"] },
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                 
                                 { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
                 ] 
                 } , 
 
 			    "datasources" :  [
-                                    { "id" : "8163d28a-19f5-4de9-912e-b7b6ffb59340-ca7a0113-50ab-50d0-9dae-11" , 
+                                    { "id" : "173afb1b-f342-4aae-b618-407a8d9887c7-ca7a0113-50ab-50d0-9dae-11" , 
                                     "entities" : ["Citizen"] }
                 ]
                 } , 
@@ -47,8 +47,8 @@
 				
 				
                                     "datasources" :  [
-                                                        { "id" : "6fa8d4ab-01d0-4b82-a089-251b5754755a-ca7a0113-50ab-50d0-9dae-11", 
-                                                        "entities" : ["Bar"] }  ]
+                                                        { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", 
+                                                        "entities" : ["SortingType:5"] }  ]
                 } , 
                 
                 
