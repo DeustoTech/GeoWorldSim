@@ -41,7 +41,7 @@ HEADERS += \
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/property/CompareAgentPropertyBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
@@ -50,7 +50,7 @@ HEADERS += \
     ../../behaviour/accessibility/DetermineAccessibilityBehaviour.h \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -110,7 +110,7 @@ SOURCES += mainAccesibility.cpp \
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/property/CompareAgentPropertyBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
@@ -119,7 +119,7 @@ SOURCES += mainAccesibility.cpp \
     ../../behaviour/accessibility/DetermineAccessibilityBehaviour.cpp \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \

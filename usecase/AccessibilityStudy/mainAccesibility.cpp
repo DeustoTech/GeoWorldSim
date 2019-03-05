@@ -19,7 +19,7 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
+#include "../../behaviour/geometry/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/property/CompareAgentPropertyBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
@@ -28,7 +28,7 @@
 #include "../../behaviour/accessibility/DetermineAccessibilityBehaviour.h"
 #include "../../behaviour/accessibility/FindDirectClosestBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
-#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
+#include "../../behaviour/random/ChooseRandomValueFromSetBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"

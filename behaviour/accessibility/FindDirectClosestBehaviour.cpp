@@ -38,6 +38,7 @@ QJsonArray FindDirectClosestBehaviour::behave(){
 
     // Obtain direct closest agent parameters:
     QSharedPointer<GWSAgent> nearestAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor, agents_to_access );
+    qDebug() << nearestAgent->serialize();
     QString nearestAgentId = nearestAgent->getId();
     GWSCoordinate nearestAgentCoors = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearestAgent )->getCentroid();
     GWSLengthUnit distanceToNearestAgent = agent_coor.getDistance( nearestAgentCoors );

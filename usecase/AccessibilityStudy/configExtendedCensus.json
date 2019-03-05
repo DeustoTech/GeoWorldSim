@@ -49,7 +49,7 @@
 				
                                     "datasources" :  [
                                                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", 
-                                                        "entities" : ["SortingType:5"] }  ]
+                                                        "entities" : ["SortingType:6"] }  ]
                 } , 
                 
                 
@@ -59,7 +59,7 @@
                                     {  "start" : true , "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 60 ,  "nexts" : ["LOOP"] }] }  , 
                     "datasources" :  [
                                       { "id" : "273589aa-3365-49ef-98aa-606e6e3f8337-ca7a0113-50ab-50d0-9dae-11" , 
-                                        "entities" : ["Road"] }
+                                        "entities" : ["Entity"] }
                         ]}
                 
                 }  
