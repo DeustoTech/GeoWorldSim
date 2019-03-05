@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.8.1, 2019-03-04T17:25:25. -->
+<!-- Written by QtCreator 4.8.1, 2019-03-05T12:22:46. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -297,7 +297,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/AccessibilityStudy/GeoWorldSimAccesibility.pro</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">GeoWorldSimAccesibility.pro</value>
-    <value type="QString" key="RunConfiguration.Arguments">id=access user_id=maialen  config=/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/AccessibilityStudy/config.json</value>
+    <value type="QString" key="RunConfiguration.Arguments">id=access user_id=maialen  config=/home/maialen/Escritorio/WorkSpace/GeoWorldSim/usecase/AccessibilityStudy/configExtendedCensus.json</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>

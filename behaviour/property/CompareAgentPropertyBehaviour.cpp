@@ -22,8 +22,6 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     QString comparison_operator = this->getProperty( COMPARISON_OPERATOR ).toString();
     QVariant comparison_value = this->getProperty( COMPARISON_VALUE );
 
-    qDebug() << agent->getProperty( property_to_compare );
-
     // Set boolean depending on comparison operator:
     bool comparison_fulfilled = false;
 

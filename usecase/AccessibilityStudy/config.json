@@ -1,6 +1,6 @@
 { "population" : {
 
-                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "grey", 
+                "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , 
                 "@behaviours": [  
                                 { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
                                 
@@ -20,14 +20,14 @@
                                 
                                 { "@gwsclass": "CompareAgentPropertyBehaviour" ,  "id": "CHECK_DIRECT_CLOSEST" , "agent_property_to_compare" : "direct_closest_distance" , "comparison_operator" : ">" , "comparison_value" : 300 , "duration": 1 ,  "nexts_if_true" : ["SET_TO_RED"] , "nexts_if_false" : ["SET_TO_ORANGE"] },
                                 
-                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_GREEN" , "agent_to_set_id" : "<routing_closest_id>" , "property_name" : "color" , "property_value" : "green" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_GREEN" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "green" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                                 
-                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_RED" , "agent_to_set_id" : "<direct_closest_id>" , "property_name" : "color" , "property_value" : "red" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_RED" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "red" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                                 
                                 { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_ORANGE" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "orange" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                                 
                 
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["STOP"] },
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                 
                                 { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
                 ] 
