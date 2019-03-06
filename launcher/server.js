@@ -66,7 +66,9 @@ app.post('/api/simulation' , (req, res) => {
     let name = req.body.name || 'New simulation';
     let description = req.body.description || 'No description';
     let user_id = req.body.user_id;
-    
+   
+console.log( req.body );
+
     const fetch = require('node-fetch');
     const { spawn } = require('child_process');
     let scenario = false;
@@ -81,7 +83,7 @@ app.post('/api/simulation' , (req, res) => {
     .then( res => res.text() )
     .then( text => {
         
-            let sp = spawn( `/home/ander/launcher/exec/${target}` , [ `id=${scenario.id}`,  `console=1`, `user_id=${user_id}`, `config=${JSON.stringify(JSON.stringify(config))}` ] );
+            let sp = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
             sp.stdout.on('data', (data) => {
                 console.log(`stdout: ${data}`);
             });
