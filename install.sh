@@ -23,8 +23,10 @@ echo "Installing Other libraries"
 echo "============================================"
 
 sudo apt-get install -y unzip
+sudo apt-get install -y npm
 sudo apt-get install -y libpq-dev
 sudo apt-get install -y libgeos-dev libgeos++-dev
+sudo apt-get install -y liblemon-dev
 sudo apt-get install -y libspatialindex-dev
 sudo apt-get install -y libproj-dev
 sudo apt-get install -y libgdal-dev
@@ -35,34 +37,6 @@ sudo apt-get install -y libeigen3-dev
 sudo apt-get install -y libshp-dev
 sudo apt-get install -y libfann-dev
 sudo apt-get install -y cmake
-
-echo "============================================"
-echo "Downloading and Installing Lemon graph library"
-echo "============================================"
-
-mkdir lib
-cd lib
-wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.zip
-unzip lemon-1.3.1.zip 
-cd lemon-1.3.1
-mkdir build
-cd build
-cmake .. && make 
-cd ../../..
-
-echo "============================================"
-echo "Downloading and Installing Qhttp library"
-echo "============================================"
-
-mkdir lib
-cd lib
-wget https://github.com/azadkuh/qhttp/archive/master.zip
-mv master.zip qhttp-master.zip
-unzip qhttp-master.zip
-cd qhttp-master
-./update-dependencies.sh
-qmake -qt5 && make
-cd ../..
 
 echo "============================================"
 echo "Installing pug renderer"
