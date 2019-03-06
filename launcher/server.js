@@ -61,12 +61,12 @@ app.get('/', (req, res) => {
 
 app.post('/api/simulation' , (req, res) => {
    
-    let target = req.body.target;
-    let config = req.body.config;
+    let target = req.body.target || (return res.send(500))
+    let config = req.body.config || (return res.send(500))
     let timeout = req.body.timeout || 60;
     let name = req.body.name || 'New simulation';
     let description = req.body.description;
-    let user_id = req.body.user_id;
+    let user_id = req.body.user_id || (return res.send(500))
 
     const fetch = require('node-fetch');
     const { spawn } = require('child_process');
