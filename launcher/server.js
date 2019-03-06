@@ -88,12 +88,6 @@ app.post('/api/simulation' , (req, res) => {
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
-            child.stdout.on('data', (data) => {
-                console.log( data.toString() );
-            });
-            child.stderr.on('data', (data) => {
-                console.log( data.toString() );
-            });
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);
                 clearTimeout( timer );
