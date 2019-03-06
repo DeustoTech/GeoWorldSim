@@ -61,17 +61,17 @@ app.get('/', (req, res) => {
 
 app.post('/api/simulation' , (req, res) => {
    
+    let target = req.body.target;
     let config = req.body.config;
-    let simulation_id = req.body.simulation_id;
-    let simulation_name = req.body.name || 'New simulation';
-    let simulation_description = req.body.description || 'No description';
+    let name = req.body.name || 'New simulation';
+    let description = req.body.description || 'No description';
     let user_id = req.body.user_id;
     
     const fetch = require('node-fetch');
     const { spawn } = require('child_process');
     let scenario = false;
         
-    fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : simulation_name , description : simulation_description , status : "Loading" } ) })
+    fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "Loading" } ) })
     .then( res => res.json() )
     .then( json => {
         
@@ -81,7 +81,7 @@ app.post('/api/simulation' , (req, res) => {
     .then( res => res.text() )
     .then( text => {
         
-            let sp = spawn( '/home/ander/launcher/exec/' , [ `id=${scenario.id}`,  `console=1`, `user_id=${user_id}`, `config=${JSON.stringify(JSON.stringify(config))}` ] );
+            let sp = spawn( `/home/ander/launcher/exec/${target}` , [ `id=${scenario.id}`,  `console=1`, `user_id=${user_id}`, `config=${JSON.stringify(JSON.stringify(config))}` ] );
             sp.stdout.on('data', (data) => {
                 console.log(`stdout: ${data}`);
             });
