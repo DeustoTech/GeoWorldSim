@@ -11,6 +11,7 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../util/parallelism/ParallelismController.h"
+#include "../../util/api/APIDriver.h"
 
 QString GWSExecutionEnvironment::AGENT_BIRTH_PROP = "birth";
 QString GWSExecutionEnvironment::AGENT_DEATH_PROP = "death";
@@ -104,9 +105,6 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     agent->decrementBusy();
     emit agent->agentStartedSignal();
 
-
-
-
     //qDebug() << QString("Agent %1 %2 running").arg( agent->metaObject()->className() ).arg( agent->getId() );
 }
 
@@ -143,6 +141,10 @@ void GWSExecutionEnvironment::run(){
         qDebug() << QString("%1 is already running").arg( this->metaObject()->className() );
         return;
     }
+
+    // Make scenario listen the socket of this simulation
+    //GWSAPIDriver api = GWSAPIDriver();
+    //api.POST( QString("https://history.geoworldsim.com/api/scenario/%1/socket").arg( GWSApp::globalInstance()->getAppId() ) );
 
     this->timer = new QTimer();
     this->timer->singleShot( 1000 , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );

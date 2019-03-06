@@ -56,8 +56,6 @@
 int main(int argc, char* argv[])
 {
 
-    QDateTime start = QDateTime::currentDateTime();
-
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
@@ -89,22 +87,26 @@ int main(int argc, char* argv[])
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-    // READ CONFIGURATION
-    QFile file( app->property( "config" ).toString() );
+    // READ CONFIGURATION (FILE OR JSON)
     QJsonObject json_configuration;
-    if( !file.open( QFile::ReadOnly ) ){
-        qCritical() << QString("No configuration file found");
-        return -1;
-    }
     QJsonParseError jerror;
-    json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    if( jerror.error != QJsonParseError::NoError ){
+    if( !app->property( "config" ).isNull() ){
+        json_configuration = QJsonDocument::fromJson( app->property( "config" ).toString().toUtf8() , &jerror ).object();
+    }
+    if( !app->property( "config_file" ).isNull() ){
+        QFile file( app->property( "config_file" ).toString() );
+        file.open( QFile::ReadOnly );
+        json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
+    }
+
+    if( json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
         qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
         return -1;
     }
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
+    QDateTime datasource_download_time = QDateTime::currentDateTime();
     QJsonObject json_population = json_configuration.value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
@@ -131,10 +133,11 @@ int main(int argc, char* argv[])
                     GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity );
                     pending_datasources.append( ds );
 
-                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
                         pending_datasources.removeAll( ds );
                         ds->deleteLater();
                         if( pending_datasources.isEmpty() ){
+                            qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
                             GWSExecutionEnvironment::globalInstance()->run();
                         }
                     });
@@ -159,7 +162,6 @@ int main(int argc, char* argv[])
 
 
 
-
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
     QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
@@ -173,15 +175,7 @@ int main(int argc, char* argv[])
      }
 
 
-
-
-GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
-    QDateTime current_time = QDateTime::currentDateTime();
-    qint64 secondsDiff = start.secsTo( current_time );
-    qDebug() << "Elapsed time" << secondsDiff;
-});
-
-app->exec();
+    app->exec();
 
 }
 

@@ -1,4 +1,5 @@
 #include "EnvironmentsGroup.h"
+#include <QtConcurrent/QtConcurrent>
 
 GWSEnvironmentsGroup* GWSEnvironmentsGroup::globalInstance(){
     static GWSEnvironmentsGroup instance;

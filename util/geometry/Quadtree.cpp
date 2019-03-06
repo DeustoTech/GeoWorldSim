@@ -162,39 +162,42 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
         for( int l = this->layer_amount ; l > 0 ; l-- ){
 
-            // Get geohash
-            this->mutex.lock();
-            int xhash = this->createHash( coor.getX() , l);
-            int yhash = this->createHash( coor.getY() , l);
-            this->mutex.unlock();
+            QtConcurrent::run([this , coor , l , object_id , object] {
 
-            this->mutex.lock();
-            if ( !this->geom_index_layers.value( l )->keys().contains( xhash ) ){
-                 this->geom_index_layers.value( l )->insert( xhash , new QMap< int , QStringList* >() );
-            }
-            this->mutex.unlock();
+                // Get geohash
+                this->mutex.lock();
+                int xhash = this->createHash( coor.getX() , l);
+                int yhash = this->createHash( coor.getY() , l);
+                this->mutex.unlock();
 
-            this->mutex.lock();
-            if ( !this->geom_index_layers.value( l )->value( xhash )->keys().contains( yhash ) ){
-                this->geom_index_layers.value( l )->value( xhash )->insert( yhash , new QStringList() );
-            }
-            this->mutex.unlock();
+                this->mutex.lock();
+                if ( !this->geom_index_layers.value( l )->keys().contains( xhash ) ){
+                     this->geom_index_layers.value( l )->insert( xhash , new QMap< int , QStringList* >() );
+                }
+                this->mutex.unlock();
 
-            // If already here, remove old version
-            this->mutex.lock();
-            if( this->id_to_geometries.keys().contains( object_id ) ){
-                QSharedPointer< GWSGeometry > previous_geom = this->id_to_geometries.value( object_id );
-                GWSCoordinate previous_coor = previous_geom->getCentroid();
-                int previous_xhash = this->createHash(previous_coor.getX() , l );
-                int previous_yhash = this->createHash(previous_coor.getY() , l );
-                this->geom_index_layers.value( l )->value( previous_xhash )->value( previous_yhash )->removeAll( object_id );
-            }
-            this->mutex.unlock();
+                this->mutex.lock();
+                if ( !this->geom_index_layers.value( l )->value( xhash )->keys().contains( yhash ) ){
+                    this->geom_index_layers.value( l )->value( xhash )->insert( yhash , new QStringList() );
+                }
+                this->mutex.unlock();
 
-            // Insert new version
-            this->mutex.lock();
-            this->geom_index_layers.value( l )->value( xhash )->value( yhash )->append( object_id );
-            this->mutex.unlock();
+                // If already here, remove old version
+                this->mutex.lock();
+                if( this->id_to_geometries.keys().contains( object_id ) ){
+                    QSharedPointer< GWSGeometry > previous_geom = this->id_to_geometries.value( object_id );
+                    GWSCoordinate previous_coor = previous_geom->getCentroid();
+                    int previous_xhash = this->createHash(previous_coor.getX() , l );
+                    int previous_yhash = this->createHash(previous_coor.getY() , l );
+                    this->geom_index_layers.value( l )->value( previous_xhash )->value( previous_yhash )->removeAll( object_id );
+                }
+                this->mutex.unlock();
+
+                // Insert new version
+                this->mutex.lock();
+                this->geom_index_layers.value( l )->value( xhash )->value( yhash )->append( object_id );
+                this->mutex.unlock();
+            });
         }
 
         this->mutex.lock();
@@ -225,12 +228,16 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
 
     for( int l = this->layer_amount ; l > 0 ; l-- ){
 
-        this->mutex.lock();
-        int xhash = this->createHash( object_geom->getCentroid().getX() , l );
-        int yhash = this->createHash( object_geom->getCentroid().getY() , l );
+        QtConcurrent::run([ this , l , object_geom , object_id ] {
 
-        this->geom_index_layers.value( l )->value( xhash )->value( yhash )->removeAll( object_id );
-        this->mutex.unlock();
+            this->mutex.lock();
+            int xhash = this->createHash( object_geom->getCentroid().getX() , l );
+            int yhash = this->createHash( object_geom->getCentroid().getY() , l );
+
+            this->geom_index_layers.value( l )->value( xhash )->value( yhash )->removeAll( object_id );
+            this->mutex.unlock();
+
+        });
     }
 
     this->mutex.lock();
