@@ -87,11 +87,10 @@ app.post('/api/simulation' , (req, res) => {
     .then( text => {
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
-            let timer = setTimeout( child.kill , (timeout * 1000) );
+            let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
             child.stdout.on('data', (data) => {
                 console.log( data.toString() );
             });
-
             child.stderr.on('data', (data) => {
                 console.log( data.toString() );
             });
@@ -102,7 +101,7 @@ app.post('/api/simulation' , (req, res) => {
             
     })
     .then( data => {
-        res.send(scenario);
+        res.send( scenario );
     })
     .catch( err => {
         res.status(500).send( err );
