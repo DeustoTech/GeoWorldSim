@@ -47,24 +47,24 @@ HEADERS += \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.h \
-    ../../behaviour/waste4think/FindClosestBehaviour.h \
+    ../../behaviour/property/TransferAgentPropertyBehaviour.h \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.h \
+    ../../behaviour/property/GatherAgentPropertyBehaviour.h \
     ../../behaviour/property/CopyPropertyBehaviour.h \
-    ../../behaviour/waste4think/CheckPropertyValueBehaviour.h \
+    ../../behaviour/property/CheckPropertyValueBehaviour.h \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
-    ../../behaviour/waste4think/GenerateRandomValueBehaviour.h \
+    ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
     ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
     ../../behaviour/move/CalculateTSPRouteBehaviour.h \
-    ../../behaviour/waste4think/SetRandomColorBehaviour.h \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h \
+    ../../behaviour/random/SetRandomColorBehaviour.h \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
     ../../behaviour/property/IncrementPropertyBehaviour.h \
         # UTILS
@@ -115,7 +115,7 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/waste4think/WaitUntilTimeBehaviour.h
+    ../../behaviour/time/WaitUntilTimeBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -137,21 +137,21 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/waste4think/TransferAgentPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/FindClosestBehaviour.cpp \
+    ../../behaviour/property/TransferAgentPropertyBehaviour.cpp \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
-    ../../behaviour/waste4think/GatherAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/GatherAgentPropertyBehaviour.cpp \
     ../../behaviour/property/CopyPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/property/CheckPropertyValueBehaviour.cpp \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateRandomValueBehaviour.cpp \
+    ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/waste4think/SetRandomColorBehaviour.cpp \
-    ../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../behaviour/random/SetRandomColorBehaviour.cpp \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
     ../../behaviour/move/SetNextTSPDestinationBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
@@ -210,7 +210,7 @@ SOURCES += mainlauncher.cpp \
     RecyclingPlantAgent.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp \
     ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/WaitUntilTimeBehaviour.cpp
+    ../../behaviour/time/WaitUntilTimeBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

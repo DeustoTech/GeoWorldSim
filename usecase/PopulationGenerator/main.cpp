@@ -23,8 +23,8 @@
 // Behaviours:
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
-#include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
-#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
+#include "../../behaviour/time/WaitUntilTimeBehaviour.h"
+#include "../../behaviour/geometry/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/population/CreateChildBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
@@ -87,26 +87,29 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
 
 
-    // READ CONFIGURATION
-    QFile file( app->property( "config" ).toString() );
+    // READ CONFIGURATION (FILE OR JSON)
     QJsonObject json_configuration;
-    if( !file.open( QFile::ReadOnly ) ){
-        qCritical() << QString("No configuration file found");
+    QJsonParseError jerror;
+    if( !app->property( "config" ).isNull() ){
+        json_configuration = QJsonDocument::fromJson( app->property( "config" ).toString().toUtf8() , &jerror ).object();
+    }
+    if( !app->property( "config_file" ).isNull() ){
+        QFile file( app->property( "config_file" ).toString() );
+        file.open( QFile::ReadOnly );
+        json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
+    }
+
+    if( json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
+        qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
         return -1;
     }
 
-    QJsonParseError jerror;
-    json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    if( jerror.error != QJsonParseError::NoError ){
-        qCritical() << QString( "Error when parsing configuration JSON: %1" ).arg( jerror.errorString() );
-        return -1;
-    }
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
-    QJsonObject json_population = json_configuration.value( "population" ).toObject();
-
-    foreach( QString key , json_population.keys() ) {
+    QDateTime datasource_download_time = QDateTime::currentDateTime();
+    QJsonObject json_population = json_configuration.value("population").toObject();
+     foreach( QString key , json_population.keys() ) {
 
         // Population type:
         QJsonObject population = json_population[ key ].toObject();
@@ -119,21 +122,29 @@ int main( int argc, char* argv[] )
 
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString datasource_id = datasource.value("id").toString();
-                QString entities_type = datasource.value("entities").toString();
-                if( !datasource_id || !entities_type ){
+                QJsonArray entities_type = datasource.value("entities").toArray();
+                if( datasource_id.isEmpty() || entities_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entities type";
                 }
 
-                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id, entities_type );
-                pending_datasources.append( ds );
+                for ( int j = 0; j < entities_type.size() ; ++j ){
 
-                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
-                    pending_datasources.removeAll( ds );
-                    ds->deleteLater();
-                    if( pending_datasources.isEmpty() ){
-                        GWSExecutionEnvironment::globalInstance()->run();
-                    }
-                });
+                    QString entity = entities_type.at( j ).toString();
+
+                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity );
+                    pending_datasources.append( ds );
+
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                        pending_datasources.removeAll( ds );
+                        ds->deleteLater();
+                        if( pending_datasources.isEmpty() ){
+                            qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
+                            GWSExecutionEnvironment::globalInstance()->run();
+                        }
+                    });
+                }
+
+
 
             }
         }
@@ -150,6 +161,19 @@ int main( int argc, char* argv[] )
         GWSExecutionEnvironment::globalInstance()->run();
     }
 
+
+
+    // LISTEN TO EXTERNAL SIMULATIONS
+    // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
+    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    foreach( QString key , json_external_listeners.keys() ) {
+
+        // Get simulation to be listened to from config.json file
+        if ( !json_external_listeners[ key ].isNull() ){
+            new GWSExternalListener( json_external_listeners[ key ].toString() );
+        }
+        qDebug() << QString("Creating external listener %1").arg( key );
+     }
 
     app->exec();
 }

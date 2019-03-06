@@ -3,9 +3,7 @@
                                     "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,
                                     "marry_age" : "marry_age", "marry_age_margin" : "marry_age_margin" , "life_exp" : "life_exp", "life_exp_margin" : "life_exp_margin", 
                                     "@behaviours": [  
-                                     { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["DISPLAY"] } ,
-                                     
-                                    { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
+                                    { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
                                       
                                    { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "<marry_age>", "set_marriage_age_margin" : "<marry_age_margin>" , "marriage_rate" : 7.33 , "set_life_expectancy_years" : "<life_exp>", "set_life_expectancy_margin" : "<life_exp_margin>", "illness_rate" : 0 ,  "birth_rate" : 7.44  ,  "set_next_child_gap_years" : 3 , "set_fertility_rate" : 1 , "set_max_fertility_age" : 5,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["STOP"], "next_if_else" : ["DISPLAY1"] },
                                
@@ -20,8 +18,10 @@
                                     ] 
                                  } , 
 
-			    "datasource_ids" :  ["4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"],
-			    "datasource_entities" : ["Citizen"]
+			     "datasources" :  [
+                                    { "id" : "d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11" , 
+                                    "entities" : ["Citizen"] }
+                ]
                 }
                 
                 }

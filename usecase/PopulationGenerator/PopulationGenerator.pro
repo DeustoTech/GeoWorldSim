@@ -15,7 +15,7 @@ QT          += multimedia # For video exporter sudo apt-get install qtmultimedia
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
-TARGET = PopulationGenerator
+TARGET = gwspopulation
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -75,8 +75,8 @@ SOURCES += \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.cpp \
         ../../behaviour/execution/StopAgentBehaviour.cpp \
-        ../../behaviour/waste4think/WaitUntilTimeBehaviour.cpp \
-        ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+        ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
+        ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
         ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
         ../../behaviour/population/CreateChildBehaviour.cpp \
         ../../behaviour/move/MoveBehaviour.cpp \
@@ -93,7 +93,7 @@ SOURCES += \
         ../../environment/execution_environment/ExecutionEnvironment.cpp \
         ../../environment/communication_environment/CommunicationEnvironment.cpp \
         ../../environment/network_environment/NetworkEdge.cpp \
-    ../../environment/social_environment/SocialRelation.cpp
+        ../../environment/social_environment/SocialRelation.cpp
 
 
 
@@ -133,8 +133,8 @@ HEADERS += \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.h \
         ../../behaviour/execution/StopAgentBehaviour.h \
-        ../../behaviour/waste4think/WaitUntilTimeBehaviour.h \
-        ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+        ../../behaviour/time/WaitUntilTimeBehaviour.h \
+        ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
         ../../behaviour/information/SendAgentSnapshotBehaviour.h \
         ../../behaviour/population/CreateChildBehaviour.h \
         ../../behaviour/move/MoveBehaviour.h \

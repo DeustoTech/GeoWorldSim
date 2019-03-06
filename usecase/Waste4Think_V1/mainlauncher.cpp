@@ -26,24 +26,24 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/waste4think/WaitUntilTimeBehaviour.h"
+#include "../../behaviour/geometry/GenerateAgentGeometryBehaviour.h"
+#include "../../behaviour/time/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
-#include "../../behaviour/waste4think/FindClosestBehaviour.h"
-#include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
+#include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
+#include "../../behaviour/property/TransferAgentPropertyBehaviour.h"
 #include "../../behaviour/move/SetNextTSPDestinationBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
-#include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
+#include "../../behaviour/property/GatherAgentPropertyBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
-#include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
-#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
+#include "../../behaviour/property/CheckPropertyValueBehaviour.h"
+#include "../../behaviour/random/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
-#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
+#include "../../behaviour/random/GenerateRandomValueBehaviour.h"
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/property/MathAgentPropertyBehaviour.h"
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( FindClosestBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetNextTSPDestinationBehaviour::staticMetaObject );
@@ -121,22 +121,26 @@ int main(int argc, char* argv[])
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-    // READ CONFIGURATION
-    QFile file( app->property( "config" ).toString() );
+    // READ CONFIGURATION (FILE OR JSON)
     QJsonObject json_configuration;
-    if( !file.open( QFile::ReadOnly ) ){
-        qCritical() << QString("No configuration file found");
-        return -1;
-    }
     QJsonParseError jerror;
-    json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    if( jerror.error != QJsonParseError::NoError ){
+    if( !app->property( "config" ).isNull() ){
+        json_configuration = QJsonDocument::fromJson( app->property( "config" ).toString().toUtf8() , &jerror ).object();
+    }
+    if( !app->property( "config_file" ).isNull() ){
+        QFile file( app->property( "config_file" ).toString() );
+        file.open( QFile::ReadOnly );
+        json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
+    }
+
+    if( json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
         qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
         return -1;
     }
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
+    QDateTime datasource_download_time = QDateTime::currentDateTime();
     QJsonObject json_population = json_configuration.value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
@@ -163,10 +167,11 @@ int main(int argc, char* argv[])
                     GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity );
                     pending_datasources.append( ds );
 
-                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
                         pending_datasources.removeAll( ds );
                         ds->deleteLater();
                         if( pending_datasources.isEmpty() ){
+                            qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
                             GWSExecutionEnvironment::globalInstance()->run();
                         }
                     });
@@ -191,7 +196,6 @@ int main(int argc, char* argv[])
 
 
 
-
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
     QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
@@ -206,12 +210,6 @@ int main(int argc, char* argv[])
 
 
 
-
-GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
-    QDateTime current_time = QDateTime::currentDateTime();
-    qint64 secondsDiff = start.secsTo( current_time );
-    qDebug() << "Elapsed time" << secondsDiff;
-});
 
 app->exec();
 
