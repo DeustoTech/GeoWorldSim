@@ -1,4 +1,8 @@
-{ "population" : {
+{ "id" : "demo",
+"user_id" : "demo",
+"timeout" : 60,
+"speed" : 60000,
+"population"  : {
 
                 "humans" 	: { "template" : { "@gwsclass": "HumanAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "birth" : -1 , 
                 "@behaviours": [  

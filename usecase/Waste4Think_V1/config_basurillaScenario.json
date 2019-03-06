@@ -1,6 +1,10 @@
 {
 
-"population" : {
+"id" : "demo",
+"user_id" : "demo",
+"timeout" : 60,
+"speed" : 60000,
+"population" :  {
 
     "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "incrORGANIC" : 0.009255, "incrRESIDUAL" : 0.65684, "incrPACKAGING" : 0.06562, "incrGLASS" : 0.06461, "incrPAPER" : 0.04827, "RESIDUAL" : 0 , "PACKAGING" : 0 , "GLASS" : 0 , "PAPER" : 0 , "ORGANIC" : 0 , "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "birth" : -1 , 
     "@behaviours": [  
