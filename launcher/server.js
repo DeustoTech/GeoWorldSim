@@ -63,17 +63,16 @@ app.post('/api/simulation' , (req, res) => {
    
     let target = req.body.target;
     let config = req.body.config;
+    let timeout = req.body.timeout || 60;
     let name = req.body.name || 'New simulation';
-    let description = req.body.description || 'No description';
+    let description = req.body.description;
     let user_id = req.body.user_id;
-   
-console.log( req.body );
 
     const fetch = require('node-fetch');
     const { spawn } = require('child_process');
     let scenario = false;
         
-    fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "Loading" } ) })
+    fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "running" } ) })
     .then( res => res.json() )
     .then( json => {
         
@@ -83,14 +82,10 @@ console.log( req.body );
     .then( res => res.text() )
     .then( text => {
         
-            let sp = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
-            sp.stdout.on('data', (data) => {
-                console.log(`stdout: ${data}`);
-            });
-            sp.stderr.on('data', (data) => {
-                console.log(`stderr: ${data}`);
-            });
-            sp.on('close', (code) => {
+            let child = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
+            let timeout = setTimeout( sp.kill , timeout * 1000 );
+            sp.on('exit', (code , signal) => {
+                timeout.clearTimeout();
                 console.log(`child process exited with code ${code}`);
             });
             
@@ -98,7 +93,7 @@ console.log( req.body );
     .then( data => {
         res.send(scenario);
     })
-    .catch( err => { 
+    .catch( err => {
         console.log( 'Error launching simulation' , err );
         
     });
