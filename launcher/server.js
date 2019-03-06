@@ -83,8 +83,8 @@ app.post('/api/simulation' , (req, res) => {
     .then( text => {
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
-            let timeout = setTimeout( sp.kill , timeout * 1000 );
-            sp.on('exit', (code , signal) => {
+            let timeout = setTimeout( child.kill , timeout * 1000 );
+            child.on('exit', (code , signal) => {
                 timeout.clearTimeout();
                 console.log(`child process exited with code ${code}`);
             });
@@ -94,8 +94,8 @@ app.post('/api/simulation' , (req, res) => {
         res.send(scenario);
     })
     .catch( err => {
+        res.status(500).send( err );
         console.log( 'Error launching simulation' , err );
-        
     });
     
 });
