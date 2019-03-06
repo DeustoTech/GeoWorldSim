@@ -62,13 +62,12 @@ app.get('/', (req, res) => {
 app.post('/api/simulation' , (req, res) => {
    
     let target = req.body.target;
-    let config = req.body.config;
     let timeout = req.body.timeout || 60;
     let name = req.body.name || 'New simulation';
     let description = req.body.description;
     let user_id = req.body.user_id
     
-    if( !target || !config || !user_id ){
+    if( !target || !user_id ){
         return res.status(404).send();
     }
 
@@ -81,12 +80,13 @@ app.post('/api/simulation' , (req, res) => {
     .then( json => {
         
             scenario = json;
+            req.body.id = scenario.id;
             return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
     })
     .then( res => res.text() )
     .then( text => {
         
-            let child = spawn( `${__dirname}/targets/${target}` , [ `id=${scenario.id}`, `user_id=${user_id}`, `config=${JSON.stringify(config)}` ] );
+            let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);

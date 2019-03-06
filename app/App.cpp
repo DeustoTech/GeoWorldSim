@@ -32,13 +32,21 @@ GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
 
 GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , created_timestamp( QDateTime::currentMSecsSinceEpoch() ) {
 
-    for( int i = 0 ; i < argc ; i++){
-        QString arg = QString( argv[i] );
-        QStringList splitted = arg.split('=');
-        if( splitted.size() == 2 ){
-            qDebug() << QString("Argument found : %1 = %2").arg( splitted.at(0) ).arg( splitted.at(1 ) );
-            this->setProperty( splitted.at(0).toLatin1() , splitted.at(1) );
-        }
+    // READ CONFIGURATION (FILE OR JSON)
+    QJsonParseError jerror;
+    QStringList splitted = QString( argv[ argc-1 ] ).split('=');
+    if( splitted[0] == "config" ){
+        this->json_configuration = QJsonDocument::fromJson( splitted[1].toUtf8() , &jerror ).object();
+    }
+    if( splitted[0] == "config_file" ){
+        QFile file( splitted[1] );
+        file.open( QFile::ReadOnly );
+        this->json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
+    }
+
+    if( this->json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
+        qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
+        this->exit( -1 );
     }
 
     Q_ASSERT( !this->getAppId().isEmpty() );
@@ -62,7 +70,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
 }
 
 GWSApp::~GWSApp(){
-    this->setProperty( "id" , QVariant() ); // Set to nu2ll
+    this->json_configuration.remove("id"); // Set to null
 }
 
 /**********************************************************************
@@ -70,11 +78,15 @@ GWSApp::~GWSApp(){
 **********************************************************************/
 
 QString GWSApp::getAppId(){
-    return this->property( "id" ).toString();
+    return this->json_configuration.value( "id" ).toString();
 }
 
 QString GWSApp::getUserId(){
-    return this->property( "user_id" ).toString();
+    return this->json_configuration.value( "user_id" ).toString();
+}
+
+QJsonObject GWSApp::getConfiguration(){
+    return this->json_configuration;
 }
 
 /**********************************************************************

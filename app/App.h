@@ -19,6 +19,7 @@ public:
     // GETTERS
     QString getAppId();
     QString getUserId();
+    QJsonObject getConfiguration();
 
 public slots:
 
@@ -31,6 +32,9 @@ private:
     ~GWSApp();
 
     QNetworkAccessManager http_manager; // HTTP Posts to alerts.geoworldsim.com
+
+    // Configuration provided by arguments
+    QJsonObject json_configuration;
 
     // Times
     const quint64 created_timestamp;

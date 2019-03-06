@@ -1,4 +1,9 @@
-{ "population" : {
+{ 
+"id" : "demo",
+"user_id" : "demo",
+"timeout" : 60,
+"speed" : 60000,
+"population" : {
 
                                     "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,
                                     "marry_age" : "marry_age", "marry_age_margin" : "marry_age_margin" , "life_exp" : "life_exp", "life_exp_margin" : "life_exp_margin", 

@@ -87,28 +87,10 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
 
 
-    // READ CONFIGURATION (FILE OR JSON)
-    QJsonObject json_configuration;
-    QJsonParseError jerror;
-    if( !app->property( "config" ).isNull() ){
-        json_configuration = QJsonDocument::fromJson( app->property( "config" ).toString().toUtf8() , &jerror ).object();
-    }
-    if( !app->property( "config_file" ).isNull() ){
-        QFile file( app->property( "config_file" ).toString() );
-        file.open( QFile::ReadOnly );
-        json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    }
-
-    if( json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
-        qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
-        return -1;
-    }
-
-
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
-    QJsonObject json_population = json_configuration.value("population").toObject();
+    QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
         // Population type:
@@ -165,7 +147,7 @@ int main( int argc, char* argv[] )
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
