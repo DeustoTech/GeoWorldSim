@@ -36,9 +36,11 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     QJsonParseError jerror;
     QStringList splitted = QString( argv[ argc-1 ] ).split('=');
     if( splitted[0] == "config" ){
+        qDebug() << "Found configuration JSON" << splitted[1].toUtf8();
         this->json_configuration = QJsonDocument::fromJson( splitted[1].toUtf8() , &jerror ).object();
     }
     if( splitted[0] == "config_file" ){
+        qDebug() << "Found configuration FILE" << splitted[1].toUtf8();
         QFile file( splitted[1] );
         file.open( QFile::ReadOnly );
         this->json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
