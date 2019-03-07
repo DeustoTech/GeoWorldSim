@@ -57,6 +57,7 @@ app.use( bodyParser.urlencoded({ extended : true }) ); // EXTENDED TRUE NEEDE FO
 
 app.get('/', (req, res) => {
     res.redirect( 'https://geoworldsim.com' );
+    console.log(req.body);
 });
 
 app.post('/api/simulation' , (req, res) => {
@@ -66,6 +67,8 @@ app.post('/api/simulation' , (req, res) => {
     let name = req.body.name || 'New simulation';
     let description = req.body.description;
     let user_id = req.body.user_id
+    
+    console.log(target);
     
     if( !target || !user_id ){
         return res.status(404).send();
