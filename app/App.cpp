@@ -61,9 +61,6 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
         } );
     }
 
-    // Call Parallelism controller to take this as main thread
-    GWSParallelismController::globalInstance();
-
     // Init random generators
     qsrand( QDateTime::currentDateTime().time().second() );
 
