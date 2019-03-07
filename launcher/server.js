@@ -57,6 +57,7 @@ app.use( bodyParser.urlencoded({ extended : true }) ); // EXTENDED TRUE NEEDE FO
 
 app.get('/', (req, res) => {
     res.redirect( 'https://geoworldsim.com' );
+    console.log(req.body);
 });
 
 app.post('/api/simulation' , (req, res) => {
@@ -66,6 +67,8 @@ app.post('/api/simulation' , (req, res) => {
     let name = req.body.name || 'New simulation';
     let description = req.body.description;
     let user_id = req.body.user_id
+    
+    console.log(target);
     
     if( !target || !user_id ){
         return res.status(404).send();
@@ -78,23 +81,27 @@ app.post('/api/simulation' , (req, res) => {
     fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "running" } ) })
     .then( res => res.json() )
     .then( json => {
-        
-            scenario = json;
-            req.body.id = scenario.id;
-            return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
+       
+        if( !json || !json.id ){
+            throw { errors: [ { path: 'scenario', message: 'NOT_CREATED' } ] };
+        }
+
+        scenario = json;
+        req.body.id = scenario.id;
+        return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
     })
     .then( res => res.text() )
     .then( text => {
-        
+
             console.log( `${__dirname}/targets/${target}` , `config=${JSON.stringify(req.body)}` );
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
             child.stdout.on('data', (data) => {
-                console.log(data);
+                //console.log(data.toString());
             });
             child.stderr.on('data', (data) => {
-                console.log(data);
+                //console.log(data.toString());
             });
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);
