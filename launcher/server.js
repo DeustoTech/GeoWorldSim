@@ -89,8 +89,16 @@ app.post('/api/simulation' , (req, res) => {
     .then( res => res.text() )
     .then( text => {
         
+            console.log( `${__dirname}/targets/${target}` , `config=${JSON.stringify(req.body)}` );
+        
             let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
+            child.stdout.on('data', (data) => {
+                console.log(data);
+            });
+            child.stderr.on('data', (data) => {
+                console.log(data);
+            });
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);
                 clearTimeout( timer );
