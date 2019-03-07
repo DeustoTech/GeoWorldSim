@@ -57,27 +57,29 @@ app.use( bodyParser.urlencoded({ extended : true }) ); // EXTENDED TRUE NEEDE FO
 
 app.get('/', (req, res) => {
     res.redirect( 'https://geoworldsim.com' );
-    console.log(req.body);
 });
 
 app.post('/api/simulation' , (req, res) => {
    
-    let target = req.body.target;
-    let timeout = req.body.timeout || 60;
-    let name = req.body.name || 'New simulation';
-    let description = req.body.description;
-    let user_id = req.body.user_id
-    
-    console.log(target);
+    let configuration = req.body;
+    let target = configuration.target;
+    let timeout = configuration.timeout || 60;
+    let name = configuration.name || 'New simulation';
+    let description = configuration.description;
+    let user_id = configuration.user_id;
+
     
     if( !target || !user_id ){
         return res.status(404).send();
     }
 
+    const {promisify} = require('util');
     const fetch = require('node-fetch');
     const { spawn } = require('child_process');
+    const fs = require('fs');
     let scenario = false;
-        
+    let filename = false;
+
     fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "running" } ) })
     .then( res => res.json() )
     .then( json => {
@@ -87,29 +89,48 @@ app.post('/api/simulation' , (req, res) => {
         }
 
         scenario = json;
-        req.body.id = scenario.id;
+        configuration.id = scenario.id;
+        filename = `${__dirname}/${scenario.id}.json`;
+	
+ 	return new Promise( (resolve , reject) => {
+            var config = JSON.stringify(configuration);
+           fs.writeFileSync( filename , config , 'utf8');
+           resolve();
+        });
+    })
+    .then( f => {
+
+	    var config_string = `config_file=${filename}`;
+	    
+        let child
+        try {
+            console.log( `${__dirname}/targets/${target}`, [ config_string ] );
+            child = spawn( `${__dirname}/targets/${target}`, [ config_string ] );
+        } catch( err ){ console.log(1 , err) }
+        
+
+        let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
+        child.stdout.on('data', (data) => {
+            console.log(data.toString());
+        });
+        child.stderr.on('data', (data) => {
+            console.log(data.toString());
+        });
+        child.on('exit', (code , signal) => {
+            
+            console.log(`child process exited with code ${code}`);
+            clearTimeout( timer );
+            fs.unlinkSync( filename );
+            
+        });
+            
+    })
+    .then( data => {
+    
         return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
     })
     .then( res => res.text() )
     .then( text => {
-
-            console.log( `${__dirname}/targets/${target}` , `config=${JSON.stringify(req.body)}` );
-        
-            let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
-            let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
-            child.stdout.on('data', (data) => {
-                //console.log(data.toString());
-            });
-            child.stderr.on('data', (data) => {
-                //console.log(data.toString());
-            });
-            child.on('exit', (code , signal) => {
-                console.log(`child process exited with code ${code}`);
-                clearTimeout( timer );
-            });
-            
-    })
-    .then( data => {
         res.send( scenario );
     })
     .catch( err => {
