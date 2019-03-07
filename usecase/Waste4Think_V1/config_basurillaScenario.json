@@ -8,9 +8,7 @@
 
     "citizens" 	: { "template" : { "@gwsclass": "HumanAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "incrORGANIC" : 0.009255, "incrRESIDUAL" : 0.65684, "incrPACKAGING" : 0.06562, "incrGLASS" : 0.06461, "incrPAPER" : 0.04827, "RESIDUAL" : 0 , "PACKAGING" : 0 , "GLASS" : 0 , "PAPER" : 0 , "ORGANIC" : 0 , "geometry" : { "@gwsclass" : "GWSGeometry" } , "color" : "Gray" , "birth" : -1 , 
     "@behaviours": [  
-                                 { "@gwsclass": "GenerateAgentGeometryBehaviour", "start" : true , "id": "GEOM", "duration": 0, "x_value": "<X>", "y_value": "<Y>", "nexts" : ["RAND_NUM1"] } ,
-                                 
-                                 { "@gwsclass": "GenerateRandomValueBehaviour", "id": "RAND_NUM1", "duration": 0, "store_random_value_as": "hour", "factor_to_multiply_random_value_with" : 12, "nexts" : ["RAND_NUM2"] } ,
+                                 { "@gwsclass": "GenerateRandomValueBehaviour", "start" : true , "id": "RAND_NUM1", "duration": 0, "store_random_value_as": "hour", "factor_to_multiply_random_value_with" : 12, "nexts" : ["RAND_NUM2"] } ,
                                  { "@gwsclass": "GenerateRandomValueBehaviour", "id": "RAND_NUM2", "duration": 0, "store_random_value_as": "minute", "factor_to_multiply_random_value_with" : 60, "nexts" : ["SET_HOUR"] } ,
                                  
                                  { "@gwsclass": "MathAgentPropertyBehaviour", "id": "SET_HOUR", "duration": 0, "agent_to_operate_on_id" : "<id>" , "property_to_modify" : "hour" , "math_operator": "+", "operand_value": 7, "nexts" : ["HOUSEHOLD_RESIDUAL"] } ,
