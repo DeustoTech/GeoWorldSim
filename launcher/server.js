@@ -81,23 +81,28 @@ app.post('/api/simulation' , (req, res) => {
     fetch( `https://history.geoworldsim.com/api/scenario?user_id=${user_id}` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify( { name : name , description : description , status : "running" } ) })
     .then( res => res.json() )
     .then( json => {
-        
+       
+	    if( !json ){
+	    	throw { path : 'simulation' , message : 'NOT FOUND' };
+	    }
+
             scenario = json;
-            req.body.id = scenario.id;
             return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
     })
     .then( res => res.text() )
     .then( text => {
         
+	    req.body.id = scenario.id;
+
             console.log( `${__dirname}/targets/${target}` , `config=${JSON.stringify(req.body)}` );
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
             child.stdout.on('data', (data) => {
-                console.log(data);
+                //console.log(data);
             });
             child.stderr.on('data', (data) => {
-                console.log(data);
+                //console.log(data);
             });
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);
