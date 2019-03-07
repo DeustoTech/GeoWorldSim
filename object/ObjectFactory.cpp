@@ -25,7 +25,6 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 }
 
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
-    this->moveToThread( GWSParallelismController::globalInstance()->getThread( qrand() ) );
 
     // Register basic types
     this->registerType( GWSAgent::staticMetaObject );

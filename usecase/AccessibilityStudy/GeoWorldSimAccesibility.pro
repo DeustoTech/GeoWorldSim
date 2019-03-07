@@ -52,7 +52,6 @@ HEADERS += \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
     ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
         # UTILS
-    ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
     ../../util/io/csv/CsvImporter.h \
     ../../util/io/ImporterExporter.h \
@@ -121,7 +120,6 @@ SOURCES += mainAccesibility.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
     ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
         # UTILS
-    ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
