@@ -147,6 +147,11 @@ void GWSExecutionEnvironment::run(){
     this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
     emit this->runningExecutionSignal();
+
+    int timeout = GWSApp::globalInstance()->getConfiguration().value("timeout").toInt( 60 );
+    QTimer::singleShot( timeout * 1000 , []{
+        GWSApp::globalInstance()->exit( 0 );
+    });
 }
 
 void GWSExecutionEnvironment::behave(){
