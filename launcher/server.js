@@ -82,27 +82,26 @@ app.post('/api/simulation' , (req, res) => {
     .then( res => res.json() )
     .then( json => {
        
-	    if( !json ){
-	    	throw { path : 'simulation' , message : 'NOT FOUND' };
-	    }
+        if( !json || !json.id ){
+            throw { errors: [ { path: 'scenario', message: 'NOT_CREATED' } ] };
+        }
 
-            scenario = json;
-            return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
+        scenario = json;
+        req.body.id = scenario.id;
+        return fetch( `https://history.geoworldsim.com/api/scenario/${scenario.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
     })
     .then( res => res.text() )
     .then( text => {
-        
-	    req.body.id = scenario.id;
 
             console.log( `${__dirname}/targets/${target}` , `config=${JSON.stringify(req.body)}` );
         
             let child = spawn( `${__dirname}/targets/${target}` , [ `config=${JSON.stringify(req.body)}` ] );
             let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
             child.stdout.on('data', (data) => {
-                //console.log(data);
+                //console.log(data.toString());
             });
             child.stderr.on('data', (data) => {
-                //console.log(data);
+                //console.log(data.toString());
             });
             child.on('exit', (code , signal) => {
                 console.log(`child process exited with code ${code}`);
