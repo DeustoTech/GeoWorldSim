@@ -100,7 +100,7 @@ app.post('/api/simulation' , async (req, res) => {
     } catch( err ){
         res.status(500).send( err );
         console.log( 'Error launching simulation' , err );
-    });
+    };
     
 });
 
