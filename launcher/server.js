@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     res.redirect( 'https://geoworldsim.com' );
 });
 
-app.post('/api/simulation' , async (req, res) => {
+app.post('/' , async (req, res) => {
     
     try {
         
