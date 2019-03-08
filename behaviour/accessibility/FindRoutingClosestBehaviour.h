@@ -16,7 +16,7 @@ public:
     static QString TRANSPORT_NETWORK_TYPE;
     static QString STORE_ROUTING_CLOSEST_ID_AS;
     //static QString STORE_CLOSEST_ROUTE_AS;
-    static QString STORE_CLOSEST_ROUTE_DISTANCE_AS;
+    static QString STORE_ROUTING_DISTANCE_AS;
     static QString STORE_ROUTING_CLOSEST_X_AS;
     static QString STORE_ROUTING_CLOSEST_Y_AS;
     static QString NEXTS;

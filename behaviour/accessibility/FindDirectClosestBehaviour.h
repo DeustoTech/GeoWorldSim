@@ -16,8 +16,8 @@ public:
     static QString STORE_DIRECT_CLOSEST_ID_AS;
     static QString STORE_DIRECT_CLOSEST_X_AS;
     static QString STORE_DIRECT_CLOSEST_Y_AS;
-    static QString STORE_DIRECT_CLOSEST_DISTANCE_AS;
-    static QString NEXT;
+    static QString STORE_DIRECT_DISTANCE_AS;
+    static QString NEXTS;
     static QString NEXTS_IF_NO_DIRECT_CLOSEST_FOUND;
 
 protected:

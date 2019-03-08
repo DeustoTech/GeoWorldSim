@@ -12,8 +12,8 @@ QString FindDirectClosestBehaviour::AGENT_TO_ACCESS_TYPE = "facility_type";  // 
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_ID_AS = "store_direct_closest_id_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_X_AS = "store_direct_closest_x_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_Y_AS = "store_direct_closest_y_as";
-QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_DISTANCE_AS = "store_direct_closest_distance_as";
-QString FindDirectClosestBehaviour::NEXT = "next";
+QString FindDirectClosestBehaviour::STORE_DIRECT_DISTANCE_AS = "store_direct_distance_as";
+QString FindDirectClosestBehaviour::NEXTS = "nexts";
 QString FindDirectClosestBehaviour::NEXTS_IF_NO_DIRECT_CLOSEST_FOUND = "nexts_if_no_direct_closest_found";
 
 
@@ -51,7 +51,7 @@ QJsonArray FindDirectClosestBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_agent_id" ) , nearestAgentId );
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_X_AS ).toString( "direct_closest_agent_x" ) , nearestAgentCoors.getX() );
     agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_Y_AS ).toString( "direct_closest_agent_y" ) , nearestAgentCoors.getY() );
-    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_DISTANCE_AS ).toString("direct_closest_agent_distance") , distanceToNearestAgent.number() );
+    agent->setProperty( this->getProperty( STORE_DIRECT_DISTANCE_AS ).toString("direct_closest_agent_distance") , distanceToNearestAgent.number() );
 
-    return this->getProperty( NEXT ).toArray();
+    return this->getProperty( NEXTS ).toArray();
 }

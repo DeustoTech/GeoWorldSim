@@ -8,11 +8,10 @@
 QString FindRoutingClosestBehaviour::AGENT_TO_ACCESS_TYPE = "facility_type";  // e.g. glass ContainerAgent
 QString FindRoutingClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  //
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ID_AS = "store_routing_closest_id_as";
-//QString FindRoutingClosestBehaviour::STORE_CLOSEST_ROUTE_AS = "store_closest_route_as";
-QString FindRoutingClosestBehaviour::STORE_CLOSEST_ROUTE_DISTANCE_AS = "store_closest_route_distance_as";
+QString FindRoutingClosestBehaviour::STORE_ROUTING_DISTANCE_AS = "store_routing_distance_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_X_AS = "store_routing_closest_agent_x_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_Y_AS = "store_routing_closest_agent_y_as";
-QString FindRoutingClosestBehaviour::NEXTS = "next";
+QString FindRoutingClosestBehaviour::NEXTS = "nexts";
 QString FindRoutingClosestBehaviour::NEXTS_IF_NO_ROUTING_CLOSEST_FOUND = "nexts_if_no_routing_closest_found";
 
 
@@ -78,7 +77,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_agent_id" ) , closest_agent_id );
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_agent_x" ) , closest_coor_and_route.first.getX() );
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_agent_y" ) , closest_coor_and_route.first.getY() );
-    agent->setProperty( this->getProperty( STORE_CLOSEST_ROUTE_DISTANCE_AS ).toString("routing_closest_agent_distance") , closest_route_distance.number() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_DISTANCE_AS ).toString("routing_closest_agent_distance") , closest_route_distance.number() );
 
     // Set next behaviours:
     return this->getProperty( NEXTS ).toArray();
