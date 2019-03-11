@@ -92,10 +92,13 @@ app.post('/' , async (req, res) => {
         // PROCESS FINISHED OR CRASHED
         child.on('exit', (code , signal) => {
             console.log(`child process exited with code ${code}`);
-            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : { status : code != 0 ? 'crashed' : 'finished' } })
+            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : { status : (code != 0 ? 'crashed' : 'finished') } })
 		.then( () => { 
+			console.log( 'PUT MADE' );
 			clearTimeout( timer );
 			fs.unlinkSync( filename );
+		})
+		.catch( err => {
 		});
         });
         

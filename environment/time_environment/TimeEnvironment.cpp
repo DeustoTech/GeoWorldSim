@@ -14,8 +14,8 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 }
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
-    qInfo() << "TimeEnvironment created";
-    this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble("1");
+    this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble(1);
+    qInfo() << "TimeEnvironment created with speed" << this->time_speed;
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
