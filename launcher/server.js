@@ -81,7 +81,7 @@ app.post('/' , async (req, res) => {
         var child = spawn( `${__dirname}/targets/${configuration.target}`, [ `config_file=${filename}` ] );
         
         // SET TIMEOUT
-        let timer = setTimeout( () => { child.kill() } , (timeout * 1000) );
+        let timer = false;//setTimeout( () => { child.kill() } , (configuration.timeout * 1000) || 600000 );
         child.stdout.on('data', (data) => {
             console.log(data.toString());
         });
