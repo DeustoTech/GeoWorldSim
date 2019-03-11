@@ -21,9 +21,6 @@ QJsonArray  StopAgentBehaviour::behave(){
     env->unregisterAgent( agent );
 
     QJsonObject json = agent->serialize();
-    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , false );
-    json.insert( GWSExecutionEnvironment::AGENT_BIRTH_PROP , false );
-
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
 
     return QJsonArray();
