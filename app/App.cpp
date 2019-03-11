@@ -32,19 +32,17 @@ GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
 
 GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , created_timestamp( QDateTime::currentMSecsSinceEpoch() ) {
 
-    // READ CONFIGURATION (FILE OR JSON)
+    // READ CONFIGURATION FILE
     QJsonParseError jerror;
-    QStringList splitted = QString( argv[ argc-1 ] ).split('=');
-    if( splitted[0] == "config" ){
-        qDebug() << "Found configuration JSON" << splitted[1].toUtf8();
-        this->json_configuration = QJsonDocument::fromJson( splitted[1].toUtf8() , &jerror ).object();
+    if( argc <= 1 ){
+        qCritical() << QString("No JSON configuration found");
+        this->exit( -1 );
     }
-    if( splitted[0] == "config_file" ){
-        qDebug() << "Found configuration FILE" << splitted[1].toUtf8();
-        QFile file( splitted[1] );
-        file.open( QFile::ReadOnly );
-        this->json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    }
+
+    qDebug() << "Found configuration FILE" << argv[1];
+    QFile file( argv[1] );
+    file.open( QFile::ReadOnly );
+    this->json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
 
     if( this->json_configuration.isEmpty() || jerror.error != QJsonParseError::NoError ){
         qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
