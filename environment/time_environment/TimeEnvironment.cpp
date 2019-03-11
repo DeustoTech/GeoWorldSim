@@ -1,6 +1,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include "../../app/App.h"
 #include "TimeEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
@@ -14,6 +15,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
     qInfo() << "TimeEnvironment created";
+    this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble("1");
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
