@@ -88,8 +88,11 @@ app.post('/' , async (req, res) => {
         child.stderr.on('data', (data) => {
             console.log(data.toString());
         });
+        
+        // PROCESS FINISHED OR CRASHED
         child.on('exit', (code , signal) => {
             console.log(`child process exited with code ${code}`);
+            await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : { status : code != 0 ? 'crashed' : 'finished' } });
             clearTimeout( timer );
             fs.unlinkSync( filename );
         });
