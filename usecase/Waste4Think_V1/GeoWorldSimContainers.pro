@@ -23,7 +23,7 @@ QMAKE_CFLAGS += -march=native -O2 -pipe
 # FORCE C++11
 QMAKE_CXXFLAGS += -std=c++14
 
-TARGET      = gwsbasurillas
+TARGET      = gwswastesimulation
 CONFIG      += console
 CONFIG      -= app_bundle
 

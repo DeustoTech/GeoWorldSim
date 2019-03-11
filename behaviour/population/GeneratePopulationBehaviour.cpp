@@ -65,7 +65,7 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     int agent_age = this->getAge( agent );
 
     // Color gradient
-    int gradient = qMax( 255.0 , (agent_age / 80.0) * 255.0);
+    int gradient = qMin( 255.0 , (agent_age / 80.0) * 255.0);
     agent->setProperty( "color" , QString( "rgb(%1,%2,128)" ).arg( gradient ).arg( 255 - gradient ) );
 
     // Check if the person lives or dies:
