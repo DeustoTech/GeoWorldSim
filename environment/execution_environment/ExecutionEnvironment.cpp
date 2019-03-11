@@ -225,8 +225,6 @@ void GWSExecutionEnvironment::behave(){
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
                .arg( who_is_min_tick ? who_is_min_tick->getId() : "" );
 
-    this->setProperty( CURRENT_TICK_TIME , min_tick );
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( this->serialize() );
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }
 
