@@ -29,6 +29,7 @@
 #include "../../behaviour/accessibility/FindDirectClosestBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
 #include "../../behaviour/random/ChooseRandomValueFromSetBehaviour.h"
+#include "../../behaviour/property/AddGWSGroupPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( DetermineAccessibilityBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( AddGWSGroupPropertyBehaviour::staticMetaObject );
 
 
     // CREATE POPULATION

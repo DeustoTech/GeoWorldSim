@@ -94,7 +94,8 @@ HEADERS += \
     ../../environment/network_environment/NetworkEdge.h \
         # AGENTS
     #agent/person/Person.h \
-    HumanAgent.h
+    HumanAgent.h \
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
 
 
 
@@ -163,7 +164,8 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
-    HumanAgent.cpp
+    HumanAgent.cpp \
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
