@@ -28,7 +28,7 @@ QJsonArray AddGWSGroupPropertyBehaviour::behave(){
 
     agent->setProperty( GWS_INHERITANCE_FAMILY_PROP , gws_group );
 
-    qDebug() << agent->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
+  //  qDebug() << agent->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
 
     return this->getProperty( NEXT ).toArray();
 
