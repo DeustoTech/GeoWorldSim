@@ -6,15 +6,30 @@
 "population" : {
 
 
-                "citizens" 	: { "template" : { "@gwsclass": "GWSAgent", "@gwsgroups": [ "Citizen" ] , "birth" : -1 , 
-                "@behaviours": [  
-                                { "@gwsclass": "FindDirectClosestBehaviour", "start" : true ,  "duration": 1, "id": "FIND_DIRECT_CLOSEST", "facility_type": "Facility", "store_direct_closest_id_as": "direct_closest_id" , "store_direct_closest_x_as": "direct_closest_x", "store_direct_closest_y_as": "direct_closest_y" , "store_direct_closest_distance_as": "direct_closest_distance" , "nexts": [ "ADD_GWSGROUP" ]  , "nexts_if_no_direct_closest_found" : ["ADD_GWSGROUP"] },
-                 
-                                { "@gwsclass": "AddGWSGroupPropertyBehaviour" ,  "id": "ADD_GWSGROUP" , "property_to_add_to_gwsgroup" : "<direct_closest_id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                "citizens" : { 
+                    "template" : { "@gwsclass" : "GWSAgent" , "type" : "Citizen" , "@gwsgroups" : [ "Citizen" ] , "color" : "gray" , "birth" : -1 , "@behaviours" : [
+                        
+                        { "@gwsclass" : "SendAgentSnapshotBehaviour" , "start" : true,  "id" : "DISPLAY" , "agent_to_send_id" : "<id>" , "duration" : 1 , "nexts" : ["FIND_DIRECT_CLOSEST"] },
+                        
+                        { "@gwsclass": "FindDirectClosestBehaviour" , "duration" : 1, "id" : "FIND_DIRECT_CLOSEST", "facility_type" : "Facility" , "store_direct_closest_id_as" : "straight_line_closest_id" , "store_direct_closest_x_as" : "straight_line_closest_x" , "store_direct_closest_y_as" : "straight_line_closest_y" , "store_direct_distance_as" : "straight_line_distance" , "nexts" : [ "FIND_ROUTING_CLOSEST" ] , "nexts_if_no_direct_closest_found" : ["FIND_ROUTING_CLOSEST"] },
+                        
+                        { "@gwsclass": "FindRoutingClosestBehaviour" , "duration" : 1 , "id" : "FIND_ROUTING_CLOSEST", "facility_type" : "Facility" , "transport_network_type"  : "Road" , "store_routing_closest_id_as" : "routing_closest_id" , "store_routing_closest_agent_x_as" : "routing_closest_x", "store_routing_closest_agent_y_as" : "routing_closest_y" , "store_routing_distance_as" : "routing_closest_distance" , "nexts" : [ "ADD_GWSGROUP" ]  , "nexts_if_no_routing_closest_found" : ["CHECK_ROUTING_CLOSEST"] },
+             
+                        { "@gwsclass": "AddGWSGroupPropertyBehaviour" ,  "id" : "ADD_GWSGROUP" , "property_to_add_to_gwsgroup" : "<routing_closest_id>" , "duration" : 1 ,  "nexts" : ["CHECK_ROUTING_CLOSEST"] },
+                        
+                        { "@gwsclass": "CompareAgentPropertyBehaviour" ,  "id" : "CHECK_ROUTING_CLOSEST" ,  "agent_property_to_compare" : "routing_closest_distance" , "comparison_operator" : "<=" , "comparison_value" : 300 , "duration" : 1 , "nexts_if_true" : ["SET_TO_GREEN"] , "nexts_if_false" : ["CHECK_DIRECT_CLOSEST"] },
                                 
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                        { "@gwsclass": "CompareAgentPropertyBehaviour" ,  "id" : "CHECK_DIRECT_CLOSEST" , "agent_property_to_compare" : "straight_line_distance" , "comparison_operator" : ">" , "comparison_value" : 300 , "duration": 1 , "nexts_if_true" : ["SET_TO_RED"] , "nexts_if_false" : ["SET_TO_ORANGE"] },
+                                
+                        { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id" : "SET_TO_GREEN" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "green" , "duration" : 1 , "nexts" : ["DISPLAY_RESULT"] },
+                                
+                        { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id" : "SET_TO_RED" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "red" , "duration" : 1 , "nexts" : ["DISPLAY_RESULT"] },
+                                
+                        { "@gwsclass": "SetAgentPropertyBehaviour" , "id" : "SET_TO_ORANGE" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "orange" , "duration" : 1 , "nexts" : ["DISPLAY_RESULT"] },
+                                
+                        { "@gwsclass": "SendAgentSnapshotBehaviour" , "id" : "DISPLAY_RESULT" , "agent_to_send_id" : "<id>" , "duration" : 1 , "nexts" : ["STOP"] },
                 
-                                { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
+                        { "@gwsclass": "StopAgentBehaviour" , "id" : "STOP" }
                 ] 
                 } , 
 
@@ -38,7 +53,16 @@
                       "datasources" :  [
                                          { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", 
                                             "entities" : ["SortingType:5"] }  ]
-                } 
+                } , 
+                
+                
+                
+                "roads" 	: { "template" : 
+                                 { "@gwsclass": "GWSAgent" , "@gwsgroups"  : [ "Road", "Footway" ] , "maxspeed" : 4   }  , 
+                                "datasources" :  [
+                                      { "id" : "273589aa-3365-49ef-98aa-606e6e3f8337-ca7a0113-50ab-50d0-9dae-11" , 
+                                        "entities" : ["Entity"] }
+                        ]}
                 
                 
                 
