@@ -172,16 +172,18 @@ void GWSExecutionEnvironment::behave(){
     int ticked_agents = 0;
 
     foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
-        if( agent ){
-            qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
-            if( agent_time <= 0 ){
-                agents_to_tick = true;
-            } else if( (agent->getProperty( GWSObject::GWS_SIM_ID_PROP ).toString() == GWSApp::globalInstance()->getAppId() || agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool()) && !agent->isBusy() ){
-                min_tick = qMin( min_tick , agent_time );
-                if( min_tick == agent_time ){ who_is_min_tick = agent; }
-                agents_to_tick = true;
-            }
+        if( agent.isNull() || agent->isBusy() ){
+            continue;
         }
+        if( !agent->getProperty( "scenario_id" ).isNull() && agent->getProperty( "scenario_id" ).toString() != GWSApp::globalInstance()->getAppId() || !agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+            continue;
+        }
+
+        qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+
+        if( agent_time >= 0 ){ min_tick = qMin( min_tick , agent_time ); }
+        if( min_tick == agent_time ){ who_is_min_tick = agent; }
+        agents_to_tick = true;
     }
 
     if( agents_to_tick ){

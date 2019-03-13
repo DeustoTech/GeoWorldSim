@@ -12,6 +12,7 @@ GWSExternalListener::GWSExternalListener( QString socket_id ) : GWSExternalCommu
   this->websocket.connect( &this->websocket , &QWebSocket::textMessageReceived , [this](const QString message){
         qDebug() << "Received message" << message.toUtf8();
         QJsonObject json = QJsonDocument::fromJson( message.toUtf8() ).object();
+        json.insert( "scenario_id" , this->socket_id );
         emit this->dataReceivedSignal( json );
     });
 }
