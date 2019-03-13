@@ -1,7 +1,7 @@
 #include "AddGWSGroupPropertyBehaviour.h"
 
 QString AddGWSGroupPropertyBehaviour::PROPERTY_TO_ADD_TO_GWSGROUP = "property_to_add_to_gwsgroup";
-QString AddGWSGroupPropertyBehaviour::NEXT = "nexts";
+QString AddGWSGroupPropertyBehaviour::NEXTS = "nexts";
 
 
 AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
@@ -10,11 +10,9 @@ AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
 }
 
 
-
 /************************************************************
  * SLOTS
  ***********************************************************/
-
 
 QJsonArray AddGWSGroupPropertyBehaviour::behave(){
 
@@ -30,7 +28,6 @@ QJsonArray AddGWSGroupPropertyBehaviour::behave(){
 
   //  qDebug() << agent->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
 
-    return this->getProperty( NEXT ).toArray();
-
+    return this->getProperty( NEXTS ).toArray();
 
 }
