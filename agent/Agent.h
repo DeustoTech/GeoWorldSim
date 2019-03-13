@@ -93,6 +93,7 @@ public slots:
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     virtual void tick() final; // Acts as a behave() wrapper
+
 protected slots:
     virtual void behave(); // Behaviour, To be implemented by children, must be synchronous because tick is already invoked asyncrhonously
 

@@ -290,6 +290,7 @@ void GWSAgent::behave(){
     qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
     if( this->to_be_executed_behaviours.isEmpty() ){
+        qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getId() );
         return;
     }
 

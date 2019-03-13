@@ -2,7 +2,7 @@
 #define GWSNETWORKENVIRONMENT_H
 
 #include <QObject>
-#include <QMutex>
+#include <QReadWriteLock>
 
 #include "../../environment/Environment.h"
 #include "NetworkEdge.h"
@@ -52,7 +52,7 @@ private:
     QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 
     // Mutex, for avoiding concurrency
-    mutable QMutex mutex;
+    mutable QReadWriteLock mutex;
 
 };
 

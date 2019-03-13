@@ -62,7 +62,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         // If calculated a route whose first point is even further than the destination, don¡t follow the route
         // Avoids recalculating a route once finished routing and freeflowing to destination
         if( !this->pending_route.isEmpty() ){
-            GWSCoordinate new_route_start = this->pending_route.at( 0 )->getFrom();
+            GWSCoordinate new_route_start = this->pending_route.at( 0 )->getFromCoordinate();
             if( new_route_start == this->last_route_started_from ){
                 this->pending_route.clear();
             } else {

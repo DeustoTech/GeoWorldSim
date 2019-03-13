@@ -81,7 +81,7 @@ HEADERS += \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.h \
-    ../../util/routing/GraphEdgeVisitor.h \
+    ../../util/routing/EdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## GRID
     ../../util/grid/Grid.h \
@@ -163,7 +163,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/Routing.cpp \
-    ../../util/routing/GraphEdgeVisitor.cpp \
+    ../../util/routing/EdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \

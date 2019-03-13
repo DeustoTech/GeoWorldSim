@@ -51,7 +51,7 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             continue;
         }
 
-        this->mutex.lock();
+        this->mutex.lockForRead();
 
         // Check in cache
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
@@ -76,6 +76,7 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             continue;
         }
 
+
         // Get route
         lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
@@ -99,7 +100,7 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
     // Compute dijkstra shortest path
     lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash  );
 
-    this->mutex.lock();
+    this->mutex.lockForRead();
     if ( this->routing_graph->id( start ) < 0 ){
         qWarning() << QString("Start (%1) is not in graph").arg( from_one_hash );
         this->mutex.unlock();
@@ -163,7 +164,7 @@ void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
         QString from_hash = edge->getFromNodeId();
         lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
 
-        this->mutex.lock();
+        this->mutex.lockForWrite();
         if( this->routing_graph->id( s ) <= 0 ){
             s = this->routing_graph->addNode();
             this->hash_to_node->insert( from_hash , s );
@@ -174,7 +175,7 @@ void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
         QString to_hash = edge->getToNodeId();
         lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
 
-        this->mutex.lock();
+        this->mutex.lockForWrite();
         if( this->routing_graph->id( e ) <= 0 ){
             e = this->routing_graph->addNode();
             this->hash_to_node->insert( to_hash , e );
@@ -182,7 +183,7 @@ void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
         this->mutex.unlock();
 
         // Create arc and link it to edge
-        this->mutex.lock();
+        this->mutex.lockForWrite();
         lemon::ListDigraph::Arc arc = this->routing_graph->addArc(s , e);
         this->arc_to_edges->insert( arc , edge );
         this->graph_edge_visitor->arc_costs.insert( arc , edge->getEdgeCost() );

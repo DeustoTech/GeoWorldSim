@@ -55,7 +55,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     {
         // From Agent to route start
-        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 )->getFrom() );
+        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 )->getFromCoordinate() );
 
         // During route start til route end
         foreach ( QSharedPointer<GWSNetworkEdge> edge , closest_route ){
@@ -63,14 +63,14 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
         }
 
         // From route end to nearest_agent
-        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 )->getTo() );
+        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 )->getToCoordinate() );
     }
 
     // Extract and store closest node ID and coordinates:
     QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
 
     // Extract agent from ID:
-   //QSharedPointer<GWSAgent> closest_agent = GWSAgentEnvironment::globalInstance()->getById( closest_agent_id );
+    //QSharedPointer<GWSAgent> closest_agent = GWSAgentEnvironment::globalInstance()->getById( closest_agent_id );
     //agent->setProperty( "color" , closest_agent->getProperty( "color" ));
 
 

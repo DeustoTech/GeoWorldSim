@@ -215,7 +215,7 @@ void GWSExecutionEnvironment::behave(){
 
     // Calculate to call again this function in (cycleFrequency - spent time) time
     if( this->isRunning() ){
-        this->timer->singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed()) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
+        this->timer->singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
     qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )

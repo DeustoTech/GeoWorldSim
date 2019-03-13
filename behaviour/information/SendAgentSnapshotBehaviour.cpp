@@ -20,7 +20,5 @@ QJsonArray SendAgentSnapshotBehaviour::behave(){
     QSharedPointer<GWSAgent> agent_to_send = GWSAgentEnvironment::globalInstance()->getById( agent_to_send_id );
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( agent_to_send->serialize() );
 
-
     return this->getProperty( NEXTS ).toArray();
-
 }

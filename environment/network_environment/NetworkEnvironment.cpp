@@ -123,7 +123,7 @@ QList< QList< QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShor
 QList< QList<QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
     if( this->network_routings.keys().contains( class_name ) ){
 
-        this->mutex.lock();
+        this->mutex.lockForRead();
         QString snapped_from = this->getNearestNodeID( from_one , class_name );
         QStringList snapped_to_many;
         foreach( GWSCoordinate c , to_many ) {
@@ -175,7 +175,7 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
                 // Insert new spatial graph with the agents class
                 if( !keys.contains( family ) ){
 
-                    this->mutex.lock();
+                    this->mutex.lockForWrite();
                     this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree() ) );
                     this->network_routings.insert( family , QSharedPointer< GWSRouting >( new GWSRouting() ) );
                     this->mutex.unlock();

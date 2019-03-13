@@ -71,22 +71,26 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     Q_UNUSED( parent );
 
     // Required properties
-    if( json.keys().contains( GWS_SIM_ID_PROP ) ){ this->setProperty( GWS_SIM_ID_PROP , json.value( GWS_SIM_ID_PROP ).toString() ); }
-    if( json.keys().contains( GWS_ID_PROP ) ){ this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
-    if( json.keys().contains( GWS_CLASS_PROP ) ){ this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
+    QStringList parsed_properties;
+    if( json.keys().contains( GWS_SIM_ID_PROP ) ){  parsed_properties.append( GWS_SIM_ID_PROP ); this->setProperty( GWS_SIM_ID_PROP , json.value( GWS_SIM_ID_PROP ).toString() ); }
+    if( json.keys().contains( GWS_ID_PROP ) ){      parsed_properties.append( GWS_ID_PROP ); this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
+    if( json.keys().contains( GWS_CLASS_PROP ) ){   parsed_properties.append( GWS_CLASS_PROP ); this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
+        parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP);
         QJsonArray arr;
         arr.append( json.value( GWS_INHERITANCE_FAMILY_PROP ).toString() );
         this->setProperty( GWS_INHERITANCE_FAMILY_PROP , arr );
     }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isArray() ){
+        parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP );
         this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
     }
 
     // Remaining properties
     foreach( QString property_name , json.keys() ){
-        if( !this->getProperty( property_name ).isNull() ){
-            continue; // Already inserted
+
+        if( parsed_properties.contains( property_name ) ){
+            continue; // Do not overwrite just parsed properties
         }
 
         // Get the value to be inserted

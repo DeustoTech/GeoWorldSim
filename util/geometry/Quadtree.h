@@ -2,7 +2,7 @@
 #define GWSQUADTREE_H
 
 #include <QObject>
-#include <QMutex>
+#include <QReadWriteLock>
 #include <QMap>
 #include <spatialindex/SpatialIndex.h>
 #include <spatialindex/Region.h>
@@ -67,12 +67,13 @@ public:
 
 protected:
 
-    int createHash( double value , int decimal_amount );
+    const int createHash( double value , int decimal_amount ) const;
 
 private:
 
-    QMutex mutex;
+    QReadWriteLock mutex;
 
+    QStringList ids_contained;
     QMap< QString , QSharedPointer<GWSObject> > id_to_objects;
     QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
     QMap< unsigned int , QMap< int , QMap< int , QStringList* >* >* > geom_index_layers;
