@@ -18,7 +18,7 @@ private:
     GWSSocialEnvironment(GWSSocialEnvironment const&);
     ~GWSSocialEnvironment();
 
-    QMap< QString , QMap < QString , QList< GWSSocialRelation > > > agent_relations;
+    //QMap< QString , QMap < QString , QList< GWSSocialRelation > > > agent_relations;
 
 };
 

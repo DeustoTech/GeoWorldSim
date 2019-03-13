@@ -57,7 +57,7 @@ SOURCES += \
         ../../util/parallelism/ParallelismController.cpp \
         ../../util/io/log/Logger.cpp \
         ../../util/routing/Routing.cpp \
-        ../../util/routing/GraphEdgeVisitor.cpp \
+        ../../util/routing/EdgeVisitor.cpp \
         ../../util/routing/TSPRouting.cpp \
         ../../util/distributed/ExternalListener.cpp \
         ../../util/distributed/ExternalCommunicator.cpp \
@@ -115,7 +115,7 @@ HEADERS += \
         ../../util/parallelism/ParallelismController.h \
         ../../util/io/log/Logger.h \
         ../../util/routing/Routing.h \
-        ../../util/routing/GraphEdgeVisitor.h \
+        ../../util/routing/EdgeVisitor.h \
         ../../util/routing/TSPRouting.h \
         ../../util/distributed/ExternalListener.h \
         ../../util/distributed/ExternalCommunicator.h \

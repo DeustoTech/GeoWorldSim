@@ -34,7 +34,7 @@ QSharedPointer<GWSAgent> GWSAgentEnvironment::getRandomByClass(QString class_nam
 }
 
 template <class T> QSharedPointer<T> GWSAgentEnvironment::getRandomByClass( QString class_name ){
-    QList<QSharedPointer<T>> all = this->getByClass<T>( class_name );
+    QList< QSharedPointer<T> > all = this->getByClass<T>( class_name );
     return all.at( qrand() % all.size() );
 }
 
@@ -88,7 +88,7 @@ QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByClass( QString class
 }
 
 template <class T> QList<QSharedPointer<T> > GWSAgentEnvironment::getByClass( QString class_name ) const{
-    QList<QSharedPointer<T> > agents;
+    QList< QSharedPointer<T> > agents;
     foreach( QSharedPointer<GWSObject> o , this->environment_agents->getByClass( class_name ) ){
         agents.append( o.dynamicCast<T>() );
     }

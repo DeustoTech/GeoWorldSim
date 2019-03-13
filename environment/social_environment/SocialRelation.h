@@ -15,6 +15,11 @@ public:
     static QString EDGE_FROM_AGENT_PROP;
     static QString EDGE_TO_AGENT_PROP;
 
+    virtual QString getFromNodeId() const;
+    virtual QString getToNodeId() const;
+    virtual QString getFromAgentId() const;
+    virtual QString getToAgentId() const;
+
 private:
     QString relation_type;
 };

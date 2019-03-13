@@ -1,8 +1,8 @@
-#include "GraphEdgeVisitor.h"
+#include "EdgeVisitor.h"
 
 #include "../../util/routing/Routing.h"
 
-GWSGraphEdgeVisitor::GWSGraphEdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){
+GWSEdgeVisitor::GWSEdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){
 }
 
 /**********************************************************************
@@ -17,6 +17,6 @@ GWSGraphEdgeVisitor::GWSGraphEdgeVisitor( lemon::ListDigraph* routing_graph ) : 
  OPERATORS
 **********************************************************************/
 
-double GWSGraphEdgeVisitor::operator [](Key arc) const {
+double GWSEdgeVisitor::operator [](Key arc) const {
     return this->arc_costs.value( arc );
 }

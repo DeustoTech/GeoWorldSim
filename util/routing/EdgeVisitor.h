@@ -1,5 +1,5 @@
-#ifndef GWSGRAPHEDGEVISITOR_H
-#define GWSGRAPHEDGEVISITOR_H
+#ifndef GWSEDGEVISITOR_H
+#define GWSEDGEVISITOR_H
 
 #include <QObject>
 #include <QDebug>
@@ -11,17 +11,17 @@
 
 #include <QMap>
 
-#include "../../environment/network_environment/NetworkEdge.h"
+#include "../../util/graph/Edge.h"
 
 
 QT_FORWARD_DECLARE_CLASS(GWSRouting)
 
-class GWSGraphEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
+class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
 public:
 
-    GWSGraphEdgeVisitor( lemon::ListDigraph* routing_graph );
+    GWSEdgeVisitor( lemon::ListDigraph* routing_graph );
 
     // GETTERS
     QMap< lemon::ListDigraph::Arc , double > arc_costs;
@@ -33,4 +33,4 @@ public:
 
 };
 
-#endif // GWSGRAPHEDGEVISITOR_H
+#endif // GWSEDGEVISITOR_H

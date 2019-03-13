@@ -1,17 +1,17 @@
 #include "Routing.h"
 
-#include "../../util/routing/GraphEdgeVisitor.h"
+#include "../../util/routing/EdgeVisitor.h"
 
 /**
  * @brief RoutingGraph::RoutingGraph
  * @param graph
  */
 GWSRouting::GWSRouting() : GWSObject(){
-    this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSNetworkEdge> >();
-    this->coors_to_node = new QMap< GWSCoordinate , lemon::ListDigraph::Node >();
+    this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , QSharedPointer<GWSEdge> >();
+    this->hash_to_node = new QMap< QString , lemon::ListDigraph::Node >();
     this->routing_graph = new lemon::ListDigraph();
-    this->graph_edge_visitor = new GWSGraphEdgeVisitor( this->routing_graph );
-    this->dijkstra_algorithm = new lemon::Dijkstra< lemon::ListDigraph, GWSGraphEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+    this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
+    this->dijkstra_algorithm = new lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
 }
 
 GWSRouting::~GWSRouting(){
@@ -21,36 +21,30 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-QList<QSharedPointer<GWSNetworkEdge> > GWSRouting::getShortestPath( GWSCoordinate from_coor, GWSCoordinate to_coor ){
-    QList< GWSCoordinate > coors;
-    coors.append( from_coor );
-    coors.append( to_coor );
-    return this->getShortestPath(coors).at(0);
-}
 
-QList<QList<QSharedPointer<GWSNetworkEdge> > > GWSRouting::getShortestPath(QList< GWSCoordinate > ordered_coors ){
-    QList<QList<QSharedPointer<GWSNetworkEdge> > > result_routes;
+QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringList ordered_hashes ){
+    QList<QList<QSharedPointer<GWSEdge> > > result_routes;
 
-    for(int i = 0; i < ordered_coors.size()-1; i++){
+    for(int i = 0; i < ordered_hashes.size()-1; i++){
 
-        QList<QSharedPointer<GWSNetworkEdge> > route;
-        GWSCoordinate from_coor = ordered_coors.at( i );
-        GWSCoordinate to_coor = ordered_coors.at( i+1 );
+        QList< QSharedPointer<GWSEdge> > route;
+        QString from_hash = ordered_hashes.at( i );
+        QString to_hash = ordered_hashes.at( i+1 );
 
-        if( !from_coor.isValid() || !to_coor.isValid() ){
+        if( from_hash.isEmpty() || to_hash.isEmpty() ){
             result_routes.append( route );
             continue;
         }
 
-        if( from_coor == to_coor ){
+        if( from_hash == to_hash ){
             //qDebug() << QString("Asking for same start and end coordinates routing [%1,%2]").arg( from_coor.getX() ).arg( from_coor.getY() );
             result_routes.append( route );
             continue;
         }
 
         // Compute dijkstra shortest path
-        lemon::ListDigraph::Node start = this->coors_to_node->value( from_coor );
-        lemon::ListDigraph::Node end = this->coors_to_node->value( to_coor );
+        lemon::ListDigraph::Node start = this->hash_to_node->value( from_hash );
+        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
 
         if( start == end ){
             result_routes.append( route );
@@ -67,7 +61,7 @@ QList<QList<QSharedPointer<GWSNetworkEdge> > > GWSRouting::getShortestPath(QList
         }
 
         if ( this->routing_graph->id( start ) < 0 || this->routing_graph->id( end ) < 0 ){
-            qDebug() << QString("Start (%1) or end coordinate (%2) are not in graph").arg( from_coor.toString() ).arg( to_coor.toString() );
+            qDebug() << QString("Start (%1) or end nodes (%2) are not in graph").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end );
             result_routes.append( route );
             this->mutex.unlock();
@@ -75,7 +69,7 @@ QList<QList<QSharedPointer<GWSNetworkEdge> > > GWSRouting::getShortestPath(QList
         }
 
         if( !this->dijkstra_algorithm->run( start , end ) ){
-            qWarning() << QString("Can not reach end coordinate (%2) from start (%1)").arg( from_coor.toString() ).arg( to_coor.toString() );
+            qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end );
             result_routes.append( route );
             this->mutex.unlock();
@@ -99,15 +93,15 @@ QList<QList<QSharedPointer<GWSNetworkEdge> > > GWSRouting::getShortestPath(QList
     return result_routes;
 }
 
-QList<QList<QSharedPointer< GWSNetworkEdge> > > GWSRouting::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many ){
-    QList< QList< QSharedPointer<GWSNetworkEdge> > > result_routes;
+QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString from_one_hash , QStringList to_many_hashes ){
+    QList< QList< QSharedPointer<GWSEdge> > > result_routes;
 
     // Compute dijkstra shortest path
-    lemon::ListDigraph::Node start = this->coors_to_node->value( from_one );
+    lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash  );
 
     this->mutex.lock();
     if ( this->routing_graph->id( start ) < 0 ){
-        qWarning() << QString("Start (%1) is not in graph").arg( from_one.toString() );
+        qWarning() << QString("Start (%1) is not in graph").arg( from_one_hash );
         this->mutex.unlock();
         return result_routes;
     }
@@ -116,10 +110,10 @@ QList<QList<QSharedPointer< GWSNetworkEdge> > > GWSRouting::getShortestPaths( GW
     this->dijkstra_algorithm->run( start );
 
     // Iterate all end nodes
-    foreach( GWSCoordinate to_coor , to_many ){
-        QList< QSharedPointer<GWSNetworkEdge> > route = QList< QSharedPointer<GWSNetworkEdge> >();
+    foreach( QString to_hash , to_many_hashes ){
+        QList< QSharedPointer<GWSEdge> > route = QList< QSharedPointer<GWSEdge> >();
 
-        lemon::ListDigraph::Node end = this->coors_to_node->value( to_coor );
+        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
 
         // Check in cache
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
@@ -161,29 +155,29 @@ QList<QList<QSharedPointer< GWSNetworkEdge> > > GWSRouting::getShortestPaths( GW
  SETTERS
 **********************************************************************/
 
-void GWSRouting::upsert(QSharedPointer<GWSNetworkEdge> edge){
+void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
 
     try {
 
         // Create or retrieve edge start node
-        GWSCoordinate from_coor = edge->getFrom();
-        lemon::ListDigraph::Node s = this->coors_to_node->value( from_coor ); // Start node
+        QString from_hash = edge->getFromNodeId();
+        lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
 
         this->mutex.lock();
         if( this->routing_graph->id( s ) <= 0 ){
             s = this->routing_graph->addNode();
-            this->coors_to_node->insert( from_coor , s );
+            this->hash_to_node->insert( from_hash , s );
         }
         this->mutex.unlock();
 
         // Create or retrieve edge end node
-        GWSCoordinate to_coor = edge->getTo();
-        lemon::ListDigraph::Node e = this->coors_to_node->value( to_coor );
+        QString to_hash = edge->getToNodeId();
+        lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
 
         this->mutex.lock();
         if( this->routing_graph->id( e ) <= 0 ){
             e = this->routing_graph->addNode();
-            this->coors_to_node->insert( to_coor , e );
+            this->hash_to_node->insert( to_hash , e );
         }
         this->mutex.unlock();
 
@@ -191,14 +185,14 @@ void GWSRouting::upsert(QSharedPointer<GWSNetworkEdge> edge){
         this->mutex.lock();
         lemon::ListDigraph::Arc arc = this->routing_graph->addArc(s , e);
         this->arc_to_edges->insert( arc , edge );
-        this->graph_edge_visitor->arc_costs.insert( arc , edge->getCost() );
+        this->graph_edge_visitor->arc_costs.insert( arc , edge->getEdgeCost() );
         this->mutex.unlock();
 
     } catch(...){}
 
 }
 
-void GWSRouting::remove(QSharedPointer<GWSNetworkEdge> edge){
+void GWSRouting::remove(QSharedPointer<GWSEdge> edge){
     lemon::ListDigraph::Arc arc = this->arc_to_edges->key( edge );
     if( this->routing_graph->id( arc ) > 0 ){
         this->routing_graph->erase( arc );
@@ -206,10 +200,9 @@ void GWSRouting::remove(QSharedPointer<GWSNetworkEdge> edge){
     }
 }
 
-
-void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSNetworkEdge> > route ){
+void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer<GWSEdge> > route ){
     if( !this->routes_cache.keys().contains( start ) ){
-        this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< QSharedPointer< GWSNetworkEdge> > >() );
+        this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< QSharedPointer< GWSEdge> > >() );
     }
     this->routes_cache[ start ].insert( end , route );
 }

@@ -22,23 +22,31 @@ GWSNetworkEdge::~GWSNetworkEdge(){
 
 void GWSNetworkEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     GWSObject::deserialize( json , parent );
-    this->length = GWSLengthUnit( this->getFrom().getDistance( this->getTo() ) );
+    this->cost = this->getFromCoordinate().getDistance( this->getToCoordinate() ).number();
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-GWSCoordinate GWSNetworkEdge::getFrom() const{
+QString GWSNetworkEdge::getFromNodeId() const{
+    return this->getFromCoordinate().toString();
+}
+
+QString GWSNetworkEdge::getToNodeId() const{
+    return this->getToCoordinate().toString();
+}
+
+GWSCoordinate GWSNetworkEdge::getFromCoordinate() const{
     return GWSCoordinate( this->getProperty( EDGE_FROM_X_PROP ).toDouble() , this->getProperty( EDGE_FROM_Y_PROP ).toDouble() , this->getProperty( EDGE_FROM_Z_PROP ).toDouble() );
 }
 
-GWSCoordinate GWSNetworkEdge::getTo() const{
+GWSCoordinate GWSNetworkEdge::getToCoordinate() const{
     return GWSCoordinate( this->getProperty( EDGE_TO_X_PROP ).toDouble() , this->getProperty( EDGE_TO_Y_PROP ).toDouble() , this->getProperty( EDGE_TO_Z_PROP ).toDouble() );
 }
 
 GWSLengthUnit GWSNetworkEdge::getLength() const {
-    return this->length;
+    return GWSLengthUnit( this->cost );
 }
 
 /**
@@ -51,7 +59,7 @@ double GWSNetworkEdge::getGradient() const{
     if( length ){
         try {
 
-            double height ( this->getFrom().getZ() - this->getTo().getZ() );
+            double height ( this->getFromCoordinate().getZ() - this->getToCoordinate().getZ() );
             if( height == height ){ // Avoid NaN
                 return ( height - 100 / length );
             }
@@ -60,28 +68,10 @@ double GWSNetworkEdge::getGradient() const{
     return 0;
 }
 
-/**
- * @brief GSSGraphEdge::getCost
- * @param accumulated_cost Accumulated cost at which this edge was reached (used to know at what time we pass)
- * @return
- */
-double GWSNetworkEdge::getCost(double accumulated_cost) const{
-    Q_UNUSED( accumulated_cost )
-    return this->length.value;
-}
-
-bool GWSNetworkEdge::equals( const QSharedPointer<GWSNetworkEdge> other) const{
-    return this->getFrom() == other->getFrom() && this->getTo() == other->getTo();
-}
-
-bool GWSNetworkEdge::equalsReversed(const QSharedPointer<GWSNetworkEdge> other) const{
-    return this->getFrom() == other->getTo() && this->getTo() == other->getFrom();
-}
-
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
 void GWSNetworkEdge::setLength(GWSLengthUnit length){
-    this->length = length;
+    this->cost = length.number();
 }
