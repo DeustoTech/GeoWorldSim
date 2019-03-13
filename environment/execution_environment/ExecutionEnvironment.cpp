@@ -214,7 +214,7 @@ void GWSExecutionEnvironment::behave(){
     }
 
     // Calculate to call again this function in (cycleFrequency - spent time) time
-    if( this->isRunning() ){
+    if( this->isRunning() ) {
         this->timer->singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
