@@ -95,10 +95,8 @@
 
 		            
     "containersRESIDUAL" 	: { "template" : 
-                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "RESIDUAL", "@gwsgroups": [ "RESIDUAL", "Container" ] ,
-                                "@behaviours" : [
-                                    { "@gwsclass": "SetAgentPropertyBehaviour", "start" : true ,  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "darkgreen" , "nexts" : ["LOOP"] }, 
-                                    {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  ,
+                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "RESIDUAL", "@gwsgroups": [ "RESIDUAL", "Container" ] },
+                                
 		            
 			    "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", "entities" : ["SortingType:5"] }
@@ -107,20 +105,15 @@
                 
 		            
     "containersPACKAGING" 	: { "template" : 
-                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "PACKAGING" ,  "@gwsgroups": [ "PACKAGING", "Container" ] , 
-                                "@behaviours" : [
-                                    { "@gwsclass": "SetAgentPropertyBehaviour", "start" : true ,  "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "yellow" , "nexts" : ["LOOP"] }, 
-                                    {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  , 
+                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "PACKAGING" ,  "@gwsgroups": [ "PACKAGING", "Container" ] }, 
+                                
 		            "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", "entities" : ["SortingType:6"] }
                 ]}, 
 		            
 		            
     "containersGLASS" 	: { "template" : 
-                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "GLASS" , "@gwsgroups": [ "GLASS", "Container" ] , 
-                                "@behaviours" : [
-                                    { "@gwsclass": "SetAgentPropertyBehaviour", "start" : true , "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "lime" , "nexts" : ["LOOP"] }, 
-                                    {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  , 
+                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "GLASS" , "@gwsgroups": [ "GLASS", "Container" ] }, 
 		             "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", "entities" : ["SortingType:9"] }
                 ]}, 
@@ -128,10 +121,8 @@
                 
 		            
     "containersPAPER" 	: { "template" : 
-                                { "@gwsclass": "GWSAgent", "name" : "PAPER" , "radius": 5 ,   "@gwsgroups": [ "PAPER", "Container" ] , 
-                                "@behaviours" : [
-                                    { "@gwsclass": "SetAgentPropertyBehaviour",  "start" : true , "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "blue" , "nexts" : ["LOOP"] }, 
-                                    {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  , 
+                                { "@gwsclass": "GWSAgent", "name" : "PAPER" , "radius": 5 ,   "@gwsgroups": [ "PAPER", "Container" ] }, 
+                                
                     "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11", "entities" : ["SortingType:8"] }
                         
@@ -140,10 +131,8 @@
                         
 		            
     "containersORGANIC" : { "template" : 
-                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "ORGANIC" ,  "@gwsgroups": [ "ORGANIC", "Container" ] , 
-                                "@behaviours" : [
-                                    { "@gwsclass": "SetAgentPropertyBehaviour",  "start" : true , "id": "SET_COLOR", "duration": 1, "agent_to_set_id": "<id>", "property_name"  : "color", "property_value" : "brown" , "nexts" : ["LOOP"] }, 
-                                    {  "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "LOOP" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["LOOP"] }  ] }  , 
+                                { "@gwsclass": "GWSAgent", "type" : "Container" , "name" : "ORGANIC" ,  "@gwsgroups": [ "ORGANIC", "Container" ] } , 
+                                
 		            "datasources" :  [
                         { "id" : "4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11" , 
                         "entities" : ["SortingType:11"] } 
