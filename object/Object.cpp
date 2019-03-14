@@ -1,8 +1,8 @@
 #include "Object.h"
 
-#include <QVector>
 #include <QDebug>
 #include <QDateTime>
+#include <QEvent>
 
 #include "../../app/App.h"
 #include "../../util/geometry/Geometry.h"
@@ -173,4 +173,22 @@ void GWSObject::copyProperties(const GWSObject &other){
         const QVariant property_value = other.getProperty( property_name );
         this->setProperty( property_name , property_value );
     }*/
+}
+
+/**********************************************************************
+ EVENTS
+**********************************************************************/
+
+bool GWSObject::event(QEvent *event){
+
+    QDynamicPropertyChangeEvent* const ev = static_cast<QDynamicPropertyChangeEvent*>( event );
+    qDebug() << "PASO" << ev << ev->propertyName();
+
+    /*if( event->type() == QDynamicPropertyChangeEvent ) {
+        QDynamicPropertyChangeEvent *const propEvent = static_cast<QDynamicPropertyChangeEvent*>(event);
+        QString propName = propEvent->propertyName();
+        emit propertyChanged( propName );
+    }*/
+
+    return QObject::event( event );
 }

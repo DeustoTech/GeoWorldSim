@@ -48,7 +48,14 @@ public:
     bool setProperty(const QString name, const QJsonValue &value);
     void copyProperties(const GWSObject &other );
 
+    // EVENTS
+    bool event(QEvent *event);
+
+    // PUBLIC DELETED ATTRIBUTE
     bool deleted = true; // IMPORTANT
+
+signals:
+    void propertyChanged( QString name );
 
 protected:
 

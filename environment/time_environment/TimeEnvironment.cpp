@@ -101,10 +101,6 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
         this->mutex.lock();
         this->agent_internal_times.insert( agent->getId() , init_internal_time );
         this->mutex.unlock();
-    } else {
-        this->mutex.lock();
-        this->agent_internal_times.insert( agent->getId() , this->getCurrentDateTime() );
-        this->mutex.unlock();
     }
 
 }

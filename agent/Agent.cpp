@@ -119,7 +119,14 @@ QJsonObject GWSAgent::serialize() const{
     */
 
     // INTERNAL TIME
-    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() ) );
+    {
+        qint64 time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
+        if( time < 0 ){
+            json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+        } else {
+            json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , time );
+        }
+    }
 
     // GEOMETRY
     QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
