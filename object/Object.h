@@ -55,7 +55,7 @@ public:
     bool deleted = true; // IMPORTANT
 
 signals:
-    void propertyChanged( QString name );
+    void propertyChangedSignal( QString name );
 
 protected:
 

@@ -182,13 +182,9 @@ void GWSObject::copyProperties(const GWSObject &other){
 bool GWSObject::event(QEvent *event){
 
     QDynamicPropertyChangeEvent* const ev = static_cast<QDynamicPropertyChangeEvent*>( event );
-    qDebug() << "PASO" << ev << ev->propertyName();
-
-    /*if( event->type() == QDynamicPropertyChangeEvent ) {
-        QDynamicPropertyChangeEvent *const propEvent = static_cast<QDynamicPropertyChangeEvent*>(event);
-        QString propName = propEvent->propertyName();
-        emit propertyChanged( propName );
-    }*/
+    if( ev ){
+        emit propertyChangedSignal( ev->propertyName() );
+    }
 
     return QObject::event( event );
 }
