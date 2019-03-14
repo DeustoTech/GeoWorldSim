@@ -9,25 +9,21 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-QString GWSObject::GWS_SIM_ID_PROP = "@simulation_id";
 QString GWSObject::GWS_ID_PROP = "id";
 QString GWSObject::GWS_CLASS_PROP = "@gwsclass";
 QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@gwsgroups";
-QString GWSObject::GWS_PARENT_PROP = "parent";
 
 quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
 
 GWSObject::GWSObject() : QObject() , deleted(false) {
-    QString generated_id = QString("GWSObject::%1").arg( ++GWSObject::counter );
+    QString generated_id = QString("Entity::%1").arg( ++GWSObject::counter );
     this->setProperty( GWSObject::GWS_ID_PROP ,  generated_id );
-    this->setProperty( GWSObject::GWS_SIM_ID_PROP ,  GWSApp::globalInstance()->getAppId() );
 }
 
 GWSObject::GWSObject(const GWSObject &other) : QObject(){
 }
 
 GWSObject::~GWSObject(){
-    //qDebug() << QString("Deleting %1 %2").arg( this->metaObject()->className() ).arg( this->getId() );
     this->deleted = true;
 }
 
@@ -40,7 +36,6 @@ GWSObject::~GWSObject(){
  */
 QJsonObject GWSObject::serializeMini() const{
     QJsonObject json;
-    json.insert( GWS_SIM_ID_PROP , this->getProperty( GWS_SIM_ID_PROP ).toString() );
     json.insert( GWS_ID_PROP , this->getId() );
     json.insert( GWS_CLASS_PROP , this->metaObject()->className() );
     json.insert( GWS_INHERITANCE_FAMILY_PROP , this->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
@@ -72,7 +67,6 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
 
     // Required properties
     QStringList parsed_properties;
-    if( json.keys().contains( GWS_SIM_ID_PROP ) ){  parsed_properties.append( GWS_SIM_ID_PROP ); this->setProperty( GWS_SIM_ID_PROP , json.value( GWS_SIM_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_ID_PROP ) ){      parsed_properties.append( GWS_ID_PROP ); this->setProperty( GWS_ID_PROP , json.value( GWS_ID_PROP ).toString() ); }
     if( json.keys().contains( GWS_CLASS_PROP ) ){   parsed_properties.append( GWS_CLASS_PROP ); this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
@@ -104,7 +98,6 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
         // Set Property
         this->setProperty( property_name , propert_value );
     }
-
 }
 
 /**********************************************************************

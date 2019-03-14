@@ -11,7 +11,7 @@ QString GWSBehaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
 GWSBehaviour::GWSBehaviour() : GWSObject(){
-    this->setProperty( BEHAVIOUR_DURATION , 1000 );
+    this->setProperty( BEHAVIOUR_DURATION , 10 ); // 10 seconds
 }
 
 /**********************************************************************
