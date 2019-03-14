@@ -97,6 +97,10 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
 QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString from_one_hash , QStringList to_many_hashes ){
     QList< QList< QSharedPointer<GWSEdge> > > result_routes;
 
+    if( from_one_hash.isEmpty() ){
+        return result_routes;
+    }
+
     // Compute dijkstra shortest path
     lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash  );
 
@@ -106,15 +110,25 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
         this->mutex.unlock();
         return result_routes;
     }
+    this->mutex.unlock();
 
     // Get start node and start graph from it
+    this->mutex.lockForWrite();
     this->dijkstra_algorithm->run( start );
+    this->mutex.unlock();
 
     // Iterate all end nodes
     foreach( QString to_hash , to_many_hashes ){
         QList< QSharedPointer<GWSEdge> > route = QList< QSharedPointer<GWSEdge> >();
 
+        if( to_hash.isEmpty() ){
+            result_routes.append( route );
+            continue;
+        }
+
+        this->mutex.lockForRead();
         lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
+        this->mutex.unlock();
 
         // Check in cache
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
@@ -129,24 +143,28 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
         }
 
         // Get route
+        this->mutex.lockForWrite();
         if( !this->dijkstra_algorithm->run( start , end ) ){
             this->cachePath( start , end );
             result_routes.append( route );
+            this->mutex.unlock();
             continue;
         }
+        this->mutex.unlock();
 
+        this->mutex.lockForRead();
         lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
             route.append( this->arc_to_edges->value( arc ) );
         }
+        this->mutex.unlock();
 
         // Save in cache
         this->cachePath( start , end , route );
 
         result_routes.append( route );
     }
-    this->mutex.unlock();
 
     return result_routes;
 }

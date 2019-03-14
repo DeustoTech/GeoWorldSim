@@ -17,6 +17,7 @@ public:
     static QString WAIT_UNTIL_HOUR;
     static QString WAIT_UNTIL_MINUTE;
     static QString WAIT_UNTIL_SECOND;
+    static QString WAIT_FREQUENCY;
     static QString NEXTS;
 
 protected slots:

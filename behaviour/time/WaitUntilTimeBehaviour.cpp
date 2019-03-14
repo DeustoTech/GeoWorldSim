@@ -11,6 +11,7 @@ QString WaitUntilTimeBehaviour::WAIT_UNTIL_DAY = "wait_until_day";
 QString WaitUntilTimeBehaviour::WAIT_UNTIL_HOUR = "wait_until_hour";
 QString WaitUntilTimeBehaviour::WAIT_UNTIL_MINUTE = "wait_until_minute";
 QString WaitUntilTimeBehaviour::WAIT_UNTIL_SECOND = "wait_until_second";
+QString WaitUntilTimeBehaviour::WAIT_FREQUENCY = "wait_frequency";
 
 QString WaitUntilTimeBehaviour::NEXTS = "nexts";
 
@@ -48,9 +49,22 @@ QJsonArray WaitUntilTimeBehaviour::behave(){
     wait_until.setDate( wait_until_day );
     wait_until.setTime( wait_until_time );
 
+    // Get periodicity of the wait
     // Wait until DAY has already past, so wait until next day's TIME
+    QString wait_periodicity = this->getProperty( WAIT_FREQUENCY ).toString();
+
+
     if( wait_until < current_datetime ){
-        wait_until = wait_until.addYears( 1 );
+        if ( wait_periodicity == "year" ){
+            wait_until = wait_until.addYears( 1 );
+        }
+        if ( wait_periodicity == "month" ){
+            wait_until = wait_until.addMonths( 1 );
+        }
+        if ( wait_periodicity == "day" ){
+            wait_until = wait_until.addDays( 1 );
+        }
+
     }
 
     int seconds = current_datetime.secsTo( wait_until ); // IN seconds
