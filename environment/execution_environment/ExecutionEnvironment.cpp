@@ -175,12 +175,12 @@ void GWSExecutionEnvironment::behave(){
     int ticked_agents = 0;
 
     foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
-        if( agent.isNull() || agent->isBusy() ){
+        if( agent.isNull() || agent->isBusy() ) {
             continue;
-        }
-        if( !agent->getProperty( "scenario_id" ).isNull() && agent->getProperty( "scenario_id" ).toString() != GWSApp::globalInstance()->getAppId() || !agent->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+        } /*else
+            if( !agent->getProperty( "scenario_id" ).isNull() || agent->getProperty( "scenario_id" ).toString() != GWSApp::globalInstance()->getAppId()  ){
             continue;
-        }
+        }*/
 
         qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
 
