@@ -90,11 +90,14 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
         return;
     }
 
-    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    // Whichever its BIRTH_DATE is, register the agent in this environment,
+    // It needs to be executed in the future, so set its INTERNAL_TIME to that future
+    qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+    if( agent_time < 0 ){
+        agent_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    }
+    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , qMax( (double)agent_time , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
 
-    // Whichever its BIRTH_DATE is, register it,
-    // however if it needs to be executed in the future, set its INTERNAL_TIME to that future
-    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , qMax( (double)current_datetime , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
     agent->incrementBusy();
 
     // Store as running
