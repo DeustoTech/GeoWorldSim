@@ -198,7 +198,7 @@ void GWSExecutionEnvironment::behave(){
 
             // If agent_tick is 0, set to now
             if( agent_next_tick <= 0 ){
-                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , min_tick );
+                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , current_datetime );
             }
 
             if ( !agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).toDouble() ){

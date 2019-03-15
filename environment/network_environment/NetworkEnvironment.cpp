@@ -98,43 +98,65 @@ QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > GWSNetworkEnvir
 }
 
 QList<QSharedPointer<GWSNetworkEdge> > GWSNetworkEnvironment::getShortestPath( GWSCoordinate from, GWSCoordinate to , QString class_name ) const{
+    QList<QSharedPointer<GWSNetworkEdge> > path;
+
     if( this->network_routings.keys().contains( class_name ) ){
         // Move given coordinates to real graph nodes
         QString snapped_from = this->getNearestNodeID( from , class_name );
         QString snapped_to = this->getNearestNodeID( to , class_name );
-        return this->network_routings.value( class_name )->getShortestPath<GWSNetworkEdge>( snapped_from , snapped_to );
+        foreach( QSharedPointer<GWSEdge> e , this->network_routings.value( class_name )->getShortestPath( snapped_from , snapped_to ) ){
+            path.append( e.dynamicCast<GWSNetworkEdge>() );
+        }
+        return path;
     }
+
+    qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
+    return path;
 }
 
 QList< QList< QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinate > ordered_coors , QString class_name ) const{
+    QList< QList< QSharedPointer< GWSNetworkEdge> > > paths;
 
     if( this->network_routings.keys().contains( class_name ) ){
         QStringList snapped_ordered;
         foreach (GWSCoordinate c, ordered_coors) {
             snapped_ordered.append( this->getNearestNodeID( c , class_name ) );
         }
-        return this->network_routings.value( class_name )->getShortestPath<GWSNetworkEdge>( snapped_ordered );
+        foreach( QList< QSharedPointer<GWSEdge> > edges , this->network_routings.value( class_name )->getShortestPath( snapped_ordered ) ){
+            QList< QSharedPointer< GWSNetworkEdge> > path;
+            foreach( QSharedPointer<GWSEdge> e , edges ){
+                path.append( e.dynamicCast<GWSNetworkEdge>() );
+            }
+            paths.append( path );
+        }
+        return paths;
     }
 
     qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
-    return QList< QList< QSharedPointer< GWSNetworkEdge> > >();
+    return paths;
 }
 
 QList< QList<QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
+    QList< QList< QSharedPointer< GWSNetworkEdge> > > paths;
+
     if( this->network_routings.keys().contains( class_name ) ){
 
-        this->mutex.lockForRead();
         QString snapped_from = this->getNearestNodeID( from_one , class_name );
         QStringList snapped_to_many;
         foreach( GWSCoordinate c , to_many ) {
             snapped_to_many.append( this->getNearestNodeID( c , class_name ) );
         }
-        this->mutex.unlock();
-
-        return this->network_routings.value( class_name )->getShortestPaths<GWSNetworkEdge>( snapped_from , snapped_to_many );
+        foreach( QList< QSharedPointer<GWSEdge> > edges , this->network_routings.value( class_name )->getShortestPaths( snapped_from , snapped_to_many ) ){
+            QList< QSharedPointer< GWSNetworkEdge> > path;
+            foreach( QSharedPointer<GWSEdge> e , edges ){
+                path.append( e.dynamicCast<GWSNetworkEdge>() );
+            }
+            paths.append( path );
+        }
+        return paths;
     }
     qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
-    return QList< QList<QSharedPointer< GWSNetworkEdge> > >();
+    return paths;
 }
 
 

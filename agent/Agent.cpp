@@ -305,6 +305,7 @@ void GWSAgent::behave(){
     QJsonArray next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
+        qDebug() << QString("AGENT %1 executing %2").arg( this->getId() ).arg( behaviour->getId() );
         QJsonArray ids = behaviour->tick( behaving_time );
         foreach (QJsonValue id , ids ) {
             next_execute_behaviour_ids.append( id );

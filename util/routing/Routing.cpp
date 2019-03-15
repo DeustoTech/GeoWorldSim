@@ -21,6 +21,12 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
+QList< QSharedPointer< GWSEdge > > GWSRouting::getShortestPath( QString from_hash , QString to_hash ){
+    QStringList hashes;
+    hashes.append( from_hash );
+    hashes.append( to_hash );
+    return this->getShortestPath( hashes ).at(0);
+}
 
 QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringList ordered_hashes ){
     QList<QList<QSharedPointer<GWSEdge> > > result_routes;
@@ -42,6 +48,8 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             continue;
         }
 
+        this->mutex.lock();
+
         // Compute dijkstra shortest path
         lemon::ListDigraph::Node start = this->hash_to_node->value( from_hash );
         lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
@@ -51,12 +59,9 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             continue;
         }
 
-        this->mutex.lockForRead();
-
         // Check in cache
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
             result_routes.append( this->routes_cache.value( start ).value( end ) );
-            this->mutex.unlock();
             continue;
         }
 
@@ -64,7 +69,6 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             qDebug() << QString("Start (%1) or end nodes (%2) are not in graph").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end );
             result_routes.append( route );
-            this->mutex.unlock();
             continue;
         }
 
@@ -72,10 +76,8 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
             qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end );
             result_routes.append( route );
-            this->mutex.unlock();
             continue;
         }
-
 
         // Get route
         lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
@@ -87,8 +89,10 @@ QList< QList< QSharedPointer<GWSEdge> > > GWSRouting::getShortestPath( QStringLi
         // Save in cache
         this->cachePath( start , end , route );
 
-        result_routes.append( route );
         this->mutex.unlock();
+
+        result_routes.append( route );
+
     }
 
     return result_routes;
@@ -104,18 +108,10 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
     // Compute dijkstra shortest path
     lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash  );
 
-    this->mutex.lockForRead();
     if ( this->routing_graph->id( start ) < 0 ){
         qWarning() << QString("Start (%1) is not in graph").arg( from_one_hash );
-        this->mutex.unlock();
         return result_routes;
     }
-    this->mutex.unlock();
-
-    // Get start node and start graph from it
-    this->mutex.lockForWrite();
-    this->dijkstra_algorithm->run( start );
-    this->mutex.unlock();
 
     // Iterate all end nodes
     foreach( QString to_hash , to_many_hashes ){
@@ -126,9 +122,7 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
             continue;
         }
 
-        this->mutex.lockForRead();
         lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
-        this->mutex.unlock();
 
         // Check in cache
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
@@ -142,29 +136,34 @@ QList<QList<QSharedPointer< GWSEdge > > > GWSRouting::getShortestPaths( QString 
             continue;
         }
 
+        // Get start node and start graph from it
+        this->mutex.lock();
+        //this->dijkstra_algorithm->run( start );
+
         // Get route
-        this->mutex.lockForWrite();
         if( !this->dijkstra_algorithm->run( start , end ) ){
             this->cachePath( start , end );
             result_routes.append( route );
-            this->mutex.unlock();
             continue;
         }
-        this->mutex.unlock();
 
-        this->mutex.lockForRead();
         lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
-            route.append( this->arc_to_edges->value( arc ) );
+            if( this->arc_to_edges->keys().contains( arc ) ){
+                route.append( this->arc_to_edges->value( arc ) );
+            }
         }
-        this->mutex.unlock();
 
         // Save in cache
         this->cachePath( start , end , route );
 
+        this->mutex.unlock();
+
         result_routes.append( route );
     }
+
+    qDebug() << "SALGO";
 
     return result_routes;
 }
@@ -182,7 +181,7 @@ void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
         QString from_hash = edge->getFromNodeId();
         lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
 
-        this->mutex.lockForWrite();
+        this->mutex.lock();
         if( this->routing_graph->id( s ) <= 0 ){
             s = this->routing_graph->addNode();
             this->hash_to_node->insert( from_hash , s );
@@ -193,15 +192,14 @@ void GWSRouting::upsert(QSharedPointer<GWSEdge> edge){
         QString to_hash = edge->getToNodeId();
         lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
 
-        this->mutex.lockForWrite();
+        this->mutex.lock();
         if( this->routing_graph->id( e ) <= 0 ){
             e = this->routing_graph->addNode();
             this->hash_to_node->insert( to_hash , e );
         }
-        this->mutex.unlock();
 
         // Create arc and link it to edge
-        this->mutex.lockForWrite();
+
         lemon::ListDigraph::Arc arc = this->routing_graph->addArc(s , e);
         this->arc_to_edges->insert( arc , edge );
         this->graph_edge_visitor->arc_costs.insert( arc , edge->getEdgeCost() );

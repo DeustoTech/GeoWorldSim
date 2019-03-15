@@ -59,8 +59,8 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
         GWSLengthUnit l = 0;
 
         foreach ( QSharedPointer<GWSNetworkEdge> edge , path ){
-            GWSCoordinate start = edge->getFrom();
-            GWSCoordinate end = edge->getTo();
+            GWSCoordinate start = edge->getFromCoordinate();
+            GWSCoordinate end = edge->getToCoordinate();
             l = l + start.getDistance( end );
         }
 

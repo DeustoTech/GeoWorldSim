@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
 
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString datasource_id = datasource.value("id").toString();
+                int limit = datasource.value("limit").toInt(-1);
                 QJsonArray entities_type = datasource.value("entities").toArray();
                 if( datasource_id.isEmpty() || entities_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entities type";
@@ -112,7 +113,7 @@ int main(int argc, char* argv[])
 
                     QString entity = entities_type.at( j ).toString();
 
-                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity );
+                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity , limit > 0 ? limit : 999999999999999 );
                     pending_datasources.append( ds );
 
                     ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){

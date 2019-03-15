@@ -134,6 +134,9 @@ QJsonArray GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     // Calculate how much to increment agent internal time
     qint64 increment_time = qMax( 100.0 , this->getProperty( BEHAVIOUR_DURATION ).toDouble() * 1000 ); // At least 0.1 seconds
     qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
+    if( agent_current_time < 0 ){
+        agent_current_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    }
 
     // Compare how much has been spent or if some other behaviour incremented the time
     qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );

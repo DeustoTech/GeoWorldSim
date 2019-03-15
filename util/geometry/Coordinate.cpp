@@ -39,7 +39,7 @@ bool GWSCoordinate::isInBounds(double minX, double maxX, double minY, double max
 }
 
 QString GWSCoordinate::toString() const{
-    return QString("%1,%2,%3").arg( this->getX() ).arg( this->getY() ).arg( this->getZ() );
+    return QString("%1,%2,%3").arg( QString::number( this->getX() , 'g' , 7 ) ).arg( QString::number( this->getY() , 'g' , 7 ) ).arg( QString::number( this->getZ() , 'g' , 7 ) );
 }
 
 /**********************************************************************
