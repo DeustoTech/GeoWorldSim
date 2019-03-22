@@ -1,6 +1,6 @@
 #include "EdgeVisitor.h"
 
-#include "../../util/routing/Routing.h"
+#include "../../util/routing/Routing.hpp"
 
 GWSEdgeVisitor::GWSEdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){
 }

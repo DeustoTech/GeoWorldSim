@@ -40,7 +40,8 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > closest_coor_and_route = GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > closest_coor_and_route =
+            GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
     QList< QSharedPointer<GWSNetworkEdge> > closest_route = closest_coor_and_route.second;
@@ -70,10 +71,6 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
 
     // Extract agent from ID:
-    //QSharedPointer<GWSAgent> closest_agent = GWSAgentEnvironment::globalInstance()->getById( closest_agent_id );
-    //agent->setProperty( "color" , closest_agent->getProperty( "color" ));
-
-
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_agent_id" ) , closest_agent_id );
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_agent_x" ) , closest_coor_and_route.first.getX() );
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_agent_y" ) , closest_coor_and_route.first.getY() );

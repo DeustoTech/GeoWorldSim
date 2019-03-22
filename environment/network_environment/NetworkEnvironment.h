@@ -49,7 +49,7 @@ private:
 
     QMap< QSharedPointer< GWSAgent > , QSharedPointer< GWSNetworkEdge > > agent_to_edge;
     QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
-    QMap<QString , QSharedPointer< GWSRouting<GWSNetworkEdge> > > network_routings;
+    QMap<QString , QSharedPointer< GWSRouting< GWSNetworkEdge > > > network_routings;
 
     // Mutex, for avoiding concurrency
     mutable QReadWriteLock mutex;
