@@ -20,13 +20,13 @@ void GWSExternalCommunicator::startSocket(){
     QObject::connect( &this->websocket , &QWebSocket::pong , [this](quint64 elapsedTime, const QByteArray &payload){
         Q_UNUSED(elapsedTime); Q_UNUSED(payload);
         this->last_status = "pong";
-        emit this->websocket.ping();
+        QTimer::singleShot( 30000 , [this](){ this->websocket.ping(); });
     });
 
-    // Events
+    // Rise from the grave
     QObject::connect( &this->websocket , &QWebSocket::disconnected , [this](){
         this->last_status = "disconnected";
-        QTimer::singleShot( 10*1000 , this , &GWSExternalCommunicator::reconnectSocket );
+        QTimer::singleShot( 1000 , this , &GWSExternalCommunicator::reconnectSocket );
     });
 
     this->reconnectSocket();
@@ -34,4 +34,5 @@ void GWSExternalCommunicator::startSocket(){
 
 void GWSExternalCommunicator::reconnectSocket(){
     this->websocket.open( QUrl( "wss://sockets.geoworldsim.com/?scenario_id=" + this->socket_id ) );
+    QTimer::singleShot( 30000 , [this](){ this->websocket.ping(); });
 }

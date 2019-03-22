@@ -94,65 +94,70 @@
             //return L.marker( latlng , { icon : L.icon( getStyle(feature) ) });
         }
         
-        // Socket
-        var socket = new WebSocket('ws://sockets.geoworldsim.com/?scenario_id=' + simulation_id );
-        socket.onopen = function () {
-            console.log( 'Socket connected' );
-        }
-        socket.onclose = function () {
-            console.log( 'Socket disconnected' );
-        }
         
-        socket.onmessage = function (ev) {
-            var json = JSON.parse( ev.data ) || {};
-            var signal = json.signal;
-            var body = json.body;
+        // Socket
+        var socket
+        var reconnectSocket = function(){
+            socket = new WebSocket('ws://sockets.geoworldsim.com/?scenario_id=' + simulation_id );
+            socket.onopen = function (ev) {
+                console.log( 'Socket connected' );
+            }
+            socket.onclose = function (ev) {
+                reconnectSocket();
+            }
+            socket.onmessage = function (ev) {
 
-	    if( signal == 'time' ){
-                
-                document.getElementById( 'time_panel' ).innerHTML = new Date( body ).toLocaleDateString() + ' ' + new Date( body ).toLocaleTimeString();
-	    }
-	    
-            if( signal == 'entity' ){
-            
-                var id = body['id'];
-                var type = body['@gwsclass'];
-		var family = body['@gwsgroups'];
-		if( family && family.join ){ type = body['@gwsgroups'].join() };
-                
-                /* If new entity class */
-                if( !layers[type] ){
-                    layers[ type ] = {};
-                    overlays[ type ] = L.featureGroup();
-                    overlays[ type ].addTo( map )
-                    switcher.addOverlay( overlays[ type ] , type );
+                var json = JSON.parse( ev.data ) || {};
+                var signal = json.signal;
+                var body = json.body;
+
+                if( signal == 'time' ){
+                    
+                    document.getElementById( 'time_panel' ).innerHTML = new Date( body ).toLocaleDateString() + ' ' + new Date( body ).toLocaleTimeString();
                 }
                 
-                // Delete if existing layer
-                if( layers[type][id] ){
-                    overlays[ type ].removeLayer( layers[ type ][ id ] );
-                    delete layers[ type ][ id ];
-                }
+                if( signal == 'entity' ){
                 
-                // Create geojson layer and add it to scope.overlays 
-                if( body.geometry && Object.keys( body.geometry ).length ){
-                    var geojson = { "type": "Feature" , "properties": {} , "geometry" : body.geometry };
-
-                    for(var p in body){ // Set properties
-                        if( p != 'geometry' ){ geojson.properties[p] = body[p]; }
+                    var id = body['id'];
+                    var type = body['@gwsclass'];
+                    var family = body['@gwsgroups'];
+                    if( family && family.join ){ type = body['@gwsgroups'].join() };
+                    
+                    /* If new entity class */
+                    if( !layers[type] ){
+                        layers[ type ] = {};
+                        overlays[ type ] = L.featureGroup();
+                        overlays[ type ].addTo( map )
+                        switcher.addOverlay( overlays[ type ] , type );
                     }
                     
-                    var layer = L.geoJson( geojson , { style : getStyle , pointToLayer : getPointToLayer } );
-                    var html = '';
-                    for(var i in body){ html += '<tr><th>' + i + '</th><td>' + JSON.stringify( body[i] ) +  '<td><tr>' }
-                    layer.bindPopup( '<table><tbody>' + html + '</tbody></table>' );
-                    layers[ type ][ id ] = layer;
-                    overlays[ type ].addLayer( layer );
+                    // Delete if existing layer
+                    if( layers[type][id] ){
+                        overlays[ type ].removeLayer( layers[ type ][ id ] );
+                        delete layers[ type ][ id ];
+                    }
+                    
+                    // Create geojson layer and add it to scope.overlays 
+                    if( body.geometry && Object.keys( body.geometry ).length ){
+                        var geojson = { "type": "Feature" , "properties": {} , "geometry" : body.geometry };
+
+                        for(var p in body){ // Set properties
+                            if( p != 'geometry' ){ geojson.properties[p] = body[p]; }
+                        }
+                        
+                        var layer = L.geoJson( geojson , { style : getStyle , pointToLayer : getPointToLayer } );
+                        var html = '';
+                        for(var i in body){ html += '<tr><th>' + i + '</th><td>' + JSON.stringify( body[i] ) +  '<td><tr>' }
+                        layer.bindPopup( '<table><tbody>' + html + '</tbody></table>' );
+                        layers[ type ][ id ] = layer;
+                        overlays[ type ].addLayer( layer );
+                    }
+                
                 }
-            
-            }
-            
-        };
+            };
+        }();
+
+        
     
     </script>
   

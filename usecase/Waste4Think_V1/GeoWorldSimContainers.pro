@@ -115,7 +115,8 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h
+    ../../behaviour/time/WaitUntilTimeBehaviour.h \
+    ../../util/routing/NewRouting.hpp
             ## TRANSPORT LINE
 
 

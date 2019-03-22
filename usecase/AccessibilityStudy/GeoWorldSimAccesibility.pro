@@ -62,7 +62,7 @@ HEADERS += \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
     ../../util/api/APIDriver.h \
-    ../../util/routing/Routing.h \
+    ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## DATASOURCES
@@ -124,7 +124,6 @@ SOURCES += mainAccesibility.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
-    ../../util/routing/Routing.cpp \
     ../../util/routing/EdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \

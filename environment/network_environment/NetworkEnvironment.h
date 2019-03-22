@@ -8,7 +8,7 @@
 #include "NetworkEdge.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Quadtree.h"
-#include "../../util/routing/Routing.h"
+#include "../../util/routing/Routing.hpp"
 
 class GWSNetworkEnvironment : public GWSEnvironment
 {
@@ -49,7 +49,7 @@ private:
 
     QMap< QSharedPointer< GWSAgent > , QSharedPointer< GWSNetworkEdge > > agent_to_edge;
     QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
-    QMap<QString , QSharedPointer< GWSRouting > > network_routings;
+    QMap<QString , QSharedPointer< GWSRouting<GWSNetworkEdge> > > network_routings;
 
     // Mutex, for avoiding concurrency
     mutable QReadWriteLock mutex;

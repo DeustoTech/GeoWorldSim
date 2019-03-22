@@ -13,9 +13,6 @@
 
 #include "../../util/graph/Edge.h"
 
-
-QT_FORWARD_DECLARE_CLASS(GWSRouting)
-
 class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
