@@ -48,6 +48,7 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
+#include "../../util/routing/Routing.hpp"
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
 #include "../../util/svm/Svm.h"
