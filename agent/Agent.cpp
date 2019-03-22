@@ -330,9 +330,5 @@ void GWSAgent::behave(){
 
     // Store to be executed in next tick
     this->to_be_executed_behaviours = next_execute_behaviours;
-    if( this->to_be_executed_behaviours.isEmpty() ){
-        qCritical() << QString("Agent %1 %2 returned no next behaviours").arg( this->metaObject()->className() ).arg( this->getId() );
-        GWSApp::exit( -1 );
-    }
     GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + (max_behaviour_time_to_increment * 1000) );
 }
