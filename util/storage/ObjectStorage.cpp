@@ -85,15 +85,6 @@ QList< QSharedPointer<GWSObject> > GWSObjectStorage::getByClass( QString class_n
     return list;
 }
 
-template <class T>
-QList< QSharedPointer<T> > GWSObjectStorage::getByClassCasted( QString class_name ) const{
-    QList< QSharedPointer<T> > objs;
-    foreach( QSharedPointer<GWSObject> o , this->getByClass( class_name ) ){
-        objs.append( o.dynamicCast<T>() );
-    }
-    return objs;
-}
-
 QSharedPointer<GWSObject> GWSObjectStorage::getByName( QString name ) const{
     foreach(QString class_name , this->classes_stored){
         return this->object_names[ class_name ]->value( name , 0 );

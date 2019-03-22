@@ -59,12 +59,8 @@ int GWSExecutionEnvironment::getRunningAgentsAmount() const{
     return this->running_agents->getAmount();
 }
 
-QList< QSharedPointer<GWSAgent> > GWSExecutionEnvironment::getRunningAgents() const {
-    QList< QSharedPointer<GWSAgent> > l;
-    foreach( QSharedPointer<GWSObject> o , this->running_agents->getByClass( GWSAgent::staticMetaObject.className() ) ){
-        l.append( o.dynamicCast<GWSAgent>() );
-    }
-    return l;
+QList< QSharedPointer< GWSAgent > > GWSExecutionEnvironment::getRunningAgents() const {
+    return this->running_agents->getByClassCasted<GWSAgent>( GWSAgent::staticMetaObject.className() );
 }
 
 template <class T> QList< QSharedPointer<T> > GWSExecutionEnvironment::getRunningAgentsByClass( QString class_name ) const{
@@ -223,12 +219,12 @@ void GWSExecutionEnvironment::behave(){
         this->timer->singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
     }
 
-    qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
+    /*qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
                .arg( GWSApp::globalInstance()->getAppId() )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
-               .arg( who_is_min_tick ? who_is_min_tick->getId() : "" );
+               .arg( who_is_min_tick ? who_is_min_tick->getId() : "" );*/
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 }

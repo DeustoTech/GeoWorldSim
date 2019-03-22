@@ -1,13 +1,16 @@
-#ifndef NEWROUTING_H
-#define NEWROUTING_H
+#ifndef GWSROUTING_H
+#define GWSROUTING_H
 
 #include <QMutex>
+#include <QDebug>
+#include <QSharedPointer>
 #include "../../object/Object.h"
 
 #include <lemon/core.h>
 #include <lemon/list_graph.h>
 #include <lemon/dijkstra.h>
 
+#include "../../util/graph/Edge.h"
 #include "../../util/routing/EdgeVisitor.h"
 
 template <class T>
@@ -21,7 +24,7 @@ public:
         this->hash_to_node = new QMap< QString , lemon::ListDigraph::Node >();
         this->routing_graph = new lemon::ListDigraph();
         this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
-        this->dijkstra_algorithm = new lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+
     }
 
     ~GWSRouting(){
@@ -29,7 +32,6 @@ public:
         delete this->hash_to_node;
         delete this->routing_graph;
         delete this->graph_edge_visitor;
-        delete this->dijkstra_algorithm;
     }
 
     /**********************************************************************
@@ -47,6 +49,8 @@ public:
     QList<QList< QSharedPointer< T > > > getShortestPath( QStringList ordered_hashes ){
         QList<QList<QSharedPointer< T > > > result_routes;
 
+        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+
         for(int i = 0; i < ordered_hashes.size()-1; i++){
 
             QList< QSharedPointer< T > > route;
@@ -63,8 +67,6 @@ public:
                 result_routes.append( route );
                 continue;
             }
-
-            this->mutex.lock();
 
             // Compute dijkstra shortest path
             lemon::ListDigraph::Node start = this->hash_to_node->value( from_hash );
@@ -88,15 +90,16 @@ public:
                 continue;
             }
 
-            if( !this->dijkstra_algorithm->run( start , end ) ){
+            if( !dijkstra_algorithm.run( start , end ) ){
                 qWarning() << QString("Can not reach end node (%2) from start (%1)").arg( from_hash ).arg( to_hash );
                 this->cachePath( start , end , route );
+                this->mutex.unlock();
                 result_routes.append( route );
                 continue;
             }
 
             // Get route
-            lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
+            lemon::Path<lemon::ListDigraph> shortest_path = dijkstra_algorithm.path( end );
             for(int i = 0 ; i < shortest_path.length() ; i++) {
                 lemon::ListDigraph::Arc arc = shortest_path.nth( i );
                 route.append( this->arc_to_edges->value( arc ) );
@@ -104,8 +107,6 @@ public:
 
             // Save in cache
             this->cachePath( start , end , route );
-
-            this->mutex.unlock();
 
             result_routes.append( route );
         }
@@ -131,6 +132,11 @@ public:
             return result_routes;
         }
 
+        // Get start node and start graph from it
+        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+
+        dijkstra_algorithm.run( start );
+
         // Iterate all end nodes
         foreach( QString to_hash , to_many_hashes ){
             QList< QSharedPointer< T > > route = QList< QSharedPointer< T > >();
@@ -154,18 +160,8 @@ public:
                 continue;
             }
 
-            // Get start node and start graph from it
-            this->mutex.lock();
-            //this->dijkstra_algorithm->run( start );
-
             // Get route
-            if( !this->dijkstra_algorithm->run( start , end ) ){
-                this->cachePath( start , end , route );
-                result_routes.append( route );
-                continue;
-            }
-
-            lemon::Path<lemon::ListDigraph> shortest_path = this->dijkstra_algorithm->path( end );
+            lemon::Path<lemon::ListDigraph> shortest_path = dijkstra_algorithm.path( end );
             for(int i = 0 ; i < shortest_path.length() ; i++) {
                 lemon::ListDigraph::Arc arc = shortest_path.nth( i );
                 if( this->arc_to_edges->keys().contains( arc ) ){
@@ -176,10 +172,9 @@ public:
             // Save in cache
             this->cachePath( start , end , route );
 
-            this->mutex.unlock();
-
             result_routes.append( route );
         }
+
         return result_routes;
     }
 
@@ -188,6 +183,8 @@ public:
     **********************************************************************/
 
     void upsert(QSharedPointer< T > edge){
+
+        //QSharedPointer< GWSEdge > edge = e.dynamicCast<GWSEdge>();
 
         try {
 
@@ -227,6 +224,9 @@ public:
     **********************************************************************/
 
     void remove(QSharedPointer< T > edge){
+
+        //QSharedPointer< GWSEdge > edge = e.dynamicCast<GWSEdge>();
+
         lemon::ListDigraph::Arc arc = this->arc_to_edges->key( edge );
         if( this->routing_graph->id( arc ) > 0 ){
             this->routing_graph->erase( arc );
@@ -251,7 +251,6 @@ protected:
 
     // Used to create nodes and arcs
     lemon::ListDigraph* routing_graph = Q_NULLPTR;
-    lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor >* dijkstra_algorithm = Q_NULLPTR;
     GWSEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
@@ -265,4 +264,4 @@ protected:
 
 };
 
-#endif // NEWROUTING_H
+#endif // GWSROUTING_H

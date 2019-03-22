@@ -130,7 +130,7 @@ QList< QList< QSharedPointer< GWSNetworkEdge > > > GWSNetworkEnvironment::getSho
     return paths;
 }
 
-QList< QList<QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
+QList< QList< QSharedPointer< GWSNetworkEdge > > > GWSNetworkEnvironment::getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
     QList< QList< QSharedPointer< GWSNetworkEdge> > > paths;
 
     if( this->network_routings.keys().contains( class_name ) ){
@@ -142,6 +142,7 @@ QList< QList<QSharedPointer< GWSNetworkEdge> > > GWSNetworkEnvironment::getShort
         }
         paths = this->network_routings.value( class_name )->getShortestPaths( snapped_from , snapped_to_many );
         return paths;
+
     }
     qWarning() << QString("Asked for path in network %1 which does not exist.").arg( class_name );
     return paths;
