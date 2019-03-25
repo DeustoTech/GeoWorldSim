@@ -191,8 +191,8 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
                 // If already here, remove old version
                 this->mutex.lockForRead();
                 if( this->ids_contained.contains( object_id ) ){
-                    this->mutex.unlock();
                     GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
+                    this->mutex.unlock();
                     GWSCoordinate previous_coor = previous_geom.getCentroid();
                     int previous_xhash = this->createHash( previous_coor.getX() , l );
                     int previous_yhash = this->createHash( previous_coor.getY() , l );
