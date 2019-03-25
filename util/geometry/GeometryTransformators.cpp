@@ -4,7 +4,7 @@
 #include "geos/geom/CoordinateArraySequence.h"
 #include "GeometryToGeoJSON.h"
 
-GWSNewGeometry GWSGeometryTransformators::transformMove( const GWSNewGeometry geometry , const GWSCoordinate &apply_movement){
+GWSGeometry GWSGeometryTransformators::transformMove( const GWSGeometry geometry , const GWSCoordinate &apply_movement){
     if( !apply_movement.isValid() ){ return geometry; }
 
     if( !geometry.inner_geometry ){
@@ -12,35 +12,35 @@ GWSNewGeometry GWSGeometryTransformators::transformMove( const GWSNewGeometry ge
         geojson.insert( "type" , "Point" );
         QJsonArray coordinate = { apply_movement.getX() , apply_movement.getY() , apply_movement.getZ() };
         geojson.insert( "coordinates" , coordinate );
-        return GWSNewGeometry( geojson );
+        return GWSGeometry( geojson );
     }
     // Else
-    GWSNewGeometry new_geometry = GWSNewGeometry( geometry );
+    GWSGeometry new_geometry = GWSGeometry( geometry );
     GWSGeometryTransformMoveFilter move = GWSGeometryTransformMoveFilter( apply_movement );
     new_geometry.inner_geometry->apply_rw( move );
     new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSNewGeometry GWSGeometryTransformators::transformBuffer( const GWSNewGeometry geometry , double threshold ){
+GWSGeometry GWSGeometryTransformators::transformBuffer( const GWSGeometry geometry , double threshold ){
     geos::geom::Geometry* buffered = geometry.inner_geometry->buffer( threshold );
-    GWSNewGeometry new_geometry;
+    GWSGeometry new_geometry;
     new_geometry.inner_geometry = buffered;
     new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSNewGeometry GWSGeometryTransformators::transformUnion( const GWSNewGeometry geometry , const GWSNewGeometry other){
+GWSGeometry GWSGeometryTransformators::transformUnion( const GWSGeometry geometry , const GWSGeometry other){
     geos::geom::Geometry* unioned = geometry.inner_geometry->Union( other.inner_geometry );
-    GWSNewGeometry new_geometry;
+    GWSGeometry new_geometry;
     new_geometry.inner_geometry = unioned;
     new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSNewGeometry GWSGeometryTransformators::transformIntersection( const GWSNewGeometry geometry , const GWSNewGeometry other){
+GWSGeometry GWSGeometryTransformators::transformIntersection( const GWSGeometry geometry , const GWSGeometry other){
     geos::geom::Geometry* intersected = geometry.inner_geometry->intersection( other.inner_geometry );
-    GWSNewGeometry new_geometry;
+    GWSGeometry new_geometry;
     new_geometry.inner_geometry = intersected;
     new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
     return new_geometry;

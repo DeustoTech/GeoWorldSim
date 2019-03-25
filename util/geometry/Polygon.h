@@ -1,11 +1,11 @@
 #ifndef GWSPOLYGON_H
 #define GWSPOLYGON_H
 
-#include "Geometry.h"
+#include "OldGeometry.h"
 #include "LineString.h"
 #include "../../geos/geom/Polygon.h"
 
-class GWSPolygon : public GWSGeometry
+class GWSPolygon : public GWSOldGeometry
 {
     Q_OBJECT
 

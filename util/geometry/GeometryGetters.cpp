@@ -2,27 +2,27 @@
 
 #include "geos/geom/CoordinateArraySequence.h"
 
-GWSAreaUnit GWSGeometryGetters::getArea(GWSNewGeometry geometry){
+GWSAreaUnit GWSGeometryGetters::getArea(GWSGeometry geometry){
     return geometry.inner_geometry->getArea();
 }
 
-double GWSGeometryGetters::getGeometryMaxX(GWSNewGeometry geometry){
+double GWSGeometryGetters::getGeometryMaxX(GWSGeometry geometry){
     return geometry.inner_geometry->getEnvelopeInternal()->getMaxX();
 }
 
-double GWSGeometryGetters::getGeometryMinX(GWSNewGeometry geometry){
+double GWSGeometryGetters::getGeometryMinX(GWSGeometry geometry){
     return geometry.inner_geometry->getEnvelopeInternal()->getMinX();
 }
 
-double GWSGeometryGetters::getGeometryMaxY(GWSNewGeometry geometry){
+double GWSGeometryGetters::getGeometryMaxY(GWSGeometry geometry){
     return geometry.inner_geometry->getEnvelopeInternal()->getMaxY();
 }
 
-double GWSGeometryGetters::getGeometryMinY(GWSNewGeometry geometry){
+double GWSGeometryGetters::getGeometryMinY(GWSGeometry geometry){
     return geometry.inner_geometry->getEnvelopeInternal()->getMinY();
 }
 
-GWSCoordinate GWSGeometryGetters::getCentroid(GWSNewGeometry geometry){
+GWSCoordinate GWSGeometryGetters::getCentroid(GWSGeometry geometry){
     if( geometry.isValid() && geometry.inner_geometry ){
         geos::geom::Coordinate centroid;
         geometry.inner_geometry->getCentroid( centroid );
@@ -31,7 +31,7 @@ GWSCoordinate GWSGeometryGetters::getCentroid(GWSNewGeometry geometry){
     return GWSCoordinate();
 }
 
-QList<GWSCoordinate> GWSGeometryGetters::getCoordinates(GWSNewGeometry geometry){
+QList<GWSCoordinate> GWSGeometryGetters::getCoordinates(GWSGeometry geometry){
     QList<GWSCoordinate> coordinates;
     if( geometry.isValid() && geometry.inner_geometry ){
         geos::geom::CoordinateSequence* seq = geometry.inner_geometry->getCoordinates();

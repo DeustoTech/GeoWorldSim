@@ -1,16 +1,16 @@
 #ifndef GWSGEOMETRYCOMPARATORS_H
 #define GWSGEOMETRYCOMPARATORS_H
 
-#include "NewGeometry.h"
+#include "Geometry.h"
 #include "../../util/units/Units.h"
 
 class GWSGeometryComparators {
 
-    static bool isInBounds( const GWSNewGeometry geometry , double minX , double maxX , double minY , double maxY );
-    static bool intersects( const GWSNewGeometry geometry , const GWSNewGeometry other);
-    static bool intersects( const GWSNewGeometry geometry , double minX , double maxX , double minY , double maxY );
-    static bool equals( const GWSNewGeometry geometry , GWSNewGeometry other );
-    static GWSLengthUnit getDistance( const GWSNewGeometry geometry , GWSNewGeometry other );
+    static bool isInBounds( const GWSGeometry geometry , double minX , double maxX , double minY , double maxY );
+    static bool intersects( const GWSGeometry geometry , const GWSGeometry other);
+    static bool intersects( const GWSGeometry geometry , double minX , double maxX , double minY , double maxY );
+    static bool equals( const GWSGeometry geometry , GWSGeometry other );
+    static GWSLengthUnit getDistance( const GWSGeometry geometry , GWSGeometry other );
 
 };
 

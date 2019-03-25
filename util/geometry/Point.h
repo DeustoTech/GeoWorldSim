@@ -1,10 +1,10 @@
 #ifndef GWSPOINT_H
 #define GWSPOINT_H
 
-#include "Geometry.h"
+#include "OldGeometry.h"
 #include "geos/geom/Point.h"
 
-class GWSPoint : public GWSGeometry
+class GWSPoint : public GWSOldGeometry
 {
     Q_OBJECT
 

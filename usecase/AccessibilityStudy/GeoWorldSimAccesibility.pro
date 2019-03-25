@@ -58,10 +58,9 @@ HEADERS += \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
             ## GEOMETRIES
-    ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
+    ../../util/geometry/Coordinate.h \
     ../../util/geometry/Quadtree.h \
-    ../../util/geometry/NewGeometry.h \
     ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/geometry/GeometryComparators.h \
     ../../util/geometry/GeometryTransformators.h \
@@ -136,10 +135,9 @@ SOURCES += mainAccesibility.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
-    ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
+    ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Quadtree.cpp \
-    ../../util/geometry/NewGeometry.cpp \
     ../../util/geometry/GeometryToGeoJSON.cpp \
     ../../util/geometry/GeometryComparators.cpp \
     ../../util/geometry/GeometryTransformators.cpp \

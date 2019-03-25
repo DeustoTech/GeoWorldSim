@@ -3,15 +3,15 @@
 
 #include "geos/geom/CoordinateSequenceFilter.h"
 
-#include "NewGeometry.h"
+#include "Geometry.h"
 
 class GWSGeometryTransformators{
 
 public:
-    static GWSNewGeometry transformMove( const GWSNewGeometry geometry , const GWSCoordinate &apply_movement );
-    static GWSNewGeometry transformBuffer( const GWSNewGeometry geometry , double threshold );
-    static GWSNewGeometry transformUnion( const GWSNewGeometry geometry , const GWSNewGeometry other );
-    static GWSNewGeometry transformIntersection( const GWSNewGeometry geometry , const GWSNewGeometry other );
+    static GWSGeometry transformMove( const GWSGeometry geometry , const GWSCoordinate &apply_movement );
+    static GWSGeometry transformBuffer( const GWSGeometry geometry , double threshold );
+    static GWSGeometry transformUnion( const GWSGeometry geometry , const GWSGeometry other );
+    static GWSGeometry transformIntersection( const GWSGeometry geometry , const GWSGeometry other );
 
 };
 

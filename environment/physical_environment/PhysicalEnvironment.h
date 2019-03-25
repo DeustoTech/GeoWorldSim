@@ -5,8 +5,8 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
-#include "../../util/geometry/NewGeometry.h"
 #include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/OldGeometry.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"
@@ -24,18 +24,18 @@ public:
     static QString GEOMETRY_PROP;
 
     // SPATIAL GETTERS
-    const GWSNewGeometry getBounds() const;
+    const GWSGeometry getBounds() const;
     GWSCoordinate getRandomCoordinate() const;
-    const GWSNewGeometry getGeometry( QSharedPointer<GWSAgent> agent ) const;
-    const GWSNewGeometry getGeometry( QString agent_id ) const;
+    const GWSGeometry getGeometry( QSharedPointer<GWSAgent> agent ) const;
+    const GWSGeometry getGeometry( QString agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
-    QStringList getAgentsIntersecting( const GWSNewGeometry geometry, QString class_name ) const;
+    QStringList getAgentsIntersecting( const GWSGeometry geometry, QString class_name ) const;
     QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // SETTERS
-    void setBounds( GWSNewGeometry geom );
+    void setBounds( GWSGeometry geom );
 
     // METHODS
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
@@ -43,7 +43,7 @@ public:
 
 protected:
 
-    void registerAgentToIndex( QSharedPointer<GWSAgent> agent , GWSNewGeometry geom );
+    void registerAgentToIndex( QSharedPointer<GWSAgent> agent , GWSGeometry geom );
 
 protected slots:
     void agentPropertyChanged( QString property_name );
@@ -54,7 +54,7 @@ private:
     ~GWSPhysicalEnvironment();
 
     // PHYSICAL ENVIRONMENT BOUNDS
-    GWSNewGeometry environment_bounds;
+    GWSGeometry environment_bounds;
 
     // SPATIAL INDEX
     QMap<QString , QSharedPointer< GWSQuadtree > > environment_agent_indexes; // Spatial indexes

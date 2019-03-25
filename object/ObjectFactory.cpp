@@ -7,15 +7,6 @@
 #include "../../agent/Agent.h"
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
-#include "../../util/geometry/Geometry.h"
-
-#include "../../util/geometry/Point.h"
-#include "../../util/geometry/LineString.h"
-#include "../../util/geometry/Polygon.h"
-
-#include "../../util/grid/Grid.h"
-#include "../../environment/network_environment/OldNetworkEdge.h"
-
 
 #include "../../util/parallelism/ParallelismController.h"
 
@@ -30,7 +21,6 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSAgent::staticMetaObject );
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
-    this->registerType( GWSGeometry::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

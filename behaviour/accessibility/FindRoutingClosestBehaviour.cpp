@@ -26,7 +26,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
-    GWSNewGeometry agent_geom = env->getGeometry( agent );
+    GWSGeometry agent_geom = env->getGeometry( agent );
     GWSCoordinate agent_coor = agent_geom.getCentroid();
 
     // Set agent type to search
@@ -34,7 +34,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     QMap< GWSCoordinate , QString > coor_to_agent;
 
     foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
-         GWSNewGeometry geom = env->getGeometry( a );
+         GWSGeometry geom = env->getGeometry( a );
          if( geom.isValid() ){
             coor_to_agent.insert( geom.getCentroid() , a->getUID() );
          }

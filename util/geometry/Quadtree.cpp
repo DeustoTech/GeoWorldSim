@@ -18,9 +18,9 @@ QStringList GWSQuadtree::getElements(){
     return this->ids_contained;
 }
 
-const GWSNewGeometry GWSQuadtree::getGeometry( QString object_id ){
+const GWSGeometry GWSQuadtree::getGeometry( QString object_id ){
     this->mutex.lockForRead();
-    const GWSNewGeometry geom = this->id_to_geometries.value( object_id );
+    const GWSGeometry geom = this->id_to_geometries.value( object_id );
     this->mutex.unlock();
     return geom;
 }
@@ -29,7 +29,7 @@ QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
     return this->getElements( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
 }
 
-QStringList GWSQuadtree::getElements(const GWSNewGeometry geom){
+QStringList GWSQuadtree::getElements(const GWSGeometry geom){
     return this->getElements(
                 GWSGeometryGetters::getGeometryMinX( geom ) ,
                 GWSGeometryGetters::getGeometryMaxX( geom ) ,
@@ -130,7 +130,7 @@ QString GWSQuadtree::getNearestElement(GWSCoordinate coor) {
         QString nearest_object_id;
         foreach (QString object_id, *y_layer) {
 
-            const GWSNewGeometry geom = this->id_to_geometries.value( object_id );
+            const GWSGeometry geom = this->id_to_geometries.value( object_id );
             if( geom.isValid() ){
                 GWSLengthUnit l = geom.getCentroid().getDistance( coor );
                 if( l < shortest_distance ){
@@ -149,16 +149,16 @@ QString GWSQuadtree::getNearestElement(GWSCoordinate coor) {
     return QString();
 }
 
-QString GWSQuadtree::getNearestElement( const GWSNewGeometry geom ) {
+QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {
     return this->getNearestElement( geom.getCentroid() );
 }
 
 void GWSQuadtree::upsert( QString object_id , GWSCoordinate coor ){
-    GWSNewGeometry geom = GWSGeometryTransformators::transformMove( GWSNewGeometry() , coor );
+    GWSGeometry geom = GWSGeometryTransformators::transformMove( GWSGeometry() , coor );
     this->upsert( object_id , geom );
 }
 
-void GWSQuadtree::upsert( QString object_id , const GWSNewGeometry geom ){
+void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
 
     if( object_id.isEmpty() ){
         return;
@@ -191,7 +191,7 @@ void GWSQuadtree::upsert( QString object_id , const GWSNewGeometry geom ){
                 // If already here, remove old version
                 if( this->ids_contained.contains( object_id ) ){
                     this->mutex.lockForRead();
-                    GWSNewGeometry previous_geom = this->id_to_geometries.value( object_id );
+                    GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
                     this->mutex.unlock();
                     GWSCoordinate previous_coor = previous_geom.getCentroid();
                     int previous_xhash = this->createHash( previous_coor.getX() , l );
@@ -222,7 +222,7 @@ void GWSQuadtree::remove(QString object_id){
         return;
     }
 
-    const GWSNewGeometry object_geom = this->id_to_geometries.value( object_id );
+    const GWSGeometry object_geom = this->id_to_geometries.value( object_id );
 
     if( !object_geom.isValid() ){
         return;
