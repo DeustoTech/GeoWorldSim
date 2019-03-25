@@ -28,7 +28,7 @@ QJsonArray IncrementPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID ).toString();
 
-    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
+    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
 
     double value = agent->getProperty( property_name ).toDouble();

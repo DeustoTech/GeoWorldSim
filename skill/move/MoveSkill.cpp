@@ -72,7 +72,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
     // Current position
     QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     if( !agent_geom ){
-        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
+        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
     }
     GWSCoordinate current_coor = agent_geom->getCentroid();
 

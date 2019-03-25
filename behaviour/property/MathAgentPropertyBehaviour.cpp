@@ -17,7 +17,7 @@ MathAgentPropertyBehaviour::MathAgentPropertyBehaviour() : GWSBehaviour (){
 QJsonArray MathAgentPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID_TO_OPERATE_ON ).toString();
-    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
+    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
 
     QString operation = this->getProperty( OPERATOR ).toString();
     QJsonValue operand_value = this->getProperty( OPERAND_VALUE );
