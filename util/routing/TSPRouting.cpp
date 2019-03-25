@@ -135,17 +135,17 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QList< GWSNewNetworkEdge > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
+        QList< QList< GWSNetworkEdge > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
         for(int j = 0; j < visit_coordinates.size(); j++ ){
 
             lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
             lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QList< GWSNewNetworkEdge > route = routes.at(j);
+            QList< GWSNetworkEdge > route = routes.at(j);
 
             GWSLengthUnit length = 0;
-            foreach( GWSNewNetworkEdge e , route ){
+            foreach( GWSNetworkEdge e , route ){
                 length = length + e.getLength();
             }
             if( length <= GWSLengthUnit( 0 ) ){

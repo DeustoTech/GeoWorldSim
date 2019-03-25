@@ -1,6 +1,5 @@
 #include "Edge.h"
 
-
 /**********************************************************************
  GETTERS
 **********************************************************************/
@@ -32,7 +31,6 @@ bool GWSEdge::operator == (const GWSEdge& other) const {
 bool GWSEdge::operator != (const GWSEdge& other) const{
     return !(*this == other);
 }
-
 
 bool GWSEdge::operator < (const GWSEdge& other) const{
     return this->getFromNodeUID() < other.getFromNodeUID();

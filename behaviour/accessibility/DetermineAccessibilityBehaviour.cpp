@@ -42,10 +42,10 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QString network_class = this->getProperty( NETWORK_TO_ACCESS ).toString();
 
-    QMap< QList< GWSNewNetworkEdge > ,  GWSCoordinate > list;
+    QMap< QList< GWSNetworkEdge > ,  GWSCoordinate > list;
 
     foreach ( GWSCoordinate coor, allAgentsCoordinates ){
-        QList< GWSNewNetworkEdge > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
+        QList< GWSNetworkEdge > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
         list.insert( min_path , coor );
     }
 
@@ -54,11 +54,11 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QList< QString > closest_agent_id_list;
 
-    foreach ( QList< GWSNewNetworkEdge > path, list.keys() ){
+    foreach ( QList< GWSNetworkEdge > path, list.keys() ){
 
         GWSLengthUnit l = 0;
 
-        foreach ( GWSNewNetworkEdge edge , path ){
+        foreach ( GWSNetworkEdge edge , path ){
             GWSCoordinate start = edge.getFromCoordinate();
             GWSCoordinate end = edge.getToCoordinate();
             l = l + start.getDistance( end );

@@ -40,11 +40,11 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< GWSNewNetworkEdge > > closest_coor_and_route =
+    QPair< GWSCoordinate , QList< GWSNetworkEdge > > closest_coor_and_route =
             GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
-    QList< GWSNewNetworkEdge > closest_route = closest_coor_and_route.second;
+    QList< GWSNetworkEdge > closest_route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
@@ -59,7 +59,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
         closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 ).getFromCoordinate() );
 
         // During route start til route end
-        foreach ( GWSNewNetworkEdge edge , closest_route ){
+        foreach ( GWSNetworkEdge edge , closest_route ){
             closest_route_distance = closest_route_distance + edge.getLength();
         }
 
