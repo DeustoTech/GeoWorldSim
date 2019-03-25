@@ -95,7 +95,11 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
+    ../../util/geometry/NewGeometry.h \
+    ../../util/geometry/GeometryToGeoJSON.h \
+    ../../util/geometry/GeometryComparators.h \
+    ../../util/geometry/GeometryTransformators.h
 
 
 
@@ -163,7 +167,11 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
+    ../../util/geometry/NewGeometry.cpp \
+    ../../util/geometry/GeometryToGeoJSON.cpp \
+    ../../util/geometry/GeometryComparators.cpp \
+    ../../util/geometry/GeometryTransformators.cpp
 
 
 

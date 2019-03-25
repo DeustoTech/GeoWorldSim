@@ -1,33 +1,33 @@
 #include "NetworkEdge.h"
 
-QString GWSNewNetworkEdge::EDGE_FROM_X_PROP = "from_x";
-QString GWSNewNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
-QString GWSNewNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
-QString GWSNewNetworkEdge::EDGE_TO_X_PROP = "to_x";
-QString GWSNewNetworkEdge::EDGE_TO_Y_PROP = "to_y";
-QString GWSNewNetworkEdge::EDGE_TO_Z_PROP = "to_z";
+QString GWSNetworkEdge::EDGE_FROM_X_PROP = "from_x";
+QString GWSNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
+QString GWSNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
+QString GWSNetworkEdge::EDGE_TO_X_PROP = "to_x";
+QString GWSNetworkEdge::EDGE_TO_Y_PROP = "to_y";
+QString GWSNetworkEdge::EDGE_TO_Z_PROP = "to_z";
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-QString GWSNewNetworkEdge::getFromNodeUID() const{
+QString GWSNetworkEdge::getFromNodeUID() const{
     return this->getFromCoordinate().toString();
 }
 
-QString GWSNewNetworkEdge::getToNodeUID() const{
+QString GWSNetworkEdge::getToNodeUID() const{
     return this->getToCoordinate().toString();
 }
 
-GWSCoordinate GWSNewNetworkEdge::getFromCoordinate() const{
+GWSCoordinate GWSNetworkEdge::getFromCoordinate() const{
     return this->from;
 }
 
-GWSCoordinate GWSNewNetworkEdge::getToCoordinate() const{
+GWSCoordinate GWSNetworkEdge::getToCoordinate() const{
     return this->to;
 }
 
-GWSLengthUnit GWSNewNetworkEdge::getLength() const {
+GWSLengthUnit GWSNetworkEdge::getLength() const {
     return GWSLengthUnit( this->cost );
 }
 
@@ -36,7 +36,7 @@ GWSLengthUnit GWSNewNetworkEdge::getLength() const {
  * (positive for climbing up and negative for going down)
  * @return
  */
-double GWSNewNetworkEdge::getGradient() const{
+double GWSNetworkEdge::getGradient() const{
     double length = this->getLength().number();
     if( length ){
         try {
@@ -53,6 +53,6 @@ double GWSNewNetworkEdge::getGradient() const{
  SETTERS
 **********************************************************************/
 
-void GWSNewNetworkEdge::setLength(GWSLengthUnit length){
+void GWSNetworkEdge::setLength(GWSLengthUnit length){
     this->cost = length.number();
 }
