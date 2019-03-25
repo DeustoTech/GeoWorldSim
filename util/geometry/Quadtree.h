@@ -10,7 +10,7 @@
 
 #include "../../agent/Agent.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/NewGeometry.h"
 
 using namespace SpatialIndex;
 using namespace SpatialIndex::StorageManager;
@@ -26,18 +26,18 @@ public:
 
     // GETTERS
     QStringList getElements();
-    QSharedPointer<GWSGeometry> getGeometry( QString object_id );
+    const GWSNewGeometry getGeometry( QString object_id );
 
     QStringList getElements( GWSCoordinate coordinate );
-    QStringList getElements( QSharedPointer<GWSGeometry> geom );
+    QStringList getElements( const GWSNewGeometry geom );
     QStringList getElements( double minX, double maxX, double minY, double maxY );
 
     QString getNearestElement( GWSCoordinate coor );
-    QString getNearestElement( QSharedPointer<GWSGeometry> geometry );
+    QString getNearestElement( GWSNewGeometry geometry );
 
     // SETTERS
     void upsert( QString object_id , GWSCoordinate coor );
-    void upsert( QString object_id , QSharedPointer<GWSGeometry> geom );
+    void upsert( QString object_id , const GWSNewGeometry geom );
     void remove( QString object_id );
 
 protected:
@@ -49,7 +49,7 @@ private:
     QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< QString , QSharedPointer<GWSGeometry> > id_to_geometries;
+    QMap< QString , GWSNewGeometry > id_to_geometries;
     QMap< unsigned int , QMap< int , QMap< int , QStringList* >* >* > geom_index_layers;
     unsigned int layer_amount = 5;
 

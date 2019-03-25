@@ -25,13 +25,7 @@ struct GWSNewGeometry {
     // GETTERS
     QString getUID() const;
     bool isValid() const;
-    GWSAreaUnit getArea() const;
-    double getGeometryMaxX() const;
-    double getGeometryMinX() const;
-    double getGeometryMaxY() const;
-    double getGeometryMinY() const;
     GWSCoordinate getCentroid() const;
-    QList<GWSCoordinate> getCoordinates() const;
 
     // OPERATORS
     bool operator == (const GWSNewGeometry&) const;

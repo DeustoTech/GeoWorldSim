@@ -17,9 +17,9 @@ GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(
 QJsonArray GenerateAgentGeometryBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSNewGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-   if( agent_geom ){
+   if( agent_geom.isValid() ){
         GWSPhysicalEnvironment::globalInstance()->unregisterAgent( agent );
     }
 

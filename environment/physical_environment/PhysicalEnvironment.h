@@ -5,6 +5,7 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
+#include "../../util/geometry/NewGeometry.h"
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Quadtree.h"
 
@@ -23,24 +24,18 @@ public:
     static QString GEOMETRY_PROP;
 
     // SPATIAL GETTERS
-    QSharedPointer<GWSGeometry> getBounds() const;
+    const GWSNewGeometry getBounds() const;
     GWSCoordinate getRandomCoordinate() const;
-    QSharedPointer<GWSGeometry> getGeometry( QSharedPointer<GWSAgent> agent ) const;
-    QSharedPointer<GWSGeometry> getGeometry( QString agent_id ) const;
+    const GWSNewGeometry getGeometry( QSharedPointer<GWSAgent> agent ) const;
+    const GWSNewGeometry getGeometry( QString agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
-    QStringList getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
+    QStringList getAgentsIntersecting( const GWSNewGeometry geometry, QString class_name ) const;
     QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // SETTERS
-    void setBounds( QSharedPointer<GWSGeometry> geom );
-
-    // SPATIAL OPERATIONS
-    void transformMove( QSharedPointer<GWSAgent> agent, const GWSCoordinate &apply_movement );
-    void transformBuffer( QSharedPointer<GWSAgent> agent, double threshold );
-    void transformUnion( QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
-    void transformIntersection( QSharedPointer<GWSAgent> agent, QSharedPointer<GWSGeometry> other );
+    void setBounds( GWSNewGeometry geom );
 
     // METHODS
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
@@ -48,7 +43,7 @@ public:
 
 protected:
 
-    void registerAgentToIndex( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> geom );
+    void registerAgentToIndex( QSharedPointer<GWSAgent> agent , GWSNewGeometry geom );
 
 protected slots:
     void agentPropertyChanged( QString property_name );
@@ -59,7 +54,7 @@ private:
     ~GWSPhysicalEnvironment();
 
     // PHYSICAL ENVIRONMENT BOUNDS
-    QSharedPointer<GWSGeometry> environment_bounds;
+    GWSNewGeometry environment_bounds;
 
     // SPATIAL INDEX
     QMap<QString , QSharedPointer< GWSQuadtree > > environment_agent_indexes; // Spatial indexes

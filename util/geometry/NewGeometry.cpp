@@ -2,6 +2,7 @@
 
 #include <QJsonDocument>
 #include "GeometryToGeoJSON.h"
+#include "GeometryGetters.h"
 
 GWSNewGeometry::GWSNewGeometry( QJsonObject geojson ) {
     this->geojson = geojson;
@@ -29,6 +30,10 @@ QString GWSNewGeometry::getUID() const{
 
 bool GWSNewGeometry::isValid() const{
     return !this->geojson.isEmpty();
+}
+
+GWSCoordinate GWSNewGeometry::getCentroid() const{
+    return GWSGeometryGetters::getCentroid( *this );
 }
 
 /**********************************************************************
