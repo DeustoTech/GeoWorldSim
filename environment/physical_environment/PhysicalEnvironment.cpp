@@ -150,7 +150,7 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
         this->agent_ids.append( agent_uid );
     }
 
-    this->registerAgentToIndex( agent , geom );
+    this->upsertAgentToIndex( agent , geom );
 
     GWSEnvironment::registerAgent( agent );
 }
@@ -178,7 +178,7 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
  PROTECTED
 **********************************************************************/
 
-void GWSPhysicalEnvironment::registerAgentToIndex(QSharedPointer<GWSAgent> agent, GWSGeometry geom){
+void GWSPhysicalEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, GWSGeometry geom){
     foreach (QJsonValue v , agent->getInheritanceFamily() ) {
 
         QString family = v.toString();
@@ -197,8 +197,10 @@ void GWSPhysicalEnvironment::registerAgentToIndex(QSharedPointer<GWSAgent> agent
 void GWSPhysicalEnvironment::agentPropertyChanged( QString property_name ){
     if( property_name == GEOMETRY_PROP ){
         QObject* object = QObject::sender();
+        if( !object ){ return; }
         GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
-        this->registerAgentToIndex( agent->getSharedPointer() , GWSGeometry( agent->getProperty( GEOMETRY_PROP ).toObject() ) );
+        if( !agent ){ return; }
+        this->upsertAgentToIndex( agent->getSharedPointer() , GWSGeometry( agent->getProperty( GEOMETRY_PROP ).toObject() ) );
     }
 }
 

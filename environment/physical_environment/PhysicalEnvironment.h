@@ -42,8 +42,7 @@ public:
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 protected:
-
-    void registerAgentToIndex( QSharedPointer<GWSAgent> agent , GWSGeometry geom );
+    void upsertAgentToIndex( QSharedPointer<GWSAgent> agent , GWSGeometry geom );
 
 protected slots:
     void agentPropertyChanged( QString property_name );
