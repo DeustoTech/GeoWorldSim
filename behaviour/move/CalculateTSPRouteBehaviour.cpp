@@ -21,8 +21,8 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
         QSharedPointer<GWSAgent> agent = this->getAgent();
         GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
 
-        QSharedPointer<GWSGeometry> agent_geom = env->getGeometry( agent );
-        GWSCoordinate agent_position = agent_geom->getCentroid();
+        GWSGeometry agent_geom = env->getGeometry( agent );
+        GWSCoordinate agent_position = agent_geom.getCentroid();
 
         QString agent_type = this->getProperty( SET_TSP_AGENT_TYPE ).toString();
 
@@ -36,8 +36,8 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
 
          foreach ( QSharedPointer<GWSAgent> a , agents_to_visit  ){
 
-              QSharedPointer<GWSGeometry> a_geom = env->getGeometry( a );
-              GWSCoordinate agent_to_visit_coord = a_geom->getCentroid();
+              GWSGeometry a_geom = env->getGeometry( a );
+              GWSCoordinate agent_to_visit_coord = a_geom.getCentroid();
 
               //QString agent_to_visit_id = a->getProperty("@id").toString();
               QString agent_to_visit_id = a->getUID();

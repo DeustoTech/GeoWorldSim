@@ -78,6 +78,9 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/geometry/GeometryTransformators.h  \
+    ../../util/geometry/GeometryGetters.h  \
+    ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.hpp \
@@ -171,6 +174,9 @@ SOURCES += mainlauncher.cpp \
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/geometry/GeometryTransformators.cpp  \
+    ../../util/geometry/GeometryGetters.cpp  \
+    ../../util/geometry/GeometryToGeoJSON.cpp \
     #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID

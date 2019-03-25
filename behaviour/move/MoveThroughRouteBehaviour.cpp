@@ -72,8 +72,8 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     QString graph_type = this->getProperty( AGENT_ROUTE_NETWORK_TYPE ).toString();
     movethroughroute_skill->move( duration_of_movement , current_speed , destination_coor , graph_type );
 
-    QSharedPointer<GWSGeometry> agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    GWSCoordinate agent_position_post = agent_geom_post->getCentroid();
+    GWSGeometry agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSCoordinate agent_position_post = agent_geom_post.getCentroid();
 
     // Set NEXTS behaviour
     if ( agent_position_post.getDistance( destination_coor ) < GWSLengthUnit( 0.5 ) ){
