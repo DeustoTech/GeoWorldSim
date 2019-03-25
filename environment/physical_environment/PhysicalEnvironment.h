@@ -26,11 +26,12 @@ public:
     QSharedPointer<GWSGeometry> getBounds() const;
     GWSCoordinate getRandomCoordinate() const;
     QSharedPointer<GWSGeometry> getGeometry( QSharedPointer<GWSAgent> agent ) const;
-    QList< QSharedPointer<GWSAgent> > getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
-    QList< QSharedPointer<GWSAgent> > getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
-    QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QString class_name ) const;
+    QSharedPointer<GWSGeometry> getGeometry( QString agent_id ) const;
+    QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
+    QStringList getAgentsIntersecting( const QSharedPointer<GWSGeometry> geometry, QString class_name ) const;
+    QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
-    QList< QSharedPointer<GWSAgent> > getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
+    QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // SETTERS
     void setBounds( QSharedPointer<GWSGeometry> geom );
@@ -48,6 +49,9 @@ public:
 protected:
 
     void registerAgentToIndex( QSharedPointer<GWSAgent> agent , QSharedPointer<GWSGeometry> geom );
+
+protected slots:
+    void agentPropertyChanged( QString property_name );
 
 private:
     GWSPhysicalEnvironment();

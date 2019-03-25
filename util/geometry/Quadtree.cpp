@@ -9,12 +9,11 @@ GWSQuadtree::GWSQuadtree() : QObject(){
 }
 
 GWSQuadtree::~GWSQuadtree(){
-    this->id_to_objects.clear();
     this->id_to_geometries.clear();
 }
 
-QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(){
-    return this->id_to_objects.values();
+QStringList GWSQuadtree::getElements(){
+    return this->ids_contained;
 }
 
 QSharedPointer<GWSGeometry> GWSQuadtree::getGeometry( QString object_id ){
@@ -24,8 +23,16 @@ QSharedPointer<GWSGeometry> GWSQuadtree::getGeometry( QString object_id ){
     return geom;
 }
 
-QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
-    QList< QSharedPointer<GWSObject> > objects;
+QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
+    return this->getElements( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
+}
+
+QStringList GWSQuadtree::getElements(QSharedPointer<GWSGeometry> geom){
+    return this->getElements( geom->getGeometryMinX() , geom->getGeometryMaxX() , geom->getGeometryMinY() , geom->getGeometryMaxY() );
+}
+
+QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
+    QStringList objects_ids;
 
     // See the decimal value where min and max diverge
     QString x_max = QString::number( maxX );
@@ -69,28 +76,28 @@ QList< QSharedPointer<GWSObject> > GWSQuadtree::getElements(double minX, double 
     int y_hash = this->createHash( ( minY + maxY ) / 2.0  , qMin( x_decimal_count , y_decimal_count ) );
 
     if( !this->geom_index_layers.keys().contains( qMin( x_decimal_count , y_decimal_count ) ) ){
-        return objects;
+        return objects_ids;
     }
 
     if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->keys().contains( x_hash ) ){
-        return objects;
+        return objects_ids;
     }
 
     if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->keys().contains( y_hash ) ){
-        return objects;
+        return objects_ids;
     }
 
     this->mutex.lockForWrite();
     QStringList* ids = this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash );
     foreach(QString id , *ids ) {
-        objects.append( this->id_to_objects.value( id ) );
+        objects_ids.append( id );
     }
     this->mutex.unlock();
 
-    return objects;
+    return objects_ids;
 }
 
-QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) {
+QString GWSQuadtree::getNearestElement(GWSCoordinate coor) {
 
     for( int l = this->layer_amount ; l > 0 ; l-- ){
 
@@ -131,29 +138,28 @@ QSharedPointer<GWSObject> GWSQuadtree::getNearestElement(GWSCoordinate coor) {
             continue;
         }
 
-        return this->id_to_objects.value( nearest_object_id );
+        return nearest_object_id;
     }
-    return Q_NULLPTR;
+    return QString();
 }
 
-QSharedPointer<GWSObject> GWSQuadtree::getNearestElement( QSharedPointer<GWSGeometry> geom ) {
+QString GWSQuadtree::getNearestElement( QSharedPointer<GWSGeometry> geom ) {
     return this->getNearestElement( geom->getCentroid() );
 }
 
-void GWSQuadtree::upsert( QSharedPointer<GWSObject> agent , GWSCoordinate coor ){
+void GWSQuadtree::upsert( QString object_id , GWSCoordinate coor ){
     QSharedPointer<GWSGeometry> geom = QSharedPointer<GWSGeometry>( new GWSGeometry() );
     geom->transformMove( coor );
-    this->upsert( agent , geom );
+    this->upsert( object_id , geom );
     geom.clear();
 }
 
-void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSGeometry> geom ){
+void GWSQuadtree::upsert( QString object_id , QSharedPointer<GWSGeometry> geom ){
 
-    if( object.isNull() ){
+    if( object_id.isEmpty() ){
         return;
     }
 
-    QString object_id = object->getId();
     GWSCoordinate coor = geom->getCentroid();
 
     if ( coor.isValid() ){
@@ -199,7 +205,6 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
         }
 
         this->mutex.lockForWrite();
-        this->id_to_objects.insert( object_id , object );
         this->id_to_geometries.insert( object_id , geom );
         this->ids_contained.append( object_id );
         this->mutex.unlock();
@@ -207,15 +212,9 @@ void GWSQuadtree::upsert( QSharedPointer<GWSObject> object , QSharedPointer<GWSG
 
 }
 
-void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
+void GWSQuadtree::remove(QString object_id){
 
-    if( object.isNull() ){
-        return;
-    }
-
-    QString object_id = object->getId();
-
-    if( !this->id_to_objects.value( object_id , Q_NULLPTR ) ){
+    if( object_id.isEmpty() ){
         return;
     }
 
@@ -237,7 +236,6 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
     }
 
     this->mutex.lockForWrite();
-    this->id_to_objects.remove( object_id );
     this->id_to_geometries.remove( object_id );
     this->ids_contained.removeAll( object_id );
     this->mutex.unlock();
@@ -245,7 +243,7 @@ void GWSQuadtree::remove(QSharedPointer<GWSObject> object){
 }
 
 
-const int GWSQuadtree::createHash(double value, int decimal_amount) const{
+int GWSQuadtree::createHash(double value, int decimal_amount) const{
     try {
         int multiplier = qPow( 10 , decimal_amount );
         return qFloor( value * multiplier );

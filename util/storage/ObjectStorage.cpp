@@ -41,14 +41,14 @@ QList< QSharedPointer<T> > GWSObjectStorage::getAll() const{
     return list;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
-    return this->getByClassAndId<GWSObject>( class_name , id );
+QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
+    return this->getByClassAndUID<GWSObject>( class_name , uid );
 }
 
 template <class T>
-QSharedPointer<T> GWSObjectStorage::getByClassAndId( QString class_name , QString id ) const{
+QSharedPointer<T> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
     if ( this->classes_stored.contains( class_name ) ){
-        QSharedPointer<GWSObject> obj = this->object_ids.value( class_name )->value( id , Q_NULLPTR );
+        QSharedPointer<GWSObject> obj = this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
         if( !obj.isNull() ){
             return obj.dynamicCast<T>();
         }
@@ -56,8 +56,8 @@ QSharedPointer<T> GWSObjectStorage::getByClassAndId( QString class_name , QStrin
     return Q_NULLPTR;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getById( QString id ){
-    return this->getById( id );
+QSharedPointer<GWSObject> GWSObjectStorage::getByUID( QString uid ){
+    return this->getByUID( uid );
 }
 
 
@@ -131,7 +131,7 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
             this->object_names.insert( c , map );
 
             QHash<QString , QSharedPointer<GWSObject> >* map2 = new QHash<QString , QSharedPointer<GWSObject> >();
-            this->object_ids.insert( c , map2 );
+            this->object_uids.insert( c , map2 );
 
             this->classes_stored.append( c );
         }
@@ -147,7 +147,7 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
 
         this->objects[ c ]->append( object );
         this->object_names[ c ]->insert( object->objectName() , object );
-        this->object_ids[ c ]->insert( object->getId() , object );
+        this->object_uids[ c ]->insert( object->getUID() , object );
 
         this->mutex.unlock();
     }
@@ -167,7 +167,7 @@ void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
 
             this->objects.value( c )->removeAll( object );
             this->object_names.value( c )->remove( object->objectName() );
-            this->object_ids.value( c )->remove( object->getId() );
+            this->object_uids.value( c )->remove( object->getUID() );
 
             if( this->objects.value( c )->isEmpty() ){
                 this->classes_stored.removeAll( c );

@@ -126,8 +126,7 @@ void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
     GWSExternalListener* listener = dynamic_cast<GWSExternalListener*>( sender() );
 
     // Get socketID corresponding to listener from listener QMap
-    QString socketID =  this->listeners.key( listener );
+    QString socketUID =  this->listeners.key( listener );
 
-
-    emit this->dataReceivedSignal( data ,  socketID );
+    emit this->dataReceivedSignal( data , socketUID );
 }

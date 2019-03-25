@@ -10,20 +10,20 @@
 #include <lemon/list_graph.h>
 #include <lemon/dijkstra.h>
 
-#include "../../util/graph/Edge.h"
+#include "../../util/graph/NewEdge.h"
 #include "../../util/routing/EdgeVisitor.h"
 
-template <class T>
+template <class T = GWSNewEdge>
 class GWSRouting : public GWSObject
 {
 
 public:
 
     GWSRouting(){
-        this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , QSharedPointer< T > >();
+        this->arc_to_edges = new QMap< lemon::ListDigraph::Arc , T >();
         this->hash_to_node = new QMap< QString , lemon::ListDigraph::Node >();
         this->routing_graph = new lemon::ListDigraph();
-        this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
+        this->graph_edge_visitor = new GWSEdgeVisitor<T>( this->routing_graph );
 
     }
 
@@ -38,7 +38,7 @@ public:
      GETTERS - ONE TO ONE
     **********************************************************************/
 
-    QList< QSharedPointer< T > > getShortestPath( QString from_hash , QString to_hash ){
+    QList< T > getShortestPath( QString from_hash , QString to_hash ){
         return this->getShortestPath( { from_hash , to_hash } ).at(0);
     }
 
@@ -46,14 +46,14 @@ public:
      GETTERS -  ORDERED MANY (ONE AFTER THE OTHER)
     **********************************************************************/
 
-    QList<QList< QSharedPointer< T > > > getShortestPath( QStringList ordered_hashes ){
-        QList<QList<QSharedPointer< T > > > result_routes;
+    QList<QList< T > > getShortestPath( QStringList ordered_hashes ){
+        QList<QList< T > > result_routes;
 
-        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor<T> > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor<T> >( *this->routing_graph , *this->graph_edge_visitor );
 
         for(int i = 0; i < ordered_hashes.size()-1; i++){
 
-            QList< QSharedPointer< T > > route;
+            QList< T > route;
             QString from_hash = ordered_hashes.at( i );
             QString to_hash = ordered_hashes.at( i+1 );
 
@@ -117,8 +117,8 @@ public:
      GETTERS -  ONE TO MANY
     **********************************************************************/
 
-    QList<QList<QSharedPointer< T > > > getShortestPaths( QString from_one_hash , QStringList to_many_hashes ){
-        QList< QList< QSharedPointer< T > > > result_routes;
+    QList<QList< T > > getShortestPaths( QString from_one_hash , QStringList to_many_hashes ){
+        QList< QList< T > > result_routes;
 
         if( from_one_hash.isEmpty() ){
             return result_routes;
@@ -133,13 +133,13 @@ public:
         }
 
         // Get start node and start graph from it
-        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+        lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor<T> > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor<T> >( *this->routing_graph , *this->graph_edge_visitor );
 
         dijkstra_algorithm.run( start );
 
         // Iterate all end nodes
         foreach( QString to_hash , to_many_hashes ){
-            QList< QSharedPointer< T > > route = QList< QSharedPointer< T > >();
+            QList< T > route = QList< T >();
 
             if( to_hash.isEmpty() ){
                 result_routes.append( route );
@@ -182,14 +182,14 @@ public:
      SETTERS - ADD EDGE
     **********************************************************************/
 
-    void upsert(QSharedPointer< T > edge){
+    void upsert(const T& edge){
 
         //QSharedPointer< GWSEdge > edge = e.dynamicCast<GWSEdge>();
 
         try {
 
             // Create or retrieve edge start node
-            QString from_hash = edge->getFromNodeId();
+            QString from_hash = edge.getFromNodeUID();
             lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
 
             this->mutex.lock();
@@ -200,7 +200,7 @@ public:
             this->mutex.unlock();
 
             // Create or retrieve edge end node
-            QString to_hash = edge->getToNodeId();
+            QString to_hash = edge.getToNodeUID();
             lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
 
             this->mutex.lock();
@@ -213,7 +213,7 @@ public:
 
             lemon::ListDigraph::Arc arc = this->routing_graph->addArc(s , e);
             this->arc_to_edges->insert( arc , edge );
-            this->graph_edge_visitor->arc_costs.insert( arc , edge->getEdgeCost() );
+            this->graph_edge_visitor->edges.insert( arc , edge );
             this->mutex.unlock();
 
         } catch(...){}
@@ -223,7 +223,7 @@ public:
      SETTERS - REMOVE EDGE
     **********************************************************************/
 
-    void remove(QSharedPointer< T > edge){
+    void remove(const T& edge){
 
         //QSharedPointer< GWSEdge > edge = e.dynamicCast<GWSEdge>();
 
@@ -238,9 +238,9 @@ public:
      SETTERS - CACHE CALCULATED ROUTES
     **********************************************************************/
 
-    void cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList<QSharedPointer< T > > route ){
+    void cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QList< T > route ){
         if( !this->routes_cache.keys().contains( start ) ){
-            this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< QSharedPointer< T > > >() );
+            this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QList< T > >() );
         }
         this->routes_cache[ start ].insert( end , route );
     }
@@ -251,16 +251,16 @@ protected:
 
     // Used to create nodes and arcs
     lemon::ListDigraph* routing_graph = Q_NULLPTR;
-    GWSEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
+    GWSEdgeVisitor<T>* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
-    QMap< lemon::ListDigraph::Arc , QSharedPointer< T > >* arc_to_edges;
+    QMap< lemon::ListDigraph::Arc , T >* arc_to_edges;
 
     // To link nodes with its original GSSGraphNode
     QMap< QString , lemon::ListDigraph::Node >* hash_to_node;
 
     // Routes cache
-    QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QList<QSharedPointer< T > > > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >
+    QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QList< T > > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >
 
 };
 

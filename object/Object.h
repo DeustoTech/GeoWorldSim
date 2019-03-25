@@ -23,7 +23,7 @@ public:
     ~GWSObject();
 
     // PROPERTIES
-    static QString GWS_ID_PROP;
+    static QString GWS_UID_PROP;
     static QString GWS_CLASS_PROP;
     static QString GWS_INHERITANCE_FAMILY_PROP;
 
@@ -35,7 +35,7 @@ public:
     virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // GETTERS
-    QString getId() const;
+    QString getUID() const;
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;

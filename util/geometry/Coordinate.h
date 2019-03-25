@@ -8,6 +8,8 @@
 #include "../units/Units.h"
 
 struct GWSCoordinate {
+
+    // PROPERTIES
     double x = std::nan("0");
     double y = std::nan("0");
     double z = std::nan("0");
@@ -21,6 +23,7 @@ struct GWSCoordinate {
     ~GWSCoordinate(){}
 
     // GETTERS
+    QString getUID() const;
     bool isValid() const;
     double getX() const;
     double getY() const;

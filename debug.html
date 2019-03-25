@@ -97,7 +97,8 @@
         
         // Socket
         var socket
-        var reconnectSocket = function(){
+        var reconnectSocket;
+        reconnectSocket = function(){
             socket = new WebSocket('ws://sockets.geoworldsim.com/?scenario_id=' + simulation_id );
             socket.onopen = function (ev) {
                 console.log( 'Socket connected' );

@@ -10,23 +10,23 @@
 #include <lemon/maps.h>
 
 #include <QMap>
+#include "../../util/graph/NewEdge.h"
 
-#include "../../util/graph/Edge.h"
-
+template <class T = GWSNewEdge>
 class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
 public:
 
-    GWSEdgeVisitor( lemon::ListDigraph* routing_graph );
-
-    // GETTERS
-    QMap< lemon::ListDigraph::Arc , double > arc_costs;
-
-    // SETTERS
+    GWSEdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){}
 
     // OPERATORS
-    double operator[](Key arc) const;
+    double operator[](Key arc) const{
+        return this->edges.value( arc ).cost;
+    }
+
+    // STORAGE
+    QMap< lemon::ListDigraph::Arc , T > edges;
 
 };
 

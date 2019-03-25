@@ -28,3 +28,4 @@ bool GWSEdge::equals( const QSharedPointer<GWSEdge> other ) const{
 bool GWSEdge::equalsReversed(const QSharedPointer<GWSEdge> other) const{
     return this->getFromNodeId() == other->getToNodeId() && this->getToNodeId() == other->getFromNodeId();
 }
+

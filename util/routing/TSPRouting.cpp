@@ -7,6 +7,7 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
+#include "../../util/graph/Edge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
 GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {
@@ -134,18 +135,18 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QList< QSharedPointer <GWSNetworkEdge> > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
+        QList< QList< GWSNewNetworkEdge > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
         for(int j = 0; j < visit_coordinates.size(); j++ ){
 
             lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
             lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QList< QSharedPointer <GWSNetworkEdge> > route = routes.at(j);
+            QList< GWSNewNetworkEdge > route = routes.at(j);
 
             GWSLengthUnit length = 0;
-            foreach( QSharedPointer <GWSNetworkEdge> e , route ){
-                length = length + e->getLength();
+            foreach( GWSNewNetworkEdge e , route ){
+                length = length + e.getLength();
             }
             if( length <= GWSLengthUnit( 0 ) ){
                 length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) );

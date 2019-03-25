@@ -63,7 +63,6 @@ HEADERS += \
     ../../util/geometry/Quadtree.h \
     ../../util/api/APIDriver.h \
     ../../util/routing/Routing.hpp \
-    ../../util/routing/EdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.h \
@@ -95,7 +94,10 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
+    ../../util/graph/NewEdge.h \
+    ../../environment/network_environment/NewNetworkEdge.h \
+    ../../util/routing/EdgeVisitor.h
 
 
 
@@ -164,7 +166,9 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
+    ../../util/graph/NewEdge.cpp \
+    ../../environment/network_environment/NewNetworkEdge.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

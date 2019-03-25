@@ -15,7 +15,7 @@ SetAgentPropertyBehaviour::SetAgentPropertyBehaviour() : GWSBehaviour(){
 QJsonArray SetAgentPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID ).toString();
-    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getById( agent_id );
+    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
     if( !agent ){
         return this->getProperty( NEXTS ).toArray();
     }
