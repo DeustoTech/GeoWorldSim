@@ -198,7 +198,7 @@ void GWSPhysicalEnvironment::agentPropertyChanged( QString property_name ){
     if( property_name == GEOMETRY_PROP ){
         QObject* object = QObject::sender();
         GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
-        qDebug() << property_name;
+        this->registerAgentToIndex( agent->getSharedPointer() , GWSGeometry( agent->getProperty( GEOMETRY_PROP ).toObject() ) );
     }
 }
 

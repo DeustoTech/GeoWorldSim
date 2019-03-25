@@ -31,7 +31,7 @@ QJsonArray SetNextTSPDestinationBehaviour::behave(){
         agent->setProperty( this->getProperty( STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString() , destination_agent_id );
 
         QSharedPointer<GWSAgent> destination_agent = GWSAgentEnvironment::globalInstance()->getByUID( destination_agent_id );
-        GWSCoordinate destination_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( destination_agent )->getCentroid();
+        GWSCoordinate destination_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( destination_agent ).getCentroid();
 
         double x = destination_agent_coor.getX();
         double y = destination_agent_coor.getY();

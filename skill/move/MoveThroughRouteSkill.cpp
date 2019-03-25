@@ -4,6 +4,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
 #include "../../skill/pollute/PolluteSkill.h"
+#include "../../util/geometry/GeometryGetters.h"
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
@@ -39,14 +40,14 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    if( !agent_geom ){
+    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    if( !agent_geom.isValid() ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
         return;
     }
 
     // Extract destination coordinates
-    GWSCoordinate current_coor = agent_geom->getCentroid();
+    GWSCoordinate current_coor = agent_geom.getCentroid();
 
     if( current_coor == route_destination ){
         return;
@@ -154,8 +155,8 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
         inside_agent_ids.append( agent->getUID() );
         starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
-        QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
-        this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
+        GWSGeometry current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
+        this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
     }
 
     MoveSkill::move( movement_duration , movement_speed , route_destination );
