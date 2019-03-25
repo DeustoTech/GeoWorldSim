@@ -39,7 +39,7 @@ GWSAgent::~GWSAgent() {
         env->unregisterAgent( this->getSharedPointer() );
     }
 
-    qDebug() << QString("%1 deleted").arg( this->getId() );
+    qDebug() << QString("%1 deleted").arg( this->getUID() );
     if( this->skills ){ this->skills->deleteAll(); this->skills->deleteLater(); }
     if( this->behaviours ){ this->behaviours->deleteAll(); this->behaviours->deleteLater(); }
 }
@@ -134,12 +134,6 @@ QJsonObject GWSAgent::serialize() const{
         json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
     }
 
-    // EDGE
-    QSharedPointer<GWSNetworkEdge> edge = GWSNetworkEnvironment::globalInstance()->getEdge( this->getSharedPointer() );
-    if( edge ){
-        json.insert( GWSNetworkEnvironment::EDGE_PROP , edge->serialize() );
-    }
-
     return json;
 }
 
@@ -177,7 +171,7 @@ QSharedPointer<GWSSkill> GWSAgent::getSkill( QString class_name ) const{
       if( !this->skills ){ return Q_NULLPTR; }
     const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
-        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getId() ).arg( class_name );
+        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name );
         return Q_NULLPTR;
     }
     return objs.at(0).dynamicCast<GWSSkill>();
@@ -216,7 +210,7 @@ QList< QSharedPointer<GWSBehaviour> > GWSAgent::getCurrentlyExecutingBehaviours(
 }
 
 QSharedPointer<GWSBehaviour> GWSAgent::getBehaviour( QString id ) const {
-    return this->behaviours->getByClassAndId( GWSBehaviour::staticMetaObject.className() , id ).dynamicCast<GWSBehaviour>();
+    return this->behaviours->getByClassAndUID( GWSBehaviour::staticMetaObject.className() , id ).dynamicCast<GWSBehaviour>();
 }
 
 QList< QSharedPointer<GWSBehaviour> > GWSAgent::getBehaviours(QString class_name) const{
@@ -291,7 +285,7 @@ void GWSAgent::behave(){
 
     // No start behaviour
     if( this->to_be_executed_behaviours.isEmpty() && this->getProperty( GWSTimeEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
-        qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getId() );
+        qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getUID() );
     }
 
  //   qDebug() << this->serialize();
@@ -300,7 +294,7 @@ void GWSAgent::behave(){
     qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
     if( this->to_be_executed_behaviours.isEmpty() ){
-        qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getId() );
+        qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getUID() );
         return;
     }
 
@@ -308,7 +302,7 @@ void GWSAgent::behave(){
     QJsonArray next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
-        qDebug() << QString("AGENT %1 executing %2").arg( this->getId() ).arg( behaviour->getId() );
+        qDebug() << QString("AGENT %1 executing %2").arg( this->getUID() ).arg( behaviour->getUID() );
         QJsonArray ids = behaviour->tick( behaving_time );
         foreach (QJsonValue id , ids ) {
             next_execute_behaviour_ids.append( id );
@@ -324,7 +318,7 @@ void GWSAgent::behave(){
 
         QSharedPointer<GWSBehaviour> behaviour = this->getBehaviour( id );
         if( behaviour.isNull() ){
-            qCritical() << QString("Agent %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getId() ).arg( id );
+            qCritical() << QString("Agent %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( id );
             GWSApp::exit( -1 );
         } else {
             next_execute_behaviours.append( behaviour );

@@ -21,8 +21,8 @@ public:
     QSharedPointer<GWSAgent> getRandomByClass( QString class_name );
     template <class T> QSharedPointer<T> getRandomByClass( QString class_name );
 
-    QSharedPointer<GWSAgent> getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
-    template <class T> QSharedPointer<T> getByClassAndId( QString class_name , QString internal_id ) const;  // Get one agent
+    QSharedPointer<GWSAgent> getByClassAndUID( QString class_name , QString internal_id ) const;  // Get one agent
+    template <class T> QSharedPointer<T> getByClassAndUID( QString class_name , QString internal_id ) const;  // Get one agent
 
     QSharedPointer<GWSAgent> getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
     template <class T> QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
@@ -30,9 +30,9 @@ public:
     QList< QSharedPointer<GWSAgent> > getByClass( QString class_name ) const; // Get all agents for a given type
     template <class T> QList<QSharedPointer<T>> getByClass( QString class_name ) const;  // Get all agents for a given type
 
-    QSharedPointer<GWSAgent> getById( QString id ) const;
-    QList< QSharedPointer<GWSAgent> > getByIds( QStringList ids ) const;
-    QList< QSharedPointer<GWSAgent> > getByIds( QJsonArray ids ) const;
+    QSharedPointer<GWSAgent> getByUID( QString id ) const;
+    QList< QSharedPointer<GWSAgent> > getByUIDS( QStringList ids ) const;
+    QList< QSharedPointer<GWSAgent> > getByUIDS( QJsonArray ids ) const;
 
     QSharedPointer<GWSAgent> getByName(QString name) const; // Get one agent by its name
     template <class T> QSharedPointer<T> getByName(QString name) const; // Get one agent by its name

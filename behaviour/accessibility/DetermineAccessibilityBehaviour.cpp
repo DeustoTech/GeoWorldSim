@@ -35,18 +35,18 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
         GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
         allAgentsCoordinates.append( coor );
 
-        QString id = agent->getId();
+        QString id = agent->getUID();
         allAgentsCoorsIds.insert( id, coor );
 
     }
 
     QString network_class = this->getProperty( NETWORK_TO_ACCESS ).toString();
 
-    QMap< QList<QSharedPointer< GWSNetworkEdge> > ,  GWSCoordinate > list;
+    QMap< QList< GWSNewNetworkEdge > ,  GWSCoordinate > list;
 
     foreach ( GWSCoordinate coor, allAgentsCoordinates ){
-        QList<QSharedPointer<GWSNetworkEdge> > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
-        list.insert( min_path , coor  );
+        QList< GWSNewNetworkEdge > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
+        list.insert( min_path , coor );
     }
 
 
@@ -54,13 +54,13 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QList< QString > closest_agent_id_list;
 
-    foreach ( QList<QSharedPointer< GWSNetworkEdge> > path, list.keys() ){
+    foreach ( QList< GWSNewNetworkEdge > path, list.keys() ){
 
         GWSLengthUnit l = 0;
 
-        foreach ( QSharedPointer<GWSNetworkEdge> edge , path ){
-            GWSCoordinate start = edge->getFromCoordinate();
-            GWSCoordinate end = edge->getToCoordinate();
+        foreach ( GWSNewNetworkEdge edge , path ){
+            GWSCoordinate start = edge.getFromCoordinate();
+            GWSCoordinate end = edge.getToCoordinate();
             l = l + start.getDistance( end );
         }
 
@@ -81,7 +81,7 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
         }
     }
 
-    QList<QSharedPointer<GWSAgent>> closest_agent_list = GWSAgentEnvironment::globalInstance()->getByIds( closest_agent_id_list );
+    QList<QSharedPointer<GWSAgent>> closest_agent_list = GWSAgentEnvironment::globalInstance()->getByUIDS( closest_agent_id_list );
 
     foreach ( QSharedPointer<GWSAgent> a, closest_agent_list ){
         a->setProperty( "color" , "green" );

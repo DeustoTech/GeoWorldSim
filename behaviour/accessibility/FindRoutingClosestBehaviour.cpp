@@ -34,17 +34,17 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
          QSharedPointer<GWSGeometry> geom = env->getGeometry( a );
          if( geom ){
-            coor_to_agent.insert( geom->getCentroid() , a->getId() );
+            coor_to_agent.insert( geom->getCentroid() , a->getUID() );
          }
     }
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSNetworkEdge> > > closest_coor_and_route =
+    QPair< GWSCoordinate , QList< GWSNewNetworkEdge > > closest_coor_and_route =
             GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
-    QList< QSharedPointer<GWSNetworkEdge> > closest_route = closest_coor_and_route.second;
+    QList< GWSNewNetworkEdge > closest_route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
@@ -56,15 +56,15 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     {
         // From Agent to route start
-        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 )->getFromCoordinate() );
+        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 ).getFromCoordinate() );
 
         // During route start til route end
-        foreach ( QSharedPointer<GWSNetworkEdge> edge , closest_route ){
-            closest_route_distance = closest_route_distance + edge->getLength();
+        foreach ( GWSNewNetworkEdge edge , closest_route ){
+            closest_route_distance = closest_route_distance + edge.getLength();
         }
 
         // From route end to nearest_agent
-        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 )->getToCoordinate() );
+        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 ).getToCoordinate() );
     }
 
     // Extract and store closest node ID and coordinates:

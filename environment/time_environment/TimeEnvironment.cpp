@@ -58,7 +58,7 @@ double GWSTimeEnvironment::getTimeSpeed() const{
 }
 
 qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
-    return this->agent_internal_times.value( agent->getId() , -1 );
+    return this->agent_internal_times.value( agent->getUID() , -1 );
 }
 
 /**********************************************************************
@@ -78,7 +78,7 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
 }
 
 void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime){
-    this->agent_internal_times.insert( agent->getId() , datetime );
+    this->agent_internal_times.insert( agent->getUID() , datetime );
 }
 
 /*void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
@@ -99,7 +99,7 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
         quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble();
         this->mutex.lock();
-        this->agent_internal_times.insert( agent->getId() , init_internal_time );
+        this->agent_internal_times.insert( agent->getUID() , init_internal_time );
         this->mutex.unlock();
     }
 
@@ -107,5 +107,5 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
 
 void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::unregisterAgent( agent );
-    this->agent_internal_times.remove( agent->getId() );
+    this->agent_internal_times.remove( agent->getUID() );
 }

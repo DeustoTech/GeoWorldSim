@@ -39,7 +39,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
-#include "../../environment/network_environment/NetworkEdge.h"
+#include "../../environment/network_environment/OldNetworkEdge.h"
 
 // Utils
 #include "../../util/geometry/Coordinate.h"

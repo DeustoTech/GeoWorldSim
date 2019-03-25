@@ -8,7 +8,6 @@
 #include <lemon/list_graph.h>
 #include <lemon/full_graph.h>
 
-#include "../../environment/network_environment/NetworkEdge.h"
 #include "../../util/geometry/Coordinate.h"
 
 class GWSTSPRouting : public QObject
