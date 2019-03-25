@@ -11,7 +11,7 @@
 #include <lemon/dijkstra.h>
 
 #include "../../util/graph/NewEdge.h"
-#include "../../util/routing/EdgeVisitor.h"
+#include "../../util/routing/EdgeVisitor.hpp"
 
 template <class T = GWSNewEdge>
 class GWSRouting : public GWSObject

@@ -63,6 +63,7 @@ HEADERS += \
     ../../util/geometry/Quadtree.h \
     ../../util/api/APIDriver.h \
     ../../util/routing/Routing.hpp \
+    ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.h \
@@ -79,6 +80,7 @@ HEADERS += \
     ../../util/ai/Intelligence.h \
     ../../util/svm/Svm.h \
     ../../util/graph/Edge.h \
+    ../../util/graph/NewEdge.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
@@ -87,6 +89,7 @@ HEADERS += \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
+    ../../environment/network_environment/NewNetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/social_environment/SocialEnvironment.h \
@@ -94,10 +97,7 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
-    ../../util/graph/NewEdge.h \
-    ../../environment/network_environment/NewNetworkEdge.h \
-    ../../util/routing/EdgeVisitor.h
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
 
 
 
@@ -126,7 +126,6 @@ SOURCES += mainAccesibility.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
-    ../../util/routing/EdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \
@@ -152,6 +151,7 @@ SOURCES += mainAccesibility.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
     ../../util/graph/Edge.cpp \
+    ../../util/graph/NewEdge.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
@@ -159,6 +159,7 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
+    ../../environment/network_environment/NewNetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
@@ -166,9 +167,7 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
-    ../../util/graph/NewEdge.cpp \
-    ../../environment/network_environment/NewNetworkEdge.cpp
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
