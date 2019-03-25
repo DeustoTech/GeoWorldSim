@@ -1,30 +1,17 @@
 #include "SocialRelation.h"
 
-QString GWSSocialRelation::EDGE_FROM_AGENT_PROP = "from_agent";
-QString GWSSocialRelation::EDGE_TO_AGENT_PROP = "to_agent";
-
-GWSSocialRelation::GWSSocialRelation() : GWSEdge() {
-}
-
-GWSSocialRelation::~GWSSocialRelation(){
-}
+QString GWSSocialRelation::AGENT_FROM_PROP = "from_agent";
+QString GWSSocialRelation::AGENT_TO_PROP = "to_agent";
+QString GWSSocialRelation::SOCIAL_RELATION_PROP = "relation";
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-QString GWSSocialRelation::getFromNodeId() const{
-    return this->getFromAgentId();
+QString GWSSocialRelation::getFromNodeUID() const{
+    return this->from_agent_uid;
 }
 
-QString GWSSocialRelation::getToNodeId() const{
-    return this->getToAgentId();
-}
-
-QString GWSSocialRelation::getFromAgentId() const{
-    return this->getProperty( EDGE_FROM_AGENT_PROP ).toString();
-}
-
-QString GWSSocialRelation::getToAgentId() const{
-    return this->getProperty( EDGE_TO_AGENT_PROP ).toString();
+QString GWSSocialRelation::getToNodeUID() const{
+    return this->to_agent_uid;
 }

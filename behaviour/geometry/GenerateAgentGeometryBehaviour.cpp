@@ -1,5 +1,5 @@
 #include "GenerateAgentGeometryBehaviour.h"
-#include "../../util/geometry/Geometry.h"
+#include "../../util/geometry/OldGeometry.h"
 #include "../../app/App.h"
 
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -17,9 +17,9 @@ GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(
 QJsonArray GenerateAgentGeometryBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
 
-   if( agent_geom ){
+   if( agent_geom.isValid() ){
         GWSPhysicalEnvironment::globalInstance()->unregisterAgent( agent );
     }
 
@@ -33,7 +33,6 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
         QJsonArray coordinates;
         coordinates.append( destination_coor.getX() ); coordinates.append( destination_coor.getY() );
         geom_json.insert( "coordinates" , coordinates );
-        geom_json.insert( GWSObject::GWS_CLASS_PROP , GWSGeometry::staticMetaObject.className() );
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , geom_json );
         GWSPhysicalEnvironment::globalInstance()->registerAgent( agent );
     }

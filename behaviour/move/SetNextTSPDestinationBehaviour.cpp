@@ -30,8 +30,8 @@ QJsonArray SetNextTSPDestinationBehaviour::behave(){
         agent->setProperty( CalculateTSPSkill::AGENT_PENDING_TSP_ROUTE_ELEMENTS , ordered_agents_to_visit_tsp_route_id_array );
         agent->setProperty( this->getProperty( STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString() , destination_agent_id );
 
-        QSharedPointer<GWSAgent> destination_agent = GWSAgentEnvironment::globalInstance()->getById( destination_agent_id );
-        GWSCoordinate destination_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( destination_agent )->getCentroid();
+        QSharedPointer<GWSAgent> destination_agent = GWSAgentEnvironment::globalInstance()->getByUID( destination_agent_id );
+        GWSCoordinate destination_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( destination_agent ).getCentroid();
 
         double x = destination_agent_coor.getX();
         double y = destination_agent_coor.getY();

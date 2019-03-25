@@ -38,33 +38,33 @@ template <class T> QSharedPointer<T> GWSAgentEnvironment::getRandomByClass( QStr
     return all.at( qrand() % all.size() );
 }
 
-QSharedPointer<GWSAgent> GWSAgentEnvironment::getById(QString id) const{
-    return this->getByClassAndId( GWSAgent::staticMetaObject.className() , id );
+QSharedPointer<GWSAgent> GWSAgentEnvironment::getByUID(QString id) const{
+    return this->getByClassAndUID( GWSAgent::staticMetaObject.className() , id );
 }
 
-QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByIds(QStringList ids) const{
+QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByUIDS(QStringList ids) const{
     QList< QSharedPointer<GWSAgent> > agents;
     foreach (QString id , ids) {
-        agents.append( this->getById( id ) );
+        agents.append( this->getByUID( id ) );
     }
     return agents;
 }
 
-QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByIds(QJsonArray json) const{
+QList< QSharedPointer<GWSAgent> > GWSAgentEnvironment::getByUIDS(QJsonArray json) const{
     QStringList ids;
     foreach(QJsonValue v , json){
         ids.append( v.toString() );
     }
-    return this->getByIds( ids );
+    return this->getByUIDS( ids );
 }
 
-QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id) const{
-    return this->getByClassAndId<GWSAgent>( class_name , id );
+QSharedPointer<GWSAgent> GWSAgentEnvironment::getByClassAndUID( QString class_name , QString id) const{
+    return this->getByClassAndUID<GWSAgent>( class_name , id );
 }
 
-template <class T> QSharedPointer<T> GWSAgentEnvironment::getByClassAndId( QString class_name , QString id ) const{
+template <class T> QSharedPointer<T> GWSAgentEnvironment::getByClassAndUID( QString class_name , QString id ) const{
     if( this->environment_agents ){
-        QSharedPointer<GWSObject> obj = this->environment_agents->getByClassAndId( class_name , id );
+        QSharedPointer<GWSObject> obj = this->environment_agents->getByClassAndUID( class_name , id );
         if( !obj.isNull() ){
             try {
                 return obj.dynamicCast<T>();

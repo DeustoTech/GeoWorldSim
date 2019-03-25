@@ -31,26 +31,24 @@ FindDirectClosestBehaviour::~FindDirectClosestBehaviour(){
 QJsonArray FindDirectClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
 
     QString facility_to_access = this->getProperty( AGENT_TO_ACCESS_TYPE ).toString();
     QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
 
     // Obtain direct closest agent parameters:
-    QSharedPointer<GWSAgent> nearestAgent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor , agents_to_access );
-    if( !nearestAgent ){
+    QSharedPointer<GWSAgent> nearest_agent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor , agents_to_access );
+    if( !nearest_agent ){
         return this->getProperty( NEXTS_IF_NO_DIRECT_CLOSEST_FOUND ).toArray();
     }
 
-   // qDebug() << nearestAgent->serialize();
-    QString nearestAgentId = nearestAgent->getId();
-    GWSCoordinate nearestAgentCoors = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearestAgent )->getCentroid();
-    GWSLengthUnit distanceToNearestAgent = agent_coor.getDistance( nearestAgentCoors );
+    GWSCoordinate nearest_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearest_agent->getUID() ).getCentroid();
+    GWSLengthUnit distanceToNearestAgent = agent_coor.getDistance( nearest_agent_coor );
 
     // Store in agent:
-    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_agent_id" ) , nearestAgentId );
-    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_X_AS ).toString( "direct_closest_agent_x" ) , nearestAgentCoors.getX() );
-    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_Y_AS ).toString( "direct_closest_agent_y" ) , nearestAgentCoors.getY() );
+    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_agent_id" ) , nearest_agent->getUID() );
+    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_X_AS ).toString( "direct_closest_agent_x" ) , nearest_agent_coor.getX() );
+    agent->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_Y_AS ).toString( "direct_closest_agent_y" ) , nearest_agent_coor.getY() );
     agent->setProperty( this->getProperty( STORE_DIRECT_DISTANCE_AS ).toString("direct_closest_agent_distance") , distanceToNearestAgent.number() );
 
     return this->getProperty( NEXTS ).toArray();

@@ -4,6 +4,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
 #include "../../skill/pollute/PolluteSkill.h"
+#include "../../util/geometry/GeometryGetters.h"
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
@@ -39,14 +40,14 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    if( !agent_geom ){
-        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getId() );
+    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    if( !agent_geom.isValid() ){
+        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
         return;
     }
 
     // Extract destination coordinates
-    GWSCoordinate current_coor = agent_geom->getCentroid();
+    GWSCoordinate current_coor = agent_geom.getCentroid();
 
     if( current_coor == route_destination ){
         return;
@@ -62,7 +63,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         // If calculated a route whose first point is even further than the destination, don¡t follow the route
         // Avoids recalculating a route once finished routing and freeflowing to destination
         if( !this->pending_route.isEmpty() ){
-            GWSCoordinate new_route_start = this->pending_route.at( 0 )->getFromCoordinate();
+            GWSCoordinate new_route_start = this->pending_route.at( 0 ).getFromCoordinate();
             if( new_route_start == this->last_route_started_from ){
                 this->pending_route.clear();
             } else {
@@ -81,7 +82,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
 
-        QSharedPointer<GWSNetworkEdge> starting_current_edge = this->pending_route.at(0);
+        GWSNetworkEdge starting_current_edge = this->pending_route.at(0);
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
@@ -102,7 +103,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
             QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
             QJsonArray new_inside_agent_ids;
             foreach (QJsonValue v, inside_agent_ids ) {
-                if( v != agent->getId() ){ new_inside_agent_ids.append( v ); }
+                if( v != agent->getUID() ){ new_inside_agent_ids.append( v ); }
             }
             starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
             // Have completed the edge coordinates, so remove the edge too (if exists)
@@ -121,7 +122,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
         // We are going to start iterating the coordinates of edge located at pending_route[0]
-        QSharedPointer<GWSNetworkEdge> starting_current_edge = this->pending_route.at(0);
+        GWSNetworkEdge starting_current_edge = this->pending_route.at(0);
 
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
@@ -146,16 +147,16 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         movement_speed = qMin( starting_current_edge_max_speed.number() , movement_speed.number() + 10 );
 
         // Store road infoVehiclermation in agent
-        agent->setProperty( STORE_CURRENT_ROAD_ID , starting_current_edge_agent->getId() );
+        agent->setProperty( STORE_CURRENT_ROAD_ID , starting_current_edge_agent->getUID() );
         agent->setProperty( STORE_CURRENT_ROAD_TYPE , starting_current_edge_agent->getProperty( "highway") );
         agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , starting_current_edge_max_speed );
 
         // Add agent to road
         QJsonArray inside_agent_ids = starting_current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
-        inside_agent_ids.append( agent->getId() );
+        inside_agent_ids.append( agent->getUID() );
         starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
-        QSharedPointer<GWSGeometry> current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
-        this->pending_edge_coordinates = current_edge_agent_geometry->getCoordinates();
+        GWSGeometry current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
+        this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
     }
 
     MoveSkill::move( movement_duration , movement_speed , route_destination );

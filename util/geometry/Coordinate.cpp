@@ -8,6 +8,10 @@ using namespace geos::geom;
  GETTERS
 **********************************************************************/
 
+QString GWSCoordinate::getUID() const{
+    return this->toString();
+}
+
 bool GWSCoordinate::isValid() const{
     return !(this->x != this->x || this->y != this->y ) // Checks NAN
            && this->x != Q_INFINITY && this->y != Q_INFINITY && this->z != Q_INFINITY; // Checks INFINITY

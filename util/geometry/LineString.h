@@ -3,11 +3,11 @@
 
 #include <QList>
 
-#include "Geometry.h"
+#include "OldGeometry.h"
 #include "Point.h"
 #include "geos/geom/LineString.h"
 
-class GWSLineString : public GWSGeometry
+class GWSLineString : public GWSOldGeometry
 {
     Q_OBJECT
 

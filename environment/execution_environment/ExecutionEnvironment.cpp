@@ -159,7 +159,7 @@ void GWSExecutionEnvironment::behave(){
 
     if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
         this->stop();
-        GWSApp::exit( 0 );
+        QTimer::singleShot( 5000 , [](){ GWSApp::exit( 0 ); });
     }
 
     // Wait for agents that are delayed (if WAIT_FOR_ME).

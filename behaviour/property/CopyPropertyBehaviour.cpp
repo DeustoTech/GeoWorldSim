@@ -27,7 +27,7 @@ QJsonArray CopyPropertyBehaviour::behave(){
 
     QString property_name_to_copy = this->getProperty( PROPERTY_NAME_TO_COPY ).toString();
 
-    QSharedPointer<GWSAgent> copy_agent = GWSAgentEnvironment::globalInstance()->getById( agent_id_to_copy_from );
+    QSharedPointer<GWSAgent> copy_agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id_to_copy_from );
     agent->setProperty( property_name_to_copy , copy_agent->getProperty( property_name_to_copy ) );
 
     // Set next behaviours:

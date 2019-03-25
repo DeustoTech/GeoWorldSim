@@ -78,10 +78,13 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/geometry/GeometryTransformators.h  \
+    ../../util/geometry/GeometryGetters.h  \
+    ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.hpp \
-    ../../util/routing/EdgeVisitor.h \
+    ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
             ## GRID
     ../../util/grid/Grid.h \
@@ -115,8 +118,7 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h \
-    ../../util/routing/NewRouting.hpp
+    ../../behaviour/time/WaitUntilTimeBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -163,7 +165,6 @@ SOURCES += mainlauncher.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
-    ../../util/routing/EdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \
@@ -173,6 +174,9 @@ SOURCES += mainlauncher.cpp \
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/geometry/GeometryTransformators.cpp  \
+    ../../util/geometry/GeometryGetters.cpp  \
+    ../../util/geometry/GeometryToGeoJSON.cpp \
     #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID

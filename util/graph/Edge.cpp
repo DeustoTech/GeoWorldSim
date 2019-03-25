@@ -1,30 +1,43 @@
 #include "Edge.h"
 
-GWSEdge::GWSEdge() : GWSObject(){
-}
-
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-/**
- * @brief GWSEdge::getCost
- * @param accumulated_cost Accumulated cost at which this edge was reached (used to know at what time reached or length)
- * @return
- */
-double GWSEdge::getEdgeCost( double accumulated_cost ) const{
-    Q_UNUSED( accumulated_cost );
-    return this->cost;
+QString GWSEdge::getUID() const{
+    return this->type + "::" + this->getFromNodeUID() + "->" + this->getToNodeUID();
 }
 
-QString GWSEdge::getEdgeType() const{
+bool GWSEdge::isValid() const{
+    return !this->getFromNodeUID().isEmpty() && !this->getToNodeUID().isEmpty();
+}
+
+double GWSEdge::getCost( double accumulated_cost ) const{
+    return this->cost + accumulated_cost;
+}
+
+QString GWSEdge::getType() const{
     return this->type;
 }
 
-bool GWSEdge::equals( const QSharedPointer<GWSEdge> other ) const{
-    return this->getFromNodeId() == other->getFromNodeId() && this->getToNodeId() == other->getToNodeId();
+/**********************************************************************
+ OPERATORS
+**********************************************************************/
+
+bool GWSEdge::operator == (const GWSEdge& other) const {
+    return ( this->getFromNodeUID() == other.getFromNodeUID() ) && ( this->getToNodeUID() == other.getToNodeUID() );
 }
 
-bool GWSEdge::equalsReversed(const QSharedPointer<GWSEdge> other) const{
-    return this->getFromNodeId() == other->getToNodeId() && this->getToNodeId() == other->getFromNodeId();
+bool GWSEdge::operator != (const GWSEdge& other) const{
+    return !(*this == other);
+}
+
+bool GWSEdge::operator < (const GWSEdge& other) const{
+    return this->getFromNodeUID() < other.getFromNodeUID();
+}
+
+GWSEdge& GWSEdge::operator = (const GWSEdge& other){
+    this->cost = other.cost;
+    this->type = other.type;
+    return *this;
 }

@@ -2,7 +2,7 @@
 "id" : "demo",
 "user_id" : "demo",
 "timeout" : 60000,
-"speed" : 60000000,
+"speed" : 6000,
 "population" :  {
 
     "citizens" 	: { "template" : 

@@ -7,15 +7,6 @@
 #include "../../agent/Agent.h"
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
-#include "../../util/geometry/Geometry.h"
-
-#include "../../util/geometry/Point.h"
-#include "../../util/geometry/LineString.h"
-#include "../../util/geometry/Polygon.h"
-
-#include "../../util/grid/Grid.h"
-#include "../../environment/network_environment/NetworkEdge.h"
-
 
 #include "../../util/parallelism/ParallelismController.h"
 
@@ -30,8 +21,6 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSAgent::staticMetaObject );
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
-    this->registerType( GWSGeometry::staticMetaObject );
-    this->registerType( GWSNetworkEdge::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
@@ -88,11 +77,11 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD
     QSharedPointer<GWSObject> obj = QSharedPointer<GWSObject>( obj_raw );
     obj_raw->self_shared_pointer = obj;
-    obj_raw->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2").arg( class_name ).arg( ++GWSObject::counter ) );
+    obj_raw->setProperty( GWSObject::GWS_UID_PROP , QString("%1::%2").arg( class_name ).arg( ++GWSObject::counter ) );
 
     // Set parent if any
     if( parent ){
-        obj->setProperty( GWSObject::GWS_ID_PROP , QString("%1::%2::%3").arg( parent->getId() ).arg( class_name ).arg( ++GWSObject::counter ) );
+        obj->setProperty( GWSObject::GWS_UID_PROP , QString("%1::%2::%3").arg( parent->getUID() ).arg( class_name ).arg( ++GWSObject::counter ) );
     }
 
     // Call deserialize for further population

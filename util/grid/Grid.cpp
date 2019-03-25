@@ -49,7 +49,7 @@ QJsonObject GWSGrid::serialize() const{
     QJsonArray geometries;
 
     // BOUNDS
-    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
+    /*double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
     double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxX();
     double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxY();
     double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinY();
@@ -84,7 +84,7 @@ QJsonObject GWSGrid::serialize() const{
     }
     geojson.insert( "geometries" , geometries );
     json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );
-
+*/
     return json;
 }
 

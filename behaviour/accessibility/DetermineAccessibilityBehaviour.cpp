@@ -22,7 +22,7 @@ DetermineAccessibilityBehaviour::DetermineAccessibilityBehaviour() : GWSBehaviou
 QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
 
     QString facility_to_access = this->getProperty( FACILITY_TO_ACCESS ).toString();
     QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
@@ -32,21 +32,21 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
     QMap< QString , GWSCoordinate > allAgentsCoorsIds;
     foreach (QSharedPointer<GWSAgent> agent, agents_to_access ){
 
-        GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+        GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
         allAgentsCoordinates.append( coor );
 
-        QString id = agent->getId();
+        QString id = agent->getUID();
         allAgentsCoorsIds.insert( id, coor );
 
     }
 
     QString network_class = this->getProperty( NETWORK_TO_ACCESS ).toString();
 
-    QMap< QList<QSharedPointer< GWSNetworkEdge> > ,  GWSCoordinate > list;
+    QMap< QList< GWSNetworkEdge > ,  GWSCoordinate > list;
 
     foreach ( GWSCoordinate coor, allAgentsCoordinates ){
-        QList<QSharedPointer<GWSNetworkEdge> > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
-        list.insert( min_path , coor  );
+        QList< GWSNetworkEdge > min_path = GWSNetworkEnvironment::globalInstance()->getShortestPath( agent_coor , coor , network_class );
+        list.insert( min_path , coor );
     }
 
 
@@ -54,13 +54,13 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QList< QString > closest_agent_id_list;
 
-    foreach ( QList<QSharedPointer< GWSNetworkEdge> > path, list.keys() ){
+    foreach ( QList< GWSNetworkEdge > path, list.keys() ){
 
         GWSLengthUnit l = 0;
 
-        foreach ( QSharedPointer<GWSNetworkEdge> edge , path ){
-            GWSCoordinate start = edge->getFromCoordinate();
-            GWSCoordinate end = edge->getToCoordinate();
+        foreach ( GWSNetworkEdge edge , path ){
+            GWSCoordinate start = edge.getFromCoordinate();
+            GWSCoordinate end = edge.getToCoordinate();
             l = l + start.getDistance( end );
         }
 
@@ -81,7 +81,7 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
         }
     }
 
-    QList<QSharedPointer<GWSAgent>> closest_agent_list = GWSAgentEnvironment::globalInstance()->getByIds( closest_agent_id_list );
+    QList<QSharedPointer<GWSAgent>> closest_agent_list = GWSAgentEnvironment::globalInstance()->getByUIDS( closest_agent_id_list );
 
     foreach ( QSharedPointer<GWSAgent> a, closest_agent_list ){
         a->setProperty( "color" , "green" );
