@@ -61,6 +61,11 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/geometry/NewGeometry.h \
+    ../../util/geometry/GeometryToGeoJSON.h \
+    ../../util/geometry/GeometryComparators.h \
+    ../../util/geometry/GeometryTransformators.h \
+    ../../util/geometry/GeometryGetters.h \
     ../../util/graph/Edge.h \
     ../../util/api/APIDriver.h \
     ../../util/routing/Routing.hpp \
@@ -95,11 +100,7 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
-    ../../util/geometry/NewGeometry.h \
-    ../../util/geometry/GeometryToGeoJSON.h \
-    ../../util/geometry/GeometryComparators.h \
-    ../../util/geometry/GeometryTransformators.h
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
 
 
 
@@ -138,9 +139,12 @@ SOURCES += mainAccesibility.cpp \
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/geometry/NewGeometry.cpp \
+    ../../util/geometry/GeometryToGeoJSON.cpp \
+    ../../util/geometry/GeometryComparators.cpp \
+    ../../util/geometry/GeometryTransformators.cpp \
+    ../../util/geometry/GeometryGetters.cpp \
     ../../util/graph/Edge.cpp \
-    #../../util/graph/Graph.cpp \
-    #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
     #../../util/grid/NumberGrid.cpp \
@@ -167,11 +171,7 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
-    ../../util/geometry/NewGeometry.cpp \
-    ../../util/geometry/GeometryToGeoJSON.cpp \
-    ../../util/geometry/GeometryComparators.cpp \
-    ../../util/geometry/GeometryTransformators.cpp
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
 
 
 

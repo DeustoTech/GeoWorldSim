@@ -22,7 +22,7 @@ DetermineAccessibilityBehaviour::DetermineAccessibilityBehaviour() : GWSBehaviou
 QJsonArray DetermineAccessibilityBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
 
     QString facility_to_access = this->getProperty( FACILITY_TO_ACCESS ).toString();
     QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
@@ -32,7 +32,7 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
     QMap< QString , GWSCoordinate > allAgentsCoorsIds;
     foreach (QSharedPointer<GWSAgent> agent, agents_to_access ){
 
-        GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+        GWSCoordinate coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
         allAgentsCoordinates.append( coor );
 
         QString id = agent->getUID();

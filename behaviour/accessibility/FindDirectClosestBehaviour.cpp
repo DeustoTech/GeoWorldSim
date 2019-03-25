@@ -31,7 +31,7 @@ FindDirectClosestBehaviour::~FindDirectClosestBehaviour(){
 QJsonArray FindDirectClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getCentroid();
+    GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
 
     QString facility_to_access = this->getProperty( AGENT_TO_ACCESS_TYPE ).toString();
     QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
@@ -42,7 +42,7 @@ QJsonArray FindDirectClosestBehaviour::behave(){
         return this->getProperty( NEXTS_IF_NO_DIRECT_CLOSEST_FOUND ).toArray();
     }
 
-    GWSCoordinate nearest_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearest_agent->getUID() )->getCentroid();
+    GWSCoordinate nearest_agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( nearest_agent->getUID() ).getCentroid();
     GWSLengthUnit distanceToNearestAgent = agent_coor.getDistance( nearest_agent_coor );
 
     // Store in agent:

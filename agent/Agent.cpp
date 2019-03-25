@@ -128,12 +128,6 @@ QJsonObject GWSAgent::serialize() const{
         }
     }
 
-    // GEOMETRY
-    QSharedPointer<GWSGeometry> geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getSharedPointer() );
-    if( geom ){
-        json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geom->serialize() );
-    }
-
     return json;
 }
 

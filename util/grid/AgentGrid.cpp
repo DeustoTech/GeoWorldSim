@@ -31,7 +31,7 @@ QList< QSharedPointer<GWSAgent> > GWSAgentGrid::getGridCellValue(unsigned int gr
         return agents;
     }
 
-    QSharedPointer<GWSGeometry> grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() );
+    /*GWSNewGeometry grid_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->getAgent() );
     double minX = grid_geom->getGeometryMinX();
     double maxX = grid_geom->getGeometryMaxX();
     double minY = grid_geom->getGeometryMinY();
@@ -47,7 +47,7 @@ QList< QSharedPointer<GWSAgent> > GWSAgentGrid::getGridCellValue(unsigned int gr
         if( agent_geom && agent_geom->intersects( cell_minX , cell_maxX , cell_minY , cell_maxY ) ){
             agents.append( agent );
         }
-    }
+    }*/
     return agents;
 }
 
