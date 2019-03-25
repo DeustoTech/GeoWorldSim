@@ -80,7 +80,7 @@ HEADERS += \
     ../../util/geometry/Quadtree.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.h \
+    ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.h \
     ../../util/routing/TSPRouting.h \
             ## GRID
@@ -115,8 +115,7 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h \
-    ../../util/routing/NewRouting.hpp
+    ../../behaviour/time/WaitUntilTimeBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -163,7 +162,6 @@ SOURCES += mainlauncher.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
-    ../../util/routing/Routing.cpp \
     ../../util/routing/EdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \

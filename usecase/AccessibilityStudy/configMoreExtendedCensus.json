@@ -34,7 +34,7 @@
                                 { "@gwsclass": "SetAgentPropertyBehaviour" ,  "id": "SET_TO_ORANGE" , "agent_to_set_id" : "<id>" , "property_name" : "color" , "property_value" : "orange" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
                                 
                 
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["DISPLAY_CLOSEST"] },
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["STOP"] },
                 
                                 { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
                 ] 
