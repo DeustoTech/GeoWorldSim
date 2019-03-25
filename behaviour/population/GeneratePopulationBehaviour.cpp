@@ -10,6 +10,8 @@
 
 #include "../../util/units/Units.h"
 
+#include "../../util/geometry/GeometryTransformators.h"
+
 #include "../../usecase/PopulationGenerator/PopulationGeneratorAgent.h"
 
 QString GeneratePopulationBehaviour::SIMULATION_LENGTH_YEARS = "years_to_simulate";
@@ -128,7 +130,7 @@ bool GeneratePopulationBehaviour::checkDeath( int age )
 
     if ( age >= testAge ||  illness <= illness_rate ) {
         if ( !couple_id.isNull() ){
-            couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
+            couple = GWSAgentEnvironment::globalInstance()->getByUID( couple_id );
             couple->setProperty( COUPLE_ID, QJsonValue() );
         }
         //GWSExecutionEnvironment::globalInstance()->unregisterAgent( agent );
@@ -194,18 +196,21 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
 
     if ( my_age <= testAge ) {  /* Suitable single candidate, now search a partner */
 
-         GWSPhysicalEnvironment::globalInstance()->transformBuffer( me , 0.002 );
+         GWSGeometry my_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( me );
+
+         const GWSGeometry buffered_geom = GWSGeometryTransformators::transformBuffer( my_geom , 0.002 );
 
          // Get total GWSAgents
-         QList< QSharedPointer<GWSAgent> > closestCandidates = GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( GWSPhysicalEnvironment::globalInstance()->getGeometry( me ) , looking_for );
+         QStringList closestCandidates = GWSPhysicalEnvironment::globalInstance()->getAgentsIntersecting( buffered_geom , looking_for );
 
          // Loop over agents to find suitable companion to breed:
-         foreach ( QSharedPointer<GWSAgent> candidate , closestCandidates ){
+         foreach ( QString candidate_id , closestCandidates ){
 
                 // Check we are not siblings:
                 QString myParent1 = me->getProperty( PARENT1 ).toString();
                 QString myParent2 = me->getProperty( PARENT2 ).toString();
 
+                QSharedPointer<GWSAgent> candidate = GWSAgentEnvironment::globalInstance()->getByUID( candidate_id );
                 QString candidateParent1 = candidate->getProperty( PARENT1 ).toString();
                 QString candidateParent2 = candidate->getProperty( PARENT2 ).toString();
 
@@ -234,8 +239,8 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
                 double value = (qrand() % ( 100000 ) ) / 100000.;
 
                 if ( value <= marriage_ratio  && candidate_age >= candidate_marriage_age  && candidates_couple_id.isNull() && i_am_candidate  ){
-                    me->setProperty( this->getProperty( COUPLE_ID ).toString(), candidate->getId() );
-                    candidate->setProperty( this->getProperty( COUPLE_ID ).toString() , me->getId() );
+                    me->setProperty( this->getProperty( COUPLE_ID ).toString(), candidate->getUID() );
+                    candidate->setProperty( this->getProperty( COUPLE_ID ).toString() , me->getUID() );
                     married = true;
                     qDebug() << "Married";
                     break;
@@ -244,7 +249,7 @@ bool GeneratePopulationBehaviour::checkMarriage( int my_age  ){
                     continue;
                 }
          }
-         GWSPhysicalEnvironment::globalInstance()->transformBuffer( me , -0.002 );
+         GWSGeometryTransformators::transformBuffer( buffered_geom , -0.002 );
       }
 
 
@@ -269,7 +274,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 
     // Get agent couple:
     QString couple_id = agent->getProperty( this->getProperty( COUPLE_ID ).toString() ).toString();
-    QSharedPointer<GWSAgent> couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
+    QSharedPointer<GWSAgent> couple = GWSAgentEnvironment::globalInstance()->getByUID( couple_id );
     int couple_age = this->getAge( couple );
 
     // If existing children, extract when was last birth:
@@ -277,7 +282,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
     QList< QSharedPointer<GWSAgent> > children ;
 
     if ( !agent->getProperty( this->getProperty( CHILDREN_IDS ).toString() ).toArray().isEmpty() ){
-        children = GWSAgentEnvironment::globalInstance()->getByIds( agent->getProperty( CHILDREN_IDS ).toArray() );
+        children = GWSAgentEnvironment::globalInstance()->getByUIDS( agent->getProperty( CHILDREN_IDS ).toArray() );
 
         foreach( QSharedPointer<GWSAgent> child , children ){
             int age = this->getAge( child );

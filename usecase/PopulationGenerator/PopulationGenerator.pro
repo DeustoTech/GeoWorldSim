@@ -56,8 +56,6 @@ SOURCES += \
         # UTILS
         ../../util/parallelism/ParallelismController.cpp \
         ../../util/io/log/Logger.cpp \
-        ../../util/routing/Routing.cpp \
-        ../../util/routing/EdgeVisitor.cpp \
         ../../util/routing/TSPRouting.cpp \
         ../../util/distributed/ExternalListener.cpp \
         ../../util/distributed/ExternalCommunicator.cpp \
@@ -67,6 +65,9 @@ SOURCES += \
         ../../util/geometry/Coordinate.cpp \
         ../../util/geometry/Geometry.cpp \
         ../../util/geometry/Quadtree.cpp \
+        ../../util/geometry/GeometryTransformators.cpp \
+        ../../util/geometry/GeometryGetters.cpp \
+        ../../util/geometry/GeometryToGeoJSON.cpp \
         ../../util/graph/Edge.cpp \
         ../../util/grid/Grid.cpp \
         ../../util/grid/GridCoordinatesConversor.cpp \
@@ -114,8 +115,8 @@ HEADERS += \
         # UTILS
         ../../util/parallelism/ParallelismController.h \
         ../../util/io/log/Logger.h \
-        ../../util/routing/Routing.h \
-        ../../util/routing/EdgeVisitor.h \
+        ../../util/routing/Routing.hpp \
+        ../../util/routing/EdgeVisitor.hpp \
         ../../util/routing/TSPRouting.h \
         ../../util/distributed/ExternalListener.h \
         ../../util/distributed/ExternalCommunicator.h \
@@ -124,6 +125,8 @@ HEADERS += \
         # GEOMETRIES
         ../../util/geometry/Coordinate.h \
         ../../util/geometry/Geometry.h \
+        ../../util/geometry/GeometryGetters.h \
+        ../../util/geometry/GeometryToGeoJSON.h \
         ../../util/geometry/Quadtree.h \
         ../../util/graph/Edge.h \
         ../../util/grid/Grid.h \

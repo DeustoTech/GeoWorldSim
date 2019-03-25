@@ -30,8 +30,8 @@
 #include "../../behaviour/move/MoveBehaviour.h"
 
 // Utils:
-#include "../../util/routing/Routing.h"
-#include "../../util/routing/EdgeVisitor.h"
+#include "../../util/routing/Routing.hpp"
+#include "../../util/routing/EdgeVisitor.hpp"
 #include "../../util/routing/TSPRouting.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Geometry.h"
