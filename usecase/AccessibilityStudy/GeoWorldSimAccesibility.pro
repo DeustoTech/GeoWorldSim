@@ -61,6 +61,7 @@ HEADERS += \
     ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/graph/Edge.h \
     ../../util/api/APIDriver.h \
     ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.hpp \
@@ -79,8 +80,6 @@ HEADERS += \
     ../../util/distributed/ExternalPublisher.h \
     ../../util/ai/Intelligence.h \
     ../../util/svm/Svm.h \
-    ../../util/graph/Edge.h \
-    ../../util/graph/NewEdge.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
@@ -89,11 +88,10 @@ HEADERS += \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
-    ../../environment/network_environment/NewNetworkEdge.h \
+    ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/social_environment/SocialEnvironment.h \
-    ../../environment/network_environment/NetworkEdge.h \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
@@ -136,6 +134,7 @@ SOURCES += mainAccesibility.cpp \
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/graph/Edge.cpp \
     #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
@@ -150,8 +149,6 @@ SOURCES += mainAccesibility.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
-    ../../util/graph/Edge.cpp \
-    ../../util/graph/NewEdge.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
@@ -159,15 +156,16 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
-    ../../environment/network_environment/NewNetworkEdge.cpp \
+    ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
-    ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
     HumanAgent.cpp \
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
+
+
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

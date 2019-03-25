@@ -14,7 +14,7 @@
 #include "../../util/geometry/Polygon.h"
 
 #include "../../util/grid/Grid.h"
-#include "../../environment/network_environment/NetworkEdge.h"
+#include "../../environment/network_environment/OldNetworkEdge.h"
 
 
 #include "../../util/parallelism/ParallelismController.h"
@@ -31,7 +31,6 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     this->registerType( GWSSkill::staticMetaObject );
     this->registerType( GWSBehaviour::staticMetaObject );
     this->registerType( GWSGeometry::staticMetaObject );
-    this->registerType( GWSNetworkEdge::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

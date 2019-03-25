@@ -10,10 +10,10 @@
 #include <lemon/list_graph.h>
 #include <lemon/dijkstra.h>
 
-#include "../../util/graph/NewEdge.h"
+#include "../../util/graph/Edge.h"
 #include "../../util/routing/EdgeVisitor.hpp"
 
-template <class T = GWSNewEdge>
+template <class T = GWSEdge>
 class GWSRouting : public GWSObject
 {
 

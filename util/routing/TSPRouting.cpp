@@ -7,7 +7,7 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
-#include "../../util/graph/Edge.h"
+#include "../../util/graph/OldEdge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
 GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {

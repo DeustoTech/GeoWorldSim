@@ -5,7 +5,7 @@
 #include <QReadWriteLock>
 
 #include "../../environment/Environment.h"
-#include "NewNetworkEdge.h"
+#include "NetworkEdge.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Quadtree.h"
 #include "../../util/routing/Routing.hpp"

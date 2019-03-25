@@ -10,9 +10,9 @@
 #include <lemon/maps.h>
 
 #include <QMap>
-#include "../../util/graph/NewEdge.h"
+#include "../../util/graph/Edge.h"
 
-template <class T = GWSNewEdge>
+template <class T = GWSEdge>
 class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 

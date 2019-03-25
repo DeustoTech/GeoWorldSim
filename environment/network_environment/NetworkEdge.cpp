@@ -1,65 +1,46 @@
 #include "NetworkEdge.h"
 
-#include <QDebug>
-#include "../../environment/network_environment/NetworkEnvironment.h"
-
-QString GWSNetworkEdge::EDGE_FROM_X_PROP = "from_x";
-QString GWSNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
-QString GWSNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
-QString GWSNetworkEdge::EDGE_TO_X_PROP = "to_x";
-QString GWSNetworkEdge::EDGE_TO_Y_PROP = "to_y";
-QString GWSNetworkEdge::EDGE_TO_Z_PROP = "to_z";
-
-GWSNetworkEdge::GWSNetworkEdge() : GWSEdge() {
-}
-
-GWSNetworkEdge::~GWSNetworkEdge(){
-}
-
-/**********************************************************************
- IMPORTERS
-**********************************************************************/
-
-void GWSNetworkEdge::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
-    GWSObject::deserialize( json , parent );
-    this->cost = this->getFromCoordinate().getDistance( this->getToCoordinate() ).number();
-}
+QString GWSNewNetworkEdge::EDGE_FROM_X_PROP = "from_x";
+QString GWSNewNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
+QString GWSNewNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
+QString GWSNewNetworkEdge::EDGE_TO_X_PROP = "to_x";
+QString GWSNewNetworkEdge::EDGE_TO_Y_PROP = "to_y";
+QString GWSNewNetworkEdge::EDGE_TO_Z_PROP = "to_z";
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-QString GWSNetworkEdge::getFromNodeId() const{
+QString GWSNewNetworkEdge::getFromNodeUID() const{
     return this->getFromCoordinate().toString();
 }
 
-QString GWSNetworkEdge::getToNodeId() const{
+QString GWSNewNetworkEdge::getToNodeUID() const{
     return this->getToCoordinate().toString();
 }
 
-GWSCoordinate GWSNetworkEdge::getFromCoordinate() const{
-    return GWSCoordinate( this->getProperty( EDGE_FROM_X_PROP ).toDouble() , this->getProperty( EDGE_FROM_Y_PROP ).toDouble() , this->getProperty( EDGE_FROM_Z_PROP ).toDouble() );
+GWSCoordinate GWSNewNetworkEdge::getFromCoordinate() const{
+    return this->from;
 }
 
-GWSCoordinate GWSNetworkEdge::getToCoordinate() const{
-    return GWSCoordinate( this->getProperty( EDGE_TO_X_PROP ).toDouble() , this->getProperty( EDGE_TO_Y_PROP ).toDouble() , this->getProperty( EDGE_TO_Z_PROP ).toDouble() );
+GWSCoordinate GWSNewNetworkEdge::getToCoordinate() const{
+    return this->to;
 }
 
-GWSLengthUnit GWSNetworkEdge::getLength() const {
+GWSLengthUnit GWSNewNetworkEdge::getLength() const {
     return GWSLengthUnit( this->cost );
 }
 
 /**
- * @brief Road::getGradient Get the roads gradient
+ * @brief GWSNewNetworkEdge::getGradient Get the roads gradient
  * (positive for climbing up and negative for going down)
  * @return
  */
-double GWSNetworkEdge::getGradient() const{
+double GWSNewNetworkEdge::getGradient() const{
     double length = this->getLength().number();
     if( length ){
         try {
-
-            double height ( this->getFromCoordinate().getZ() - this->getToCoordinate().getZ() );
+            double height ( this->from.getZ() - this->to.getZ() );
             if( height == height ){ // Avoid NaN
                 return ( height - 100 / length );
             }
@@ -72,6 +53,6 @@ double GWSNetworkEdge::getGradient() const{
  SETTERS
 **********************************************************************/
 
-void GWSNetworkEdge::setLength(GWSLengthUnit length){
+void GWSNewNetworkEdge::setLength(GWSLengthUnit length){
     this->cost = length.number();
 }

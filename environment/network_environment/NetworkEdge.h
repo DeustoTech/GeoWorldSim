@@ -1,19 +1,18 @@
 #ifndef GWSNETWORKEDGE_H
 #define GWSNETWORKEDGE_H
 
+#include <QJsonObject>
+
 #include "../../util/graph/Edge.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/units/Units.h"
 
-class GWSNetworkEdge : public GWSEdge
-{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE explicit GWSNetworkEdge();
-    ~GWSNetworkEdge();
+struct GWSNewNetworkEdge : GWSEdge {
 
     // PROPERTIES
+    GWSCoordinate from;
+    GWSCoordinate to;
+
+    // JSON
     static QString EDGE_FROM_X_PROP;
     static QString EDGE_FROM_Y_PROP;
     static QString EDGE_FROM_Z_PROP;
@@ -21,12 +20,16 @@ public:
     static QString EDGE_TO_Y_PROP;
     static QString EDGE_TO_Z_PROP;
 
-    // IMPORTERS
-    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    // CONSTRUCTORS
+    GWSNewNetworkEdge() : GWSEdge() {}
+    GWSNewNetworkEdge( QJsonObject json ) : GWSNewNetworkEdge( GWSCoordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() , json.value( EDGE_FROM_Z_PROP ).toDouble() ) , GWSCoordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() , json.value( EDGE_TO_Z_PROP ).toDouble() ) ) {}
+    GWSNewNetworkEdge(GWSCoordinate from, GWSCoordinate to) : GWSEdge( from.getDistance(to).number() , "Network" ) , from(from) , to(to) {}
+    GWSNewNetworkEdge(const GWSNewNetworkEdge &other) : GWSNewNetworkEdge(other.from , other.to){}
+    ~GWSNewNetworkEdge(){}
 
     // GETTERS
-    virtual QString getFromNodeId() const;
-    virtual QString getToNodeId() const;
+    virtual QString getFromNodeUID() const;
+    virtual QString getToNodeUID() const;
     virtual GWSCoordinate getFromCoordinate() const;
     virtual GWSCoordinate getToCoordinate() const;
     virtual GWSLengthUnit getLength() const;
