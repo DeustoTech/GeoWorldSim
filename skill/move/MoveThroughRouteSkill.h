@@ -29,7 +29,7 @@ public:
 
 protected:
 
-    QList< QSharedPointer<GWSNetworkEdge> > pending_route;
+    QList<GWSNetworkEdge> pending_route;
     QList<GWSCoordinate> pending_edge_coordinates;
     GWSCoordinate last_route_started_from;
 

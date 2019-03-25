@@ -282,10 +282,14 @@ void GWSAgent::behave(){
         qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getUID() );
     }
 
+
+
+
     qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
 
     if( this->to_be_executed_behaviours.isEmpty() ){
         qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getUID() );
+        qDebug() << this->serialize();
         return;
     }
 

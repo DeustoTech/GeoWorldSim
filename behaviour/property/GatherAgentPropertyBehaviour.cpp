@@ -18,7 +18,7 @@ QJsonArray GatherAgentPropertyBehaviour::behave(){
     QJsonValue emitting_agent_id = this->getProperty( GENERATING_AGENT_ID );
     QJsonValue emitting_agent_property = this->getProperty( PROPERTY_TO_GATHER );
 
-    QSharedPointer< GWSAgent > emitting_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndId( GWSAgent::staticMetaObject.className() , emitting_agent_id.toString() );
+    QSharedPointer< GWSAgent > emitting_agent =  GWSAgentEnvironment::globalInstance()->getByClassAndUID( GWSAgent::staticMetaObject.className() , emitting_agent_id.toString() );
 
     QString property_to_gather = emitting_agent_property.toString();
 
