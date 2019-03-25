@@ -153,7 +153,6 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     this->registerAgentToIndex( agent , geom );
 
     GWSEnvironment::registerAgent( agent );
-
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
