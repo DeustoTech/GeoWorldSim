@@ -68,7 +68,7 @@ template <class T> QList< QSharedPointer<T> > GWSExecutionEnvironment::getRunnin
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
-    return this->timer ? true : false;
+    return this->getProperty("RUNNING").toBool( false );
 }
 
 int GWSExecutionEnvironment::getTicksAmount() const{
@@ -140,8 +140,7 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    this->timer = new QTimer();
-    this->timer->singleShot( 1000 , Qt::CoarseTimer , this , &GWSExecutionEnvironment::tick );
+    this->setProperty("RUNNING" , true );
     this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
@@ -151,6 +150,8 @@ void GWSExecutionEnvironment::run(){
     QTimer::singleShot( timeout * 1000 , []{
         GWSApp::globalInstance()->exit( 0 );
     });
+
+    QtConcurrent::run([ this ] { this->tick(); });
 }
 
 void GWSExecutionEnvironment::behave(){
@@ -159,7 +160,7 @@ void GWSExecutionEnvironment::behave(){
 
     if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
         this->stop();
-        QTimer::singleShot( 5000 , [](){ GWSApp::exit( 0 ); });
+        QtConcurrent::run([](){ GWSApp::exit( 0 ); });
     }
 
     // Wait for agents that are delayed (if WAIT_FOR_ME).
@@ -214,27 +215,27 @@ void GWSExecutionEnvironment::behave(){
         }
     }
 
-    // Calculate to call again this function in (cycleFrequency - spent time) time
-    if( this->isRunning() ) {
-        this->timer->singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
-    }
-
-    /*qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
+    qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
                .arg( GWSApp::globalInstance()->getAppId() )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
-               .arg( who_is_min_tick ? who_is_min_tick->getId() : "" );*/
+               .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
+
+    // Call again this function
+    if( this->isRunning() ) {
+        QTimer::singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
+        //QtConcurrent::run([ this ] { this->tick(); });
+    }
 }
 
 void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
-    this->timer->deleteLater();
-    this->timer = Q_NULLPTR;
+    this->setProperty("RUNNING" , false );
     this->setProperty( ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 

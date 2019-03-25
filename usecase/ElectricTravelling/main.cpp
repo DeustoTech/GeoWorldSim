@@ -48,25 +48,16 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/waste4think/DelayBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
-#include "../../behaviour/waste4think/FindClosestBehaviour.h"
-#include "../../behaviour/waste4think/TransferAgentPropertyBehaviour.h"
-#include "../../behaviour/waste4think/FollowTSPRouteBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
-#include "../../behaviour/waste4think/GatherAgentPropertyBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
-#include "../../behaviour/waste4think/CheckPropertyValueBehaviour.h"
-#include "../../behaviour/waste4think/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
-#include "../../behaviour/waste4think/GenerateRandomValueBehaviour.h"
 
 int main(int argc, char* argv[])
 {
@@ -86,40 +77,16 @@ int main(int argc, char* argv[])
     GWSCommunicationEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject ) ;
-    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( DriveBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
 
-
-    // INIT RANDOM NUMBERS
-    qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
-
-
-    // Read agents according to CONFIG file
-    // INIT RANDOM NUMBERS
-    qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
-
-    // READ CONFIGURATION
-    QFile file( app->property( "config" ).toString() );
-    QJsonObject json_configuration;
-    if( !file.open( QFile::ReadOnly ) ){
-        qCritical() << QString("No configuration file found");
-        return -1;
-    }
-    QJsonParseError jerror;
-    json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
-    if( jerror.error != QJsonParseError::NoError ){
-        qCritical() << QString("Error when parsing configuration JSON: %1").arg( jerror.errorString() );
-        return -1;
-    }
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
-    QJsonObject json_population = json_configuration.value("population").toObject();
+    QDateTime datasource_download_time = QDateTime::currentDateTime();
+    QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
         // Population type:
@@ -127,29 +94,38 @@ int main(int argc, char* argv[])
 
         if ( !population.value( "template" ).isNull() && !population.value( "datasources" ).isNull() ){
 
-                    QJsonArray datasources = population.value( "datasources" ).toArray();
+            QJsonArray datasources = population.value( "datasources" ).toArray();
 
-                    for ( int i = 0; i <  datasources.size() ; ++i ){
+            for ( int i = 0; i <  datasources.size() ; ++i ){
 
-                        QJsonObject datasource = datasources.at( i ).toObject();
-                        QString datasource_id = datasource.value("id").toString();
-                        QString entities_type = datasource.value("entities").toString();
-                        if( !datasource_id || !entities_type ){
-                            qWarning() << "Asked to download from scenario without ID or entities type";
+                QJsonObject datasource = datasources.at( i ).toObject();
+                QString datasource_id = datasource.value("id").toString();
+                int limit = datasource.value("limit").toInt(-1);
+                QJsonArray entities_type = datasource.value("entities").toArray();
+                if( datasource_id.isEmpty() || entities_type.isEmpty() ){
+                    qWarning() << "Asked to download from scenario without ID or entities type";
+                }
+
+                for ( int j = 0; j < entities_type.size() ; ++j ){
+
+                    QString entity = entities_type.at( j ).toString();
+
+                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity , limit > 0 ? limit : 999999999999999 );
+                    pending_datasources.append( ds );
+
+                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                        pending_datasources.removeAll( ds );
+                        ds->deleteLater();
+                        if( pending_datasources.isEmpty() ){
+                            qDebug() << "Loading time" << datasource_download_time.secsTo( QDateTime::currentDateTime() );
+                            GWSExecutionEnvironment::globalInstance()->run();
                         }
+                    });
+                }
 
-                        GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id, entities_type );
-                        pending_datasources.append( ds );
 
-                        ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources ](){
-                            pending_datasources.removeAll( ds );
-                            ds->deleteLater();
-                            if( pending_datasources.isEmpty() ){
-                                GWSExecutionEnvironment::globalInstance()->run();
-                            }
-                        });
 
-                    }
+            }
         }
 
         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
@@ -166,10 +142,9 @@ int main(int argc, char* argv[])
 
 
 
-
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-    QJsonObject json_external_listeners = json_configuration.value("external_listeners").toObject();
+    QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
@@ -180,88 +155,6 @@ int main(int argc, char* argv[])
      }
 
 
-    // SVM
-
-    // Loop over all vehicle subtype directories and components
-    QString svm_splitted_file_path = "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/";
-    QDir directory( svm_splitted_file_path );
-
-    // Vehicle subtype level:
-    QFileInfoList vehicleSubsegmentsInfo = directory.entryInfoList( QDir::NoDotAndDotDot | QDir::Dirs );
-    /*foreach( QFileInfo subsegment, vehicleSubsegmentsInfo) {
-
-        if ( subsegment.isDir() ){
-
-            QFileInfoList pollutionComponentsInfo = QDir( subsegment.absoluteFilePath() ).entryInfoList( QDir::NoDotAndDotDot | QDir::Dirs );
-
-            foreach( QFileInfo component, pollutionComponentsInfo) {
-
-                if ( component.isDir() ){
-
-                    QFileInfoList pollutantFilesInfo = QDir( component.absoluteFilePath() ).entryInfoList( QDir::NoDotAndDotDot | QDir::Files);
-
-                    QString inputs_file_path;
-                    QString outputs_file_path;
-
-                    foreach( QFileInfo pollutantFiles, pollutantFilesInfo) {
-
-                        if ( pollutantFiles.isFile() ){
-                            qDebug() << pollutantFiles.absoluteFilePath();
-                            QString fileName = pollutantFiles.fileName();
-
-                            if ( fileName == "INPUT.csv"  ){
-                                qDebug() << "FOUND INPUTS FILE!";
-                                inputs_file_path = pollutantFiles.absoluteFilePath();
-                            }
-
-                            if ( fileName == "OUTPUT.csv"  ){
-                                qDebug() << "FOUND OUTPUTS FILE!";
-                                outputs_file_path = pollutantFiles.absoluteFilePath();
-                            }
-
-                        }
-
-                    }
-
-                    GWSSvm* svm = new GWSSvm();
-                    svm->trainFromFile( inputs_file_path , outputs_file_path );
-                    svm->saveTrained( component.absoluteFilePath() + "/svm_model" , component.absoluteFilePath() + "/model_params");
-
-                    svm->deleteLater();
-
-                }
-            }
-        }
-
-    }*/
-
-
-        // GWSSvm* svm = new GWSSvm();
-        // svm->loadTrained( "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/MC 2S <=150cc Euro-3/CO/svm_model" , "/home/maialen/Escritorio/WorkSpace/FILES/HBEFA/HBFA_SVM_SPLITTED/MC 2S <=150cc Euro-3/CO/model_params" );
-        //QList<QPair < QString, QVariant> > test_input;
-         /* test_input = { QPair<QString , QVariant>("Component" , "HC") , QPair<QString , QVariant>("TrafficSit" , "RUR/MW/80/St+Go"),
-                         QPair<QString , QVariant>("Gradient" , 0) , QPair<QString , QVariant>("Subsegment" , "MC 4S 251-750cc Euro-5") ,
-                         QPair<QString , QVariant>("V" , 28.1581172943) , QPair<QString , QVariant>("V_0" , 0) , QPair<QString , QVariant>("V_100" , 0)};
-            */
-
-
-         // 0;98.7671890259;RUR/Semi-MW/110/Freeflow
-       /*  QMap<QString , QVariant> input;
-          input.insert("Gradient" , 0);
-          input.insert("V" , 98.7671890259);
-          input.insert( "Road_type" , "MW");
-          input.insert("Traffic_sit" , 0.66);
-          qDebug() << svm->run( input );
-          return 0;*/
-    //}*/
-
-
-          GWSExecutionEnvironment::connect( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::stoppingExecutionSignal , [start]( ){
-              QDateTime current_time = QDateTime::currentDateTime();
-              qint64 secondsDiff = start.secsTo( current_time );
-              qDebug() << "Elapsed time" << secondsDiff;
-          });
-
-          app->exec();
+    app->exec();
 
 }

@@ -170,7 +170,7 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
 
         for( int l = this->layer_amount ; l > 0 ; l-- ){
 
-            //QtConcurrent::run([this , coor , l , object_id , object] {
+            QtConcurrent::run([this , coor , l , object_id] {
 
                 // Get geohash
                 int xhash = this->createHash( coor.getX() , l );
@@ -189,15 +189,17 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
                 this->mutex.unlock();
 
                 // If already here, remove old version
+                this->mutex.lockForRead();
                 if( this->ids_contained.contains( object_id ) ){
-                    this->mutex.lockForRead();
-                    GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
                     this->mutex.unlock();
+                    GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
                     GWSCoordinate previous_coor = previous_geom.getCentroid();
                     int previous_xhash = this->createHash( previous_coor.getX() , l );
                     int previous_yhash = this->createHash( previous_coor.getY() , l );
-                    this->mutex.lockForRead();
+                    this->mutex.lockForWrite();
                     this->geom_index_layers.value( l )->value( previous_xhash )->value( previous_yhash )->removeAll( object_id );
+                    this->mutex.unlock();
+                } else {
                     this->mutex.unlock();
                 }
 
@@ -205,7 +207,7 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
                 this->mutex.lockForWrite();
                 this->geom_index_layers.value( l )->value( xhash )->value( yhash )->append( object_id );
                 this->mutex.unlock();
-            //});
+            });
         }
 
         this->mutex.lockForWrite();

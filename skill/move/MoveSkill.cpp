@@ -54,7 +54,6 @@ GWSSpeedUnit MoveSkill::calculateNewSpeed(GWSSpeedUnit current_speed , GWSSpeedU
     return new_speed;
 }
 
-
 void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards ){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
@@ -102,8 +101,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
         GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
         GWSGeometry moved_geometry = GWSGeometryTransformators::transformMove( agent_geom , apply_movement );
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , moved_geometry.geojson );
-        emit agent->propertyChangedSignal( GWSPhysicalEnvironment::GEOMETRY_PROP );
-
+        //emit agent->propertyChangedSignal( GWSPhysicalEnvironment::GEOMETRY_PROP );
 
     }
 

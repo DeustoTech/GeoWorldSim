@@ -14,11 +14,12 @@ GWSGeometry GWSGeometryTransformators::transformMove( const GWSGeometry geometry
         geojson.insert( "coordinates" , coordinate );
         return GWSGeometry( geojson );
     }
+
     // Else
     GWSGeometry new_geometry = GWSGeometry( geometry );
     GWSGeometryTransformMoveFilter move = GWSGeometryTransformMoveFilter( apply_movement );
     new_geometry.inner_geometry->apply_rw( move );
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( geometry.inner_geometry );
+    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 

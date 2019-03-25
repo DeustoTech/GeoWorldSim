@@ -27,8 +27,8 @@ DriveBehaviour::~DriveBehaviour(){
 QJsonArray DriveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QSharedPointer<GWSGeometry> agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    Q_ASSERT( !agent_geom.isNull() );
+    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    Q_ASSERT( !agent_geom.isValid() );
 
     QJsonArray nexts_if_moving = this->getProperty( NEXTS_IF_MOVE ).toArray();
 
@@ -37,7 +37,6 @@ QJsonArray DriveBehaviour::behave(){
     // ------------------------
 
     QString current_road_id = agent->getProperty( MoveThroughRouteSkill::STORE_CURRENT_ROAD_ID ).toString();
-  //  qDebug() << "Current road id" << current_road_id;
 
     // ------------------------------------
     // Check if already moving towards direction

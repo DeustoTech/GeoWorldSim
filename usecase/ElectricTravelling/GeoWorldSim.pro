@@ -45,12 +45,12 @@ HEADERS += \
     ../../skill/move/drive/DriveSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.h \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/electricTravelling/DriveBehaviour.h \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
     ../../behaviour/execution/StopAgentBehaviour.h \
+    ../../behaviour/move/MoveBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -59,16 +59,20 @@ HEADERS += \
     ../../util/ai/Intelligence.h \
     ../../util/svm/Svm.h \
             ## GEOMETRIES
-    ../../util/geometry/Coordinate.h \
     ../../util/geometry/Geometry.h \
+    ../../util/geometry/Coordinate.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/geometry/GeometryToGeoJSON.h \
+    ../../util/geometry/GeometryComparators.h \
+    ../../util/geometry/GeometryTransformators.h \
+    ../../util/geometry/GeometryGetters.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.h \
-    ../../util/routing/GraphEdgeVisitor.h \
+    ../../util/routing/Routing.hpp \
+    ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/Edge.h \
@@ -88,12 +92,10 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
         # AGENTS
             ## TRANSPORT LINES
-    HumanAgent.h \
     ../../skill/pollute/PolluteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
-
 
 
 SOURCES += main.cpp \
@@ -111,12 +113,12 @@ SOURCES += main.cpp \
     ../../skill/move/drive/DriveSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/waste4think/GenerateAgentGeometryBehaviour.cpp \
+    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/electricTravelling/DriveBehaviour.cpp \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
+    ../../behaviour/move/MoveBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -126,15 +128,17 @@ SOURCES += main.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
-    ../../util/routing/Routing.cpp \
-    ../../util/routing/GraphEdgeVisitor.cpp \
     ../../util/routing/TSPRouting.cpp \
             ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
-    ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
+    ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/geometry/GeometryToGeoJSON.cpp \
+    ../../util/geometry/GeometryComparators.cpp \
+    ../../util/geometry/GeometryTransformators.cpp \
+    ../../util/geometry/GeometryGetters.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
     ../../util/ai/Intelligence.cpp \
@@ -152,7 +156,6 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
-    HumanAgent.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp
