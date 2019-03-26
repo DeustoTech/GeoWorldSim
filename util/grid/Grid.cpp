@@ -16,40 +16,22 @@ QString GWSGrid::GRID_VALUES_PROP = "grid_values";
 QString GWSGrid::GRID_X_SIZE_PROP = "grid_x_size";
 QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
 
-GWSGrid::GWSGrid( QSharedPointer<GWSAgent> agent){
-    this->agent = agent;
-}
-
-GWSGrid::~GWSGrid(){
-}
-
-/**********************************************************************
- IMPORTERS
-**********************************************************************/
-
-void GWSGrid::deserialize(QJsonObject json){
-    this->max_value = json.value( GRID_MAX_VALUE_PROP ).toDouble();
-    this->min_value = json.value( GRID_MIN_VALUE_PROP ).toDouble();
-    this->setGridSize( json.value( GRID_X_SIZE_PROP ).toInt() , json.value( GRID_Y_SIZE_PROP ).toInt() );
-}
 
 /**********************************************************************
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSGrid::serialize() const{
+/*QJsonObject GWSGrid::serialize() const{
     QJsonObject json;
     json.insert( GRID_MAX_VALUE_PROP , this->max_value );
     json.insert( GRID_MIN_VALUE_PROP , this->min_value );
-    json.insert( GRID_X_SIZE_PROP , (int)this->x_size );
-    json.insert( GRID_Y_SIZE_PROP , (int)this->y_size );
 
     QJsonObject geojson;
     geojson.insert( "type" , "GeometryCollection" );
     QJsonArray geometries;
 
     // BOUNDS
-    /*double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
+    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
     double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxX();
     double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxY();
     double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinY();
@@ -84,32 +66,16 @@ QJsonObject GWSGrid::serialize() const{
     }
     geojson.insert( "geometries" , geometries );
     json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );
-*/
+
     return json;
-}
+}*/
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSAgent> GWSGrid::getAgent() const{
-    return this->agent;
-}
-
 bool GWSGrid::isGridEmpty() const{
     return true;
-}
-
-/*const GWSEnvelope GWSGrid::getBounds() const{
-    //return this->property( BOUNDS_PROP.toLatin1() ).value<GWSEnvelope*>();
-}*/
-
-int GWSGrid::getGridXSize() const{
-    return this->x_size;
-}
-
-int GWSGrid::getGridYSize() const{
-    return this->y_size;
 }
 
 /*const void* GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
@@ -167,11 +133,6 @@ void GWSGrid::setGridMaxValue(double max){
 
 void GWSGrid::setGridMinValue(double min){
     this->min_value = min;
-}
-
-void GWSGrid::setGridSize(unsigned int x_size, unsigned int y_size){
-    this->x_size = x_size;
-    this->y_size = y_size;
 }
 
 /*void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, void* v){

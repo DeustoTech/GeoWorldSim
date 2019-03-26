@@ -5,7 +5,7 @@
 
 #include "../../util/graph/Edge.h"
 
-class GWSSocialRelation : GWSEdge {
+struct GWSSocialRelation : GWSEdge {
 
     // PROPERTIES
     QString from_agent_uid;
