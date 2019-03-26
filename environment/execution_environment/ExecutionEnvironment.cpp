@@ -28,6 +28,8 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
+    this->setProperty( AGENT_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( -1 ) );
+    this->setProperty( AGENT_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end_time" ).toDouble( -1 ) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
@@ -140,15 +142,16 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
+    GWSTimeEnvironment::globalInstance()->setDatetime( this->getProperty( AGENT_BIRTH_PROP ).toDouble( QDateTime::currentMSecsSinceEpoch() ) );
     this->setProperty("RUNNING" , true );
     this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
     emit this->runningExecutionSignal();
 
-    int timeout = GWSApp::globalInstance()->getConfiguration().value("timeout").toInt( 60 );
+    int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 60 );
     QTimer::singleShot( timeout * 1000 , []{
-        GWSApp::globalInstance()->exit( 0 );
+        GWSApp::globalInstance()->exit( -1 );
     });
 
     QtConcurrent::run([ this ] { this->tick(); });
@@ -158,14 +161,24 @@ void GWSExecutionEnvironment::behave(){
 
     QList< QSharedPointer<GWSAgent> > currently_running_agents = this->getRunningAgents();
 
-    if( currently_running_agents.isEmpty() && !GWSApp::globalInstance()->property( "live" ).toBool() ){
+    if( currently_running_agents.isEmpty() ){
         this->stop();
-        QTimer::singleShot( 10000 , []{ GWSApp::exit( 0 ); });
+        QTimer::singleShot( 10*1000 , [](){ GWSApp::exit( 0 ); });
+        return;
+    }
+
+    // Get current datetime in simulation
+    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+
+    // If simulation end_time reached
+    if( current_datetime > this->getProperty( AGENT_DEATH_PROP ).toDouble() ){
+        this->stop();
+        QTimer::singleShot( 10*1000 , [](){ GWSApp::exit( 0 ); });
+        return;
     }
 
     // Wait for agents that are delayed (if WAIT_FOR_ME).
     // Get min tick time and add some threshold to execute the agents that are more delayed.
-    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     qint64 min_tick = current_datetime;
     QSharedPointer<GWSAgent> who_is_min_tick;
     bool agents_to_tick = false;

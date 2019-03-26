@@ -1,8 +1,5 @@
 { 
-"id" : "demo",
-"user_id" : "demo",
-"timeout" : 6000,
-"speed" : 600000,
+"target":"gwspopulation","name":"Population simulation","description":"Population simulation.","timeout":120000,"status":"pending","user_id":"ca7a0113-50ab-50d0-9dae-115bc5aea6d0","speed":6000,
 "population" : {
 
                                     "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,

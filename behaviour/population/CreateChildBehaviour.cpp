@@ -21,17 +21,17 @@ QJsonArray CreateChildBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString couple_id = agent->getProperty( "couple_id" ).toString();
-    QSharedPointer<GWSAgent> couple = GWSAgentEnvironment::globalInstance()->getById( couple_id );
+    QSharedPointer<GWSAgent> couple = GWSAgentEnvironment::globalInstance()->getByUID( couple_id );
 
 
     // Pass parent information as basic characteristics:
     QJsonObject new_born_json = agent->serialize();
     QDateTime next_year = QDateTime::fromMSecsSinceEpoch( GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) ).addYears( 1 );
     new_born_json.insert( GWSExecutionEnvironment::AGENT_BIRTH_PROP , next_year.toMSecsSinceEpoch() );
-    new_born_json.remove( GWSAgent::GWS_ID_PROP );
+    new_born_json.remove( GWSAgent::GWS_UID_PROP );
 
     new_born_json.remove( "couple_id" );
-    new_born_json.insert( "parent1", agent->getId() );
+    new_born_json.insert( "parent1", agent->getUID() );
     new_born_json.insert( "parent2", couple_id );
     new_born_json.remove( "children" );
 
@@ -55,15 +55,15 @@ QJsonArray CreateChildBehaviour::behave(){
     QList< QSharedPointer<GWSAgent> > children ;
 
     if ( !agent->getProperty( "children" ).toArray().isEmpty() ){
-        children = GWSAgentEnvironment::globalInstance()->getByIds( agent->getProperty( "children"  ).toArray() );
+        children = GWSAgentEnvironment::globalInstance()->getByUIDS( agent->getProperty( "children"  ).toArray() );
     }
 
     QJsonArray children_ids;
     foreach( QSharedPointer<GWSAgent> child , children ){
-        children_ids.append( child->getId() );
+        children_ids.append( child->getUID() );
     }
 
-    children_ids.append( new_born->getId() );
+    children_ids.append( new_born->getUID() );
 
     agent->setProperty( "children" , children_ids );
     couple->setProperty( "children" , children_ids );
