@@ -48,7 +48,7 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Tick in 1 second duration to move in small parts
-    GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
+    GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble( 1 );  //qrand() % 100 / 100.0;
 
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 

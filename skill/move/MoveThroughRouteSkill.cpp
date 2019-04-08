@@ -106,6 +106,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
                 if( v != agent->getUID() ){ new_inside_agent_ids.append( v ); }
             }
             starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , new_inside_agent_ids );
+
             // Have completed the edge coordinates, so remove the edge too (if exists)
             this->pending_route.removeAt( 0 );
             move_to = current_coor;
@@ -157,8 +158,13 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         starting_current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
         GWSGeometry current_edge_agent_geometry = GWSPhysicalEnvironment::globalInstance()->getGeometry( starting_current_edge_agent );
         this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
+
+        // Set destination to next coordinate
+        if ( !this->pending_edge_coordinates.isEmpty() ){
+            route_destination = this->pending_edge_coordinates.at( 0 );
+        }
+
     }
 
     MoveSkill::move( movement_duration , movement_speed , route_destination );
-
 }

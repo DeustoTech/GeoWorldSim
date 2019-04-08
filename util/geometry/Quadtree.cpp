@@ -6,12 +6,11 @@
 
 GWSQuadtree::GWSQuadtree() : QObject(){
     for( int l = this->layer_amount ; l > 0 ; l-- ){
-        this->geom_index_layers.insert( l , new QMap< int , QMap< int, QStringList* >* >() );
+        this->quadtree_layers.insert( l , new QMap< int , QMap< int, geos::index::quadtree::Quadtree* >* >() );
     }
 }
 
 GWSQuadtree::~GWSQuadtree(){
-    this->id_to_geometries.clear();
 }
 
 QStringList GWSQuadtree::getElements(){
@@ -20,9 +19,11 @@ QStringList GWSQuadtree::getElements(){
 
 const GWSGeometry GWSQuadtree::getGeometry( QString object_id ){
     this->mutex.lockForRead();
-    const GWSGeometry geom = this->id_to_geometries.value( object_id );
+    QSharedPointer<GWSQuadtreeElement> elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
     this->mutex.unlock();
-    return geom;
+
+    if( elm ){ return elm->geometry; }
+    return GWSGeometry();
 }
 
 QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
@@ -39,6 +40,9 @@ QStringList GWSQuadtree::getElements(const GWSGeometry geom){
 
 QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
     QStringList objects_ids;
+
+    const geos::geom::Envelope env = geos::geom::Envelope( minX , maxX , minY , maxY );
+    std::vector<void*> ids;
 
     // See the decimal value where min and max diverge
     QString x_max = QString::number( maxX );
@@ -81,76 +85,62 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     int x_hash = this->createHash( ( minX + maxX ) / 2.0 , qMin( x_decimal_count , y_decimal_count ) );
     int y_hash = this->createHash( ( minY + maxY ) / 2.0  , qMin( x_decimal_count , y_decimal_count ) );
 
-    if( !this->geom_index_layers.keys().contains( qMin( x_decimal_count , y_decimal_count ) ) ){
+    this->mutex.lockForRead();
+    if( !this->quadtree_layers.keys().contains( qMin( x_decimal_count , y_decimal_count ) ) ){
+        this->mutex.unlock();
         return objects_ids;
     }
 
-    if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->keys().contains( x_hash ) ){
+    if( !this->quadtree_layers.value( qMin( x_decimal_count , y_decimal_count ) )->keys().contains( x_hash ) ){
+        this->mutex.unlock();
         return objects_ids;
     }
 
-    if( !this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->keys().contains( y_hash ) ){
+    if( !this->quadtree_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->keys().contains( y_hash ) ){
+        this->mutex.unlock();
         return objects_ids;
     }
+    this->mutex.unlock();
 
     this->mutex.lockForWrite();
-    QStringList* ids = this->geom_index_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash );
-    foreach(QString id , *ids ) {
-        objects_ids.append( id );
+    this->quadtree_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash )->query( &env , ids );
+    foreach(void* id, ids) {
+        GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
+        if( !ptr ){ continue; }
+        objects_ids.append( ptr->object_id );
     }
     this->mutex.unlock();
 
     return objects_ids;
 }
 
-QString GWSQuadtree::getNearestElement(GWSCoordinate coor) {
-
-    for( int l = this->layer_amount ; l > 0 ; l-- ){
-
-        QMap< int , QMap< int , QStringList* >* >* layer = this->geom_index_layers.value( l );
-        if( !layer ){
-            continue;
-        }
-
-        int xhash = this->createHash( coor.getX() , l );
-
-        QMap< int, QStringList* >* x_layer = layer->value( xhash );
-        if( !x_layer ){
-            continue;
-        }
-
-        int yhash = this->createHash( coor.getY() , l );
-
-        QStringList* y_layer = x_layer->value( yhash );
-        if( !y_layer || y_layer->isEmpty() ){
-            continue;
-        }
-
-        GWSLengthUnit shortest_distance = GWSLengthUnit(999999999999999);
-        QString nearest_object_id;
-        foreach (QString object_id, *y_layer) {
-
-            const GWSGeometry geom = this->id_to_geometries.value( object_id );
-            if( geom.isValid() ){
-                GWSLengthUnit l = geom.getCentroid().getDistance( coor );
-                if( l < shortest_distance ){
-                    shortest_distance = l;
-                    nearest_object_id = object_id;
-                }
-            }
-        }
-
-        if( nearest_object_id.isEmpty() ){
-            continue;
-        }
-
-        return nearest_object_id;
-    }
-    return QString();
+QString GWSQuadtree::getNearestElement( GWSCoordinate coor ) {
+    GWSGeometry geom = GWSGeometryTransformators::transformMove( GWSGeometry() , coor );
+    return this->getNearestElement( geom );
 }
 
 QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {
-    return this->getNearestElement( geom.getCentroid() );
+
+    if( !geom.isValid() ){ return QString(); }
+
+    GWSLengthUnit shortest_distance = GWSLengthUnit(999999999999999);
+    QString nearest_object_id;
+    foreach (QString object_id, this->getElements( geom ) ) {
+
+        this->mutex.lockForRead();
+        const GWSGeometry g = this->quadtree_elements.value( object_id )->geometry;
+        this->mutex.unlock();
+
+        if( g.isValid() ){
+            GWSLengthUnit l = g.getCentroid().getDistance( geom.getCentroid() );
+            if( l < shortest_distance ){
+                shortest_distance = l;
+                nearest_object_id = object_id;
+            }
+        }
+    }
+
+    return nearest_object_id;
 }
 
 void GWSQuadtree::upsert( QString object_id , GWSCoordinate coor ){
@@ -164,13 +154,89 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
         return;
     }
 
-    GWSCoordinate coor = geom.getCentroid();
+    this->mutex.lockForRead();
+    QSharedPointer<GWSQuadtreeElement> previous_elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+    this->mutex.unlock();
+
+    QSharedPointer<GWSQuadtreeElement> elm = QSharedPointer<GWSQuadtreeElement>( new GWSQuadtreeElement( object_id , geom ) );
+
+    for( int l = this->layer_amount ; l > 0 ; l-- ){
+
+        QtConcurrent::run([this , l , elm , previous_elm] {
+
+            if( previous_elm ){
+
+                // Get geohash
+                int xhash = this->createHash( previous_elm->geometry.getCentroid().getX() , l );
+                int yhash = this->createHash( previous_elm->geometry.getCentroid().getY() , l );
+
+                // Get envelope
+                geos::geom::Envelope env = geos::geom::Envelope(
+                            GWSGeometryGetters::getGeometryMinX( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxX( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMinY( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxY( previous_elm->geometry ) );
+
+                this->mutex.lockForWrite();
+                this->quadtree_layers.value( l )->value( xhash )->value( yhash )->remove( &env , previous_elm.data() );
+                this->quadtree_elements.remove( elm->object_id );
+                this->mutex.unlock();
+
+            }
+
+            if( elm->geometry.isValid() ){
+
+                // Get geohash
+                int xhash = this->createHash( elm->geometry.getCentroid().getX() , l );
+                int yhash = this->createHash( elm->geometry.getCentroid().getY() , l );
+
+                this->mutex.lockForRead();
+                if ( !this->quadtree_layers.value( l )->keys().contains( xhash ) ){
+                    this->mutex.unlock();
+                    this->mutex.lockForWrite();
+                    this->quadtree_layers.value( l )->insert( xhash , new QMap< int , geos::index::quadtree::Quadtree* >() );
+                }
+                this->mutex.unlock();
+
+                this->mutex.lockForRead();
+                if ( !this->quadtree_layers.value( l )->value( xhash )->keys().contains( yhash ) ){
+                    this->mutex.unlock();
+                    this->mutex.lockForWrite();
+                    this->quadtree_layers.value( l )->value( xhash )->insert( yhash , new geos::index::quadtree::Quadtree() );
+                }
+                this->mutex.unlock();
+
+                // Get envelope
+                geos::geom::Envelope env = geos::geom::Envelope(
+                            GWSGeometryGetters::getGeometryMinX( elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxX( elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMinY( elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxY( elm->geometry ) );
+
+                this->mutex.lockForWrite();
+                this->quadtree_layers.value( l )->value( xhash )->value( yhash )->insert( &env , elm.data() );
+                this->quadtree_elements.insert( elm->object_id , elm );
+                if( !this->ids_contained.contains( elm->object_id ) ){
+                    this->ids_contained.append( elm->object_id );
+                }
+                this->mutex.unlock();
+            }
+
+        });
+
+    }
+
+    previous_elm.clear();
+
+    /*GWSCoordinate coor = geom.getCentroid();
 
     if ( coor.isValid() ){
 
         for( int l = this->layer_amount ; l > 0 ; l-- ){
 
             QtConcurrent::run([this , coor , l , object_id] {
+
+                if( !this ){ return; }
 
                 // Get geohash
                 int xhash = this->createHash( coor.getX() , l );
@@ -190,16 +256,14 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
 
                 // If already here, remove old version
                 this->mutex.lockForRead();
-                if( this->ids_contained.contains( object_id ) ){
-                    GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
-                    this->mutex.unlock();
+                GWSGeometry previous_geom = this->id_to_geometries.value( object_id );
+                this->mutex.unlock();
+                if( previous_geom.isValid() ){
                     GWSCoordinate previous_coor = previous_geom.getCentroid();
                     int previous_xhash = this->createHash( previous_coor.getX() , l );
                     int previous_yhash = this->createHash( previous_coor.getY() , l );
                     this->mutex.lockForWrite();
                     this->geom_index_layers.value( l )->value( previous_xhash )->value( previous_yhash )->removeAll( object_id );
-                    this->mutex.unlock();
-                } else {
                     this->mutex.unlock();
                 }
 
@@ -212,18 +276,58 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
 
         this->mutex.lockForWrite();
         this->id_to_geometries.insert( object_id , geom );
-        this->ids_contained.append( object_id );
+        if( !this->ids_contained.contains( object_id ) ){
+            this->ids_contained.append( object_id );
+        }
         this->mutex.unlock();
-   }
+   }*/
 
 }
 
-void GWSQuadtree::remove(QString object_id){
+void GWSQuadtree::remove( QString object_id ){
 
     if( object_id.isEmpty() ){
         return;
     }
 
+    this->mutex.lockForRead();
+    QSharedPointer<GWSQuadtreeElement> previous_elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+    this->mutex.unlock();
+
+    for( int l = this->layer_amount ; l > 0 ; l-- ){
+
+        QtConcurrent::run([this , l , previous_elm] {
+
+            if( previous_elm ){
+
+                // Get geohash
+                int xhash = this->createHash( previous_elm->geometry.getCentroid().getX() , l );
+                int yhash = this->createHash( previous_elm->geometry.getCentroid().getY() , l );
+
+                // Get envelope
+                geos::geom::Envelope env = geos::geom::Envelope(
+                            GWSGeometryGetters::getGeometryMinX( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxX( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMinY( previous_elm->geometry ) ,
+                            GWSGeometryGetters::getGeometryMaxY( previous_elm->geometry ) );
+
+                this->mutex.lockForWrite();
+                this->quadtree_layers.value( l )->value( xhash )->value( yhash )->remove( &env , previous_elm.data() );
+                this->quadtree_elements.remove( previous_elm->object_id );
+                this->mutex.unlock();
+            }
+
+            this->mutex.lockForWrite();
+            this->ids_contained.removeAll( previous_elm->object_id );
+            this->mutex.unlock();
+
+        });
+
+    }
+
+    previous_elm.clear();
+
+    /*
     const GWSGeometry object_geom = this->id_to_geometries.value( object_id );
 
     if( !object_geom.isValid() ){
@@ -245,7 +349,7 @@ void GWSQuadtree::remove(QString object_id){
     this->id_to_geometries.remove( object_id );
     this->ids_contained.removeAll( object_id );
     this->mutex.unlock();
-
+    */
 }
 
 
