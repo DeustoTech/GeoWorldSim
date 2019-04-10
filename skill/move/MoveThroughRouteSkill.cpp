@@ -12,6 +12,7 @@ QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_
 QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_ID = "current_road_id";
 QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_TYPE = "current_road_type";
 QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
+QString MoveThroughRouteSkill::STORE_ROUTE_AS = "calculated_route";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
     //this->setProperty( SKILL_NETWORK_TYPE_PROP , "GWSAgent" );
@@ -20,17 +21,6 @@ MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
 MoveThroughRouteSkill::~MoveThroughRouteSkill(){
 }
 
-/**********************************************************************
- GETTERS
-**********************************************************************/
-
-/*GWSCoordinate MoveThroughRouteSkill::getRouteDestination() {
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    if( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).isNull() || agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).isNull() ){
-        return GWSCoordinate( NAN , NAN , NAN );
-    }
-    return GWSCoordinate( agent->getProperty( AGENT_ROUTE_DESTINATION_X_PROP ).toDouble( ) , agent->getProperty( AGENT_ROUTE_DESTINATION_Y_PROP ).toDouble( ) , 0 );
-}*/
 
 /**********************************************************************
  METHODS
@@ -63,12 +53,24 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         // If calculated a route whose first point is even further than the destination, don¡t follow the route
         // Avoids recalculating a route once finished routing and freeflowing to destination
         if( !this->pending_route.isEmpty() ){
+
             GWSCoordinate new_route_start = this->pending_route.at( 0 ).getFromCoordinate();
             if( new_route_start == this->last_route_started_from ){
                 this->pending_route.clear();
             } else {
                 this->last_route_started_from = new_route_start;
             }
+
+            // Store route
+            QJsonObject geojson;
+            geojson.insert( "type" , "LineString" );
+            QJsonArray coordinates;
+            foreach (GWSNetworkEdge edge , this->pending_route) {
+                coordinates.append( QJsonArray( { edge.getFromCoordinate().getX() , edge.getFromCoordinate().getY() , edge.getFromCoordinate().getZ() } ) );
+            }
+            geojson.insert( "coordinates" , coordinates );
+            agent->setProperty( STORE_ROUTE_AS , geojson );
+
         }
     }
 
@@ -161,6 +163,9 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
         // Set destination to next coordinate
         if ( !this->pending_edge_coordinates.isEmpty() ){
+            if( route_destination == this->pending_edge_coordinates.at( 0 ) ){
+                this->pending_edge_coordinates.removeAt( 0 );
+            }
             route_destination = this->pending_edge_coordinates.at( 0 );
         }
 

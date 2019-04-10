@@ -5,19 +5,11 @@
 #include <QReadWriteLock>
 #include <QMap>
 
-#include <spatialindex/SpatialIndex.h>
-#include <spatialindex/Region.h>
-#include <spatialindex/RTree.h>
-
 #include <geos/index/quadtree/Quadtree.h>
 
 #include "../../agent/Agent.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Geometry.h"
-
-using namespace SpatialIndex;
-using namespace SpatialIndex::StorageManager;
-using namespace SpatialIndex::RTree;
 
 using namespace geos::index::quadtree;
 
@@ -54,7 +46,7 @@ private:
     // HELPER CLASS
     class GWSQuadtreeElement {
     public:
-        GWSQuadtreeElement( QString object_id , GWSGeometry geometry ) : object_id( object_id ) , geometry( geometry ){}
+        GWSQuadtreeElement( QString object_id , GWSGeometry geometry ) : object_id( object_id ) , geometry( geometry ) {}
         QString object_id;
         GWSGeometry geometry;
     };
@@ -62,9 +54,9 @@ private:
     QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< QString , QSharedPointer<GWSQuadtree::GWSQuadtreeElement> > quadtree_elements;
+    QMap< QString , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
     QMap< unsigned int , QMap< int , QMap< int , geos::index::quadtree::Quadtree* >* >* > quadtree_layers;
-    unsigned int layer_amount = 5;
+    unsigned int layer_depth_amount = 3;
 
 };
 

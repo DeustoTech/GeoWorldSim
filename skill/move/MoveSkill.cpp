@@ -11,8 +11,8 @@ QString MoveSkill::STORE_MAX_SPEED_PROP = "move_skill_maxspeed";
 QString MoveSkill::STORE_CURRENT_SPEED_PROP = "move_skill_current_speed";
 QString MoveSkill::STORE_MOVING_TOWARDS_X_PROP = "move_skill_moving_towards_x";
 QString MoveSkill::STORE_MOVING_TOWARDS_Y_PROP = "move_skill_moving_towards_y";
-QString MoveSkill::STORE_ACCUMULATED_DISTANCE_PROP = "move_skill_total_moved_distance";
-QString MoveSkill::STORE_ACCUMULATED_TIME_PROP = "move_skill_total_travel_time";
+QString MoveSkill::STORE_ACCUMULATED_DISTANCE_PROP = "move_skill_total_travelled_distance";
+QString MoveSkill::STORE_ACCUMULATED_TIME_PROP = "move_skill_total_travelled_time";
 
 MoveSkill::MoveSkill() : GWSSkill(){
 }

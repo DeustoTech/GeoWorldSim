@@ -286,7 +286,6 @@ void GWSAgent::behave(){
 
     if( this->to_be_executed_behaviours.isEmpty() ){
         qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getUID() );
-        qDebug() << this->last_behaved;
         return;
     }
 
@@ -296,7 +295,6 @@ void GWSAgent::behave(){
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
         //qDebug() << QString("AGENT %1 executing %2").arg( this->getUID() ).arg( behaviour->getUID() );
         QJsonArray ids = behaviour->tick( behaving_time );
-        this->last_behaved.append( behaviour->getUID() );
         foreach (QJsonValue id , ids ) {
             next_execute_behaviour_ids.append( id );
         }

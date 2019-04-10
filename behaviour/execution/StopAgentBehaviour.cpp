@@ -23,5 +23,5 @@ QJsonArray  StopAgentBehaviour::behave(){
     QJsonObject json = agent->serialize();
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
 
-    return QJsonArray();
+    return QJsonArray({ this->getUID() });
 }

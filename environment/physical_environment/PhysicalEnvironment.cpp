@@ -181,6 +181,7 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 void GWSPhysicalEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, GWSGeometry geom){
     foreach (QJsonValue v , agent->getInheritanceFamily() ) {
 
+        QString uuid = agent->getUID();
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
@@ -189,8 +190,10 @@ void GWSPhysicalEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, 
             this->environment_agent_indexes.insert( family , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
         }
         this->mutex.unlock();
-        this->environment_agent_indexes.value( family )->upsert( agent->getUID() , geom );
 
+        QtConcurrent::run([this , uuid , geom , family] {
+            this->environment_agent_indexes.value( family )->upsert( uuid , geom );
+        });
     }
 }
 

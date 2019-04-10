@@ -28,6 +28,7 @@ struct GWSNetworkEdge : GWSEdge {
     ~GWSNetworkEdge(){}
 
     // GETTERS
+    virtual bool isValid() const;
     virtual QString getFromNodeUID() const;
     virtual QString getToNodeUID() const;
     virtual GWSCoordinate getFromCoordinate() const;
