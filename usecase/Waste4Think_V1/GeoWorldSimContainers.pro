@@ -88,7 +88,6 @@ HEADERS += \
     ../../util/routing/TSPRouting.h \
             ## GRID
     ../../util/grid/Grid.h \
-    ../../util/grid/AgentGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -109,6 +108,7 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/social_environment/SocialEnvironment.h \
+    ../../environment/social_environment/SocialRelation.h \
     ../../environment/network_environment/NetworkEdge.h \
         # AGENTS
     #agent/person/Person.h \
@@ -182,7 +182,6 @@ SOURCES += mainlauncher.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
     #../../util/grid/NumberGrid.cpp \
-    ../../util/grid/AgentGrid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
@@ -197,7 +196,6 @@ SOURCES += mainlauncher.cpp \
     ../../environment/EnvironmentsGroup.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
-    #../../environment/social_environment/SocialEnvironment.cpp \
     #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
@@ -205,6 +203,7 @@ SOURCES += mainlauncher.cpp \
     ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
+    ../../environment/social_environment/SocialRelation.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
     #agent/person/Person.cpp \

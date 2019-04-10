@@ -16,8 +16,8 @@ public:
     QStringList getInRelationeds( QSharedPointer<GWSAgent> agent , QString relation_type );
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    //virtual void registerAgent( QSharedPointer<GWSAgent> agent );
+    //virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:
 
