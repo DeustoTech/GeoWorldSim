@@ -1,7 +1,6 @@
 #include "MoveThroughRouteInVehicleSkill.h"
 
-MoveThroughRouteInVehicleSkill::MoveThroughRouteInVehicleSkill() : MoveThroughRouteSkill()
-{
+MoveThroughRouteInVehicleSkill::MoveThroughRouteInVehicleSkill() : MoveThroughRouteSkill(){
 
 }
 
@@ -12,7 +11,7 @@ void MoveThroughRouteInVehicleSkill::move(GWSTimeUnit movement_duration, GWSSpee
 
     MoveThroughRouteSkill::move( movement_duration , movement_speed , route_destination , graph_type );
 
-    QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
+    /*QSharedPointer<PolluteSkill> vehiclePollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
     if( vehiclePollute_skill.isNull() ){
         vehiclePollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
         qDebug() << "Adding PolluteSkill";
@@ -28,7 +27,7 @@ void MoveThroughRouteInVehicleSkill::move(GWSTimeUnit movement_duration, GWSSpee
         vehiclePollute_skill->pollute( vehicle_subtype , "CO" ,   agent->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
         vehiclePollute_skill->pollute( vehicle_subtype , "HC" ,   agent->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).isDouble() , 2.0 , road_type , 0.66 );
     }
-
+*/
 
 
 

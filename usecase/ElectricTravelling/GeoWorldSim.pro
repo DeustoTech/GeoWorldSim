@@ -97,7 +97,8 @@ HEADERS += \
     ../../skill/pollute/PolluteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/property/PropertyStatisticsBehaviour.h
+    ../../behaviour/property/PropertyStatisticsBehaviour.h \
+    ../../behaviour/emissions/VehicleNoiseBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -164,7 +165,8 @@ SOURCES += main.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
-    ../../behaviour/property/PropertyStatisticsBehaviour.cpp
+    ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
+    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

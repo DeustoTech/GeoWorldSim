@@ -3,7 +3,6 @@
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
-#include "../../skill/pollute/PolluteSkill.h"
 #include "../../util/geometry/GeometryGetters.h"
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
@@ -66,7 +65,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
             geojson.insert( "type" , "LineString" );
             QJsonArray coordinates;
             foreach (GWSNetworkEdge edge , this->pending_route) {
-                coordinates.append( QJsonArray( { edge.getFromCoordinate().getX() , edge.getFromCoordinate().getY() , edge.getFromCoordinate().getZ() } ) );
+                coordinates.append( QJsonArray( { edge.getToCoordinate().getX() , edge.getToCoordinate().getY() , edge.getToCoordinate().getZ() } ) );
             }
             geojson.insert( "coordinates" , coordinates );
             agent->setProperty( STORE_ROUTE_AS , geojson );
@@ -76,8 +75,11 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
     // Assume we have reached route end OR not found route, move freely
     if( this->pending_route.isEmpty() ){
+
+        // Pending time to reach destination can be higher than the duration requested.
         GWSLengthUnit pending_distance = current_coor.getDistance( route_destination );
-        MoveSkill::move( movement_duration , GWSSpeedUnit( qMin( 4.0 , pending_distance.number() ) ) , route_destination );
+        GWSTimeUnit pending_time = pending_distance.number() / movement_speed.number(); // Time needed to reach route_destination at current speed
+        MoveSkill::move( qMin( pending_time , movement_duration ), movement_speed , route_destination );
         return;
     }
 
@@ -119,7 +121,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         }
 
         route_destination = move_to;
-        movement_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble() , movement_speed.number()+ 10 );
+        movement_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble( movement_speed.number() ) , movement_speed.number() + 10 );
     }
 
     if( !this->pending_route.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
@@ -129,7 +131,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
         QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
-        GWSSpeedUnit starting_current_edge_max_speed = starting_current_edge_agent->getProperty( "maxspeed").toDouble();
+        GWSSpeedUnit starting_current_edge_max_speed = starting_current_edge_agent->getProperty( "maxspeed" ).toDouble( movement_speed.number() );
 
         // First look if edge has a capacity and therefore we can enter edge
         double edge_capacity = -1;

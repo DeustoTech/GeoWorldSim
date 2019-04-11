@@ -1,15 +1,17 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600,"status":"pending","user_id":"545b694b-af38-55ca-bb94-cebd61d1e9a3","speed":3,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":6000,"status":"pending","user_id":"545b694b-af38-55ca-bb94-cebd61d1e9a3","speed":5,
 
 "population" : {
 
-	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "birth" : -1 , "fixed_y" : 43.28315 , "fixed_x" : -2.862104 , 
+	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "fixed_x" : -2.93486 , "fixed_y" : 43.26275 , "birth" : -1 , 
 	
                             "@behaviours": [  
 
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 1 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING"] } , 
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 10 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["NOISE"] } , 
+                                                        
+                                                        { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
                                                         
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
                                                         
@@ -17,10 +19,10 @@
                             ] } , 
                             
                             
-                            "datasources":[{"entities":["Vehicle"],"id":"1013fa37-1eef-4b91-9819-6f0ed6dfaca7-545b694b-af38-55ca-bb94-ce"} ] }, 
+                            "datasources":[{"entities":["CAR"],"id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"} ] }, 
 
 
-        "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "birth" : -1 , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
+        "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
         
                             "@behaviours": [  
                                 
@@ -38,7 +40,7 @@
 
                             
 	"roads"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["Road"] , "maxspeed":4 },
-                            "datasources":[{"entities":["Road"],"id":"66e3e16d-88e9-4b5f-8a4c-430f081be160-545b694b-af38-55ca-bb94-ce"}]}
+                            "datasources":[{"entities":["Road"],"id":"11327b1e-0346-4d8f-9b7b-77fd1a408731-545b694b-af38-55ca-bb94-ce"}]}
 	
     },
 

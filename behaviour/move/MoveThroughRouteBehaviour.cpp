@@ -37,6 +37,10 @@ void MoveThroughRouteBehaviour::initialize(){
         agent->addSkill( movethroughroute_skill );
     }
 
+    // Check if agent has NoiseSkill, otherwise create it and set the agent type
+
+    // Check if agent has PolluteSkill
+
 }
 
 /**********************************************************************
