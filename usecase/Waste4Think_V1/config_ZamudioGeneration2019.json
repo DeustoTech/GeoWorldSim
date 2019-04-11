@@ -6,9 +6,81 @@
 {"citizens":
     {"template":{"@gwsclass":"GWSAgent","type":"Citizen","@gwsgroups":["Human","Citizen"] ,"birth":-1,
                 "@behaviours":[ 
-                { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "start":true, "id": "WASTE", "duration": 1, "nexts" : ["WASTE"] } ]},
+                
+                {"@gwsclass":"SendAgentSnapshotBehaviour", "start":true,  "id":"DISPLAY","agent_to_send_id":"<id>","duration":1,"nexts":["WASTE"]},
+                
+                { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "id": "WASTE", "family_members" : "TOTAL" , "duration": 1, "nexts" : ["CHECK_ORGANIC"] } ,
+                
+                { "@gwsclass": "CheckPropertyValueBehaviour",  "id": "CHECK_ORGANIC", "duration": 1, "property_to_compare" : "organic" , "threshold_value" : 1000 , "comparison_operator" : ">", "nexts_if_true" : ["FIND_ORGANIC"] , "nexts_if_false" : ["CHECK_RESIDUAL"] },
+                
+                { "@gwsclass": "CheckPropertyValueBehaviour",  "id": "CHECK_RESIDUAL", "duration": 1, "property_to_compare" : "residual" , "threshold_value" : 1000 , "comparison_operator" : ">", "nexts_if_true" : ["FIND_RESIDUAL"] , "nexts_if_false" : ["CHECK_PAPER"] },
+                
+                { "@gwsclass": "CheckPropertyValueBehaviour",  "id": "CHECK_PAPER", "duration": 1, "property_to_compare" : "paper" , "threshold_value" : 1000 , "comparison_operator" : ">", "nexts_if_true" : ["FIND_PAPER"] , "nexts_if_false" : ["CHECK_PLASTIC"] },
+                
+                { "@gwsclass": "CheckPropertyValueBehaviour",  "id": "CHECK_PLASTIC", "duration": 1, "property_to_compare" : "plastic" , "threshold_value" : 1000 , "comparison_operator" : ">", "nexts_if_true" : ["FIND_PLASTIC"] , "nexts_if_false" : ["DISPLAY"] },
+                
+                {"@gwsclass":"FindRoutingClosestBehaviour","duration":1,"id":"FIND_ORGANIC","facility_type":"ORGANIC","transport_network_type":"Footway","store_routing_closest_id_as":"closest_organic_id","store_routing_closest_agent_x_as":"closest_organic_x","store_routing_closest_agent_y_as":"closest_organic_y","store_routing_distance_as":"closest_organic_distance", "store_routing_closest_route_as" : "closest_organic_routing" , "nexts":["TRANSFER_ORGANIC"],"nexts_if_no_routing_closest_found":["STOP"]} ,
+                
+                {"@gwsclass":"TransactionBehaviour","duration":1,"id":"TRANSFER_ORGANIC","property_name_to_transfer":"organic","transaction_type":"WasteTransaction","transaction_data":{"emittedResources":[{"refResource":"ORGANIC"}]}, "emitting_agent_id":"<id>","receiving_agent_id":"<closest_organic_id>", "nexts":["SET_ORGANIC_COLOR"]} ,
+                
+                {"@gwsclass":"SetAgentPropertyBehaviour","id":"SET_ORGANIC_COLOR","duration":1,"agent_to_set_id":"<closest_organic_id>","property_name":"color","property_value":"chocolate","nexts":["DISPLAY_ORGANIC"]},
+                
+                {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY_ORGANIC","agent_to_send_id":"<closest_organic_id>","duration":1,"nexts":["CHECK_RESIDUAL"]},
+                
+                {"@gwsclass":"FindRoutingClosestBehaviour","duration":1,"id":"FIND_RESIDUAL","facility_type":"RESIDUAL","transport_network_type":"Footway","store_routing_closest_id_as":"closest_residual_id","store_routing_closest_agent_x_as":"closest_residual_x","store_routing_closest_agent_y_as":"closest_residual_y","store_routing_distance_as":"closest_residual_distance", "store_routing_closest_route_as" : "closest_residual_routing" , "nexts":["TRANSFER_RESIDUAL"],"nexts_if_no_routing_closest_found":["STOP"]} ,
+                
+                {"@gwsclass":"TransactionBehaviour","duration":1,"id":"TRANSFER_RESIDUAL","property_name_to_transfer":"residual","transaction_type":"WasteTransaction","transaction_data":{"emittedResources":[{"refResource":"RESIDUAL"}]}, "emitting_agent_id":"<id>","receiving_agent_id":"<closest_residual_id>", "nexts":["SET_RESIDUAL_COLOR"]} ,
+                
+                {"@gwsclass":"SetAgentPropertyBehaviour","id":"SET_RESIDUAL_COLOR","duration":1,"agent_to_set_id":"<closest_residual_id>","property_name":"color","property_value":"gray","nexts":["DISPLAY_RESIDUAL"]},
+                
+                {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY_RESIDUAL","agent_to_send_id":"<closest_residual_id>","duration":1,"nexts":["CHECK_PAPER"]},
+                
+                
+                {"@gwsclass":"FindRoutingClosestBehaviour","duration":1,"id":"FIND_PAPER","facility_type":"PAPER","transport_network_type":"Footway","store_routing_closest_id_as":"closest_paper_id","store_routing_closest_agent_x_as":"closest_paper_x","store_routing_closest_agent_y_as":"closest_paper_y","store_routing_distance_as":"closest_paper_distance", "store_routing_closest_route_as" : "closest_paper_routing" , "nexts":["TRANSFER_PAPER"],"nexts_if_no_routing_closest_found":["STOP"]} ,
+                
+                {"@gwsclass":"TransactionBehaviour","duration":1,"id":"TRANSFER_PAPER","property_name_to_transfer":"paper","transaction_type":"WasteTransaction","transaction_data":{"emittedResources":[{"refResource":"PAPER"}]}, "emitting_agent_id":"<id>","receiving_agent_id":"<closest_paper_id>", "nexts":["SET_PAPER_COLOR"]} ,
+                
+                {"@gwsclass":"SetAgentPropertyBehaviour","id":"SET_PAPER_COLOR","duration":1,"agent_to_set_id":"<closest_paper_id>","property_name":"color","property_value":"blue","nexts":["DISPLAY_PAPER"]} , 
+                
+                {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY_PAPER","agent_to_send_id":"<closest_paper_id>","duration":1,"nexts":["CHECK_PLASTIC"]},
+                
+                {"@gwsclass":"FindRoutingClosestBehaviour","duration":1,"id":"FIND_PLASTIC","facility_type":"PLASTIC","transport_network_type":"Footway","store_routing_closest_id_as":"closest_plastic_id","store_routing_closest_agent_x_as":"closest_plastic_x","store_routing_closest_agent_y_as":"closest_plastic_y","store_routing_distance_as":"closest_plastic_distance", "store_routing_closest_route_as" : "closest_plastic_routing" , "nexts":["TRANSFER_PLASTIC"],"nexts_if_no_routing_closest_found":["STOP"]} ,
+                
+                {"@gwsclass":"TransactionBehaviour","duration":1,"id":"TRANSFER_PLASTIC", "property_name_to_transfer":"plastic" , "transaction_type" : "WasteTransaction" , "transaction_data":{"emittedResources":[{"refResource":"PLASTIC"}]}, "emitting_agent_id":"<id>","receiving_agent_id":"<closest_plastic_id>", "nexts":["SET_PLASTIC_COLOR"] } ,
+                
+                {"@gwsclass":"SetAgentPropertyBehaviour","id":"SET_PLASTIC_COLOR","duration":1,"agent_to_set_id":"<closest_plastic_id>","property_name":"color","property_value":"yellow","nexts":["DISPLAY_PLASTIC"]},
+
+                
+                {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY_PLASTIC","agent_to_send_id":"<closest_plastic_id>","duration":1,"nexts":["DISPLAY"]},
+                
+                { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP"  }
+                
+                ]},
                 
                 "datasources":
-                [{"entities":["Citizen"],"id":"d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11"}]}
+                [{"entities":["Citizen"],"id":"d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11"}] } ,
+                
+                
+"containersRESIDUAL": 
+    {"template": {"@gwsclass":"GWSAgent","type":"Container","name":"RESIDUAL","@gwsgroups":["RESIDUAL","Container"]}, 
+                  "datasources":[{"entities":["SortingType:5"],"id":"4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"}]},
+
+"containersPACKAGING":
+    {"template":{"@gwsclass":"GWSAgent","type":"Container","name":"PACKAGING","@gwsgroups":["PACKAGING","Container"]},
+                 "datasources":[{"entities":["SortingType:6"],"id":"4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"}]},
+
+"containersPAPER":
+    {"template":{"@gwsclass":"GWSAgent","type":"Container","name":"PAPER","@gwsgroups":["PAPER","Container"]},
+                 "datasources":[{"entities":["SortingType:8"],"id":"4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"}]},
+
+"containersORGANIC":
+    {"template":{"@gwsclass":"GWSAgent","type":"Container","name":"ORGANIC","@gwsgroups":["ORGANIC","Container"]},
+                 "datasources":[{"entities":["SortingType:11"],"id":"4c9ca068-475d-40fa-84f9-3de8780a858c-ca7a0113-50ab-50d0-9dae-11"}]},
+
+"roads":
+    {"template":{"@gwsclass":"GWSAgent","@gwsgroups":["Road","Footway"],"maxspeed":4},
+                 "datasources":[{"entities":["Entity"],"id":"273589aa-3365-49ef-98aa-606e6e3f8337-ca7a0113-50ab-50d0-9dae-11"}]}
 }
+
+
 }

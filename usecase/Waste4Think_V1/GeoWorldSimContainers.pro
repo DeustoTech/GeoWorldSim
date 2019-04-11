@@ -47,7 +47,6 @@ HEADERS += \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/property/TransferAgentPropertyBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/move/MoveBehaviour.h \
@@ -118,7 +117,8 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h
+    ../../behaviour/time/WaitUntilTimeBehaviour.h \
+    ../../behaviour/transaction/TransactionBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -140,7 +140,6 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/property/TransferAgentPropertyBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
@@ -213,7 +212,8 @@ SOURCES += mainlauncher.cpp \
     RecyclingPlantAgent.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp \
     ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
-    ../../behaviour/time/WaitUntilTimeBehaviour.cpp
+    ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
+    ../../behaviour/transaction/TransactionBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
