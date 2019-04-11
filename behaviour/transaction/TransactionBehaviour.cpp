@@ -1,4 +1,4 @@
-#include "TransferAgentPropertyBehaviour.h"
+#include "TransactionBehaviour.h"
 
 #include <QVariant>
 #include <QJsonObject>
@@ -9,19 +9,19 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
-QString TransferAgentPropertyBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
-QString TransferAgentPropertyBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
-QString TransferAgentPropertyBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
-QString TransferAgentPropertyBehaviour::TRANSACTION_TYPE = "transaction_type";
-QString TransferAgentPropertyBehaviour::TRANSACTION_DATA = "transaction_data";
-QString TransferAgentPropertyBehaviour::NEXTS = "nexts";
+QString TransactionBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
+QString TransactionBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
+QString TransactionBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
+QString TransactionBehaviour::TRANSACTION_TYPE = "transaction_type";
+QString TransactionBehaviour::TRANSACTION_DATA = "transaction_data";
+QString TransactionBehaviour::NEXTS = "nexts";
 
 
-TransferAgentPropertyBehaviour::TransferAgentPropertyBehaviour() : GWSBehaviour(){
+TransactionBehaviour::TransactionBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray TransferAgentPropertyBehaviour::behave(){
+QJsonArray TransactionBehaviour::behave(){
 
     QSharedPointer< GWSAgent > emitter;
     QSharedPointer< GWSAgent > receiver;
@@ -96,7 +96,7 @@ QJsonArray TransferAgentPropertyBehaviour::behave(){
 }
 
 
-QJsonValue TransferAgentPropertyBehaviour::incrementQJsonValue( QJsonValue existing_value , QJsonValue increment ){
+QJsonValue TransactionBehaviour::incrementQJsonValue( QJsonValue existing_value , QJsonValue increment ){
 
     if( existing_value.isNull() ){
         return increment;

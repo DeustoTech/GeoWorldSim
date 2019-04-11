@@ -14,7 +14,6 @@ QString GenerateWasteZamudioModelBehaviour::WASTE_TYPE7 = "waste_type7";
 
 
 QString GenerateWasteZamudioModelBehaviour::FAMILY_MEMBERS = "family_members";
-QString GenerateWasteZamudioModelBehaviour::MAX_VALUE = "max_waste";
 
 
 QString GenerateWasteZamudioModelBehaviour::STORE_WASTE_TYPE1_AS = "store_waste_type1_as";
@@ -109,7 +108,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
 
     // Zamudio characterization From W4T_M1_ZamudioEnero19.xlsx:
     QString characterization = QString::fromUtf8("{"
-                               " \"resto\" : { "
+                               " \"residual\" : { "
                                        " \"food_waste\" : 0.0413 ,"
                                        " \"no_food_waste\" :  0.4153, "
                                        " \"gardening_waste\" :  0.00, "
@@ -283,33 +282,39 @@ double GenerateWasteZamudioModelBehaviour::partialModel ( double rest, double un
 QJsonArray GenerateWasteZamudioModelBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();    
-    int family_members = this->getProperty( FAMILY_MEMBERS ).toInt(1);
+    int family_members = agent->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt(1);
 
     QJsonObject generationObject = this->getProperty( "daily_generation_kg_person" ).toObject();
     QJsonObject characterizationObject = this->getProperty( "characterization" ).toObject();
-    QJsonObject generated;
+    QJsonObject generated = agent->getProperty( "GENERATED" ).toObject();
 
     //qDebug() << characterizationObject.keys();
 
+    // Check if the agent already has any waste stored:
 
-   foreach( QString sorting_type , characterizationObject.keys() ){
+    foreach( QString sorting_type , characterizationObject.keys() ){
 
-       QJsonObject to_throw_to_this_sorting_type;
+       QJsonObject to_throw_to_this_sorting_type = generated.value( sorting_type ).toObject();
+
+       double total = 0;
 
        foreach ( QString waste , generationObject.keys() ){
 
-            qDebug() << waste << generationObject.value( waste );
+           // qDebug() << waste << generationObject.value( waste );
 
             // Units are grams:
             GWSMassUnit waste_amount = GWSMassUnit( generationObject.value( waste ).toDouble(0) * 1000 * family_members );
 
             double percentage = characterizationObject.value( sorting_type ).toObject().value( waste ).toDouble();
             GWSMassUnit waste_that_goes_to_this_sorting_type = waste_amount * percentage;
-            to_throw_to_this_sorting_type.insert( waste , waste_that_goes_to_this_sorting_type.number() );
+            to_throw_to_this_sorting_type.insert( waste , to_throw_to_this_sorting_type.value( waste ).toDouble( 0 ) + waste_that_goes_to_this_sorting_type.number() );
+
+            total += to_throw_to_this_sorting_type.value( waste ).toDouble();
 
        }
 
        generated.insert( sorting_type , to_throw_to_this_sorting_type );
+       agent->setProperty( sorting_type , total );
 
     }
 

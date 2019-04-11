@@ -6,6 +6,7 @@ QString CheckPropertyValueBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
 QString CheckPropertyValueBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
 QString CheckPropertyValueBehaviour::PROPERTY_TO_COMPARE_NAME = "property_to_compare";
 QString CheckPropertyValueBehaviour::REFERENCE_VALUE_TO_COMPARE = "threshold_value";
+QString CheckPropertyValueBehaviour::COMPARISON_OPERATOR = "comparison_operator";
 
 CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
 
@@ -15,7 +16,8 @@ CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
 QJsonArray CheckPropertyValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    QJsonValue threshold_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE );
+    double threshold_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE ).toDouble();
+    QString operation = this->getProperty( COMPARISON_OPERATOR ).toString();
 
     // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
     QJsonValue property_name = this->getProperty( PROPERTY_TO_COMPARE_NAME );
@@ -56,7 +58,21 @@ QJsonArray CheckPropertyValueBehaviour::behave(){
         break;
     }
     }
-    bool comparison_success = threshold_value == total;
+
+    bool comparison_success = false;
+
+    if ( operation == ">" ){
+        comparison_success = total >= threshold_value;
+    }
+
+    if ( operation == "<" ){
+        comparison_success = total <= threshold_value;
+    }
+
+    if ( operation == "=" ){
+        comparison_success = threshold_value == total;
+    }
+
 
     if( comparison_success ){
         return this->getProperty( NEXTS_IF_TRUE ).toArray();
