@@ -17,7 +17,7 @@ struct GWSEdge {
 
     // GETTERS
     QString getUID() const;
-    bool isValid() const;
+    virtual bool isValid() const;
     double getCost( double accumulated_cost = 0 ) const;
     QString getType() const;
 

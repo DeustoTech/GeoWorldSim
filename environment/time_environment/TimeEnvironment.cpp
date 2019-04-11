@@ -15,8 +15,8 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
     this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble(1);
-    this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value("start_time").toDouble( QDateTime::currentMSecsSinceEpoch() );
-    qInfo() << "TimeEnvironment created with speed" << this->time_speed;
+    this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
+    qInfo() << QString("TimeEnvironment created with speed %1 and datetime %2").arg( this->time_speed ).arg( QDateTime::fromMSecsSinceEpoch( this->simulation_datetime_msecs ).toString() );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
@@ -98,7 +98,7 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
 
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
-        quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble();
+        quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble( -1 );
         this->mutex.lock();
         this->agent_internal_times.insert( agent->getUID() , init_internal_time );
         this->mutex.unlock();

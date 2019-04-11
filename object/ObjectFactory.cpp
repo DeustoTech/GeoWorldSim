@@ -53,11 +53,13 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
 
     if( json.isEmpty() ){
         qWarning() << QString("Object Factory received empty JSON");
+        GWSApp::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 
     if( !json.keys().contains( GWSObject::GWS_CLASS_PROP ) ){
         qWarning() << QString("Object Factory received json without %1").arg( GWSObject::GWS_CLASS_PROP );
+        GWSApp::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 
@@ -65,6 +67,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
 
     if( !this->constructors.keys().contains( class_name ) ){
         qWarning() << QString("Object class %1 not registered in the ObjectFactory.").arg( class_name );
+        GWSApp::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 

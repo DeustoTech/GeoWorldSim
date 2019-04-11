@@ -83,7 +83,7 @@ public:
                 continue;
             }
 
-            if ( this->routing_graph->id( start ) < 0 || this->routing_graph->id( end ) < 0 ){
+            if ( this->routing_graph->id( start ) <= 0 || this->routing_graph->id( end ) <= 0 ){
                 qDebug() << QString("Start (%1) or end nodes (%2) are not in graph").arg( from_hash ).arg( to_hash );
                 this->cachePath( start , end , route );
                 result_routes.append( route );

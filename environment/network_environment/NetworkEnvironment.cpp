@@ -241,7 +241,7 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
 **********************************************************************/
 
 QString GWSNetworkEnvironment::getNearestNodeUID( GWSCoordinate coor , QString class_name ) const{
-   GWSNetworkEdge edge = this->getNearestEdge( coor , class_name );
+    GWSNetworkEdge edge = this->getNearestEdge( coor , class_name );
     if( !edge.isValid() ){
         return QString();
     }

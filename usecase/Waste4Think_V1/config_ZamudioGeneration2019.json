@@ -1,0 +1,14 @@
+{"id" : "demo",
+"user_id" : "demo",
+"timeout" : 6000,
+"speed" : 60000,
+"population":
+{"citizens":
+    {"template":{"@gwsclass":"GWSAgent","type":"Citizen","@gwsgroups":["Human","Citizen"] ,"birth":-1,
+                "@behaviours":[ 
+                { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "start":true, "id": "WASTE", "duration": 1, "nexts" : ["WASTE"] } ]},
+                
+                "datasources":
+                [{"entities":["Citizen"],"id":"d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11"}]}
+}
+}

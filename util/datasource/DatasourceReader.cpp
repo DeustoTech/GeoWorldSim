@@ -28,8 +28,8 @@ bool GWSDatasourceReader::downloadedFinished(){
 }
 
 void GWSDatasourceReader::requestPaginated(int page){
-    QString paginated_url = QString("http://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4&min_time=%5&max_time=%6").arg( this->scenario_id ).arg( this->entities_type ).arg( page * this->page_size ).arg( this->page_size ).arg( this->min_time ).arg( this->max_time );
-    qDebug() << QString("Requesting entities %1 from scenario %2, from %3 to %4").arg( this->entities_type ).arg( paginated_url ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
+    QString paginated_url = QString("https://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4&fields=*").arg( this->scenario_id ).arg( this->entities_type ).arg( page * this->page_size ).arg( this->page_size );
+    qDebug() << QString("Requesting %1 from datasource %2, %3 / %4").arg( this->entities_type ).arg( this->scenario_id ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 
     QNetworkReply* reply = this->api_driver.GET( paginated_url );
     reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
@@ -50,7 +50,7 @@ void GWSDatasourceReader::dataReceived(){
     }
 
     unsigned int count = json.value( "count" ).toInt();
-    qDebug() << QString("Downloaded datasource %1, amount %2 of total %3").arg( this->scenario_id ).arg( this->downloaded_total ).arg( count );
+    qDebug() << QString("Downloaded %1 from datasource %2, %3 / %4").arg( this->entities_type ).arg( this->scenario_id ).arg( this->downloaded_total ).arg( count );
 
     if( count > (this->last_paginated+1) * this->page_size && this->downloaded_total < this->download_limit ){
         this->requestPaginated( ++this->last_paginated );

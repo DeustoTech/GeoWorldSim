@@ -78,6 +78,13 @@ int main(int argc, char* argv[])
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 
+    // INIT RANDOM NUMBERS
+    qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
+
+    // INIT OBJECT FACTORY
+    GWSObjectFactory::globalInstance()->registerType( GWSAgent::staticMetaObject );
+
+
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
     GWSAgentEnvironment::globalInstance();

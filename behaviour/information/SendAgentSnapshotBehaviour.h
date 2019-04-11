@@ -13,8 +13,9 @@ public:
     Q_INVOKABLE explicit SendAgentSnapshotBehaviour();
 
     // PARAMETERS
-    static QString NEXTS;
     static QString AGENT_TO_SEND_ID;
+    static QString SOCKET_ID;
+    static QString NEXTS;
 
 private slots:
 

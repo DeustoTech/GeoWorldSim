@@ -29,7 +29,7 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
     this->setProperty( AGENT_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( -1 ) );
-    this->setProperty( AGENT_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end_time" ).toDouble( -1 ) );
+    this->setProperty( AGENT_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end_time" ).toDouble( INFINITY ) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
@@ -142,7 +142,6 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    GWSTimeEnvironment::globalInstance()->setDatetime( this->getProperty( AGENT_BIRTH_PROP ).toDouble( QDateTime::currentMSecsSinceEpoch() ) );
     this->setProperty("RUNNING" , true );
     this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );

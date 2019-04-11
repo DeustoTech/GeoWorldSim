@@ -20,9 +20,7 @@ public:
     static QString STORE_CURRENT_ROAD_ID;
     static QString STORE_CURRENT_ROAD_TYPE;
     static QString STORE_CURRENT_ROAD_MAXSPEED;
-
-    // GETTERS
-    //GWSCoordinate getRouteDestination();
+    static QString STORE_ROUTE_AS;
 
     // METHODS
     virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );

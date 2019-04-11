@@ -11,6 +11,10 @@ QString GWSNetworkEdge::EDGE_TO_Z_PROP = "to_z";
  GETTERS
 **********************************************************************/
 
+bool GWSNetworkEdge::isValid() const {
+    return this->getFromCoordinate().isValid() && this->getToCoordinate().isValid();
+}
+
 QString GWSNetworkEdge::getFromNodeUID() const{
     return this->getFromCoordinate().toString();
 }

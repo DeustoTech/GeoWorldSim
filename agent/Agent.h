@@ -116,7 +116,6 @@ protected:
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
     QList< QSharedPointer<GWSBehaviour> > to_be_executed_behaviours;
-    QStringList last_behaved;
 
     /**
       * Mutex for paralelism

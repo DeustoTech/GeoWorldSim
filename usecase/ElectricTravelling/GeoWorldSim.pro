@@ -76,6 +76,8 @@ HEADERS += \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/Edge.h \
+            ## GRID
+    ../../util/grid/Grid.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
             ## DATASOURCES
@@ -94,7 +96,8 @@ HEADERS += \
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
+    ../../behaviour/property/PropertyStatisticsBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -141,6 +144,8 @@ SOURCES += main.cpp \
     ../../util/geometry/GeometryGetters.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
+            ## GRID
+    ../../util/grid/Grid.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
             ## RANDOM
@@ -158,7 +163,8 @@ SOURCES += main.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
+    ../../behaviour/property/PropertyStatisticsBehaviour.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 
