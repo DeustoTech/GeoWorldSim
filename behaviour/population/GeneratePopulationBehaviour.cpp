@@ -24,7 +24,7 @@ QString GeneratePopulationBehaviour::LIFE_EXPECTANCY = "set_life_expectancy_year
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY_MARGIN = "set_life_expectancy_margin";
 QString GeneratePopulationBehaviour::ILLNESS_RATE = "illness_rate";
 QString GeneratePopulationBehaviour::NEXT_CHILD_GAP = "set_next_child_gap_years";
-QString GeneratePopulationBehaviour::BIRTH_RATE = "set_birth_rate";
+QString GeneratePopulationBehaviour::BIRTH_RATE = "birth_rate";
 QString GeneratePopulationBehaviour::TOTAL_FERTILITY_RATE = "set_fertility_rate";
 QString GeneratePopulationBehaviour::MAX_FERTILITY_AGE = "set_max_fertility_age";
 QString GeneratePopulationBehaviour::CHILDREN_IDS = "children";
@@ -303,8 +303,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 
     // Otherwise, select random threshold age:
     int testAge = 0;
-    //int min = agent->getProperty( MARRY_AGE ).toInt();
-    int min = this->getProperty( MARRY_AGE ).toInt();
+    int min =  this->getProperty( MARRY_AGE ).toInt();
 
     int max = max_fertility_age;
     testAge = ( qrand() % ( max-min  + 1 )) + min;
