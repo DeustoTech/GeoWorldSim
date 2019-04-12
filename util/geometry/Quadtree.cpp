@@ -28,36 +28,44 @@ const GWSGeometry GWSQuadtree::getGeometry( QString object_id ){
 QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
     QStringList objects_ids;
 
-    int x_hash = this->createHash( coor.getX() / 2.0 , this->layer_depth_amount );
-    int y_hash = this->createHash( coor.getY() / 2.0 , this->layer_depth_amount );
+    for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
-    this->mutex.lockForRead();
-    if( !this->quadtree_layers.keys().contains( this->layer_depth_amount ) ){
+        this->mutex.lockForRead();
+        if( !this->quadtree_layers.keys().contains( l ) ){
+            this->mutex.unlock();
+            continue;
+        }
+
+        int x_hash = this->createHash( coor.getX() , l );
+        int y_hash = this->createHash( coor.getY() , l );
+
+        if( !this->quadtree_layers.value( l )->keys().contains( x_hash ) ){
+            this->mutex.unlock();
+            continue;
+        }
+
+        if( !this->quadtree_layers.value( l )->value( x_hash )->keys().contains( y_hash ) ){
+            this->mutex.unlock();
+            continue;
+        }
         this->mutex.unlock();
-        return objects_ids;
-    }
 
-    if( !this->quadtree_layers.value( this->layer_depth_amount )->keys().contains( x_hash ) ){
+        const geos::geom::Envelope env = geos::geom::Envelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
+        std::vector<void*> ids;
+
+        this->mutex.lockForWrite();
+        this->quadtree_layers.value( l )->value( x_hash )->value( y_hash )->query( &env , ids );
         this->mutex.unlock();
-        return objects_ids;
-    }
+        foreach(void* id, ids) {
+            GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
+            if( !ptr ){ continue; }
+            objects_ids.append( ptr->object_id );
+        }
 
-    if( !this->quadtree_layers.value( this->layer_depth_amount )->value( x_hash )->keys().contains( y_hash ) ){
-        this->mutex.unlock();
-        return objects_ids;
-    }
-    this->mutex.unlock();
+        if( !objects_ids.isEmpty() ){
+            return objects_ids;
+        }
 
-    const geos::geom::Envelope env = geos::geom::Envelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
-    std::vector<void*> ids;
-
-    this->mutex.lockForWrite();
-    this->quadtree_layers.value( this->layer_depth_amount )->value( x_hash )->value( y_hash )->query( &env , ids );
-    this->mutex.unlock();
-    foreach(void* id, ids) {
-        GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
-        if( !ptr ){ continue; }
-        objects_ids.append( ptr->object_id );
     }
 
     return objects_ids;
@@ -148,8 +156,30 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
 }
 
 QString GWSQuadtree::getNearestElement( GWSCoordinate coor ) {
-    GWSGeometry geom = GWSGeometryTransformators::transformMove( GWSGeometry() , coor );
-    return this->getNearestElement( geom );
+
+    if( !coor.isValid() ){ return QString(); }
+
+    GWSLengthUnit shortest_distance = GWSLengthUnit(999999999999999);
+    QString nearest_object_id;
+    foreach (QString object_id , this->getElements( coor ) ) {
+
+        this->mutex.lockForWrite();
+        GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+        this->mutex.unlock();
+
+        if( !elm ){ continue; }
+        const GWSGeometry g = elm->geometry;
+
+        if( g.isValid() ){
+            GWSLengthUnit l = g.getCentroid().getDistance( coor );
+            if( l < shortest_distance ){
+                shortest_distance = l;
+                nearest_object_id = object_id;
+            }
+        }
+    }
+
+    return nearest_object_id;
 }
 
 QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {

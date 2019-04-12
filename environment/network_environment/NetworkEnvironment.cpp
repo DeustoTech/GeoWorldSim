@@ -133,6 +133,13 @@ QList< QList< GWSNetworkEdge > > GWSNetworkEnvironment::getShortestPaths( GWSCoo
     if( this->network_routings.keys().contains( class_name ) ){
 
         QString snapped_from = this->getNearestNodeUID( from_one , class_name );
+        if( snapped_from.isEmpty() ){
+            for(int i = 0; i < to_many.size() ; i++){
+                paths.append( QList<GWSNetworkEdge>() );
+            }
+            return paths;
+        }
+
         QStringList snapped_to_many;
         foreach( GWSCoordinate c , to_many ) {
             snapped_to_many.append( this->getNearestNodeUID( c , class_name ) );
@@ -242,6 +249,7 @@ void GWSNetworkEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
 
 QString GWSNetworkEnvironment::getNearestNodeUID( GWSCoordinate coor , QString class_name ) const{
     GWSNetworkEdge edge = this->getNearestEdge( coor , class_name );
+    //qDebug() << edge.getUID();
     if( !edge.isValid() ){
         return QString();
     }
