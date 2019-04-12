@@ -22,7 +22,7 @@ void ListenToMessagesBehaviour::listen( QJsonObject message_json , QString socke
 
 
 
-QJsonArray ListenToMessagesBehaviour::behave(){
+QPair< double , QJsonArray > ListenToMessagesBehaviour::behave(){
 
     qDebug() << "STARTING TO LISTEN";
 
@@ -40,6 +40,6 @@ QJsonArray ListenToMessagesBehaviour::behave(){
         }
 
 
-    return this->getProperty( NEXTS).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS).toArray() );
 
 }

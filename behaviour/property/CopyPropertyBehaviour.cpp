@@ -11,7 +11,7 @@ CopyPropertyBehaviour::CopyPropertyBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray CopyPropertyBehaviour::behave(){
+QPair< double , QJsonArray > CopyPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -31,5 +31,5 @@ QJsonArray CopyPropertyBehaviour::behave(){
     agent->setProperty( property_name_to_copy , copy_agent->getProperty( property_name_to_copy ) );
 
     // Set next behaviours:
-   return this->getProperty( NEXTS ).toArray();
+   return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

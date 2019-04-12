@@ -41,8 +41,6 @@ HEADERS += \
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
-    ../../skill/view/ViewSkill.h \
-    ../../skill/move/drive/DriveSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
@@ -112,9 +110,7 @@ SOURCES += main.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
-    ../../skill/view/ViewSkill.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
-    ../../skill/move/drive/DriveSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \

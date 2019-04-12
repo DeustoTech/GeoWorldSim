@@ -16,7 +16,7 @@ CalculateTSPRouteBehaviour::CalculateTSPRouteBehaviour() : GWSBehaviour(){
  * Generate Ordered TSP route with Agent Type input
  */
 
-QJsonArray CalculateTSPRouteBehaviour::behave(){
+QPair< double , QJsonArray > CalculateTSPRouteBehaviour::behave(){
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
         GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
@@ -67,8 +67,9 @@ QJsonArray CalculateTSPRouteBehaviour::behave(){
          }
 
          agent->setProperty( CalculateTSPSkill::AGENT_PENDING_TSP_ROUTE_ELEMENTS , ordered_agents_to_visit_tsp_route_id_array );
+
          //TODO routing->deleteLater();
-         return this->getProperty( NEXTS ).toArray();
+         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
        /* else {
 

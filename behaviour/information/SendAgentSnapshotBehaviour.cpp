@@ -16,7 +16,7 @@ SendAgentSnapshotBehaviour::SendAgentSnapshotBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QJsonArray SendAgentSnapshotBehaviour::behave(){
+QPair< double , QJsonArray > SendAgentSnapshotBehaviour::behave(){
 
     // Agent to fetch UID (by default this behaviours agent)
     QString agent_to_send_id = this->getProperty( AGENT_TO_SEND_ID ).toString( this->getAgent()->getUID() );
@@ -30,5 +30,5 @@ QJsonArray SendAgentSnapshotBehaviour::behave(){
     // Send the agent
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( agent_to_send->serialize() , socket_id );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

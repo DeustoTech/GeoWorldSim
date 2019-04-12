@@ -18,7 +18,7 @@ public:
     static QString NEXTS;
 
 private slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 
 };
 

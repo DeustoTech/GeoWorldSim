@@ -21,12 +21,12 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QJsonArray MoveBehaviour::behave(){
+QPair< double , QJsonArray > MoveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Tick in 1 second duration to move in small parts
-    GWSTimeUnit duration_of_movement = qrand() % 100 / 100.0;
+    GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble();
 
     // Check if agent has a MoveSkill, otherwise create it and set its max_speed
     QSharedPointer<MoveSkill> move_skill = agent->getSkill( MoveSkill::staticMetaObject.className() ).dynamicCast<MoveSkill>();
@@ -39,9 +39,11 @@ QJsonArray MoveBehaviour::behave(){
 
     QJsonValue x_destination = this->getProperty( AGENT_MOVE_TO_X_VALUE );
     QJsonValue y_destination = this->getProperty( AGENT_MOVE_TO_Y_VALUE );
+
     GWSCoordinate destination_coor = GWSCoordinate( x_destination.toDouble() , y_destination.toDouble() );
     if( !destination_coor.isValid() ){
-        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
+        qWarning() << QString("Agent %1 %2 has no destination to move to.").arg( agent->metaObject()->className() ).arg( agent->getUID() );
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
     // Calculate speed
@@ -53,16 +55,25 @@ QJsonArray MoveBehaviour::behave(){
         this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
     }
 
-    // Move towards
+    // Pending time to reach destination can be higher than the duration requested.
     GWSCoordinate agent_position = agent_geom.getCentroid();
+    GWSLengthUnit pending_distance = agent_position.getDistance( destination_coor );
+    GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed
+    duration_of_movement = qMin( pending_time , duration_of_movement );
+
+    // Move towards
     move_skill->move( duration_of_movement , current_speed , destination_coor );
 
-    if ( agent_position == destination_coor ){
-        return this->getProperty( NEXTS_IF_ARRIVED ).toArray();
+    GWSGeometry agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSCoordinate agent_position_post = agent_geom_post.getCentroid();
+
+    if ( agent_position_post == destination_coor ){
+        return QPair< double , QJsonArray >( duration_of_movement.number() , this->getProperty( NEXTS_IF_ARRIVED ).toArray() );
     }
 
-    if ( agent_position != destination_coor ){
-        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
+    if ( agent_position_post != destination_coor ){
+        return QPair< double , QJsonArray >( duration_of_movement.number() , this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
+    return QPair< double , QJsonArray >( duration_of_movement.number() , this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
 }

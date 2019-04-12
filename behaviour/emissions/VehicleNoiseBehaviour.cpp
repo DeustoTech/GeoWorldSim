@@ -12,7 +12,7 @@ VehicleNoiseBehaviour::VehicleNoiseBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray VehicleNoiseBehaviour::behave(){
+QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     double A_roll = 0;
@@ -58,5 +58,5 @@ QJsonArray VehicleNoiseBehaviour::behave(){
     // Store noise
     agent->setProperty( this->getProperty( STORE_NOISE_AS ).toString("vehicle_noise") , total_noise );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

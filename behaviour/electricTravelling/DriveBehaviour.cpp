@@ -24,7 +24,7 @@ DriveBehaviour::~DriveBehaviour(){
 }
 
 
-QJsonArray DriveBehaviour::behave(){
+QPair< double , QJsonArray > DriveBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );

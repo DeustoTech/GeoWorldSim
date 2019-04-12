@@ -18,7 +18,7 @@ public:
     static QString NEXTS;
 
 protected slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // MOVEONPARTICULARWASTETSPROUTE_H

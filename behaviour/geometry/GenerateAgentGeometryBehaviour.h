@@ -18,7 +18,7 @@ public:
     static QString SET_JSON_VALUE;
 
 protected slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // GENERATEAGENTGEOMETRYBEHAVIOUR_H
