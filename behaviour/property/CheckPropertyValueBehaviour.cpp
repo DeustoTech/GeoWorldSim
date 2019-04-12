@@ -12,8 +12,7 @@ CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
 
 }
 
-
-QJsonArray CheckPropertyValueBehaviour::behave(){
+QPair< double , QJsonArray > CheckPropertyValueBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     double threshold_value = this->getProperty( REFERENCE_VALUE_TO_COMPARE ).toDouble();
@@ -75,8 +74,10 @@ QJsonArray CheckPropertyValueBehaviour::behave(){
 
 
     if( comparison_success ){
-        return this->getProperty( NEXTS_IF_TRUE ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE ).toArray() );
+
     } else {
-        return this->getProperty( NEXTS_IF_FALSE ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_FALSE ).toArray() );
+        ;
     }
 }

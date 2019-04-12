@@ -16,7 +16,7 @@ public:
     static QString PROPERTY_NAME_TO_COPY;
     static QString NEXTS;
 
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // COPYPROPERTYBEHAVIOUR_H

@@ -47,7 +47,7 @@ void MoveThroughRouteBehaviour::initialize(){
  METHODS
 **********************************************************************/
 
-QJsonArray MoveThroughRouteBehaviour::behave(){
+QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -60,7 +60,8 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
     QJsonValue y_destination = this->getProperty( AGENT_ROUTE_DESTINATION_Y_VALUE );
     GWSCoordinate destination_coor = GWSCoordinate( x_destination.toDouble() , y_destination.toDouble() );
     if( !destination_coor.isValid() ){
-        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
+        qWarning() << QString("Agent %1 %2 has invalid destination to route to").arg( agent->metaObject()->className() ).arg( agent->getUID() );
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
     // Calculate speed
@@ -72,6 +73,12 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
         this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
     }
 
+    // Pending time to reach destination can be higher than the duration requested.
+    GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
+    GWSLengthUnit pending_distance = agent_position.getDistance( destination_coor );
+    GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed
+    duration_of_movement = qMin( pending_time , duration_of_movement );
+
     // Move towards
     QString graph_type = this->getProperty( AGENT_ROUTE_NETWORK_TYPE ).toString();
     movethroughroute_skill->move( duration_of_movement , current_speed , destination_coor , graph_type );
@@ -81,11 +88,11 @@ QJsonArray MoveThroughRouteBehaviour::behave(){
 
     // Set NEXTS behaviour
     if ( agent_position_post.getDistance( destination_coor ) < GWSLengthUnit( 0.5 ) ){
-        return this->getProperty( NEXTS_IF_ARRIVED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ARRIVED ).toArray() );
     }
 
     if ( agent_position_post != destination_coor ){
-        return this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() ,  this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
 }

@@ -7,7 +7,15 @@
     {"template":{"@gwsclass":"GWSAgent","type":"Citizen","@gwsgroups":["Human","Citizen"] ,"birth":-1,
                 "@behaviours":[ 
                 
-                {"@gwsclass":"SendAgentSnapshotBehaviour", "start":true,  "id":"DISPLAY","agent_to_send_id":"<id>","duration":1,"nexts":["WASTE"]},
+                {"@gwsclass":"SendAgentSnapshotBehaviour", "start":true,  "id":"DISPLAY","agent_to_send_id":"<id>","duration":1,"nexts":["RAND_NUM1"]},
+                
+                {"@gwsclass":"GenerateRandomValueBehaviour","id":"RAND_NUM1","duration":1,"store_random_value_as":"hour","factor_to_multiply_random_value_with":12,"nexts":["RAND_NUM2"]}
+
+                ,{"@gwsclass":"GenerateRandomValueBehaviour","id":"RAND_NUM2","duration":1,"store_random_value_as":"minute","factor_to_multiply_random_value_with":60,"nexts":["SET_HOUR"]}
+
+                ,{"@gwsclass":"MathAgentPropertyBehaviour","id":"SET_HOUR","duration":1,"agent_to_operate_on_id":"<id>","property_to_modify":"hour","math_operator":"+","operand_value":7,"nexts":["WAIT"]},
+                
+                {"@gwsclass":"WaitUntilTimeBehaviour","id":"WAIT","wait_until_hour":"<hour>","wait_until_minute":"<minute>","wait_until_second":0,"wait_frequency":"day","duration":1,"nexts":["WASTE"]},
                 
                 { "@gwsclass": "GenerateWasteZamudioModelBehaviour", "id": "WASTE", "family_members" : "TOTAL" , "duration": 1, "nexts" : ["CHECK_ORGANIC"] } ,
                 
@@ -58,7 +66,7 @@
                 ]},
                 
                 "datasources":
-                [{"entities":["Citizen"],"id":"d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11"}] } ,
+                [{"entities":["Citizen"],"id":"8cccd579-2e4f-4f9f-ab61-0a03e7f9db4a-ca7a0113-50ab-50d0-9dae-11"}] } ,
                 
                 
 "containersRESIDUAL": 

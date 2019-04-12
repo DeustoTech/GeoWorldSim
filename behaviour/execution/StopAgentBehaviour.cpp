@@ -14,7 +14,7 @@ StopAgentBehaviour::StopAgentBehaviour() : GWSBehaviour(){
  SLOTS
 **********************************************************************/
 
-QJsonArray  StopAgentBehaviour::behave(){
+QPair< double , QJsonArray > StopAgentBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSExecutionEnvironment* env = GWSExecutionEnvironment::globalInstance();
@@ -23,5 +23,5 @@ QJsonArray  StopAgentBehaviour::behave(){
     QJsonObject json = agent->serialize();
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
 
-    return QJsonArray({ this->getUID() });
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , QJsonArray({ this->getUID() }) );
 }

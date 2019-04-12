@@ -20,7 +20,7 @@ public:
     static QString AGENT_ROUTE_NETWORK_TYPE;
 
 protected slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 
 protected:
     virtual void initialize();

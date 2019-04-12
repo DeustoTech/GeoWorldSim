@@ -18,7 +18,7 @@ public:
     static QString NEXTS_IF_ROUTE_FINISHED;
 
 protected slots:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // SETNEXTTSPDESTINATIONBEHAVIOUR_H

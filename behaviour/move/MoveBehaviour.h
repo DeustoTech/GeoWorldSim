@@ -20,7 +20,7 @@ public:
     static QString NEXTS_IF_NOT_ARRIVED;
 
 private slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 
 };
 

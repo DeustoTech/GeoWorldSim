@@ -293,16 +293,19 @@ void GWSAgent::behave(){
     QJsonArray next_execute_behaviour_ids;
 
     foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
+
         //qDebug() << QString("AGENT %1 executing %2").arg( this->getUID() ).arg( behaviour->getUID() );
-        QJsonArray ids = behaviour->tick( behaving_time );
-        foreach (QJsonValue id , ids ) {
+
+        QPair< double , QJsonArray > duration_and_nexts_ids = behaviour->tick( behaving_time );
+        foreach (QJsonValue id , duration_and_nexts_ids.second ) {
             next_execute_behaviour_ids.append( id );
         }
-        max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , behaviour->getProperty( GWSBehaviour::BEHAVIOUR_DURATION ).toDouble() );
+
+        max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , duration_and_nexts_ids.first );
     }
 
     QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
-    foreach (QJsonValue v , next_execute_behaviour_ids) {
+    foreach( QJsonValue v , next_execute_behaviour_ids ) {
 
         QString id = v.toString();
         if( id.isEmpty() ){ continue; }

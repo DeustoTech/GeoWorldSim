@@ -11,7 +11,7 @@ public:
     Q_INVOKABLE explicit StopAgentBehaviour();
 
 private slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // STOPAGENTBEHAVIOUR_H

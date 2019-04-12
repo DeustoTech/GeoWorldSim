@@ -120,11 +120,11 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
 /**
  * This method is a wrapper slot to be invoked by the GWSAgent for behave() to be executed in the agents thread.
  **/
-QJsonArray GWSBehaviour::tick( qint64 behaviour_ticked_time ){
+QPair< double , QJsonArray > GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
     //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
-    QJsonArray nexts;
+    QPair< double , QJsonArray > nexts;
     this->behaving_time = behaviour_ticked_time;
 
     this->getAgent()->incrementBusy();
@@ -144,14 +144,19 @@ QJsonArray GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     return nexts;
 }
 
-QJsonArray GWSBehaviour::behave(){
+QPair< double , QJsonArray > GWSBehaviour::behave(){
 
     QJsonArray nexts;
+    double max_duration = 0;
 
     // A parent behaviour will iterate all its child behaviours at each behave call
     foreach( QSharedPointer<GWSBehaviour> sub, this->sub_behaviours) {
-        nexts.append( sub->tick( this->behaving_time ) );
+        QPair< double , QJsonArray > n = sub->tick( this->behaving_time );
+        foreach ( QJsonValue v , n.second ) {
+            nexts.append( v );
+        }
+        max_duration = qMax( max_duration , n.first );
     }
 
-    return nexts;
+    return QPair< double , QJsonArray>( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , nexts );
 }

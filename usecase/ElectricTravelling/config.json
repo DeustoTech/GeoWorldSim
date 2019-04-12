@@ -1,5 +1,5 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":6000,"status":"pending","user_id":"545b694b-af38-55ca-bb94-cebd61d1e9a3","speed":5,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":6000,"status":"pending","user_id":"545b694b-af38-55ca-bb94-cebd61d1e9a3","speed":10,
 
 "population" : {
 
@@ -9,7 +9,7 @@
 
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 10 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["NOISE"] } , 
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["NOISE"] } , 
                                                         
                                                         { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
                                                         

@@ -13,7 +13,7 @@ ChangeColorRangeBehaviour::ChangeColorRangeBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray ChangeColorRangeBehaviour::behave(){
+QPair< double , QJsonArray > ChangeColorRangeBehaviour::behave(){
 
     QSharedPointer< GWSAgent > agent = this->getAgent();
 
@@ -37,7 +37,9 @@ QJsonArray ChangeColorRangeBehaviour::behave(){
          agent->setProperty( "color" , QString("rgb(%1,%2,%3)").arg( 255 * color_factor ).arg( 255 * ( 1 - color_factor ) ).arg( 0 ));
 
     }
-    else{ agent->setProperty( "color" , "Green" ); }
-    QJsonArray nexts = this->getProperty( NEXTS ).toArray();
-    return nexts;
+    else{
+        agent->setProperty( "color" , "Green" );
+    }
+
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

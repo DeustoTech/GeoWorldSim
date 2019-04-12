@@ -14,7 +14,7 @@ GenerateAgentGeometryBehaviour::GenerateAgentGeometryBehaviour() : GWSBehaviour(
 
 }
 
-QJsonArray GenerateAgentGeometryBehaviour::behave(){
+QPair< double , QJsonArray > GenerateAgentGeometryBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
@@ -46,5 +46,5 @@ QJsonArray GenerateAgentGeometryBehaviour::behave(){
 
     }
 
-   return this->getProperty( NEXTS ).toArray();
+   return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

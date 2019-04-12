@@ -22,7 +22,7 @@ public:
     static QString NEXTS;
 
 protected slots:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
 
 private:
     QJsonValue incrementQJsonValue( QJsonValue existing_value , QJsonValue increment );

@@ -15,7 +15,7 @@ PropertyStatisticsBehaviour::PropertyStatisticsBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QJsonArray PropertyStatisticsBehaviour::behave(){
+QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
 
     QString agents_type = this->getProperty( AGENTS_TYPE ).toString();
     QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
@@ -38,5 +38,5 @@ QJsonArray PropertyStatisticsBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_TOTAL_AS ).toString( "statistics_total" ) + "_sum" , total_sum );
     agent->setProperty( this->getProperty( STORE_TOTAL_AS ).toString( "statistics_total" ) + "_avg", average );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

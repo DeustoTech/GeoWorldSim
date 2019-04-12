@@ -43,8 +43,6 @@
 #include "../../util/svm/Svm.h"
 #include "../../util/parallelism/ParallelismController.h"
 
-#include "../../skill/pollute/PolluteSkill.h"
-#include "../../skill/move/drive/DriveSkill.h"
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
@@ -58,7 +56,6 @@
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
-#include "../../behaviour/electricTravelling/DriveBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 
 int main(int argc, char* argv[])

@@ -20,7 +20,7 @@ WaitUntilTimeBehaviour::WaitUntilTimeBehaviour() : GWSBehaviour(){
 }
 
 
-QJsonArray WaitUntilTimeBehaviour::behave(){
+QPair< double , QJsonArray > WaitUntilTimeBehaviour::behave(){
 
     qint64 current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
     QDateTime current_datetime = QDateTime::fromMSecsSinceEpoch( current_time );
@@ -70,5 +70,5 @@ QJsonArray WaitUntilTimeBehaviour::behave(){
     int seconds = current_datetime.secsTo( wait_until ); // IN seconds
     this->setProperty( GWSBehaviour::BEHAVIOUR_DURATION , seconds );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

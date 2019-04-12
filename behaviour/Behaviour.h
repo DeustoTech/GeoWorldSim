@@ -29,7 +29,7 @@ public:
     // GETTERS
     QSharedPointer<GWSAgent> getAgent() const;
     QList< QSharedPointer<GWSBehaviour> > getSubs() const;
-    virtual const QJsonValue getProperty( QString name  ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
+    virtual const QJsonValue getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
     virtual const void setProperty( QString name , const QJsonValue &value );
 
     // SETTERS
@@ -45,8 +45,8 @@ protected:
     //QStringList next_behaviour_ids;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
-    QJsonArray tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
-    virtual QJsonArray behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asyncrhonous
+    QPair< double , QJsonArray > tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
+    virtual QPair< double , QJsonArray > behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asynchronous
 
 private:
     quint64 behaving_time = 0;
