@@ -14,7 +14,7 @@ AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
  * SLOTS
  ***********************************************************/
 
-QJsonArray AddGWSGroupPropertyBehaviour::behave(){
+QPair< double , QJsonArray > AddGWSGroupPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -28,6 +28,6 @@ QJsonArray AddGWSGroupPropertyBehaviour::behave(){
 
   //  qDebug() << agent->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 }

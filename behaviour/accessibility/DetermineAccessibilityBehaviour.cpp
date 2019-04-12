@@ -19,7 +19,7 @@ DetermineAccessibilityBehaviour::DetermineAccessibilityBehaviour() : GWSBehaviou
  * SLOTS
  ***********************************************************/
 
-QJsonArray DetermineAccessibilityBehaviour::behave(){
+QPair< double , QJsonArray > DetermineAccessibilityBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
@@ -125,5 +125,6 @@ QJsonArray DetermineAccessibilityBehaviour::behave(){
 }*/
 
 
-    return this->getProperty( NEXT ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT ).toArray() );
+
 }
