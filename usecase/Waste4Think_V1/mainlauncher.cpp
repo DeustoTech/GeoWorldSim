@@ -30,7 +30,7 @@
 #include "../../behaviour/time/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
-#include "../../behaviour/property/TransferAgentPropertyBehaviour.h"
+#include "../../behaviour/transaction/TransactionBehaviour.h"
 #include "../../behaviour/move/SetNextTSPDestinationBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( TransferAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateTSPRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetNextTSPDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );

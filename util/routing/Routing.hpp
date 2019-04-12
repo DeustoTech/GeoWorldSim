@@ -121,6 +121,10 @@ public:
         QList< QList< T > > result_routes;
 
         if( from_one_hash.isEmpty() ){
+            qWarning() << QString("Start (%1) not defined").arg( from_one_hash );
+            for(int i = 0; i < to_many_hashes.size() ; i++){
+                result_routes.append( QList<T>() );
+            }
             return result_routes;
         }
 

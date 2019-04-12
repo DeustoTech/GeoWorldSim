@@ -16,7 +16,6 @@ QString GWSGrid::GRID_VALUES_PROP = "grid_values";
 QString GWSGrid::GRID_X_SIZE_PROP = "grid_x_size";
 QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
 
-
 /**********************************************************************
  EXPORTERS
 **********************************************************************/

@@ -25,7 +25,10 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSExecutionEnvironment::GWSExecutionEnvironment() : GWSEnvironment() {
+GWSExecutionEnvironment::GWSExecutionEnvironment() :
+    tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_threshold").toDouble( 5 ) * 9999 ) ,
+    max_agent_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value("max_agents_per_tick").toDouble( 500 ) ) ,
+    GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
     this->setProperty( AGENT_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( -1 ) );
@@ -166,6 +169,9 @@ void GWSExecutionEnvironment::behave(){
         return;
     }
 
+    // Shuffle list
+    std::random_shuffle( currently_running_agents.begin() , currently_running_agents.end() );
+
     // Get current datetime in simulation
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
 
@@ -222,13 +228,12 @@ void GWSExecutionEnvironment::behave(){
 
                 QtConcurrent::run( agent.data() , &GWSAgent::tick );
 
-                ticked_agents++;
+                if( ++ticked_agents >= this->max_agent_amount_per_tick ){ break; }
             }
         }
     }
 
-    qInfo() << QString("%1 : Ticking %4 , Agents %2 / %3 , Min tick %5" )
-               .arg( GWSApp::globalInstance()->getAppId() )
+    qInfo() << QString("Ticked %4 , Agents %2 / %3 , Min tick %5" )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
                .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )

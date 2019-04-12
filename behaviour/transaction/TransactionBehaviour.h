@@ -1,17 +1,17 @@
-#ifndef TRANSFERAGENTPROPERTYBEHAVIOUR_H
-#define TRANSFERAGENTPROPERTYBEHAVIOUR_H
+#ifndef TRANSACTIONBEHAVIOUR_H
+#define TRANSACTIONBEHAVIOUR_H
 
 #include <QJsonValue>
 
 #include "../../behaviour/Behaviour.h"
 
-class TransferAgentPropertyBehaviour : public GWSBehaviour
+class TransactionBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
 
-    Q_INVOKABLE explicit TransferAgentPropertyBehaviour();
+    Q_INVOKABLE explicit TransactionBehaviour();
 
     // PROPERTIES
     static QString PROPERTY_NAME_TO_TRANSFER;

@@ -23,7 +23,7 @@ QMAKE_CFLAGS += -march=native -O2 -pipe
 # FORCE C++11
 QMAKE_CXXFLAGS += -std=c++14
 
-TARGET      = gws-electric
+TARGET      = gwswastesimulation
 CONFIG      += console
 CONFIG      -= app_bundle
 
@@ -41,68 +41,90 @@ HEADERS += \
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
+    ../../skill/move/MoveThroughRouteInVehicleSkill.h \
+    ../../skill/move/CalculateTSPSkill.h \
     ../../skill/view/ViewSkill.h \
-    ../../skill/move/drive/DriveSkill.h \
+    ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/transaction/TransactionBehaviour.h \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
+    ../../util/datasource/AgentGeneratorDatasource.h \
+    ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
+    ../../behaviour/property/GatherAgentPropertyBehaviour.h \
+    ../../behaviour/property/CopyPropertyBehaviour.h \
+    ../../behaviour/property/CheckPropertyValueBehaviour.h \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
+    ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
+    ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
+    ../../behaviour/random/SetRandomColorBehaviour.h \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
+    ../../behaviour/property/SetAgentPropertyBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
+    ../../util/io/csv/CsvImporter.h \
+    ../../util/io/ImporterExporter.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
-    ../../util/ai/Intelligence.h \
-    ../../util/svm/Svm.h \
             ## GEOMETRIES
-    ../../util/geometry/Geometry.h \
     ../../util/geometry/Coordinate.h \
+    ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
+    ../../util/geometry/GeometryTransformators.h  \
+    ../../util/geometry/GeometryGetters.h  \
     ../../util/geometry/GeometryToGeoJSON.h \
-    ../../util/geometry/GeometryComparators.h \
-    ../../util/geometry/GeometryTransformators.h \
-    ../../util/geometry/GeometryGetters.h \
-    ../../util/distributed/ExternalCommunicator.h \
-    ../../util/distributed/ExternalListener.h \
-    ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
-            ## GRAPH
-    ../../util/graph/Edge.h \
             ## GRID
     ../../util/grid/Grid.h \
+   # ../../util/grid/AgentGrid.h \
+    ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
-            ## DATASOURCES
-    ../../util/datasource/AgentGeneratorDatasource.h \
+    ../../util/distributed/ExternalListener.h \
+    ../../util/distributed/ExternalCommunicator.h \
+    ../../util/distributed/ExternalPublisher.h \
+    ../../util/ai/Intelligence.h \
+    ../../util/svm/Svm.h \
+    ../../util/graph/Edge.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
     ../../environment/agent_environment/AgentEnvironment.h \
-    ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
+    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
-    ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
+    ../../environment/communication_environment/CommunicationEnvironment.h \
+    ../../environment/social_environment/SocialEnvironment.h \
+    ../../environment/social_environment/SocialRelation.h \
+    ../../environment/network_environment/NetworkEdge.h \
         # AGENTS
-            ## TRANSPORT LINES
-    ../../skill/pollute/PolluteSkill.h \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/property/PropertyStatisticsBehaviour.h \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.h
-    #../../skill/pollute/VehiclePolluteSkill.h
+    #agent/person/Person.h \
+    ContainerAgent.h \
+    HumanAgent.h \
+    TruckAgent.h \
+    RecyclingPlantAgent.h \
+    ../../behaviour/information/ListenToMessagesBehaviour.h \
+    ../../behaviour/property/MathAgentPropertyBehaviour.h \
+    ../../behaviour/time/WaitUntilTimeBehaviour.h
+            ## TRANSPORT LINE
 
 
-SOURCES += main.cpp \
+
+SOURCES += mainlauncher.cpp \
         # BASICS
     ../../app/App.cpp \
     ../../object/Object.cpp \
@@ -114,60 +136,86 @@ SOURCES += main.cpp \
     ../../skill/move/MoveSkill.cpp \
     ../../skill/view/ViewSkill.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
-    ../../skill/move/drive/DriveSkill.cpp \
+    ../../skill/pollute/PolluteSkill.cpp \
+    ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
+    ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/transaction/TransactionBehaviour.cpp \
+    ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
+    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
+    ../../behaviour/property/GatherAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/CopyPropertyBehaviour.cpp \
+    ../../behaviour/property/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
+    ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/random/SetRandomColorBehaviour.cpp \
+    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
+    ../../behaviour/move/SetNextTSPDestinationBehaviour.cpp \
+    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
+    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
-    ../../util/distributed/ExternalCommunicator.cpp \
-    ../../util/distributed/ExternalListener.cpp \
-    ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/routing/TSPRouting.cpp \
+    ../../util/io/csv/CsvImporter.cpp \
+    ../../util/io/ImporterExporter.cpp \
             ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
-    ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Coordinate.cpp \
+    ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
+    ../../util/geometry/GeometryTransformators.cpp  \
+    ../../util/geometry/GeometryGetters.cpp  \
     ../../util/geometry/GeometryToGeoJSON.cpp \
-    ../../util/geometry/GeometryComparators.cpp \
-    ../../util/geometry/GeometryTransformators.cpp \
-    ../../util/geometry/GeometryGetters.cpp \
-            ## GRAPH
-    ../../util/graph/Edge.cpp \
+    #../../util/graph/Graph.cpp \
+    #../../util/graph/GraphUtils.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
-    ../../util/ai/Intelligence.cpp \
-    ../../util/svm/Svm.cpp \
+    #../../util/grid/NumberGrid.cpp \
+    #../../util/grid/AgentGrid.cpp \
+    ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
+    ../../util/distributed/ExternalListener.cpp \
+    ../../util/distributed/ExternalCommunicator.cpp \
+    ../../util/distributed/ExternalPublisher.cpp \
+    ../../util/ai/Intelligence.cpp \
+    ../../util/svm/Svm.cpp \
+    ../../util/graph/Edge.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
     ../../environment/agent_environment/AgentEnvironment.cpp \
-    ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
+    #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
-    ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
+    ../../environment/grid_environment/GridEnvironment.cpp \
+    ../../environment/communication_environment/CommunicationEnvironment.cpp \
+    ../../environment/social_environment/SocialEnvironment.cpp \
+    ../../environment/social_environment/SocialRelation.cpp \
+    ../../environment/network_environment/NetworkEdge.cpp \
         # AGENTS
-    ../../skill/pollute/PolluteSkill.cpp \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
-    ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp
-    #../../skill/pollute/VehiclePolluteSkill.cpp
+    #agent/person/Person.cpp \
+    ContainerAgent.cpp \
+    HumanAgent.cpp \
+    TruckAgent.cpp \
+    RecyclingPlantAgent.cpp \
+    ../../behaviour/information/ListenToMessagesBehaviour.cpp \
+    ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
+    ../../behaviour/time/WaitUntilTimeBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

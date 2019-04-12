@@ -53,6 +53,7 @@
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
+#include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
 
 

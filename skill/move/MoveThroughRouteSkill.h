@@ -4,7 +4,6 @@
 #include <QObject>
 #include "../../environment/network_environment/NetworkEdge.h"
 #include "../../skill/move/MoveSkill.h"
-#include "../../skill/pollute/VehiclePolluteSkill.h"
 
 class MoveThroughRouteSkill : public MoveSkill
 {

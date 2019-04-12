@@ -11,8 +11,6 @@ PolluteSkill::PolluteSkill()  : GWSSkill( ){
 
 }
 
-
-
 PolluteSkill::~PolluteSkill(){
 }
 
