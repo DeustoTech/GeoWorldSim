@@ -43,7 +43,8 @@ public:
     static QString NEXT_IF_ELSE;
 
 private slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
+
 
 protected:
     virtual bool checkDeath( int age );

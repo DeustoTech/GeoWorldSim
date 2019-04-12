@@ -59,7 +59,7 @@ void GeneratePopulationBehaviour::initialize(){
  SLOTS
 **********************************************************************/
 
-QJsonArray GeneratePopulationBehaviour::behave(){
+QPair< double , QJsonArray > GeneratePopulationBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -74,13 +74,15 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     bool died = false;
     died = this->checkDeath( agent_age );
     if( died ){
-        return this->getProperty( NEXT_IF_DIED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_DIED ).toArray() );
+
     }
 
     bool migrate = false;
     migrate = this->checkMigration( agent_age );
     if(  migrate ){
-        return this->getProperty( NEXT_IF_MIGRATE ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_MIGRATE ).toArray() );
+
     }
 
     bool married = false;
@@ -91,10 +93,12 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     }
 
     if( married && checkBirth( agent_age ) ){
-        return this->getProperty( NEXT_IF_BIRTH ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_BIRTH ).toArray() );
+
     }
 
-    return this->getProperty( NEXT_IF_ELSE ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_ELSE ).toArray() );
+
 }
 
 

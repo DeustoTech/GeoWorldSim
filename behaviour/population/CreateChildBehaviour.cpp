@@ -17,7 +17,7 @@ CreateChildBehaviour::CreateChildBehaviour()
 /*************************************************************************************************************************************
    SLOTS
 *************************************************************************************************************************************/
-QJsonArray CreateChildBehaviour::behave(){
+QPair< double , QJsonArray > CreateChildBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString couple_id = agent->getProperty( "couple_id" ).toString();
@@ -68,6 +68,6 @@ QJsonArray CreateChildBehaviour::behave(){
     agent->setProperty( "children" , children_ids );
     couple->setProperty( "children" , children_ids );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 }
