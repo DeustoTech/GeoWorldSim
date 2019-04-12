@@ -21,7 +21,7 @@ TransactionBehaviour::TransactionBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray TransactionBehaviour::behave(){
+QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     QSharedPointer< GWSAgent > emitter;
     QSharedPointer< GWSAgent > receiver;
@@ -33,7 +33,8 @@ QJsonArray TransactionBehaviour::behave(){
     receiver = GWSAgentEnvironment::globalInstance()->getByClassAndUID( GWSAgent::staticMetaObject.className() , this->getProperty( RECEIVING_AGENT_ID ).toString() );
 
     if( emitter.isNull() || receiver.isNull() ){
-        return this->getProperty( NEXTS ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+
     }
 
     QJsonValue property_name = this->getProperty( PROPERTY_NAME_TO_TRANSFER );
@@ -92,7 +93,7 @@ QJsonArray TransactionBehaviour::behave(){
     transaction.insert( "value" , value_to_be_transferred );
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }
 
 

@@ -17,7 +17,7 @@ public:
 
 
 protected slots:
-    virtual QJsonArray behave();
+    virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // SETRANDOMCOLORBEHAVIOUR_H

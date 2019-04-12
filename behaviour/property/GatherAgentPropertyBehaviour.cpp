@@ -11,7 +11,7 @@ GatherAgentPropertyBehaviour::GatherAgentPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-QJsonArray GatherAgentPropertyBehaviour::behave(){
+QPair< double , QJsonArray > GatherAgentPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -27,6 +27,6 @@ QJsonArray GatherAgentPropertyBehaviour::behave(){
     emitting_agent->setProperty( property_to_gather  , 0. );
     agent->setProperty( property_to_gather , new_waste );
 
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 }

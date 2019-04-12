@@ -17,7 +17,7 @@ public:
     static QString NEXTS;
 
 protected:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // SETAGENTPROPERTYBEHAVIOUR_H

@@ -12,18 +12,19 @@ SetAgentPropertyBehaviour::SetAgentPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-QJsonArray SetAgentPropertyBehaviour::behave(){
+QPair< double , QJsonArray > SetAgentPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID ).toString();
     QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
     if( !agent ){
-        return this->getProperty( NEXTS ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+
     }
 
     QString property_name = this->getProperty( PROPERTY_NAME ).toString();
     QJsonValue property_value = this->getProperty( PROPERTY_VALUE );
 
     agent->setProperty( property_name , property_value );
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 }
