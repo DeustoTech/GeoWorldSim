@@ -1,16 +1,18 @@
 { 
-"target":"gwspopulation","name":"Population simulation","description":"Population simulation.","timeout":120000,"status":"pending","user_id":"ca7a0113-50ab-50d0-9dae-115bc5aea6d0","speed":6000,
+"id" : "demo",
+"user_id" : "demo",
+"timeout" : 6000,
+"speed" : 60000,
 "population" : {
-
-                                    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } ,
-                                    "marry_age" : "marry_age", "marry_age_margin" : "marry_age_margin" , "life_exp" : "life_exp", "life_exp_margin" : "life_exp_margin", 
-                                    "@behaviours": [  
+    "generator" 	: { "template" : { "@gwsclass": "PopulationGeneratorAgent", "@gwsgroups": [ "GWSAgent"], "geometry" : { "@gwsclass" : "GWSGeometry" } , "marry_age" : "marry_age", "marry_age_margin" : "marry_age_margin" , "life_exp" : "life_exp", "life_exp_margin" : "life_exp_margin", 
+    "@behaviours": [  
                                     { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true,  "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["POP"] },
                                       
                                    { "@gwsclass": "GeneratePopulationBehaviour",  "id": "POP", "duration": 1,   "set_marriage_age" : "<marry_age>", "set_marriage_age_margin" : "<marry_age_margin>" , "marriage_rate" : 7.33 , "set_life_expectancy_years" : "<life_exp>", "set_life_expectancy_margin" : "<life_exp_margin>", "illness_rate" : 0.0001 ,  "birth_rate" : 7.44  ,  "set_next_child_gap_years" : 3 , "set_fertility_rate" : 1 , "set_max_fertility_age" : 5,  "couple_id" : "couple_id" , "next_if_died" : ["STOP"] ,  "next_if_birth" : ["CHILD"] , "next_if_migrate" : ["STOP"], "next_if_else" : ["DISPLAY1"] },
                                
                                     
                                      { "@gwsclass": "CreateChildBehaviour" ,  "id": "CHILD" ,  "duration": 1 ,  "nexts" : ["DISPLAY1"] },
+                                     
                                     
                                     { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY1" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["WAIT_TO_JAN1"] },
                                     
@@ -24,8 +26,25 @@
                                     { "id" : "d36c663a-2400-4b3a-adb4-37089422b5a5-ca7a0113-50ab-50d0-9dae-11" , 
                                     "entities" : ["Citizen"] }
                 ]
-                }
+                },
                 
-                }
+        "stats"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "STATS" , "id" : "STATS" , "color" : "Red" ,    "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } , "birth" : -1  ,
+        
+                            "@behaviours": [  
+                                
+                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" ,  "duration": 10 , "nexts" : ["STATS1"] },
+                                
+                                 { "@gwsclass": "PropertyStatisticsBehaviour" ,  "id": "STATS1" ,  "duration": 0 ,  "agents_type" : "PopulationGeneratorAgent", "agents_filter" : { "looking_for" : "MALE" , "alive" : true } , "agents_property_name" : "birth" , "store_total_as" : "total_female" , "nexts" : ["STATS2"] },
+                                 
+                                 { "@gwsclass": "PropertyStatisticsBehaviour" ,  "id": "STATS2" ,  "duration": 0 ,  "agents_type" : "PopulationGeneratorAgent", "agents_filter" : { "looking_for" : "FEMALE" , "alive" : true } , "agents_property_name" : "birth" , "store_total_as" : "total_male" , "nexts" : ["STATS3"] } ,
+                                 
+                                 { "@gwsclass": "PropertyStatisticsBehaviour" ,  "id": "STATS3" ,  "duration": 0 ,  "agents_type" : "PopulationGeneratorAgent", "agents_filter" : { "alive" : true } , "agents_property_name" : "birth" , "store_total_as" : "total_population" , "nexts" : ["DISPLAY"] }
+                                    
+                                
+                            ] } ,
+                            
+                            "amount" : 1 }
+                
+      }
                 
 }

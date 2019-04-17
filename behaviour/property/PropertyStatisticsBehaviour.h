@@ -13,6 +13,7 @@ public:
 
     // PROPERTIES
     static QString AGENTS_TYPE;
+    static QString AGENTS_FILTER;
     static QString AGENTS_PROPERTY_NAME;
     static QString STORE_TOTAL_AS;
     static QString NEXTS;

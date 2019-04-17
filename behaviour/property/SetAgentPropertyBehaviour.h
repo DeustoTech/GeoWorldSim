@@ -12,8 +12,7 @@ public:
 
     //- PROPERTIES
     static QString AGENT_ID;
-    static QString PROPERTY_NAME;
-    static QString PROPERTY_VALUE;
+    static QString PROPERTIES;
     static QString NEXTS;
 
 protected:

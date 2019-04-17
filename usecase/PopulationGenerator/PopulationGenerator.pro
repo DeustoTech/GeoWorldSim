@@ -82,6 +82,7 @@ SOURCES += \
         ../../behaviour/population/CreateChildBehaviour.cpp \
         ../../behaviour/move/MoveBehaviour.cpp \
         ../../behaviour/execution/DeleteAgentBehaviour.cpp \
+        ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
@@ -142,6 +143,7 @@ HEADERS += \
         ../../behaviour/population/CreateChildBehaviour.h \
         ../../behaviour/move/MoveBehaviour.h \
         ../../behaviour/execution/DeleteAgentBehaviour.h \
+        ../../behaviour/property/PropertyStatisticsBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \

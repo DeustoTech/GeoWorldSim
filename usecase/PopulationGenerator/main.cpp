@@ -28,6 +28,7 @@
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/population/CreateChildBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
+#include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 
 // Utils:
 #include "../../util/routing/Routing.hpp"
@@ -85,7 +86,7 @@ int main( int argc, char* argv[] )
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CreateChildBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
-
+    GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;
