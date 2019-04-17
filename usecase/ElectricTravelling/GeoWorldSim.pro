@@ -43,12 +43,13 @@ HEADERS += \
     ../../skill/move/MoveThroughRouteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+    ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveBehaviour.h \
+    ../../behaviour/property/PropertyStatisticsBehaviour.h \
+    ../../behaviour/emissions/VehicleNoiseBehaviour.h
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -92,11 +93,7 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
         # AGENTS
             ## TRANSPORT LINES
-    ../../skill/pollute/PolluteSkill.h \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/property/PropertyStatisticsBehaviour.h \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.h
+    ../../skill/pollute/PolluteSkill.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -113,12 +110,13 @@ SOURCES += main.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+    ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
+    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -158,11 +156,7 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
-    ../../skill/pollute/PolluteSkill.cpp \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
-    ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp
+    ../../skill/pollute/PolluteSkill.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

@@ -50,7 +50,6 @@
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
-#include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
