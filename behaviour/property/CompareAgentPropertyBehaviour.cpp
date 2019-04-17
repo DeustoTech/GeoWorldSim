@@ -15,7 +15,7 @@ CompareAgentPropertyBehaviour::CompareAgentPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-QJsonArray CompareAgentPropertyBehaviour::behave(){
+QPair< double , QJsonArray > CompareAgentPropertyBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString property_to_compare = this->getProperty( AGENT_PROPERTY_TO_COMPARE ).toString();
@@ -27,8 +27,7 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
 
     QJsonValue property = agent->getProperty( property_to_compare );
     if( property.isNull() ){
-        QJsonArray next = this->getProperty( NEXTS_IF_FALSE ).toArray();
-        return next;
+       return  QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_FALSE ).toArray() );
     }
 
     if ( comparison_operator == "==" ){
@@ -81,11 +80,12 @@ QJsonArray CompareAgentPropertyBehaviour::behave(){
     }
 
     // Evaluate the according to boolean:
-    QJsonArray next;
+    QPair< double , QJsonArray > next;
     if ( comparison_fulfilled ) {
-        next = this->getProperty( NEXTS_IF_TRUE ).toArray();
+        next =  QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE ).toArray() );
+
     } else {
-        next = this->getProperty( NEXTS_IF_FALSE ).toArray();
+        next =  QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_FALSE ).toArray() );
     }
     return next;
 

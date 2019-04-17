@@ -17,7 +17,7 @@ public:
 
     // METHODS
     //virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    //virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+   // virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 private:
 

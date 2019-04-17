@@ -24,7 +24,7 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 **********************************************************************/
 
 
-QJsonArray IncrementPropertyBehaviour::behave(){
+QPair< double , QJsonArray > IncrementPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID ).toString();
 
@@ -44,15 +44,15 @@ QJsonArray IncrementPropertyBehaviour::behave(){
 
     QJsonValue max_threshold = this->getProperty( MAX_THRESHOLD_VALUE_PROP );
     if ( max_threshold.isDouble() && incremented >= max_threshold.toDouble() ){
-        return this->getProperty( NEXTS_IF_MAX_THRESHOLD_REACHED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_MAX_THRESHOLD_REACHED ).toArray() );
     }
 
     QJsonValue min_threshold = this->getProperty( MIN_THRESHOLD_VALUE_PROP );
     if ( min_threshold.isDouble() && incremented <= min_threshold.toDouble() ){
-        return this->getProperty( NEXTS_IF_MIN_THRESHOLD_REACHED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_MIN_THRESHOLD_REACHED ).toArray() );
     }
 
     // Else
-    return this->getProperty( NEXTS_ELSE ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_ELSE ).toArray() );
 
 }

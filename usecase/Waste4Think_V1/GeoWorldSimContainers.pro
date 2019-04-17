@@ -47,6 +47,7 @@ HEADERS += \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
+    ../../behaviour/transaction/TransactionBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/move/MoveBehaviour.h \
@@ -87,6 +88,7 @@ HEADERS += \
     ../../util/routing/TSPRouting.h \
             ## GRID
     ../../util/grid/Grid.h \
+   # ../../util/grid/AgentGrid.h \
     ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -117,8 +119,7 @@ HEADERS += \
     RecyclingPlantAgent.h \
     ../../behaviour/information/ListenToMessagesBehaviour.h \
     ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h \
-    ../../behaviour/transaction/TransactionBehaviour.h
+    ../../behaviour/time/WaitUntilTimeBehaviour.h
             ## TRANSPORT LINE
 
 
@@ -140,6 +141,7 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
+    ../../behaviour/transaction/TransactionBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
@@ -181,6 +183,7 @@ SOURCES += mainlauncher.cpp \
             ## GRID
     ../../util/grid/Grid.cpp \
     #../../util/grid/NumberGrid.cpp \
+    #../../util/grid/AgentGrid.cpp \
     ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
@@ -212,8 +215,7 @@ SOURCES += mainlauncher.cpp \
     RecyclingPlantAgent.cpp \
     ../../behaviour/information/ListenToMessagesBehaviour.cpp \
     ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
-    ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
-    ../../behaviour/transaction/TransactionBehaviour.cpp
+    ../../behaviour/time/WaitUntilTimeBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

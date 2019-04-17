@@ -21,7 +21,7 @@ public:
     static QString NEXTS_IF_NO_DIRECT_CLOSEST_FOUND;
 
 protected:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
   //  GWSCoordinate closest_coor;
   //  QPair< GWSCoordinate, QString > closest_coor_id;
 };

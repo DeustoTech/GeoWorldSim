@@ -15,7 +15,7 @@ SetNextTSPDestinationBehaviour::SetNextTSPDestinationBehaviour() : GWSBehaviour(
 }
 
 
-QJsonArray SetNextTSPDestinationBehaviour::behave(){
+QPair< double , QJsonArray > SetNextTSPDestinationBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -38,13 +38,14 @@ QJsonArray SetNextTSPDestinationBehaviour::behave(){
         agent->setProperty( this->getProperty( STORE_NEXT_TSP_DESTINATION_X_VALUE).toString() , x );
         agent->setProperty( this->getProperty( STORE_NEXT_TSP_DESTINATION_Y_VALUE).toString() , y );
 
-        return this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray() );
+
 
     } else {
 
-        return this->getProperty( NEXTS_IF_ROUTE_FINISHED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ROUTE_FINISHED ).toArray() );
     }
 
-    return this->getProperty( NEXTS_IF_ROUTE_FINISHED ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ROUTE_FINISHED ).toArray() );
 }
 

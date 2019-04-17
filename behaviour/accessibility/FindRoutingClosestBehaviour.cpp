@@ -21,7 +21,7 @@ FindRoutingClosestBehaviour::FindRoutingClosestBehaviour() : GWSBehaviour(){
 
 }
 
-QJsonArray FindRoutingClosestBehaviour::behave(){
+QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -50,7 +50,7 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
-        return this->getProperty( NEXTS_IF_NO_ROUTING_CLOSEST_FOUND ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NO_ROUTING_CLOSEST_FOUND ).toArray() );
     }
 
     // Extract and store the distance of the route:
@@ -90,5 +90,5 @@ QJsonArray FindRoutingClosestBehaviour::behave(){
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ROUTE_AS ).toString("store_routing_closest_route_as") , geojson );
 
     // Set next behaviours:
-    return this->getProperty( NEXTS ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

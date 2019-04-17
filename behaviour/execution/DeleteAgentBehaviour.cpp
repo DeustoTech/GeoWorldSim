@@ -12,10 +12,10 @@ DeleteAgentBehaviour::DeleteAgentBehaviour() : GWSBehaviour( ){
 }
 
 
-QJsonArray DeleteAgentBehaviour::behave(){
+QPair< double , QJsonArray >  DeleteAgentBehaviour::behave(){
 
    // emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
     GWSEnvironmentsGroup::globalInstance()->unregisterAgent( this->getAgent() );
 
-    return QJsonArray();
+    return QPair< double , QJsonArray >();
 }

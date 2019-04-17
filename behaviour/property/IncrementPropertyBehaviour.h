@@ -23,7 +23,7 @@ public:
     static QString NEXTS_ELSE;
 
 private slots:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
 
 };
 

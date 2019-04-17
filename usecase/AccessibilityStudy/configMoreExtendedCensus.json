@@ -15,7 +15,7 @@
                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_DIRECT_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["FIND_ROUTING_CLOSEST"] },
                  
                  
-                                { "@gwsclass": "FindRoutingClosestBehaviour", "duration": 1, "id": "FIND_ROUTING_CLOSEST", "facility_type": "Facility", "transport_network_type" : "Road" , "store_routing_closest_id_as": "routing_closest_id" , "store_routing_closest_agent_x_as": "routing_closest_x", "store_routing_closest_agent_y_as": "routing_closest_y" , "store_closest_route_distance_as": "routing_closest_distance" , "nexts": [ "DISPLAY_ROUTING_CLOSEST" ]  , "nexts_if_no_routing_closest_found" : ["CHECK_ROUTING_CLOSEST"] },
+                                { "@gwsclass": "FindRoutingClosestBehaviour", "duration": 1, "id": "FIND_ROUTING_CLOSEST", "facility_type": "Facility", "transport_network_type" : "Road" , "store_routing_closest_id_as": "routing_closest_id" , "store_routing_closest_agent_x_as": "routing_closest_x", "store_routing_closest_agent_y_as": "routing_closest_y" , "store_routing_distance_as": "routing_closest_distance" , "store_routing_closest_route_as" : "routing_closest_route" , "nexts": [ "DISPLAY_ROUTING_CLOSEST" ]  , "nexts_if_no_routing_closest_found" : ["CHECK_ROUTING_CLOSEST"] },
                 
                                 
                                 { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "id": "DISPLAY_ROUTING_CLOSEST" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["ADD_GWSGROUP"] },

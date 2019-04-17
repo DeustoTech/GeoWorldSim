@@ -18,7 +18,7 @@ public:
     static QString NEXTS_IF_FALSE;
 
 protected slots:
-    virtual QJsonArray behave();
+     virtual QPair< double , QJsonArray > behave();
 };
 
 #endif // COMPAREPROPERTYBEHAVIOUR_H

@@ -279,7 +279,7 @@ double GenerateWasteZamudioModelBehaviour::partialModel ( double rest, double un
 }
 
 
-QJsonArray GenerateWasteZamudioModelBehaviour::behave(){
+QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();    
     int family_members = agent->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt(1);

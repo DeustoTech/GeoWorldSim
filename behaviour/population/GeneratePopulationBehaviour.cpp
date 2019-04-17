@@ -24,7 +24,7 @@ QString GeneratePopulationBehaviour::LIFE_EXPECTANCY = "set_life_expectancy_year
 QString GeneratePopulationBehaviour::LIFE_EXPECTANCY_MARGIN = "set_life_expectancy_margin";
 QString GeneratePopulationBehaviour::ILLNESS_RATE = "illness_rate";
 QString GeneratePopulationBehaviour::NEXT_CHILD_GAP = "set_next_child_gap_years";
-QString GeneratePopulationBehaviour::BIRTH_RATE = "set_birth_rate";
+QString GeneratePopulationBehaviour::BIRTH_RATE = "birth_rate";
 QString GeneratePopulationBehaviour::TOTAL_FERTILITY_RATE = "set_fertility_rate";
 QString GeneratePopulationBehaviour::MAX_FERTILITY_AGE = "set_max_fertility_age";
 QString GeneratePopulationBehaviour::CHILDREN_IDS = "children";
@@ -59,7 +59,7 @@ void GeneratePopulationBehaviour::initialize(){
  SLOTS
 **********************************************************************/
 
-QJsonArray GeneratePopulationBehaviour::behave(){
+QPair< double , QJsonArray > GeneratePopulationBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -74,13 +74,15 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     bool died = false;
     died = this->checkDeath( agent_age );
     if( died ){
-        return this->getProperty( NEXT_IF_DIED ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_DIED ).toArray() );
+
     }
 
     bool migrate = false;
     migrate = this->checkMigration( agent_age );
     if(  migrate ){
-        return this->getProperty( NEXT_IF_MIGRATE ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_MIGRATE ).toArray() );
+
     }
 
     bool married = false;
@@ -91,10 +93,12 @@ QJsonArray GeneratePopulationBehaviour::behave(){
     }
 
     if( married && checkBirth( agent_age ) ){
-        return this->getProperty( NEXT_IF_BIRTH ).toArray();
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_BIRTH ).toArray() );
+
     }
 
-    return this->getProperty( NEXT_IF_ELSE ).toArray();
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXT_IF_ELSE ).toArray() );
+
 }
 
 
@@ -303,8 +307,7 @@ bool GeneratePopulationBehaviour::checkBirth( int age  )
 
     // Otherwise, select random threshold age:
     int testAge = 0;
-    //int min = agent->getProperty( MARRY_AGE ).toInt();
-    int min = this->getProperty( MARRY_AGE ).toInt();
+    int min =  this->getProperty( MARRY_AGE ).toInt();
 
     int max = max_fertility_age;
     testAge = ( qrand() % ( max-min  + 1 )) + min;
