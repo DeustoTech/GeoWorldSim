@@ -49,7 +49,7 @@ HEADERS += \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/PropertyStatisticsBehaviour.h \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.h
+    ../../behaviour/emissions/VehicleNoiseBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -93,7 +93,9 @@ HEADERS += \
     ../../environment/execution_environment/ExecutionEnvironment.h \
         # AGENTS
             ## TRANSPORT LINES
-    ../../skill/pollute/PolluteSkill.h
+    ../../skill/pollute/PolluteSkill.h \
+    GTAlgBehaviour.h \
+    ../../behaviour/electricTravelling/GTAlgBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -116,7 +118,7 @@ SOURCES += main.cpp \
     ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
-    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp
+    ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -156,7 +158,8 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
-    ../../skill/pollute/PolluteSkill.cpp
+    ../../skill/pollute/PolluteSkill.cpp \
+    ../../behaviour/electricTravelling/GTAlgBehaviour.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

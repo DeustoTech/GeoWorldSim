@@ -67,7 +67,7 @@ int main( int argc, char* argv[] )
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
     // INIT OBJECT FACTORY
-    GWSObjectFactory::globalInstance()->registerType( PopulationGeneratorAgent::staticMetaObject );
+    //GWSObjectFactory::globalInstance()->registerType( PopulationGeneratorAgent::staticMetaObject );
 
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();

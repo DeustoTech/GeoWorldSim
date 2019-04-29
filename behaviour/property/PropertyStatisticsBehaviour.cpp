@@ -32,7 +32,7 @@ QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
         bool valid = true;
 
         foreach( QString key , agents_filter.keys() ){
-            qDebug() << key << agents_filter.value( key ) << agent->getProperty( key );
+           // qDebug() << key << agents_filter.value( key ) << agent->getProperty( key );
 
             if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
                 valid = false;
