@@ -55,6 +55,7 @@ void GWSCommunicationEnvironment::disconnectExternalSocket(QString socket_id){
     }
 }
 
+
 /**********************************************************************
  LISTENERS
 **********************************************************************/

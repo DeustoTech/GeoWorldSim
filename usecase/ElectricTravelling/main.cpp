@@ -41,7 +41,7 @@
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
 #include "../../util/svm/Svm.h"
-#include "../../util/parallelism/ParallelismController.h"
+#include "../../util/api/APIDriver.h"
 
 
 // Behaviours
@@ -56,6 +56,7 @@
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
+#include "../../behaviour/electricTravelling/GTAlgBehaviour.h"
 
 int main(int argc, char* argv[])
 {
@@ -73,6 +74,7 @@ int main(int argc, char* argv[])
     GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
     GWSCommunicationEnvironment::globalInstance();
+    GWSAPIDriver::globalInstance();
 
     // AVAILABLE BEHAVIOURS
     //GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
@@ -81,6 +83,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GTAlgBehaviour::staticMetaObject );
 
 
     // CREATE POPULATION

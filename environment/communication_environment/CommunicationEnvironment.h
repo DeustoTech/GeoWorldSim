@@ -23,12 +23,9 @@ signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
     void sendMessageSignal( QJsonObject message_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
     void dataReceivedSignal( QJsonObject message_json , QString socket_id );
 
-
-public slots:
+private slots:
     void dataReceivedFromSocket( QJsonObject data );
 
-
-private slots:
     // SOCKETS
     void connectExternalSocket( QString socket_id );
     void disconnectExternalSocket( QString socket_id );

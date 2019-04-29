@@ -1,9 +1,7 @@
 #ifndef GTALGBEHAVIOUR_H
 #define GTALGBEHAVIOUR_H
 
-
 #include "../../behaviour/Behaviour.h"
-
 
 class GTAlgBehaviour : public GWSBehaviour
 {
@@ -15,13 +13,15 @@ public:
 
 
     // PROPERTIES
-    static QString VEHICLE_TYPE;
-    static QString STORE_NOISE_AS;
-    static QString NEXTS;
+    static QString TRIP_LEGS;
+    static QString NEXT_TRIP_LEG;
+    static QString NEXTS_IF_LEGS;
+    static QString NEXTS_IF_NO_LEGS;
 
 
 private slots:
     virtual QPair< double , QJsonArray > behave();
+    void dataReceived();
 
 };
 

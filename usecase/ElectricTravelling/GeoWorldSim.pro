@@ -55,7 +55,7 @@ HEADERS += \
     ../../util/io/log/Logger.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
-    ../../util/ai/Intelligence.h \
+    ../../util/ai/InAPItelligence.h \
     ../../util/svm/Svm.h \
             ## GEOMETRIES
     ../../util/geometry/Geometry.h \
@@ -77,6 +77,7 @@ HEADERS += \
     ../../util/graph/Edge.h \
             ## GRID
     ../../util/grid/Grid.h \
+    ../../util/ai/Intelligence.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
             ## DATASOURCES

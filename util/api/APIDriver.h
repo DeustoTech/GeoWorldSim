@@ -15,9 +15,8 @@ class GWSAPIDriver : public QObject
     Q_OBJECT
 
 public:
-    GWSAPIDriver(QObject* parent = 0);
-    GWSAPIDriver(const GWSAPIDriver& other);
-    ~GWSAPIDriver();
+
+    static GWSAPIDriver* globalInstance();
 
     // GET
     virtual QNetworkReply* GET( QUrl url, QMap<QString, QString> headers = QMap<QString, QString>() );
@@ -36,7 +35,11 @@ public:
     // DELETE
     virtual QNetworkReply* DELETE( QUrl url, QMap<QString, QString> headers = QMap<QString, QString>() );
 
-protected:
+private:
+    GWSAPIDriver( );
+    GWSAPIDriver(const GWSAPIDriver& other);
+    ~GWSAPIDriver();
+
     virtual QNetworkReply* operation( QNetworkAccessManager::Operation operation , QUrl url , QMap<QString, QString> headers = QMap<QString, QString>() , QByteArray data = QByteArray() , QByteArray custom_operation = QByteArray() );
 
     QNetworkAccessManager* access_manager;

@@ -4,7 +4,13 @@
 #include <QNetworkProxy>
 #include <QJsonDocument>
 
-GWSAPIDriver::GWSAPIDriver(QObject *parent) : QObject( parent ){
+
+GWSAPIDriver* GWSAPIDriver::globalInstance(){
+    static GWSAPIDriver instance;
+    return &instance;
+}
+
+GWSAPIDriver::GWSAPIDriver() : QObject(){
 
     QNetworkProxyQuery npq( QUrl( "https://www.google.com" ) );
     QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
@@ -35,7 +41,7 @@ GWSAPIDriver::~GWSAPIDriver(){
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::GET( QUrl url, QMap<QString, QString> headers ){
+QNetworkReply* GWSAPIDriver::GET( QUrl url , QMap<QString, QString> headers ){
     return this->operation( QNetworkAccessManager::GetOperation , url , headers );
 }
 
@@ -123,7 +129,7 @@ QNetworkReply* GWSAPIDriver::operation(QNetworkAccessManager::Operation operatio
     buffer.write( data );
     buffer.seek( 0 );
 
-    QNetworkReply* unfinished_reply = 0;
+    QNetworkReply* unfinished_reply = Q_NULLPTR;
 
     try {
 

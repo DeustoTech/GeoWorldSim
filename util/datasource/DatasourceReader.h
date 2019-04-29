@@ -5,8 +5,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "../../util/api/APIDriver.h"
-
 class GWSDatasourceReader : public QObject
 {
     Q_OBJECT
@@ -28,7 +26,6 @@ private slots:
     void dataReceived();
 
 private:
-    GWSAPIDriver api_driver;
     QString scenario_id;
     QString entities_type;
     QString min_time;

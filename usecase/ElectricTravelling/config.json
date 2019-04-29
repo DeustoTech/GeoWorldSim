@@ -7,7 +7,9 @@
 	
                             "@behaviours": [  
 
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
+                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["GTALG"] } ,
+                                                        
+                                                        {"@gwsclass": "GTAlgBehaviour" ,  "id": "GTALG" , "transport_mode" : "CAR", "duration": 0 ,  "nexts_if_leg" : ["MOVE"] , "nexts_if_no_leg" : ["STOP"] } , 
                                                         
                                                         { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["NOISE"] } , 
                                                         
@@ -19,7 +21,7 @@
                             ] } , 
                             
                             
-                            "datasources":[{"entities":["CAR"],"id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"} ] }, 
+                            "datasources":[{"entities":["CAR"],"id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce" , "limit" : 10 } ] }, 
 
 
         "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
