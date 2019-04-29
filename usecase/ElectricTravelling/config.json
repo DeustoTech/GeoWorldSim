@@ -11,7 +11,7 @@
                                                         
                                                         {"@gwsclass": "GTAlgBehaviour" ,  "id": "GTALG" , "transport_mode" : "CAR", "duration": 0 ,  "nexts_if_leg" : ["MOVE"] , "nexts_if_no_leg" : ["STOP"] } , 
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["STOP"] , "nexts_if_not_arrived" : ["NOISE"] } , 
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["GTALG"] , "nexts_if_not_arrived" : ["NOISE"] } , 
                                                         
                                                         { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
                                                         

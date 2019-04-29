@@ -55,15 +55,34 @@ QPair< double , QJsonArray > GTAlgBehaviour::behave(){
 
                 qDebug() << "Receiving data";
                 QJsonObject json = QJsonDocument::fromJson( reply->readAll() ).object();
+
+
+                // We are only interested in the "itineraries.legs" field of the QJsonObject
+
+                QJsonObject plan =  json.value( "plan" ).toObject();
+                QJsonArray itineraries = plan.value( "itineraries" ).toArray();
+
+                QJsonArray legs_array;
+
+                if ( !itineraries.isEmpty() ){
+
+                    for ( int i = 0; i < itineraries.size() ; ++i ){
+
+                        QJsonObject itinerariesObj = itineraries.at( i ).toObject();
+                        legs_array.append( itinerariesObj.value( "legs" ));
+                        }
+                    }
+
                 reply->deleteLater();
 
                 agent->decrementBusy();
+                agent->setProperty( "trip_legs" , legs_array );
 
             } );
 
         });
 
-        // Query the polish tool
+
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_LEGS ).toArray() );
 
     }
