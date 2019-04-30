@@ -21,9 +21,9 @@ QPair< double , QJsonArray > SetAgentPropertyBehaviour::behave(){
 
     }
 
-    QJsonObject properties_names = this->getProperty( PROPERTIES ).toObject();
+    QJsonObject properties = this->getProperty( PROPERTIES ).toObject();
     
-    foreach ( QString property_name, properties_names.keys() ){
+    foreach ( QString property_name, properties.keys() ){
         
             QJsonValue property_value = this->getProperty( property_name );
             agent->setProperty( property_name , property_value );
