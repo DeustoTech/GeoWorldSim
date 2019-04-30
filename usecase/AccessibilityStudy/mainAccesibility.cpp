@@ -103,31 +103,24 @@ int main(int argc, char* argv[])
             for ( int i = 0; i <  datasources.size() ; ++i ){
 
                 QJsonObject datasource = datasources.at( i ).toObject();
-                QString datasource_id = datasource.value("id").toString();
+                QString scenario_id = datasource.value("scenario_id").toString();
                 int limit = datasource.value("limit").toInt(-1);
-                QJsonArray entities_type = datasource.value("entities").toArray();
-                if( datasource_id.isEmpty() || entities_type.isEmpty() ){
-                    qWarning() << "Asked to download from scenario without ID or entities type";
+                QString entity_type = datasource.value("entity_type").toString();
+                if( scenario_id.isEmpty() || entity_type.isEmpty() ){
+                    qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 
-                for ( int j = 0; j < entities_type.size() ; ++j ){
+                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , limit > 0 ? limit : 999999999999999 );
+                pending_datasources.append( ds );
 
-                    QString entity = entities_type.at( j ).toString();
-
-                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity , limit > 0 ? limit : 999999999999999 );
-                    pending_datasources.append( ds );
-
-                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
-                        pending_datasources.removeAll( ds );
-                        ds->deleteLater();
-                        if( pending_datasources.isEmpty() ){
-                            qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
-                            GWSExecutionEnvironment::globalInstance()->run();
-                        }
-                    });
-                }
-
-
+                ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                    pending_datasources.removeAll( ds );
+                    ds->deleteLater();
+                    if( pending_datasources.isEmpty() ){
+                        qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
+                        GWSExecutionEnvironment::globalInstance()->run();
+                    }
+                });
 
             }
         }
