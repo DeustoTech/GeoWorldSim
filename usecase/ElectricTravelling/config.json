@@ -9,9 +9,9 @@
 
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["GTALG"] } ,
                                                         
-                                                        {"@gwsclass": "GTAlgBehaviour" ,  "id": "GTALG" , "transport_mode" : "CAR", "duration": 0 ,  "nexts_if_leg" : ["MOVE"] , "nexts_if_no_leg" : ["STOP"] } , 
+                                                        {"@gwsclass": "GTAlgBehaviour" ,  "id": "GTALG" , "transport_mode" : "CAR", "destination_x" : -2.93457, "destination_y" :  43.26361  , "duration": 0 , "store_trip_legs_as" : "trip_legs" ,  "store_current_leg_mode_as" : "leg_mode", "store_current_leg_destination_x_as" : "leg_destination_x" , "store_current_leg_destination_y_as" : "leg_destination_y",  "nexts_if_leg" : ["MOVE"] , "nexts_if_no_leg" : ["STOP"] , "nexts_if_waiting" : ["GTALG"] } , 
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<fixed_x>", "route_destination_y_value": "<fixed_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["GTALG"] , "nexts_if_not_arrived" : ["NOISE"] } , 
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<leg_destination_x>", "route_destination_y_value": "<leg_destination_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["GTALG"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING"] } , 
                                                         
                                                         { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
                                                         
@@ -21,7 +21,7 @@
                             ] } , 
                             
                             
-                            "datasources":[{"entities":["CAR"],"id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce" , "limit" : 10 } ] }, 
+                            "datasources":[{"entity_type":["CAR"],"scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 1} ] }, 
 
 
         "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
@@ -42,7 +42,7 @@
 
                             
 	"roads"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["Road"] , "maxspeed":4 },
-                            "datasources":[{"entities":["Road"],"id":"11327b1e-0346-4d8f-9b7b-77fd1a408731-545b694b-af38-55ca-bb94-ce"}]}
+                            "datasources":[{"entity_type":["Road"],"scenario_id":"11327b1e-0346-4d8f-9b7b-77fd1a408731-545b694b-af38-55ca-bb94-ce"}]}
 	
     },
 

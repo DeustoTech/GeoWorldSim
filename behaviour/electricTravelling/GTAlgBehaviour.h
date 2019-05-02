@@ -13,10 +13,16 @@ public:
 
 
     // PROPERTIES
+    static QString DESTINATION_X;
+    static QString DESTINATION_Y;
     static QString TRIP_LEGS;
-    static QString NEXT_TRIP_LEG;
+    static QString CURRENT_LEG_MODE;
+    static QString CURRENT_LEG_TO_X;
+    static QString CURRENT_LEG_TO_Y;
+    static QString CURRENT_LEG_DEPARTURE_TIME;
     static QString NEXTS_IF_LEGS;
     static QString NEXTS_IF_NO_LEGS;
+    static QString NEXTS_IF_WAITING;
 
 
 private slots:
