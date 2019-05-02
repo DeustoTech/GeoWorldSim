@@ -10,7 +10,7 @@ class GWSDatasourceReader : public QObject
     Q_OBJECT
 
 public:
-    explicit GWSDatasourceReader( QString scenario_id , QString entities_type , int limit = 9999999999 , QString min_time = "" , QString max_time = "" );
+    explicit GWSDatasourceReader( QString scenario_id , QString entities_type , QString entities_filter = "" , int limit = 9999999999);
 
     // METHODS
     void startReading();
@@ -28,8 +28,7 @@ private slots:
 private:
     QString scenario_id;
     QString entities_type;
-    QString min_time;
-    QString max_time;
+    QString entities_filter;
     unsigned int last_paginated = 0;
     unsigned int page_size = 1000;
 

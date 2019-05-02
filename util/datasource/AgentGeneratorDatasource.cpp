@@ -13,7 +13,7 @@
 #include <QObject>
 #include <QTimer>
 
-GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString scenario_id , QString entities_type, int amount ) : QObject ()
+GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString scenario_id , QString entities_type , QString entities_filter , int amount ) : QObject ()
 {
 
     if( json.isEmpty() ){
@@ -21,7 +21,7 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         return;
     }
 
-    GWSDatasourceReader* agentReader = new GWSDatasourceReader( scenario_id , entities_type, amount );
+    GWSDatasourceReader* agentReader = new GWSDatasourceReader( scenario_id , entities_type , entities_filter , amount );
     agentReader->connect( agentReader , &GWSDatasourceReader::dataReadingFinishedSignal , [this](){
         emit this->dataReadingFinishedSignal();
     });
