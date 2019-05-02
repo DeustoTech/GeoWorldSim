@@ -115,6 +115,7 @@ QPair< double , QJsonArray > GTAlgBehaviour::behave(){
     legs.removeAt( 0 );
     agent->setProperty( this->getProperty( TRIP_LEGS ).toString() , legs );
 
+    // TO DO: GESTIONAR CASO DE UN SOLO LEG.
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_LEGS ).toArray() );
 
