@@ -100,6 +100,7 @@ QPair< double , QJsonArray > GTAlgBehaviour::behave(){
 
 
 /*******************************************
+ *  METHODS
  *******************************************/
 void GTAlgBehaviour::dataReceived(){
 
