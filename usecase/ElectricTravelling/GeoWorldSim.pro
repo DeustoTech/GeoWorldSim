@@ -91,12 +91,14 @@ HEADERS += \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-        # AGENTS
+        # AGENTS`
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
+    ../../behaviour/emissions/PolluteBehaviour.h \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
-    ../../skill/move/StoreMultiRouteSkill.h
+    ../../skill/move/StoreMultiRouteSkill.h \
+    ../../behaviour/property/PropertyHeatmapBehaviour.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -160,9 +162,11 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
+    ../../behaviour/emissions/PolluteBehaviour.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
-    ../../skill/move/StoreMultiRouteSkill.cpp
+    ../../skill/move/StoreMultiRouteSkill.cpp \
+    ../../behaviour/property/PropertyHeatmapBehaviour.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

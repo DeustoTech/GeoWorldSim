@@ -26,8 +26,6 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
 
             // Path to SVM trained files:
             QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
-
-
             QDir dir( svm_path );
             if ( dir.exists() ){
 
@@ -60,10 +58,12 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
         input.insert( "trafficSit" , 0.36);
 
         QJsonObject result = this->svm->run( input );
-        double polluted_amount = result.value( "EFA" ).toDouble();
+        GWSMassUnit polluted_amount = result.value( "EFA" ).toDouble();
 
         // Save polluted amount:
-        agent->setProperty( "total"+ pollutant +"amount" , agent->getProperty( "total"+ pollutant +"amount").toDouble() + polluted_amount );
-        return GWSMassUnit();
+       // agent->setProperty( "total"+ pollutant +"amount" , agent->getProperty( "total"+ pollutant +"amount").toDouble() + polluted_amount );
+        return polluted_amount;
+
+
 
 }
