@@ -49,7 +49,10 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         // Generate pending route
         if( graph_type.isEmpty() ){ graph_type = GWSAgent::staticMetaObject.className(); }
         QStringList agent_ids = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , route_destination , graph_type );
-        this->pending_route_edges = GWSAgentEnvironment::globalInstance()->getByUIDS( agent_ids );
+
+        if( !agent_ids.isEmpty() ){
+            this->pending_route_edges = GWSAgentEnvironment::globalInstance()->getByUIDS( agent_ids );
+        }
 
         // If calculated a route whose first point is even further than the destination, don¡t follow the route
         // Avoids recalculating a route once finished routing and freeflowing to destination
