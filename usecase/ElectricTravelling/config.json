@@ -1,5 +1,5 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":10,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5, "id":"demo" ,
 
 "population" : {
 
@@ -26,7 +26,6 @@
                             
                             
                             "datasources":[{"entity_type":"CAR","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 100} ] }, 
-
 
         "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
         
@@ -63,8 +62,6 @@
                             {"entity_type":"Motorway","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
                             ]}
 	
-    },
-
-"id":"demo"
+    }
 	
 }

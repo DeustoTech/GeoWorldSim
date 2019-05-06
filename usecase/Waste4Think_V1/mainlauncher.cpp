@@ -31,7 +31,6 @@
 #include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
 #include "../../behaviour/transaction/TransactionBehaviour.h"
-#include "../../behaviour/move/SetNextTSPDestinationBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h"
