@@ -1,5 +1,5 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":10,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5,
 
 "population" : {
 
@@ -7,11 +7,19 @@
 	
                             "@behaviours": [  
 
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["GTALG"] } ,
+                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 , "nexts" : ["GTALG"] } ,
                                                         
+<<<<<<< HEAD
                                                         {"@gwsclass": "GTAlgBehaviour" ,  "id": "GTALG" , "transport_mode" : "CAR", "destination_x" : "<to_x>", "destination_y" :  "<to_y>"  , "duration": 0 , "store_trip_legs_as" : "trip_legs" ,  "store_current_leg_mode_as" : "leg_mode", "store_current_leg_destination_x_as" : "leg_destination_x" , "store_current_leg_destination_y_as" : "leg_destination_y",  "nexts_if_leg" : ["MOVE"] , "nexts_if_no_leg" : ["STOP"] , "nexts_if_waiting" : ["GTALG"] } , 
+=======
+                                                        {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  "id": "GTALG" , "transport_mode" : "WALK,TRANSIT,CAR", "route_optimization" : "QUICKER" , "destination_x" : -2.93457, "destination_y" :  43.26361  , "duration": 1 ,  "nexts" : ["NEXT_DESTINATION"] } ,
+>>>>>>> 99f33287f4e2abbf2789cf9510e7d768b58e70d4
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "Road", "maxspeed" : 120 , "route_destination_x_value": "<leg_destination_x>", "route_destination_y_value": "<leg_destination_y>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["GTALG"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING"] } , 
+                                                        {"@gwsclass": "SetNextRouteDestinationBehaviour" ,  "id": "NEXT_DESTINATION" , "duration": 1 ,  "nexts_while_pending_route" : ["DISPLAY_BEFORE_MOVE"] , "nexts_if_finished" : ["STOP"] } , 
+                                                        
+                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_BEFORE_MOVE" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
+                                                        
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "<transport_mode>", "maxspeed" : 120 , "route_destination_x_value": "<next_x_value>", "route_destination_y_value": "<next_y_value>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["NEXT_DESTINATION"] , "nexts_if_not_arrived" : ["DISPLAY_MOVING"] } , 
                                                         
                                                         { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
                                                         
@@ -21,7 +29,11 @@
                             ] } , 
                             
                             
+<<<<<<< HEAD
                             "datasources":[{"entity_type":["CAR"],"scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 100} ] }, 
+=======
+                            "datasources":[{"entity_type":"CAR","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 10 } ] }, 
+>>>>>>> 99f33287f4e2abbf2789cf9510e7d768b58e70d4
 
 
         "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } ,
@@ -41,8 +53,28 @@
                             "amount" : 1 },
 
                             
+<<<<<<< HEAD
 	"roads"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["Road"] , "maxspeed":4 },
                             "datasources":[{"entity_type":["Primary", "Pedestrian","Residential","Secondary","Tertiary","Motorway","Entity","Primary"],"scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}]}
+=======
+	"WALK"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK"] , "maxspeed" : 4 },
+                            "datasources":[
+                            {"entity_type":"Pedestrian","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Residential","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Tertiary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Secondary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Primary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
+                            ]},
+                            
+        "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["CAR","BUS","SUBWAY"] , "maxspeed":120 },
+                            "datasources":[
+                            {"entity_type":"Residential","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Tertiary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Secondary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Primary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Motorway","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
+                            ]}
+>>>>>>> 99f33287f4e2abbf2789cf9510e7d768b58e70d4
 	
     },
 

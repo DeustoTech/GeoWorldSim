@@ -58,9 +58,9 @@ double GWSTimeEnvironment::getTimeSpeed() const{
     return this->time_speed;
 }
 
-qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
+/*qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
     return this->agent_internal_times.value( agent->getUID() , -1 );
-}
+}*/
 
 /**********************************************************************
  SETTERS
@@ -78,9 +78,9 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
-void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime){
+/*void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime){
     this->agent_internal_times.insert( agent->getUID() , datetime );
-}
+}*/
 
 /*void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
     QString agent_id = agent->getId();
@@ -98,15 +98,43 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
 
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
-        quint64 init_internal_time = agent->getProperty( INTERNAL_TIME_PROP ).toDouble( -1 );
-        this->mutex.lock();
+
+        quint64 init_internal_time = this->getCurrentDateTime();
+        QJsonValue internal_time = agent->getProperty( INTERNAL_TIME_PROP );
+
+        if( internal_time.isDouble() ){
+            init_internal_time = internal_time.toDouble( init_internal_time );
+        }
+        else {
+            init_internal_time = QDateTime::fromString( internal_time.toString() ).toMSecsSinceEpoch();
+        }
+
+        agent->setProperty( INTERNAL_TIME_PROP , (double)init_internal_time );
         this->agent_internal_times.insert( agent->getUID() , init_internal_time );
-        this->mutex.unlock();
     }
+
+    // Listen to agent property changes
+    this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
 
 }
 
 void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::unregisterAgent( agent );
     this->agent_internal_times.remove( agent->getUID() );
+
+    this->disconnect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
+}
+
+/**********************************************************************
+ PROTECTED
+**********************************************************************/
+
+void GWSTimeEnvironment::agentPropertyChanged( QString property_name ){
+    if( property_name == INTERNAL_TIME_PROP ){
+        QObject* object = QObject::sender();
+        if( !object ){ return; }
+        GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
+        if( !agent ){ return; }
+        this->agent_internal_times.insert( agent->getUID() , agent->getProperty( INTERNAL_TIME_PROP ).toDouble() );
+    }
 }

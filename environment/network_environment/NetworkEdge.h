@@ -23,14 +23,12 @@ struct GWSNetworkEdge : GWSEdge {
     // CONSTRUCTORS
     GWSNetworkEdge() : GWSEdge() {}
     GWSNetworkEdge( QJsonObject json ) : GWSNetworkEdge( GWSCoordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() , json.value( EDGE_FROM_Z_PROP ).toDouble() ) , GWSCoordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() , json.value( EDGE_TO_Z_PROP ).toDouble() ) ) {}
-    GWSNetworkEdge(GWSCoordinate from, GWSCoordinate to) : GWSEdge( from.getDistance(to).number() , "Network" ) , from(from) , to(to) {}
+    GWSNetworkEdge( GWSCoordinate from, GWSCoordinate to ) : GWSEdge( from.getDistance(to).number() , "Network" , from.toString() , to.toString() ) , from(from) , to(to) {}
     GWSNetworkEdge(const GWSNetworkEdge &other) : GWSNetworkEdge(other.from , other.to){}
     ~GWSNetworkEdge(){}
 
     // GETTERS
     virtual bool isValid() const;
-    virtual QString getFromNodeUID() const;
-    virtual QString getToNodeUID() const;
     virtual GWSCoordinate getFromCoordinate() const;
     virtual GWSCoordinate getToCoordinate() const;
     virtual GWSLengthUnit getLength() const;

@@ -46,7 +46,6 @@ HEADERS += \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/PropertyStatisticsBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
@@ -70,8 +69,8 @@ HEADERS += \
     ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.hpp \
+    ../../util/routing/Routing.h \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/Edge.h \
@@ -95,8 +94,9 @@ HEADERS += \
         # AGENTS
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
-    GTAlgBehaviour.h \
-    ../../behaviour/electricTravelling/GTAlgBehaviour.h
+    ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
+    ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
+    ../../skill/move/StoreMultiRouteSkill.h
     #../../skill/pollute/VehiclePolluteSkill.h
 
 
@@ -116,7 +116,6 @@ SOURCES += main.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
@@ -129,6 +128,7 @@ SOURCES += main.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
+    ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
             ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
@@ -160,7 +160,9 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
-    ../../behaviour/electricTravelling/GTAlgBehaviour.cpp
+    ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
+    ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
+    ../../skill/move/StoreMultiRouteSkill.cpp
     #../../skill/pollute/VehiclePolluteSkill.cpp
 
 

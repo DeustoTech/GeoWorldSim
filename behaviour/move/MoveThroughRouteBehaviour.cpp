@@ -8,7 +8,7 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
-QString MoveThroughRouteBehaviour::AGENT_ROUTE_NETWORK_TYPE = "transport_network_type";
+QString MoveThroughRouteBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";
 QString MoveThroughRouteBehaviour::AGENT_ROUTE_DESTINATION_X_VALUE = "route_destination_x_value";
 QString MoveThroughRouteBehaviour::AGENT_ROUTE_DESTINATION_Y_VALUE = "route_destination_y_value";
 QString MoveThroughRouteBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
@@ -50,11 +50,10 @@ void MoveThroughRouteBehaviour::initialize(){
 QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble( 1 );  //qrand() % 100 / 100.0;
-
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
 
     QJsonValue x_destination = this->getProperty( AGENT_ROUTE_DESTINATION_X_VALUE );
     QJsonValue y_destination = this->getProperty( AGENT_ROUTE_DESTINATION_Y_VALUE );
@@ -65,6 +64,7 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     }
 
     // Calculate speed
+    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     GWSSpeedUnit current_speed = GWSSpeedUnit( this->getProperty( AGENT_CURRENT_SPEED ).toDouble() );
     GWSSpeedUnit max_speed = GWSSpeedUnit( this->getProperty( AGENT_MAX_SPEED ).toDouble() );
 
@@ -74,16 +74,18 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     }
 
     // Pending time to reach destination can be higher than the duration requested.
-    GWSCoordinate agent_position = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
+    GWSCoordinate agent_position = agent_geom.getCentroid();
     GWSLengthUnit pending_distance = agent_position.getDistance( destination_coor );
     GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed
     duration_of_movement = qMin( pending_time , duration_of_movement );
 
     // Move towards
-    QString graph_type = this->getProperty( AGENT_ROUTE_NETWORK_TYPE ).toString();
+    QString graph_type = this->getProperty( TRANSPORT_NETWORK_TYPE ).toString();
+
     movethroughroute_skill->move( duration_of_movement , current_speed , destination_coor , graph_type );
 
-    GWSGeometry agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSGeometry agent_geom_post = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+
     GWSCoordinate agent_position_post = agent_geom_post.getCentroid();
 
     // Set NEXTS behaviour

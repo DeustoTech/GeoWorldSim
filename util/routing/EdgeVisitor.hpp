@@ -12,7 +12,6 @@
 #include <QMap>
 #include "../../util/graph/Edge.h"
 
-template <class T = GWSEdge>
 class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
@@ -26,7 +25,7 @@ public:
     }
 
     // STORAGE
-    QMap< lemon::ListDigraph::Arc , T > edges;
+    QMap< lemon::ListDigraph::Arc , GWSEdge > edges;
 
 };
 
