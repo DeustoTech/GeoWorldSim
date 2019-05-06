@@ -88,12 +88,11 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         return;
     }
 
+    // If pending_route_edges is not empty
+    QSharedPointer<GWSAgent> current_edge_agent = this->pending_route_edges.at(0);
+
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
-
-        QSharedPointer<GWSAgent> current_edge_agent = this->pending_route_edges.at(0);
-        GWSNetworkEdge starting_current_edge = GWSNetworkEdge( current_edge_agent->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() );
-        //QSharedPointer<GWSAgent> starting_current_edge_agent = GWSNetworkEnvironment::globalInstance()->getAgent( starting_current_edge );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );
@@ -131,14 +130,11 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         }
 
         route_destination = move_to;
-        //movement_speed = qMin( starting_current_edge_agent->getProperty( "maxspeed" ).toDouble( movement_speed.number() ) , movement_speed.number() + 10 );
     }
 
     if( !this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
         // We are going to start iterating the coordinates of edge located at pending_route[0]
-        QSharedPointer<GWSAgent> current_edge_agent = this->pending_route_edges.at(0);
-
         GWSSpeedUnit starting_current_edge_max_speed = current_edge_agent->getProperty( "maxspeed" ).toDouble( movement_speed.number() );
 
         // First look if edge has a capacity and therefore we can enter edge
@@ -157,17 +153,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         }
 
         // We can enter, so increment or maintain speed
-        movement_speed = qMin( starting_current_edge_max_speed.number() , movement_speed.number() + 10 );
-
-        // Store road infoVehiclermation in agent
-        agent->setProperty( STORE_CURRENT_ROAD_ID , current_edge_agent->getUID() );
-        agent->setProperty( STORE_CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "highway") );
-        agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , starting_current_edge_max_speed );
-
-        // Add agent to road
-        QJsonArray inside_agent_ids = current_edge_agent->getProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP ).toArray();
-        inside_agent_ids.append( agent->getUID() );
-        current_edge_agent->setProperty( MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP , inside_agent_ids );
+        //movement_speed = qMin( starting_current_edge_max_speed.number() , movement_speed.number() + 10 );
 
         GWSGeometry current_edge_agent_geometry = GWSGeometry( current_edge_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );

@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
 "target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5, "id":"demo" ,
+=======
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":10,
+>>>>>>> 001ea730b91d83bde6f911d80b0f496a745e9169
 
 "population" : {
 
@@ -8,10 +12,16 @@
                             "@behaviours": [  
 
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 , "nexts" : ["GTALG"] } ,
+<<<<<<< HEAD
                                           
 
                                                         {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  "id": "GTALG" , "transport_mode" : "WALK,TRANSIT,CAR", "route_optimization" : "QUICKER" , "destination_x" : -2.93457, "destination_y" :  43.26361  , "duration": 1 ,  "nexts" : ["NEXT_DESTINATION"] } ,
       
+=======
+
+                                                        {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  "id": "GTALG" , "transport_mode" : "WALK,TRANSIT,CAR", "route_optimization" : "QUICKER" , "destination_x" : -2.93457, "destination_y" :  43.26361  , "duration": 1 ,  "nexts" : ["NEXT_DESTINATION"] } ,
+
+>>>>>>> 001ea730b91d83bde6f911d80b0f496a745e9169
                                                         {"@gwsclass": "SetNextRouteDestinationBehaviour" ,  "id": "NEXT_DESTINATION" , "duration": 1 ,  "nexts_while_pending_route" : ["DISPLAY_BEFORE_MOVE"] , "nexts_if_finished" : ["STOP"] } , 
                                                         
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_BEFORE_MOVE" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
@@ -22,11 +32,14 @@
                                                         
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
                                                         
-                                                        { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1  }
+                                                        { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                             ] } , 
                             
                             
+<<<<<<< HEAD
 
+=======
+>>>>>>> 001ea730b91d83bde6f911d80b0f496a745e9169
                             "datasources":[{"entity_type":["CAR"],"scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 100} ] }, 
 
                             "datasources":[{"entity_type":"CAR","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"  , "limit" : 10 } ] }, 
@@ -48,7 +61,10 @@
                             "amount" : 1 },
 
                             
+<<<<<<< HEAD
 
+=======
+>>>>>>> 001ea730b91d83bde6f911d80b0f496a745e9169
 	"WALK"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK"] , "maxspeed" : 4 },
                             "datasources":[
                             {"entity_type":"Pedestrian","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
@@ -58,7 +74,7 @@
                             {"entity_type":"Primary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
                             ]},
                             
-        "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["CAR","BUS","SUBWAY"] , "maxspeed":120 },
+        "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["CAR","BUS","SUBWAY"] , "maxspeed" : 120 },
                             "datasources":[
                             {"entity_type":"Residential","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Tertiary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
@@ -66,6 +82,11 @@
                             {"entity_type":"Primary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Motorway","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
                             ]}
+<<<<<<< HEAD
+=======
+	
+    },
+>>>>>>> 001ea730b91d83bde6f911d80b0f496a745e9169
 
 	
     }

@@ -117,7 +117,6 @@ void GWSCommunicationEnvironment::sendData(QString signal , QJsonObject data , Q
         this->publishers.insert( socket_id , publisher );
     }
     publisher->sendMessage( signal , data );
-
 }
 
 void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){

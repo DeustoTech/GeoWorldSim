@@ -245,7 +245,7 @@ void GWSExecutionEnvironment::behave(){
     if( this->isRunning() ) {
         // DO NOT USE QTCONCURRENT FOR THIS.
         // OTHERWISE IT WAITS FOR ALL PENDING AGENTS TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
-        QTimer::singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , Qt::VeryCoarseTimer , this , &GWSExecutionEnvironment::tick );
+        QTimer::singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , this , &GWSExecutionEnvironment::tick );
     }
 }
 

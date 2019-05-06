@@ -37,31 +37,23 @@ void GWSNetworkEnvironment::deserialize(QJsonObject json){
  GETTERS
 **********************************************************************/
 
-/*const QSharedPointer<GWSGraphNode> GWSNetworkEnvironment::getNode(QSharedPointer<GWSAgent> agent) const{
-    if( agent.isNull() ){
-        return Q_NULLPTR;
-    }
-    return this->agent_to_node.value( agent );
-}*/
-
-GWSNetworkEdge GWSNetworkEnvironment::getEdge( GWSCoordinate from ,  GWSCoordinate to , QString class_name) const{
+QString GWSNetworkEnvironment::getEdge( GWSCoordinate from ,  GWSCoordinate to , QString class_name) const{
     if( this->network_edges.keys().contains( class_name ) ){
         QString agent_id = this->network_edges.value( class_name )->getNearestElement( from );
         QSharedPointer< GWSAgent > agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
         GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
         if( edge.getToCoordinate() == to ){
-            return edge;
+            return agent_id;
         }
     }
-    return GWSNetworkEdge();
+    return QString();
 }
 
-QSharedPointer<GWSAgent> GWSNetworkEnvironment::getNearestEdge( GWSCoordinate coor , QString class_name ) const{
+QString GWSNetworkEnvironment::getNearestAgent( GWSCoordinate coor , QString class_name ) const{
     if( this->network_edges.keys().contains( class_name ) ){
-        QString agent_id = this->network_edges.value( class_name )->getNearestElement( coor );
-        return GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
+        return this->network_edges.value( class_name )->getNearestElement( coor );
     }
-    return Q_NULLPTR;
+    return QString();
 }
 
 QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > > GWSNetworkEnvironment::getNearestNodeAndPath(GWSCoordinate coor, QList<GWSCoordinate> get_nearest, QString class_name) const {
@@ -211,8 +203,12 @@ void GWSNetworkEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, G
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        this->mutex.lockForWrite();
-        if( !this->network_edges.keys().contains( family ) ){
+        this->mutex.lockForRead();
+        if( !this->environment_agent_index_types.contains( family ) ){
+            this->mutex.unlock();
+
+            this->mutex.lockForWrite();
+            this->environment_agent_index_types.append( family );
             this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree() ) );
             this->network_routings.insert( family , QSharedPointer< GWSRouting >( new GWSRouting() ) );
         }
@@ -243,11 +239,12 @@ void GWSNetworkEnvironment::agentPropertyChanged( QString property_name ){
 QString GWSNetworkEnvironment::getNearestNodeUID( GWSCoordinate coor , QString class_name ) const{
 
     if( this->network_edges.keys().contains( class_name ) ){
-        QSharedPointer<GWSAgent> agent = this->getNearestEdge( coor , class_name );
-        if( !agent ){
-            return QString();
+        QString agent_id = this->getNearestAgent( coor , class_name );
+        if( agent_id.isEmpty() ){
+            return agent_id;
         }
 
+        QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
         GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
 
         if( !edge.isValid() ){
