@@ -56,13 +56,14 @@ private:
     GWSGeometry environment_bounds;
 
     // SPATIAL INDEX
+    QStringList environment_agent_index_types;
     QMap< QString , QSharedPointer< GWSQuadtree > > environment_agent_indexes; // Spatial indexes
 
     // Agent geometries
     QStringList agent_ids;
 
     // Mutex, for avoiding concurrency
-    QMutex mutex;
+    QReadWriteLock mutex;
 
 };
 

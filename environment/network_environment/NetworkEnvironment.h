@@ -25,12 +25,12 @@ public:
     void deserialize(QJsonObject json);
 
     // GETTERS
-    GWSNetworkEdge getEdge( QSharedPointer< GWSAgent > agent ) const;
-    QSharedPointer< GWSAgent > getAgent( GWSNetworkEdge edge ) const;
-    GWSNetworkEdge getEdge( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
-    QSharedPointer<GWSAgent> getNearestEdge( GWSCoordinate coor , QString class_name ) const;
+    //GWSNetworkEdge getEdge( QSharedPointer< GWSAgent > agent ) const;
+    //QSharedPointer< GWSAgent > getAgent( GWSNetworkEdge edge ) const;
+    QString getEdge( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
+    QString getNearestAgent( GWSCoordinate coor , QString class_name ) const;
 
-    QStringList getShortestPath( GWSCoordinate from, GWSCoordinate to , QString class_name ) const;
+    QStringList getShortestPath( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
     QList< QStringList > getShortestPath( QList< GWSCoordinate > ordered_coors , QString class_name ) const;
     QList< QStringList > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const;
     QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > > getNearestNodeAndPath( GWSCoordinate coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
@@ -55,6 +55,7 @@ private :
     QString getNearestNodeUID( GWSCoordinate coor , QString class_name ) const;
 
     // Storages
+    QStringList environment_agent_index_types;
     QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
     QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 
