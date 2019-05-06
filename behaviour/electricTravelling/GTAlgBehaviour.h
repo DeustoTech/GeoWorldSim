@@ -15,6 +15,7 @@ public:
     // PROPERTIES
     static QString DESTINATION_X;
     static QString DESTINATION_Y;
+    static QString TRANSPORT_MODE;
     static QString TRIP_LEGS;
     static QString CURRENT_LEG_MODE;
     static QString CURRENT_LEG_TO_X;

@@ -2,6 +2,7 @@
 
 QString GTAlgBehaviour::DESTINATION_X = "destination_x";
 QString GTAlgBehaviour::DESTINATION_Y = "destination_y";
+QString GTAlgBehaviour::TRANSPORT_MODE = "transport_mode";
 QString GTAlgBehaviour::TRIP_LEGS = "store_trip_legs_as";
 QString GTAlgBehaviour::CURRENT_LEG_MODE = "store_current_leg_mode_as";
 QString GTAlgBehaviour::CURRENT_LEG_TO_X = "store_current_leg_destination_x_as";
@@ -48,11 +49,12 @@ QPair< double , QJsonArray > GTAlgBehaviour::behave(){
         QString optimization_mode = "QUICKER";
 
         // url type to query:
-        QString gtUrl = QString( "http://157.158.135.195:8081/gtalg/routers/default/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=CAR&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=QUICKER&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
+        QString gtUrl = QString( "http://157.158.135.195:8081/gtalg/routers/default/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=QUICKER&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
                 .arg( from_x ).arg( from_y )
                 .arg( to_x ).arg( to_y)
                 .arg( time.toString( "hh:mm") )
-                .arg( date.toString( "MM-dd-yyyy") );
+                .arg( date.toString( "MM-dd-yyyy") )
+                .arg( transport_mode );
 
        //qDebug() << gtUrl;
 
