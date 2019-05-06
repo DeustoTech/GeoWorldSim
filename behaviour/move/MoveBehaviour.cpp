@@ -35,7 +35,7 @@ QPair< double , QJsonArray > MoveBehaviour::behave(){
         agent->addSkill( move_skill );
     }
 
-    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     QJsonValue x_destination = this->getProperty( AGENT_MOVE_TO_X_VALUE );
     QJsonValue y_destination = this->getProperty( AGENT_MOVE_TO_Y_VALUE );
@@ -64,7 +64,7 @@ QPair< double , QJsonArray > MoveBehaviour::behave(){
     // Move towards
     move_skill->move( duration_of_movement , current_speed , destination_coor );
 
-    GWSGeometry agent_geom_post = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSGeometry agent_geom_post = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     GWSCoordinate agent_position_post = agent_geom_post.getCentroid();
 
     if ( agent_position_post == destination_coor ){

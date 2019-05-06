@@ -9,6 +9,7 @@
 
 #include "../../util/graph/OldEdge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
+#include "../../environment/agent_environment/AgentEnvironment.h"
 
 GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {
     this->transport_network_type = transport_network_type;
@@ -135,18 +136,19 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QList< GWSNetworkEdge > > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
+        QList< QStringList > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
         for(int j = 0; j < visit_coordinates.size(); j++ ){
 
             lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
             lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QList< GWSNetworkEdge > route = routes.at(j);
+            QStringList route = routes.at(j);
+            QList< QSharedPointer<GWSAgent> > route_agents = GWSAgentEnvironment::globalInstance()->getByUIDS( route );
 
             GWSLengthUnit length = 0;
-            foreach( GWSNetworkEdge e , route ){
-                length = length + e.getLength();
+            foreach( QSharedPointer<GWSAgent> e , route_agents ){
+                //length = length + GWSEdge( e->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
             }
             if( length <= GWSLengthUnit( 0 ) ){
                 length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) );

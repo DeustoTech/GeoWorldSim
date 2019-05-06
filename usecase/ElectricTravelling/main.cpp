@@ -56,7 +56,8 @@
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
-#include "../../behaviour/electricTravelling/GTAlgBehaviour.h"
+#include "../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h"
+#include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
 
 int main(int argc, char* argv[])
 {
@@ -83,8 +84,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GTAlgBehaviour::staticMetaObject );
-
+    GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;

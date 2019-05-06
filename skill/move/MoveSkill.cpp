@@ -70,7 +70,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
             * movement_duration.number();
 
     // Current position
-    GWSGeometry agent_geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     if( !agent_geom.isValid() ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
     }

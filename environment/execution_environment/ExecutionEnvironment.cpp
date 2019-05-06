@@ -93,12 +93,12 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
     // Whichever its BIRTH_DATE is, register the agent in this environment,
     // It needs to be executed in the future, so set its INTERNAL_TIME to that future
-    qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
-    if( agent_time < 0 ){
+    qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+    if( agent_time <= 0 ){
         agent_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     }
-    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , qMax( (double)agent_time , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
 
+    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , qMax( (double)agent_time , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
     agent->incrementBusy();
 
     // Store as running
@@ -192,12 +192,13 @@ void GWSExecutionEnvironment::behave(){
     foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
         if( agent.isNull() || agent->isBusy() ) {
             continue;
-        } /*else
+        }
+        /*else
             if( !agent->getProperty( "scenario_id" ).isNull() || agent->getProperty( "scenario_id" ).toString() != GWSApp::globalInstance()->getAppId()  ){
             continue;
         }*/
 
-        qint64 agent_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
+        qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( current_datetime );
 
         if( agent_time >= 0 ){ min_tick = qMin( min_tick , agent_time ); }
         if( min_tick == agent_time ){ who_is_min_tick = agent; }
@@ -209,12 +210,11 @@ void GWSExecutionEnvironment::behave(){
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
 
-            qint64 agent_next_tick = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent );
-
-            // If agent_tick is 0, set to now
-            if( agent_next_tick <= 0 ){
-                GWSTimeEnvironment::globalInstance()->setAgentInternalTime( agent , current_datetime );
+            if( agent.isNull() || agent->isBusy() ) {
+                continue;
             }
+
+            qint64 agent_next_tick = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( 0 );
 
             if ( !agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).toDouble() ){
                 this->unregisterAgent( agent );

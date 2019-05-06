@@ -15,14 +15,6 @@ bool GWSNetworkEdge::isValid() const {
     return this->getFromCoordinate().isValid() && this->getToCoordinate().isValid();
 }
 
-QString GWSNetworkEdge::getFromNodeUID() const{
-    return this->getFromCoordinate().toString();
-}
-
-QString GWSNetworkEdge::getToNodeUID() const{
-    return this->getToCoordinate().toString();
-}
-
 GWSCoordinate GWSNetworkEdge::getFromCoordinate() const{
     return this->from;
 }

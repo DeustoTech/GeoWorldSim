@@ -8,10 +8,3 @@ QString GWSSocialRelation::SOCIAL_RELATION_PROP = "relation";
  GETTERS
 **********************************************************************/
 
-QString GWSSocialRelation::getFromNodeUID() const{
-    return this->from_agent_uid;
-}
-
-QString GWSSocialRelation::getToNodeUID() const{
-    return this->to_agent_uid;
-}
