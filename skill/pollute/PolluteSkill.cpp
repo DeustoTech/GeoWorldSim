@@ -20,12 +20,14 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
 
+        // Divide into FCL, INDIRECT and DIRECT:
         if ( !this->svm ){
 
             this->svm = new GWSSvm();
 
             // Path to SVM trained files:
-            QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
+            QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/FCL" + vehicle_type + "/" + pollutant;
+           // QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
             QDir dir( svm_path );
             if ( dir.exists() ){
 
@@ -37,7 +39,6 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString pollutant , GW
                 QString totalPath_params = svm_path +  "/" + svm_parameters;
 
 
-                qDebug() << totalPath_model;
                // Load trained SVM model and parameters:
                 this->svm->loadTrained( totalPath_model , totalPath_params );
 

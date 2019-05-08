@@ -39,9 +39,7 @@
                                 
                                 { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP2" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "store_total_as" : "total_noise" , "duration": 0 , "nexts" : ["PROP3"] },
                                 
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP3" , "agents_type" : "Citizen" , "agents_property_name" : "CO2" , "store_total_as" : "total_CO2" , "duration": 0 , "nexts" : ["HEATMAP"] } ,
-                                
-                                { "@gwsclass": "PropertyHeatmapBehaviour" , "id": "HEATMAP" , "agents_type" : "Citizen" , "property_to_heatmap" : "vehicle_noise" , "store_heatmap_data_as" : "noise_heatmap" , "duration": 0 , "nexts" : ["DISPLAY"] }
+                                { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP3" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "store_total_as" : "total_CO2" , "duration": 0 , "nexts" : ["DISPLAY"] } 
                                 
                             ] } ,
                             

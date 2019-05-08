@@ -59,8 +59,9 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     GWSMassUnit emission = pollute_skill->pollute( vehicle_type , pollutant , vehicle_speed , gradient , roadType , trafficSit );
 
     // Save polluted amount:
-    agent->setProperty( pollutant , agent->getProperty( pollutant ).toDouble() + emission.number() );
+    agent->setProperty( "total_" + pollutant , agent->getProperty( pollutant ).toDouble() + emission.number() );
+    agent->setProperty( "current_" + pollutant , emission.number() );
 
-   return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 }
