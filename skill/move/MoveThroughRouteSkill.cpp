@@ -91,6 +91,8 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     // If pending_route_edges is not empty
     QSharedPointer<GWSAgent> current_edge_agent = this->pending_route_edges.at(0);
 
+    agent->setProperty( STORE_CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "type" ) );
+
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
 

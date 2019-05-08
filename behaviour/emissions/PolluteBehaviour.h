@@ -3,6 +3,8 @@
 
 #include "../../behaviour/Behaviour.h"
 
+#include "../../util/geometry/Coordinate.h"
+
 class PolluteBehaviour : public GWSBehaviour
 {
     Q_OBJECT
@@ -13,7 +15,7 @@ public:
 
     // PARAMETERS
     static QString VEHICLE_TYPE;
-    static QString VEHICLE_SUBTYPE;
+    static QString TRANSPORT_MODE;
     static QString ABATEMENT_TYPE;
     static QString POLLUTANT_TYPE;
     static QString CURRENT_ROAD_GRADIENT;
@@ -27,6 +29,9 @@ protected slots:
 
 protected:
     virtual void initialize();
+
+private:
+    GWSCoordinate last_position;
 
 };
 
