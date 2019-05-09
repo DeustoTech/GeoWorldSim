@@ -400,7 +400,7 @@ double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
     // Denormalize from [ -1 , 1 ] range:
     //qDebug() << normalized_value << min << max << this->output_positions.keys();
     //normalized_value = ( normalized_value / 2.0 + 0.5) * ( max - min ) + min;
-    qDebug() << normalized_value;
+    //qDebug() << normalized_value;
     return normalized_value;
 
 }

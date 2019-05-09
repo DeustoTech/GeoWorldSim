@@ -9,6 +9,7 @@
 #include "../../agent/Agent.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
+#include "../../util/geometry/GeometryGetters.h"
 
 QString GWSGrid::GRID_MAX_VALUE_PROP = "grid_max_value";
 QString GWSGrid::GRID_MIN_VALUE_PROP = "grid_min_value";
@@ -20,7 +21,8 @@ QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
  EXPORTERS
 **********************************************************************/
 
-/*QJsonObject GWSGrid::serialize() const{
+QJsonObject GWSGrid::serialize() const{
+
     QJsonObject json;
     json.insert( GRID_MAX_VALUE_PROP , this->max_value );
     json.insert( GRID_MIN_VALUE_PROP , this->min_value );
@@ -29,11 +31,20 @@ QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
     geojson.insert( "type" , "GeometryCollection" );
     QJsonArray geometries;
 
+    QSharedPointer<GWSAgent> agent;
+
+
     // BOUNDS
-    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinX();
-    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxX();
-    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMaxY();
-    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( this->agent )->getGeometryMinY();
+    GWSGeometry geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    double left =   GWSGeometryGetters::getGeometryMinX( geom );
+    double right =  GWSGeometryGetters::getGeometryMaxX( geom );
+    double top =    GWSGeometryGetters::getGeometryMaxY( geom );
+    double bottom = GWSGeometryGetters::getGeometryMinY( geom );
+
+    /*double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX();
+    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxX();
+    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY();
+    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY();*/
 
     for(int i = 0 ; i < this->getGridXSize() ; i++){
         for(int j = 0 ; j < this->getGridYSize() ; j++ ){
@@ -67,7 +78,7 @@ QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
     json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );
 
     return json;
-}*/
+}
 
 /**********************************************************************
  GETTERS

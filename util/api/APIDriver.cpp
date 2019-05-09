@@ -117,6 +117,9 @@ QNetworkReply* GWSAPIDriver::operation(QNetworkAccessManager::Operation operatio
 
     // Request
     QNetworkRequest request(url);
+    QSslConfiguration sslConfiguration( QSslConfiguration::defaultConfiguration() );
+    sslConfiguration.setProtocol( QSsl::TlsV1_2 );
+    request.setSslConfiguration( sslConfiguration );
 
     // Add request headers
     foreach ( const QString header, headers.keys() ){

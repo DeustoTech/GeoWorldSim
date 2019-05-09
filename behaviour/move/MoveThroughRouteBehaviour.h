@@ -17,7 +17,7 @@ public:
     static QString AGENT_ROUTE_DESTINATION_Y_VALUE;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
-    static QString AGENT_ROUTE_NETWORK_TYPE;
+    static QString TRANSPORT_NETWORK_TYPE;
 
 protected slots:
     virtual QPair< double , QJsonArray > behave();

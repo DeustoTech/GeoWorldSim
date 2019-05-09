@@ -46,7 +46,6 @@ HEADERS += \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.h\
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/PropertyStatisticsBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
@@ -70,13 +69,13 @@ HEADERS += \
     ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.hpp \
     ../../util/routing/EdgeVisitor.hpp \
+    ../../util/routing/Routing.h \
     ../../util/routing/TSPRouting.h \
             ## GRAPH
     ../../util/graph/Edge.h \
             ## GRID
-    ../../util/grid/Grid.h \
+    #../../util/grid/Grid.h \
     ../../util/ai/Intelligence.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -92,12 +91,14 @@ HEADERS += \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-        # AGENTS
+        # AGENTS`
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
-    GTAlgBehaviour.h \
-    ../../behaviour/electricTravelling/GTAlgBehaviour.h
-    #../../skill/pollute/VehiclePolluteSkill.h
+    ../../behaviour/emissions/PolluteBehaviour.h \
+    ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
+    ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
+    ../../skill/move/StoreMultiRouteSkill.h \
+    ../../behaviour/property/PropertyHeatmapBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -116,7 +117,6 @@ SOURCES += main.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/electricTravelling/ChangeColorRangeBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
@@ -129,6 +129,7 @@ SOURCES += main.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
+    ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
             ## DATASOURCES
     ../../util/datasource/AgentGeneratorDatasource.cpp \
@@ -143,7 +144,7 @@ SOURCES += main.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
             ## GRID
-    ../../util/grid/Grid.cpp \
+    #../../util/grid/Grid.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
             ## RANDOM
@@ -160,8 +161,11 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
-    ../../behaviour/electricTravelling/GTAlgBehaviour.cpp
-    #../../skill/pollute/VehiclePolluteSkill.cpp
+    ../../behaviour/emissions/PolluteBehaviour.cpp \
+    ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
+    ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
+    ../../skill/move/StoreMultiRouteSkill.cpp \
+    ../../behaviour/property/PropertyHeatmapBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

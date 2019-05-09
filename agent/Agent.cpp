@@ -118,16 +118,6 @@ QJsonObject GWSAgent::serialize() const{
     json.insert( "@behaviours" , behaviours );
     */
 
-    // INTERNAL TIME
-    {
-        qint64 time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
-        if( time < 0 ){
-            json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
-        } else {
-            json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , time );
-        }
-    }
-
     return json;
 }
 
@@ -161,11 +151,11 @@ bool GWSAgent::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
 }
 
-QSharedPointer<GWSSkill> GWSAgent::getSkill( QString class_name ) const{
+QSharedPointer<GWSSkill> GWSAgent::getSkill( QString class_name , bool silent ) const{
       if( !this->skills ){ return Q_NULLPTR; }
     const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
-        qDebug() << QString("%1:%2 has no skills %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name );
+        if( !silent ){ qDebug() << QString("%1:%2 has no skill %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name ); }
         return Q_NULLPTR;
     }
     return objs.at(0).dynamicCast<GWSSkill>();
@@ -282,7 +272,7 @@ void GWSAgent::behave(){
         qWarning() << QString("Agent %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getUID() );
     }
 
-    qint64 behaving_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getSharedPointer() );
+    qint64 behaving_time = this->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
     if( this->to_be_executed_behaviours.isEmpty() ){
         qDebug() << QString("Agent %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getUID() );
@@ -321,5 +311,5 @@ void GWSAgent::behave(){
 
     // Store to be executed in next tick
     this->to_be_executed_behaviours = next_execute_behaviours;
-    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getSharedPointer() , behaving_time + (max_behaviour_time_to_increment * 1000) );
+    this->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , behaving_time + (max_behaviour_time_to_increment * 1000) );
 }

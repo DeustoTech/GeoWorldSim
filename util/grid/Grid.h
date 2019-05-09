@@ -39,6 +39,9 @@ struct GWSGrid
     virtual double getGridCellValue( int grid_x , int grid_y ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
+    // EXPORTERS
+    virtual QJsonObject serialize() const;
+
     // SETTERS
     void setGridMaxValue( double max );
     void setGridMinValue( double min );

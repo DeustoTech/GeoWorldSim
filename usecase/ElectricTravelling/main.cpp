@@ -56,7 +56,9 @@
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
-#include "../../behaviour/electricTravelling/GTAlgBehaviour.h"
+#include "../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h"
+#include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
+#include "../../behaviour/emissions/PolluteBehaviour.h"
 
 int main(int argc, char* argv[])
 {
@@ -83,7 +85,9 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GTAlgBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
 
 
     // CREATE POPULATION
@@ -92,72 +96,72 @@ int main(int argc, char* argv[])
     QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
      foreach( QString key , json_population.keys() ) {
 
-        // Population type:
-        QJsonObject population = json_population[ key ].toObject();
+         // Population type:
+         QJsonObject population = json_population[ key ].toObject();
 
-        if ( !population.value( "template" ).isNull() && !population.value( "datasources" ).isNull() ){
+         if ( !population.value( "template" ).isNull() && !population.value( "datasources" ).isNull() ){
 
-            QJsonArray datasources = population.value( "datasources" ).toArray();
+             QJsonArray datasources = population.value( "datasources" ).toArray();
 
-            for ( int i = 0; i <  datasources.size() ; ++i ){
+             for ( int i = 0; i <  datasources.size() ; ++i ){
 
-                QJsonObject datasource = datasources.at( i ).toObject();
-                QString datasource_id = datasource.value("id").toString();
-                int limit = datasource.value("limit").toInt(-1);
-                QJsonArray entities_type = datasource.value("entities").toArray();
-                if( datasource_id.isEmpty() || entities_type.isEmpty() ){
-                    qWarning() << "Asked to download from scenario without ID or entities type";
-                }
+                 QJsonObject datasource = datasources.at( i ).toObject();
+                 QString scenario_id = datasource.value("scenario_id").toString();
+                 int limit = datasource.value("limit").toInt(-1);
+                 QString entity_type = datasource.value("entity_type").toString();
+                 QString entity_filter = datasource.value("entity_filter").toString();
+                 if( scenario_id.isEmpty() || entity_type.isEmpty() ){
+                     qWarning() << "Asked to download from scenario without ID or entity_type";
+                 }
 
-                for ( int j = 0; j < entities_type.size() ; ++j ){
+                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
+                 pending_datasources.append( ds );
 
-                    QString entity = entities_type.at( j ).toString();
+                 ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                     pending_datasources.removeAll( ds );
+                     ds->deleteLater();
+                     if( pending_datasources.isEmpty() ){
+                         qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
+                         GWSExecutionEnvironment::globalInstance()->run();
+                     }
+                 });
 
-                    GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , datasource_id,  entity , limit > 0 ? limit : 999999999999999 );
-                    pending_datasources.append( ds );
+             }
+         }
 
-                    ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
-                        pending_datasources.removeAll( ds );
-                        ds->deleteLater();
-                        if( pending_datasources.isEmpty() ){
-                            qDebug() << "Loading time" << datasource_download_time.secsTo( QDateTime::currentDateTime() );
-                            GWSExecutionEnvironment::globalInstance()->run();
-                        }
-                    });
-                }
-
-
-
-            }
-        }
-
-        if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
-            for ( int i = 0; i < population.value("amount").toInt() ; i++){
-                // Use template to generate amount agents
-                GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
-            }
-        }
-       qDebug() << QString("Creating population %1").arg( key );
-    }
-    if( pending_datasources.isEmpty() ){
-        GWSExecutionEnvironment::globalInstance()->run();
-    }
-
-
-
-    // LISTEN TO EXTERNAL SIMULATIONS
-    // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-    QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
-    foreach( QString key , json_external_listeners.keys() ) {
-
-        // Get simulation to be listened to from config.json file
-        if ( !json_external_listeners[ key ].isNull() ){
-            new GWSExternalListener( json_external_listeners[ key ].toString() );
-        }
-        qDebug() << QString("Creating external listener %1").arg( key );
+         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
+             for ( int i = 0; i < population.value("amount").toInt() ; i++){
+                 // Use template to generate amount agents
+                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
+             }
+         }
+        qDebug() << QString("Creating population %1").arg( key );
+     }
+     if( pending_datasources.isEmpty() ){
+         GWSExecutionEnvironment::globalInstance()->run();
      }
 
 
-    app->exec();
 
-}
+     // LISTEN TO EXTERNAL SIMULATIONS
+     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
+     QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
+     foreach( QString key , json_external_listeners.keys() ) {
+
+         // Get simulation to be listened to from config.json file
+         if ( !json_external_listeners[ key ].isNull() ){
+             new GWSExternalListener( json_external_listeners[ key ].toString() );
+         }
+         qDebug() << QString("Creating external listener %1").arg( key );
+      }
+
+
+     app->exec();
+
+ }
+
+
+
+
+
+

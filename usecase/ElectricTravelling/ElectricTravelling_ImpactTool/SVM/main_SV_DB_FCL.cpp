@@ -34,7 +34,6 @@ int main(int argc, char **argv)
         if( !db.open() )
           qWarning() << "ERROR: " << db.lastError();
 
-        QString component;
 
         // List of subsegments of interest:
         QStringList subsegmentList = {
@@ -134,25 +133,21 @@ int main(int argc, char **argv)
 
 
         // SQL query to extract the distinct pollutant components:
-        QStringList componentList;
+        /*QStringList componentList;
         QSqlQuery query( "SELECT DISTINCT component FROM hbefa_all" );
 
         while ( query.next() ){
             componentList.append( query.value(0).toString() );
-        }
+        }*/
+
+
+        QString component = "FCL";
 
 
         // Iterate over each subsegment and component to train the SVM:
         foreach(QString subsegment , subsegmentList){
 
-            for ( int j = 0; j < componentList.size() ; j++){
-
-                component = componentList.at(j);
-
-                qDebug() << subsegment << component;
-
-                QSqlQuery query(  QString( "SELECT gradient, velocity , roadType , trafficSit , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2'" ).arg( subsegment ).arg( component ) );
-
+                QSqlQuery query(  QString( "SELECT gradient, velocity , \"roadType\" , \"trafficSit\" , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2'" ).arg( subsegment ).arg( component ) );
                 QSqlError error = query.lastError();
 
                 if( !query.isActive() ){
@@ -172,8 +167,8 @@ int main(int argc, char **argv)
                         int gradient = query.value(0).toInt();
                         double velocity = query.value(1).toDouble();
                         QString roadType = query.value(2).toString();
-                        double trafficSit = query.value(2).toDouble();
-                        double efa = query.value(2).toDouble();
+                        double trafficSit = query.value(3).toDouble();
+                        double efa = query.value(4).toDouble();
 
                         input.insert( "gradient" , gradient);
                         input.insert( "velocity" , velocity);
@@ -190,7 +185,7 @@ int main(int argc, char **argv)
                 }
 
                 QString replaced = subsegment;
-                QString path =  "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + replaced.replace( ' ' , '_') + "/" + component ;
+                QString path =  "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/FCL/" + replaced.replace( ' ' , '_') + "/" + component ;
 
                 QDir dir( path );
                 if ( !dir.exists() ){
@@ -207,7 +202,7 @@ int main(int argc, char **argv)
 
             }
 
-        }
+
 
 
 

@@ -122,25 +122,27 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
  **/
 QPair< double , QJsonArray > GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
+    QSharedPointer<GWSAgent> agent = this->getAgent();
     //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     QPair< double , QJsonArray > nexts;
     this->behaving_time = behaviour_ticked_time;
 
-    this->getAgent()->incrementBusy();
+    agent->incrementBusy();
     nexts = this->behave();
-    this->getAgent()->decrementBusy();
+    agent->decrementBusy();
 
     // Calculate how much to increment agent internal time
     qint64 increment_time = qMax( 100.0 , this->getProperty( BEHAVIOUR_DURATION ).toDouble() * 1000 ); // At least 0.1 seconds
-    qint64 agent_current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
+    qint64 agent_current_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+
     if( agent_current_time < 0 ){
         agent_current_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     }
 
     // Compare how much has been spent or if some other behaviour incremented the time
     qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
-    GWSTimeEnvironment::globalInstance()->setAgentInternalTime( this->getAgent() , max_time );
+    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , max_time );
     return nexts;
 }
 

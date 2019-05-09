@@ -4,9 +4,9 @@
  GETTERS
 **********************************************************************/
 
-QString GWSEdge::getUID() const{
+/*QString GWSEdge::getUID() const{
     return this->type + "::" + this->getFromNodeUID() + "->" + this->getToNodeUID();
-}
+}*/
 
 bool GWSEdge::isValid() const{
     return !this->getFromNodeUID().isEmpty() && !this->getToNodeUID().isEmpty();

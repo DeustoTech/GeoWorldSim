@@ -21,7 +21,7 @@ QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
     double B_prop = 0;
     double vref = 70.0;
 
-    GWSSpeedUnit vehicle_speed = this->getProperty( MoveSkill::STORE_MAX_SPEED_PROP ).toDouble();
+    GWSSpeedUnit vehicle_speed = this->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).toDouble();
     QString vehicle_type = this->getProperty( VEHICLE_TYPE ).toString();
 
     if( vehicle_type.toUpper() == "CAR" ){

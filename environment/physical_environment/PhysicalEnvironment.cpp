@@ -93,7 +93,7 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
     QSharedPointer<GWSAgent> nearest = Q_NULLPTR;
     GWSLengthUnit nearest_distance = -1;
     foreach (QSharedPointer<GWSAgent> agent , agents) {
-        GWSGeometry geom = this->getGeometry( agent );
+        GWSGeometry geom = GWSGeometry( agent->getProperty( GEOMETRY_PROP ).toObject() );
         if( !geom.isValid() ){
             continue;
         }
@@ -145,11 +145,6 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
         return;
     }
 
-    // Add the new agents geometry
-    if( !this->agent_ids.contains( agent_uid ) ){
-        this->agent_ids.append( agent_uid );
-    }
-
     this->upsertAgentToIndex( agent , geom );
 
     GWSEnvironment::registerAgent( agent );
@@ -171,7 +166,6 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
             this->environment_agent_indexes.value( family )->remove( agent_id );
         }
     }
-    this->agent_ids.removeAll( agent_id );
 }
 
 /**********************************************************************
@@ -185,8 +179,12 @@ void GWSPhysicalEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, 
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        this->mutex.lock();
-        if( !this->environment_agent_indexes.keys().contains( family ) ){
+        this->mutex.lockForRead();
+        if( !this->environment_agent_index_types.contains( family ) ){
+            this->mutex.unlock();
+
+            this->mutex.lockForWrite();
+            this->environment_agent_index_types.append( family );
             this->environment_agent_indexes.insert( family , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
         }
         this->mutex.unlock();

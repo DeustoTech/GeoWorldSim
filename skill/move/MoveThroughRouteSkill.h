@@ -26,8 +26,8 @@ public:
 
 protected:
 
-    QList<GWSNetworkEdge> pending_route;
-    QList<GWSCoordinate> pending_edge_coordinates;
+    QList< QSharedPointer<GWSAgent> > pending_route_edges;
+    QList< GWSCoordinate > pending_edge_coordinates;
     GWSCoordinate last_route_started_from;
 
 };

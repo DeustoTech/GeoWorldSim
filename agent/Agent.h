@@ -69,7 +69,7 @@ public:
 
     // SKILLS
     bool hasSkill( QString class_name ) const;
-    QSharedPointer<GWSSkill> getSkill( QString class_name ) const;
+    QSharedPointer<GWSSkill> getSkill( QString class_name , bool silent = false ) const;
     //template <class T> QSharedPointer<T> getSkill( QString class_name ) const;
     QList< QSharedPointer<GWSSkill> > getSkills( QString class_name ) const;
     //template <class T> QList< QSharedPointer<T> > getSkills( QString class_name ) const;
