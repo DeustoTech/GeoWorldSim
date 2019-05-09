@@ -42,7 +42,6 @@ HEADERS += \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../skill/move/CalculateTSPSkill.h \
     ../../skill/view/ViewSkill.h \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
@@ -60,9 +59,6 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/random/SetRandomColorBehaviour.h \
     ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
@@ -138,14 +134,10 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
-    ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/property/GatherAgentPropertyBehaviour.cpp \
