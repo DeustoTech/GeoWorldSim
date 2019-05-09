@@ -89,6 +89,7 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "refEmitter" , emitter->getUID() );
     transaction.insert( "refReceiver" , receiver->getUID() );
+    transaction.insert( "geometry" , emitter->getProperty("geometry").toObject() );
     transaction.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
     transaction.insert( "value" , value_to_be_transferred );
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
