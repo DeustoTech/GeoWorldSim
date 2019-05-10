@@ -42,11 +42,11 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< GWSNetworkEdge > > closest_coor_and_route =
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > >  closest_coor_and_route =
             GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
-    QList< GWSNetworkEdge > closest_route = closest_coor_and_route.second;
+    QList< QSharedPointer<GWSAgent> > closest_route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
@@ -58,15 +58,23 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     {
         // From Agent to route start
-        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_route.at( 0 ).getFromCoordinate() );
+        GWSGeometry closest_geom = closest_route.at( 0 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        GWSCoordinate closest_coor = closest_geom.getCentroid();
+
+        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_coor );
 
         // During route start til route end
-        foreach ( GWSNetworkEdge edge , closest_route ){
-            closest_route_distance = closest_route_distance + edge.getLength();
+        foreach ( QSharedPointer<GWSAgent> edge , closest_route ){
+
+            GWSGeometry edge_geom = edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+            GWSCoordinate edge_coor = edge_geom.getCentroid();
+            closest_route_distance = closest_route_distance + agent_coor.getDistance( edge_coor );
         }
 
         // From route end to nearest_agent
-        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( closest_route.at( closest_route.size() - 1 ).getToCoordinate() );
+        GWSGeometry geom = closest_route.at( closest_route.size() - 1 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        GWSCoordinate coor = geom.getCentroid();
+        closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( coor );
     }
 
     // Extract and store closest node ID and coordinates:
@@ -80,10 +88,17 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     QJsonObject geojson;
     geojson.insert( "type" , "LineString" );
+
     QJsonArray coordinates;
     coordinates.append( QJsonArray({ agent_coor.getX() , agent_coor.getY() , agent_coor.getZ() }) );
-    foreach (GWSNetworkEdge edge , closest_coor_and_route.second ) {
-        coordinates.append( QJsonArray( { edge.getFromCoordinate().getX() , edge.getFromCoordinate().getY() , edge.getFromCoordinate().getZ() } ) );
+
+    foreach ( QSharedPointer<GWSAgent> edge , closest_coor_and_route.second ) {
+
+        GWSGeometry edge_geom = edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        GWSCoordinate edge_coor = edge_geom.getCentroid();
+
+        coordinates.append( QJsonArray( { edge_coor.getX() , edge_coor.getY() , edge_coor.getZ() } ) );
+
     }
     coordinates.append( QJsonArray({ closest_coor_and_route.first.getX() , closest_coor_and_route.first.getY() , closest_coor_and_route.first.getZ() }) );
     geojson.insert( "coordinates" , coordinates );

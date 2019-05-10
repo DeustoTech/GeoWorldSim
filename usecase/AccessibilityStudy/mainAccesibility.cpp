@@ -19,17 +19,14 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/geometry/GenerateAgentGeometryBehaviour.h"
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/property/CompareAgentPropertyBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
-#include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
-#include "../../behaviour/accessibility/DetermineAccessibilityBehaviour.h"
 #include "../../behaviour/accessibility/FindDirectClosestBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
-#include "../../behaviour/random/ChooseRandomValueFromSetBehaviour.h"
 #include "../../behaviour/property/AddGWSGroupPropertyBehaviour.h"
+#include "../../behaviour/transaction/TransactionBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -39,7 +36,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
-#include "../../environment/network_environment/OldNetworkEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
@@ -48,7 +45,7 @@
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/AgentGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
-#include "../../util/routing/Routing.hpp"
+#include "../../util/routing/Routing.h"
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
 #include "../../util/svm/Svm.h"
@@ -74,17 +71,14 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( HumanAgent::staticMetaObject );
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindDirectClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( CompareAgentPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( ListenToMessagesBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( DetermineAccessibilityBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( ChooseRandomValueFromSetBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( AddGWSGroupPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
 
 
     // CREATE POPULATION
@@ -106,11 +100,12 @@ int main(int argc, char* argv[])
                 QString scenario_id = datasource.value("scenario_id").toString();
                 int limit = datasource.value("limit").toInt(-1);
                 QString entity_type = datasource.value("entity_type").toString();
+                QString entity_filter = datasource.value("entity_filter").toString();
                 if( scenario_id.isEmpty() || entity_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 
-                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , limit > 0 ? limit : 999999999999999 );
+                GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999 );
                 pending_datasources.append( ds );
 
                 ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){

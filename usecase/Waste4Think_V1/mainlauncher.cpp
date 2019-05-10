@@ -45,8 +45,6 @@
 #include "../../behaviour/property/SetAgentPropertyBehaviour.h"
 #include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/property/MathAgentPropertyBehaviour.h"
-#include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
-
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
