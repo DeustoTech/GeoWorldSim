@@ -47,10 +47,6 @@ struct GWSGrid
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
 
-    // OPERATORS
-    //GWSGrid* operator+(const double number);
-    //GWSGrid* operator++();
-
     // METHODS
     //GWSGrid getSubGrid( GWSEnvelope bounds );
     //QList<GWSEnvelope> getSurroundingCells( GWSCoordinate coor );

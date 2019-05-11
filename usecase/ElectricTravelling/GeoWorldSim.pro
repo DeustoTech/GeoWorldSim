@@ -10,7 +10,7 @@ QT          += network
 QT          += websockets # sudo apt-get install libqt5websockets5-dev
 QT          += sql # sudo apt-get install libqt5sql5 libqt5sql5-psql
 QT          += xml
-QT          += network
+QT          += network # sudo apt-get install openssl
 QT          += multimedia # For video exporter sudo apt-get install qtmultimedia5-dev
 
 # ACTIVATE QT-COMPILER OPTIMIZATION
