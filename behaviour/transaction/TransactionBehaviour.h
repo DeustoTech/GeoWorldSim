@@ -14,7 +14,6 @@ public:
     Q_INVOKABLE explicit TransactionBehaviour();
 
     // PROPERTIES
-    static QString PROPERTY_NAME_TO_TRANSFER;
     static QString TRANSACTION_TYPE;
     static QString TRANSACTION_DATA;
     static QString EMITTING_AGENT_ID;

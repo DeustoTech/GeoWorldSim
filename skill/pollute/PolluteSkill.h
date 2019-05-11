@@ -15,15 +15,14 @@ public:
      Q_INVOKABLE explicit PolluteSkill();
     ~PolluteSkill();
 
-
     // PROPERTIES
     static QString POLLUTANT_TYPE_PROP;
     static QString VEHICLE_TYPE_PROP;
 
-    virtual GWSMassUnit pollute( QString vehicle_type , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit );
+    virtual GWSMassUnit pollute( QString vehicle_type , QString transport_mode , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit , GWSLengthUnit distance );
 
 private:
-    GWSSvm* svm = Q_NULLPTR;
+    QMap< QString , GWSSvm* > models; // QMAP< POLLUTANT , SVM >;
 };
 
 #endif // POLLUTESKILL_H

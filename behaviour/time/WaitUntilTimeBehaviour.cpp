@@ -22,7 +22,7 @@ WaitUntilTimeBehaviour::WaitUntilTimeBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > WaitUntilTimeBehaviour::behave(){
 
-    qint64 current_time = GWSTimeEnvironment::globalInstance()->getAgentInternalTime( this->getAgent() );
+    qint64 current_time = this->getAgent()->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toInt();
     QDateTime current_datetime = QDateTime::fromMSecsSinceEpoch( current_time );
 
     int year = this->getProperty( WAIT_UNTIL_YEAR ).toDouble( current_datetime.date().year() );

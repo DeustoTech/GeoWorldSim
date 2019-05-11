@@ -30,16 +30,16 @@ GWSCoordinate GWSPhysicalEnvironment::getRandomCoordinate() const{
     return this->environment_bounds.getCentroid();
 }
 
-/*const GWSGeometry GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
+const GWSGeometry GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
     return this->getGeometry( agent->getUID() );
-}*/
+}
 
-/*const GWSGeometry GWSPhysicalEnvironment::getGeometry( QString agent_id ) const{
+const GWSGeometry GWSPhysicalEnvironment::getGeometry( QString agent_id ) const{
     if( this->environment_agent_indexes.keys().contains( GWSAgent::staticMetaObject.className() ) ){
         return this->environment_agent_indexes.value( GWSAgent::staticMetaObject.className() )->getGeometry( agent_id );
     }
     return GWSGeometry();
-}*/
+}
 
 QStringList GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
     QStringList agents;

@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         QString component;
 
         // List of subsegments of interest:
-        QStringList subsegmentList = {
+        QStringList subsegmentList1 = {
                                         // DIESEL CARS
                                        "PC diesel <1,4L Euro-1",
                                        "PC diesel <1,4L Euro-2",
@@ -132,6 +132,12 @@ int main(int argc, char **argv)
                                        "renfe463"
                                         } ;
 
+        QStringList subsegmentList = {  "121.000000inductionLiIon",
+                                        "121.000000synchronousLiIon",
+                                        "51.250000inductionLiIon",
+                                        "51.250000synchronousLiIon",
+                                        "76.280000inductionLiIon",
+                                        "76.280000synchronousLiIon"};
 
         // SQL query to extract the distinct pollutant components:
         QStringList componentList;
@@ -151,7 +157,7 @@ int main(int argc, char **argv)
 
                 qDebug() << subsegment << component;
 
-                QSqlQuery query(  QString( "SELECT gradient, velocity , roadType , trafficSit , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2'" ).arg( subsegment ).arg( component ) );
+                QSqlQuery query(  QString( "SELECT gradient, velocity , \"EFA\" FROM hbefa_all WHERE subsegment = '%1'  AND component = '%2'" ).arg( subsegment ).arg( component ) );
 
                 QSqlError error = query.lastError();
 
@@ -171,14 +177,14 @@ int main(int argc, char **argv)
 
                         int gradient = query.value(0).toInt();
                         double velocity = query.value(1).toDouble();
-                        QString roadType = query.value(2).toString();
-                        double trafficSit = query.value(2).toDouble();
+                        //QString roadType = query.value(2).toString();
+                        //double trafficSit = query.value(2).toDouble();
                         double efa = query.value(2).toDouble();
 
                         input.insert( "gradient" , gradient);
                         input.insert( "velocity" , velocity);
-                        input.insert( "roadType" , roadType);
-                        input.insert( "trafficSit" , trafficSit);
+                        //input.insert( "roadType" , roadType);
+                        //input.insert( "trafficSit" , trafficSit);
                         input_list.append( input);
 
                         output.insert( "EFA", efa );

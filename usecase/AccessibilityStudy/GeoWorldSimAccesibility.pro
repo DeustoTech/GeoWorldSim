@@ -41,16 +41,13 @@ HEADERS += \
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/property/CompareAgentPropertyBehaviour.h \
+    ../../behaviour/property/TransferAgentPropertyBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
-    ../../behaviour/information/ListenToMessagesBehaviour.h \
-    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.h \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
-    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
         # UTILS
     ../../util/io/log/Logger.h \
     ../../util/io/csv/CsvImporter.h \
@@ -67,15 +64,12 @@ HEADERS += \
     ../../util/geometry/GeometryGetters.h \
     ../../util/graph/Edge.h \
     ../../util/api/APIDriver.h \
-    ../../util/routing/Routing.hpp \
+    ../../util/routing/Routing.h \
     ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.h \
     ../../util/datasource/AgentGeneratorDatasource.h \
-            ## GRID
-    ../../util/grid/Grid.h \
-    ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
     ../../util/distributed/ExternalListener.h \
@@ -89,7 +83,6 @@ HEADERS += \
     ../../environment/agent_environment/AgentEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
@@ -99,7 +92,8 @@ HEADERS += \
         # AGENTS
     #agent/person/Person.h \
     HumanAgent.h \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
+    ../../behaviour/transaction/TransactionBehaviour.h
 
 
 
@@ -114,20 +108,17 @@ SOURCES += mainAccesibility.cpp \
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/property/CompareAgentPropertyBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
-    ../../behaviour/information/ListenToMessagesBehaviour.cpp \
-    ../../behaviour/accessibility/DetermineAccessibilityBehaviour.cpp \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
-    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
         # UTILS
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
+    ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \
@@ -143,10 +134,6 @@ SOURCES += mainAccesibility.cpp \
     ../../util/geometry/GeometryTransformators.cpp \
     ../../util/geometry/GeometryGetters.cpp \
     ../../util/graph/Edge.cpp \
-            ## GRID
-    ../../util/grid/Grid.cpp \
-    #../../util/grid/NumberGrid.cpp \
-    ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
     ../../util/distributed/ExternalListener.cpp \
@@ -163,13 +150,13 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/social_environment/SocialRelation.cpp \
         # AGENTS
     HumanAgent.cpp \
-    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp
+    ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
+    ../../behaviour/transaction/TransactionBehaviour.cpp
 
 
 

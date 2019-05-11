@@ -2,7 +2,7 @@
 #define GWSROUTING_H
 
 #include <QObject>
-#include <QMutex>
+#include <QReadWriteLock>
 #include <QMap>
 
 #include <lemon/core.h>
@@ -36,7 +36,7 @@ protected:
 
 protected:
 
-    QMutex mutex;
+    QReadWriteLock mutex;
 
     // Used to create nodes and arcs
     lemon::ListDigraph* routing_graph = Q_NULLPTR;

@@ -127,10 +127,13 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
         lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
 
         // Check in cache
+        this->mutex.lockForRead();
         if( this->routes_cache.keys().contains( start ) && this->routes_cache.value( start ).keys().contains( end ) ){
             result_routes.append( this->routes_cache.value( start ).value( end ) );
+            this->mutex.unlock();
             continue;
         }
+        this->mutex.unlock();
 
         if ( this->routing_graph->id( end ) < 0 ){
             this->cachePath( start , end , route );
@@ -140,11 +143,14 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
 
         // Get route
         lemon::Path<lemon::ListDigraph> shortest_path = dijkstra_algorithm.path( end );
+
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
+            this->mutex.lockForRead();
             if( this->arc_to_object_ids->keys().contains( arc ) ){
                 route.append( this->arc_to_object_ids->value( arc ) );
             }
+            this->mutex.unlock();
         }
 
         // Save in cache
@@ -169,7 +175,7 @@ void GWSRouting::upsert(QString object_id , const GWSEdge edge){
         QString from_hash = edge.getFromNodeUID();
         lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
 
-        this->mutex.lock();
+        this->mutex.lockForWrite();
         if( this->routing_graph->id( s ) <= 0 ){
             s = this->routing_graph->addNode();
             this->hash_to_node->insert( from_hash , s );
@@ -180,7 +186,7 @@ void GWSRouting::upsert(QString object_id , const GWSEdge edge){
         QString to_hash = edge.getToNodeUID();
         lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
 
-        this->mutex.lock();
+        this->mutex.lockForWrite();
         if( this->routing_graph->id( e ) <= 0 ){
             e = this->routing_graph->addNode();
             this->hash_to_node->insert( to_hash , e );

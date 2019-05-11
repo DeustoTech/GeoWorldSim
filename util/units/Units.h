@@ -25,6 +25,7 @@ struct GWSUnit {
 
     // GETTERS
     double number() const { return value; }
+    bool isValid() const { return this->number() == this->number();}
 
     // SETTERS
     GWSUnit operator =(const double value){

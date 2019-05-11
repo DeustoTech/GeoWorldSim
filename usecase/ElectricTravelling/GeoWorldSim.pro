@@ -75,7 +75,7 @@ HEADERS += \
             ## GRAPH
     ../../util/graph/Edge.h \
             ## GRID
-    ../../util/grid/Grid.h \
+    #../../util/grid/Grid.h \
     ../../util/ai/Intelligence.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -91,13 +91,14 @@ HEADERS += \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
-        # AGENTS
+        # AGENTS`
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
+    ../../behaviour/emissions/PolluteBehaviour.h \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
-    ../../skill/move/StoreMultiRouteSkill.h
-    #../../skill/pollute/VehiclePolluteSkill.h
+    ../../skill/move/StoreMultiRouteSkill.h \
+    ../../behaviour/property/PropertyHeatmapBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -143,7 +144,7 @@ SOURCES += main.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
             ## GRID
-    ../../util/grid/Grid.cpp \
+    #../../util/grid/Grid.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
             ## RANDOM
@@ -160,10 +161,11 @@ SOURCES += main.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
+    ../../behaviour/emissions/PolluteBehaviour.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
-    ../../skill/move/StoreMultiRouteSkill.cpp
-    #../../skill/pollute/VehiclePolluteSkill.cpp
+    ../../skill/move/StoreMultiRouteSkill.cpp \
+    ../../behaviour/property/PropertyHeatmapBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

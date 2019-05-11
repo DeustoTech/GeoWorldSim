@@ -67,6 +67,8 @@ QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > > GWSNetworkEnvironment
     for(int i = 0 ; i < get_nearest.size() ; i++ ){
 
         QStringList route = routes_to_all.at( i );
+        if( route.isEmpty() ){ continue; }
+
         QList< QSharedPointer<GWSAgent> > route_agents = GWSAgentEnvironment::globalInstance()->getByUIDS( route );
         if( route_agents.isEmpty() ){ continue; }
 

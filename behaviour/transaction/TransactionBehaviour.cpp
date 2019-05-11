@@ -9,7 +9,6 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
-QString TransactionBehaviour::PROPERTY_NAME_TO_TRANSFER = "property_name_to_transfer";
 QString TransactionBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
 QString TransactionBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
 QString TransactionBehaviour::TRANSACTION_TYPE = "transaction_type";
@@ -37,61 +36,80 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     }
 
-    QJsonValue property_name = this->getProperty( PROPERTY_NAME_TO_TRANSFER );
-    QJsonValue value_to_be_transferred = emitter->getProperty( property_name.toString() );
-    QJsonValue existing_value = receiver->getProperty(  property_name.toString());
-    QJsonValue values_sum;
+    QJsonObject transaction_data = this->getProperty( TRANSACTION_DATA ).toObject();
 
-    switch ( existing_value.type() ) {
-    case QJsonValue::Double : {
-        values_sum = value_to_be_transferred.toDouble() + existing_value.toDouble();
-        break;
-    }
-    case QJsonValue::String : {
-        values_sum = value_to_be_transferred.toString() + value_to_be_transferred.toString();
-        break;
-    }
-    case QJsonValue::Bool : {
-        values_sum = value_to_be_transferred.toBool() + value_to_be_transferred.toBool();
-        break;
-    }
-    case QJsonValue::Array : {
-        QJsonArray existing_array = existing_value.toArray();
-        existing_array.append( value_to_be_transferred );
-        values_sum = existing_array;
-        break;
-    }
-    case QJsonValue::Object : {
-        QJsonObject existing_object = existing_value.toObject();
-        QJsonObject delta = value_to_be_transferred.toObject();
-        foreach( QString key , delta.keys() ){
-            existing_object.insert( key , this->incrementQJsonValue( existing_object[key] , delta[key] ) );
+    foreach( QString key , transaction_data.keys() ){
+
+        QJsonValue value = transaction_data.value( key );
+
+        // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent
+        if( value.toString().startsWith("<") && value.toString().endsWith(">") ){
+            QString property_name = value.toString().remove( 0 , 1 );
+            property_name = property_name.remove( property_name.length() - 1 , 1 );
+            value = emitter->getProperty( property_name );
         }
 
-        values_sum = existing_object;
-        break;
-    }
-    case QJsonValue::Null :
-    default : {
-        values_sum = value_to_be_transferred;
-        break;
-    }
-    }
+        QJsonValue receiver_existing_value = receiver->getProperty( key );
+        QJsonValue values_sum;
 
-    receiver->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , values_sum );
-    emitter->setProperty( this->getProperty( PROPERTY_NAME_TO_TRANSFER ).toString() , QJsonValue() );
+        switch ( receiver_existing_value.type() ) {
+            case QJsonValue::Double : {
+                values_sum = value.toDouble() + receiver_existing_value.toDouble();
+                break;
+            }
+            case QJsonValue::String : {
+                values_sum = value.toString() + receiver_existing_value.toString();
+                break;
+            }
+            case QJsonValue::Bool : {
+                values_sum = value.toBool() + receiver_existing_value.toBool();
+                break;
+            }
+            case QJsonValue::Array : {
+                QJsonArray existing_array = receiver_existing_value.toArray();
+                existing_array.append( value );
+                values_sum = existing_array;
+                break;
+            }
+            case QJsonValue::Object : {
+                QJsonObject existing_object = receiver_existing_value.toObject();
+                QJsonObject delta = value.toObject();
+                foreach( QString key , delta.keys() ){
+                    existing_object.insert( key , this->incrementQJsonValue( existing_object[key] , delta[key] ) );
+                }
 
-    // Store transfers log
-    QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
-    QString id = QString("%1%2%3").arg(emitter->getUID()).arg(receiver->getUID()).arg(GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ));
-    transaction.insert( GWSObject::GWS_UID_PROP , id );
-    transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-    transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-    transaction.insert( "refEmitter" , emitter->getUID() );
-    transaction.insert( "refReceiver" , receiver->getUID() );
-    transaction.insert( "time" , GWSTimeEnvironment::globalInstance()->getAgentInternalTime( emitter ) );
-    transaction.insert( "value" , value_to_be_transferred );
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+                values_sum = existing_object;
+                break;
+            }
+            case QJsonValue::Null :
+            default : {
+                values_sum = value;
+                break;
+            }
+        }
+
+        receiver->setProperty( key , values_sum );
+        emitter->setProperty( key , QJsonValue() );
+
+        // Store transfers log
+        QJsonObject transaction;
+
+        QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
+        transaction.insert( GWSObject::GWS_UID_PROP , id );
+
+        transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+        transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+
+        transaction.insert( "refEmitter" , emitter->getUID() );
+        transaction.insert( "refReceiver" , receiver->getUID() );
+        transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
+
+        transaction.insert( key , values_sum );
+
+        emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+
+    }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

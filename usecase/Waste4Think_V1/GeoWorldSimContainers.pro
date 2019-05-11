@@ -42,7 +42,6 @@ HEADERS += \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
     ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../skill/move/CalculateTSPSkill.h \
     ../../skill/view/ViewSkill.h \
     ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
@@ -52,6 +51,7 @@ HEADERS += \
     ../../util/datasource/AgentGeneratorDatasource.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/property/GatherAgentPropertyBehaviour.h \
@@ -60,9 +60,6 @@ HEADERS += \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/move/SetNextTSPDestinationBehaviour.h \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.h \
     ../../behaviour/random/SetRandomColorBehaviour.h \
     ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \
@@ -83,13 +80,10 @@ HEADERS += \
     ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.hpp \
+    ../../util/routing/Routing.h \
     ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/TSPRouting.h \
             ## GRID
-    ../../util/grid/Grid.h \
-   # ../../util/grid/AgentGrid.h \
-    ../../util/grid/GridCoordinatesConversor.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
     ../../util/distributed/ExternalListener.h \
@@ -104,7 +98,6 @@ HEADERS += \
     ../../environment/agent_environment/AgentEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
-    ../../environment/grid_environment/GridEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
@@ -138,14 +131,10 @@ SOURCES += mainlauncher.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
     ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
-    ../../skill/move/CalculateTSPSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/move/CalculateTSPRouteBehaviour.cpp \
     ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
     ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
     ../../behaviour/property/GatherAgentPropertyBehaviour.cpp \
@@ -156,8 +145,9 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
     ../../behaviour/random/SetRandomColorBehaviour.cpp \
     ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
+    ../../behaviour/move/MoveBehaviour.cpp \
+    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
-    ../../behaviour/move/SetNextTSPDestinationBehaviour.cpp \
     ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
     ../../behaviour/property/IncrementPropertyBehaviour.cpp \
         # UTILS
@@ -166,6 +156,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
+    ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \
@@ -181,10 +172,6 @@ SOURCES += mainlauncher.cpp \
     #../../util/graph/Graph.cpp \
     #../../util/graph/GraphUtils.cpp \
             ## GRID
-    ../../util/grid/Grid.cpp \
-    #../../util/grid/NumberGrid.cpp \
-    #../../util/grid/AgentGrid.cpp \
-    ../../util/grid/GridCoordinatesConversor.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
     ../../util/distributed/ExternalListener.cpp \
@@ -202,7 +189,6 @@ SOURCES += mainlauncher.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
-    ../../environment/grid_environment/GridEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/social_environment/SocialRelation.cpp \

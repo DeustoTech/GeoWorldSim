@@ -123,6 +123,8 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
 
     svm_node* x = new svm_node[ inputs.size() + 1 ];
 
+    QJsonObject result;
+
     // Loop over test input pairs:
     for(int i = 0 ; i < inputs.keys().size() ; i++ ){
 
@@ -138,6 +140,8 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
             x[ i ].value = value_double;
         } else {
             qWarning() << QString("Input %1 not contained in training data").arg( hash );
+            result.insert( this->output_positions.keys().at(0) , 0 );
+            return result;
         }
     }
 
@@ -145,7 +149,7 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
     x[ inputs.size() ].index = -1;
 
     // Predict SVM result on test input:
-    QJsonObject result;
+
 
     double normResult = svm_predict( this->model , x );
 
