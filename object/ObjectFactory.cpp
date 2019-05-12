@@ -91,8 +91,68 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     obj->deserialize( json , parent );
 
     // Call initalize hook
-    obj->initialize();
+    obj->afterCreateHook();
 
     // Return object
     return obj;
+}
+
+QJsonValue GWSObjectFactory::incrementValue(QJsonValue existing_value, QJsonValue increment){
+
+    if( existing_value.isNull() ){
+        return increment;
+    }
+
+    if( increment.isNull() ){
+        return existing_value;
+    }
+
+    // Unitary elements (int, double, string, bool)
+
+    if( existing_value.isDouble() ){
+        return existing_value.toDouble() + increment.toDouble();
+    }
+
+    if( existing_value.isString() ){
+        return existing_value.toString() + increment.toString();
+    }
+
+    if( existing_value.isBool() ){
+        return existing_value.toBool() + increment.toBool();
+    }
+
+    // Complex element ARRAY
+
+    {
+        if( existing_value.isArray() ){
+            QJsonArray existing_array = existing_value.toArray();
+
+            if( increment.isArray() ){
+                foreach( QJsonValue v , increment.toArray() ){
+                    existing_array.append( v );
+                }
+            } else {
+                existing_array.append( increment );
+            }
+            return existing_array;
+        }
+    }
+
+    // Complext elements OBJECT
+
+    QJsonObject result;
+
+    if( existing_value.isObject() ){
+        foreach( QString key , existing_value.toObject().keys() ){
+            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
+        }
+    }
+
+    if( increment.isObject() ){
+        foreach( QString key , increment.toObject().keys() ){
+            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
+        }
+    }
+
+    return result;
 }

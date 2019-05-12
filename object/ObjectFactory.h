@@ -22,6 +22,9 @@ public:
     QSharedPointer<GWSObject> fromBytes( QByteArray bytes , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
     QSharedPointer<GWSObject> fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
+    // STATICS
+    static QJsonValue incrementValue(QJsonValue existing_value , QJsonValue increment);
+
 protected:
     GWSObjectFactory();
     GWSObjectFactory(GWSObjectFactory const&);

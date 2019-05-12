@@ -43,6 +43,7 @@ HEADERS += \
     ../../behaviour/Behaviour.h \
     ../../behaviour/information/SendAgentSnapshotBehaviour.h \
     ../../behaviour/property/CompareAgentPropertyBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
     ../../behaviour/property/TransferAgentPropertyBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
     ../../behaviour/property/SetAgentPropertyBehaviour.h \

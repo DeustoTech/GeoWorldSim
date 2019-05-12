@@ -46,7 +46,8 @@ public:
     //void setParent( QSharedPointer<GWSObject> parent );
     bool setProperty(const QString name, const GWSUnit &value);
     bool setProperty(const QString name, const QJsonValue &value);
-    void copyProperties(const GWSObject &other );
+    bool incrementProperty(const QString name , const QJsonValue &value);
+    void copyProperties(const GWSObject &other);
 
     // EVENTS
     bool event(QEvent *event);
@@ -60,7 +61,8 @@ signals:
 protected:
 
     // HOOKS
-    virtual void initialize(){};
+    virtual void afterCreateHook(){};
+    virtual void beforeDestroyHook(){};
 
 private:
 

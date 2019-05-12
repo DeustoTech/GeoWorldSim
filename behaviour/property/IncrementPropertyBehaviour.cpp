@@ -27,12 +27,18 @@ IncrementPropertyBehaviour::IncrementPropertyBehaviour() : GWSBehaviour(){
 QPair< double , QJsonArray > IncrementPropertyBehaviour::behave(){
 
     QString agent_id = this->getProperty( AGENT_ID ).toString();
+    QSharedPointer<GWSAgent> agent = this->getAgent();
 
-    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
+    if( agent->getUID() != agent_id ){
+        agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
+    }
+
     QString property_name = this->getProperty( PROPERTY_NAME_PROP ).toString();
 
-    double value = agent->getProperty( property_name ).toDouble();
-    double incremented = value + this->getProperty( INCREMENT_VALUE_PROP ).toDouble();
+    QJsonValue increment = this->getProperty( INCREMENT_VALUE_PROP );
+    agent->incrementProperty( property_name , increment );
+
+    double incremented = agent->getProperty( property_name ).toDouble();
 
     QJsonValue max_limit = this->getProperty( MAX_LIMIT_VALUE_PROP );
     if( max_limit.isDouble() ){ incremented = qMin( max_limit.toDouble() , incremented ); }

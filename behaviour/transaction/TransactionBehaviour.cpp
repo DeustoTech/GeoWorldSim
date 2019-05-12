@@ -4,6 +4,7 @@
 #include <QJsonObject>
 
 #include "../../app/App.h"
+#include "../../object/ObjectFactory.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
@@ -40,53 +41,24 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     foreach( QString key , transaction_data.keys() ){
 
-        QJsonValue value = transaction_data.value( key );
+        // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one agent's value
+        if( key.startsWith("<") && key.endsWith(">") ){
+            QString property_key = key.remove( 0 , 1 );
+            property_key = property_key.remove( property_key.length() - 1 , 1 );
+            key = emitter->getProperty( property_key ).toString();
+        }
 
-        // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent
-        if( value.toString().startsWith("<") && value.toString().endsWith(">") ){
-            QString property_name = value.toString().remove( 0 , 1 );
+        QJsonValue increment = transaction_data.value( key );
+
+        // If it comes between '<>', it is not a value, but a key to fetch that property from the agent
+        if( increment.toString().startsWith("<") && increment.toString().endsWith(">") ){
+            QString property_name = increment.toString().remove( 0 , 1 );
             property_name = property_name.remove( property_name.length() - 1 , 1 );
-            value = emitter->getProperty( property_name );
+            increment = emitter->getProperty( property_name );
         }
 
         QJsonValue receiver_existing_value = receiver->getProperty( key );
-        QJsonValue values_sum;
-
-        switch ( receiver_existing_value.type() ) {
-            case QJsonValue::Double : {
-                values_sum = value.toDouble() + receiver_existing_value.toDouble();
-                break;
-            }
-            case QJsonValue::String : {
-                values_sum = value.toString() + receiver_existing_value.toString();
-                break;
-            }
-            case QJsonValue::Bool : {
-                values_sum = value.toBool() + receiver_existing_value.toBool();
-                break;
-            }
-            case QJsonValue::Array : {
-                QJsonArray existing_array = receiver_existing_value.toArray();
-                existing_array.append( value );
-                values_sum = existing_array;
-                break;
-            }
-            case QJsonValue::Object : {
-                QJsonObject existing_object = receiver_existing_value.toObject();
-                QJsonObject delta = value.toObject();
-                foreach( QString key , delta.keys() ){
-                    existing_object.insert( key , this->incrementQJsonValue( existing_object[key] , delta[key] ) );
-                }
-
-                values_sum = existing_object;
-                break;
-            }
-            case QJsonValue::Null :
-            default : {
-                values_sum = value;
-                break;
-            }
-        }
+        QJsonValue values_sum = GWSObjectFactory::incrementValue( receiver_existing_value , increment );
 
         receiver->setProperty( key , values_sum );
         emitter->setProperty( key , QJsonValue() );
@@ -114,46 +86,3 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }
 
-
-QJsonValue TransactionBehaviour::incrementQJsonValue( QJsonValue existing_value , QJsonValue increment ){
-
-    if( existing_value.isNull() ){
-        return increment;
-    }
-
-    if( increment.isNull() ){
-        return existing_value;
-    }
-
-    // Unitary elements (int, double, string, bool)
-
-    if( existing_value.isDouble() ){
-        return existing_value.toDouble() + increment.toDouble();
-    }
-
-    if( existing_value.isString() ){
-        return existing_value.isString() + increment.isString();
-    }
-
-    if( existing_value.isBool() ){
-        return existing_value.toBool() + increment.toBool();
-    }
-
-    // Complext elements (object)
-
-    QJsonObject result;
-
-    if( existing_value.isObject() ){
-        foreach( QString key , existing_value.toObject().keys() ){
-            result.insert( key , this->incrementQJsonValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
-        }
-    }
-
-    if( increment.isObject() ){
-        foreach( QString key , increment.toObject().keys() ){
-            result.insert( key , this->incrementQJsonValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
-        }
-    }
-
-    return result;
-}

@@ -24,6 +24,7 @@ GWSObject::GWSObject(const GWSObject &other) : QObject(){
 }
 
 GWSObject::~GWSObject(){
+    this->beforeDestroyHook();
     this->deleted = true;
 }
 
@@ -173,6 +174,12 @@ void GWSObject::copyProperties(const GWSObject &other){
         const QVariant property_value = other.getProperty( property_name );
         this->setProperty( property_name , property_value );
     }*/
+}
+
+bool GWSObject::incrementProperty(const QString name, const QJsonValue &value){
+    QJsonValue existing_value = this->getProperty( name );
+    QJsonValue values_sum = GWSObjectFactory::incrementValue( existing_value , value );
+    return this->setProperty( name , values_sum );
 }
 
 /**********************************************************************
