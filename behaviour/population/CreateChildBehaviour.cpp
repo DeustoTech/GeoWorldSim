@@ -26,7 +26,7 @@ QPair< double , QJsonArray > CreateChildBehaviour::behave(){
 
     // Pass parent information as basic characteristics:
     QJsonObject new_born_json = agent->serialize();
-    QDateTime next_year = QDateTime::fromMSecsSinceEpoch( GWSTimeEnvironment::globalInstance()->getAgentInternalTime( agent ) ).addYears( 1 );
+    QDateTime next_year = QDateTime::fromMSecsSinceEpoch( agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toInt() ).addYears( 1 );
     new_born_json.insert( GWSExecutionEnvironment::AGENT_BIRTH_PROP , next_year.toMSecsSinceEpoch() );
     new_born_json.remove( GWSAgent::GWS_UID_PROP );
 

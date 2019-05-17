@@ -31,7 +31,6 @@
 #include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 
 // Utils:
-#include "../../util/routing/Routing.hpp"
 #include "../../util/routing/EdgeVisitor.hpp"
 #include "../../util/routing/TSPRouting.h"
 #include "../../util/geometry/Coordinate.h"
@@ -50,8 +49,6 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/network_environment/NetworkEdge.h"
-#include "../../environment/grid_environment/GridEnvironment.h"
-
 
 
 /**************************************************************************************
@@ -107,11 +104,12 @@ int main( int argc, char* argv[] )
                  QString scenario_id = datasource.value("scenario_id").toString();
                  int limit = datasource.value("limit").toInt(-1);
                  QString entity_type = datasource.value("entity_type").toString();
+                 QString entity_filter = datasource.value("entity_filter").toString();
                  if( scenario_id.isEmpty() || entity_type.isEmpty() ){
                      qWarning() << "Asked to download from scenario without ID or entity_type";
                  }
 
-                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , limit > 0 ? limit : 999999999999999 );
+                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999  );
                  pending_datasources.append( ds );
 
                  ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){

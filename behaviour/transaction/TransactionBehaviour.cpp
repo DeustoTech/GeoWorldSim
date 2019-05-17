@@ -37,52 +37,59 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     }
 
+
     QJsonObject transaction_data = this->getProperty( TRANSACTION_DATA ).toObject();
 
     foreach( QString key , transaction_data.keys() ){
 
-        // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one agent's value
-        if( key.startsWith("<") && key.endsWith(">") ){
-            QString property_key = key.remove( 0 , 1 );
-            property_key = property_key.remove( property_key.length() - 1 , 1 );
-            key = emitter->getProperty( property_key ).toString();
-        }
+           // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one agent's value
+           if( key.startsWith("<") && key.endsWith(">") ){
+               QString property_key = key.remove( 0 , 1 );
+               property_key = property_key.remove( property_key.length() - 1 , 1 );
+               key = emitter->getProperty( property_key ).toString();
+           }
 
-        QJsonValue increment = transaction_data.value( key );
+           QJsonValue increment = transaction_data.value( key );
 
-        // If it comes between '<>', it is not a value, but a key to fetch that property from the agent
-        if( increment.toString().startsWith("<") && increment.toString().endsWith(">") ){
-            QString property_name = increment.toString().remove( 0 , 1 );
-            property_name = property_name.remove( property_name.length() - 1 , 1 );
-            increment = emitter->getProperty( property_name );
-        }
+           // If it comes between '<>', it is not a value, but a key to fetch that property from the agent
+           if( increment.toString().startsWith("<") && increment.toString().endsWith(">") ){
+               QString property_name = increment.toString().remove( 0 , 1 );
+               property_name = property_name.remove( property_name.length() - 1 , 1 );
+               increment = emitter->getProperty( property_name );
+           }
 
-        QJsonValue receiver_existing_value = receiver->getProperty( key );
-        QJsonValue values_sum = GWSObjectFactory::incrementValue( receiver_existing_value , increment );
+           QJsonValue receiver_existing_value = receiver->getProperty( key );
+           QJsonValue values_sum = GWSObjectFactory::incrementValue( receiver_existing_value , increment );
 
-        receiver->setProperty( key , values_sum );
-        emitter->setProperty( key , QJsonValue() );
+           receiver->setProperty( key , values_sum );
+           emitter->setProperty( key , QJsonValue() );
 
-        // Store transfers log
-        QJsonObject transaction;
+           // Store transfers log
+           QJsonObject transaction;
 
-        QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
-        transaction.insert( GWSObject::GWS_UID_PROP , id );
+           QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
+           transaction.insert( GWSObject::GWS_UID_PROP , id );
 
-        transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-        transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+           transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+           transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
-        transaction.insert( "refEmitter" , emitter->getUID() );
-        transaction.insert( "refReceiver" , receiver->getUID() );
-        transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
+           transaction.insert( "refEmitter" , emitter->getUID() );
 
-        transaction.insert( key , values_sum );
+           transaction.insert( "refReceiver" , receiver->getUID() );
+           transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+           transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
 
-        emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+           transaction.insert( key , values_sum );
 
-    }
+           emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
-    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-}
+       }
 
+
+    // Set a counter of how many transactions have there been towards the corresponding receiver:
+     int transaction_count = receiver->getProperty( "transaction_count" ).toInt();
+     transaction_count = transaction_count + 1;
+     receiver->setProperty("transaction_count", transaction_count );
+
+       return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+   }

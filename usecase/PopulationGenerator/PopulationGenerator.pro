@@ -61,6 +61,7 @@ SOURCES += \
         ../../util/distributed/ExternalCommunicator.cpp \
         ../../util/distributed/ExternalPublisher.cpp \
         ../../util/api/APIDriver.cpp \
+        ../../util/routing/Routing.cpp \
         # GEOMETRIES
         ../../util/geometry/Coordinate.cpp \
         ../../util/geometry/Geometry.cpp \
@@ -69,8 +70,6 @@ SOURCES += \
         ../../util/geometry/GeometryGetters.cpp \
         ../../util/geometry/GeometryToGeoJSON.cpp \
         ../../util/graph/Edge.cpp \
-        ../../util/grid/Grid.cpp \
-        ../../util/grid/GridCoordinatesConversor.cpp \
         ../../util/datasource/DatasourceReader.cpp \
         ../../util/datasource/AgentGeneratorDatasource.cpp \
         # BEHAVIOURS
@@ -89,7 +88,6 @@ SOURCES += \
         ../../environment/agent_environment/AgentEnvironment.cpp \
         ../../environment/physical_environment/PhysicalEnvironment.cpp \
         ../../environment/time_environment/TimeEnvironment.cpp \
-        ../../environment/grid_environment/GridEnvironment.cpp\
         ../../environment/network_environment/NetworkEnvironment.cpp \
         ../../environment/social_environment/SocialEnvironment.cpp \
         ../../environment/execution_environment/ExecutionEnvironment.cpp \
@@ -116,13 +114,13 @@ HEADERS += \
         # UTILS
         ../../util/parallelism/ParallelismController.h \
         ../../util/io/log/Logger.h \
-        ../../util/routing/Routing.hpp \
         ../../util/routing/EdgeVisitor.hpp \
         ../../util/routing/TSPRouting.h \
         ../../util/distributed/ExternalListener.h \
         ../../util/distributed/ExternalCommunicator.h \
         ../../util/distributed/ExternalPublisher.h \
         ../../util/api/APIDriver.h \
+        ../../util/routing/Routing.h \
         # GEOMETRIES
         ../../util/geometry/Coordinate.h \
         ../../util/geometry/Geometry.h \
@@ -130,8 +128,6 @@ HEADERS += \
         ../../util/geometry/GeometryToGeoJSON.h \
         ../../util/geometry/Quadtree.h \
         ../../util/graph/Edge.h \
-        ../../util/grid/Grid.h \
-        ../../util/grid/GridCoordinatesConversor.h\
         ../../util/datasource/DatasourceReader.h \
         ../../util/datasource/AgentGeneratorDatasource.h \
         # BEHAVIOURS
@@ -154,9 +150,8 @@ HEADERS += \
         ../../environment/social_environment/SocialEnvironment.h \
         ../../environment/execution_environment/ExecutionEnvironment.h \
         ../../environment/communication_environment/CommunicationEnvironment.h \
-        ../../environment/grid_environment/GridEnvironment.h \
         ../../environment/network_environment/NetworkEdge.h \
-    ../../environment/social_environment/SocialRelation.h
+        ../../environment/social_environment/SocialRelation.h
 
 
 
