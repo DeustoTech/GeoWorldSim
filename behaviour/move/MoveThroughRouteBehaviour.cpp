@@ -26,12 +26,12 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
  INITIALIZE
 **********************************************************************/
 
-void MoveThroughRouteBehaviour::initialize(){
+void MoveThroughRouteBehaviour::afterCreateHook(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
     // Check if agent has a MoveSkill, otherwise create it and set its max_speed
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() , true ).dynamicCast<MoveThroughRouteSkill>();
     if( movethroughroute_skill.isNull() ){
         movethroughroute_skill = QSharedPointer<MoveThroughRouteSkill>( new MoveThroughRouteSkill() );
         agent->addSkill( movethroughroute_skill );

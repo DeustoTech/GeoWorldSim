@@ -28,7 +28,7 @@ protected slots:
     virtual QPair< double , QJsonArray > behave();
 
 protected:
-    virtual void initialize();
+    virtual void afterCreateHook();
 
 private:
     GWSCoordinate last_position;

@@ -23,7 +23,7 @@ PolluteBehaviour::PolluteBehaviour() : GWSBehaviour (){
  INITIALIZE
 **********************************************************************/
 
-void PolluteBehaviour::initialize(){
+void PolluteBehaviour::afterCreateHook(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -62,8 +62,6 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     double trafficSit = agent->getProperty( CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
 
     QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
-
-
 
     GWSLengthUnit distance = current_coor.getDistance( this->last_position );
 

@@ -3,6 +3,7 @@
 QString CalculateGTAlgRouteBehaviour::GTALG_HOST = "gtalg_host";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_X = "destination_x";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
+QString CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
 QString CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
 QString CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
 
@@ -31,11 +32,37 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         GWSCoordinate agent_coor = agent_geom.getCentroid();
-        double from_y = agent_coor.getX();
-        double from_x = agent_coor.getY();
 
-        double to_y = this->getProperty( DESTINATION_X ).toDouble();
-        double to_x = this->getProperty( DESTINATION_Y ).toDouble();
+        double from_x = agent_coor.getX();
+        double from_y = agent_coor.getY();
+
+        QJsonValue to_x = this->getProperty( DESTINATION_X );
+        QJsonValue to_y = this->getProperty( DESTINATION_Y );
+
+
+        double dest_y;
+        double dest_x;
+
+        if( !to_x.isNull() && !to_y.isNull() ){
+
+            dest_x = to_x.toDouble();
+            dest_y = to_y.toDouble();
+
+        }
+
+        QJsonValue json_value = this->getProperty( DESTINATION_JSON );
+        if( !json_value.isNull() ){
+
+            GWSGeometry geom_json = GWSGeometry( json_value.toObject() );
+            GWSCoordinate coor_json = geom_json.getCentroid();
+
+            dest_x = coor_json.getX();
+            dest_y = coor_json.getY();
+
+        }
+
+
+
 
         qint64 currentDateTime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
         QDateTime timeStamp = QDateTime::fromMSecsSinceEpoch( currentDateTime );
@@ -44,15 +71,16 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         // url type to query:
         QString gtalg_host = this->getProperty( "gtalg_host" ).toString( "http://157.158.135.195:8081/gtalg/routers/default" );
-        QString gtUrl = QString(  gtalg_host + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&weightOptimization=%8&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
-                .arg( from_x ).arg( from_y )
-                .arg( to_x ).arg( to_y)
+
+        QString gtUrl = QString(  gtalg_host + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
+                .arg( from_y ).arg( from_x )
+                .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
                 .arg( date.toString( "MM-dd-yyyy" ) )
                 .arg( this->getProperty( TRANSPORT_MODE ).toString() )
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
-        //qDebug() << gtUrl;
+        qDebug() << gtUrl;
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 

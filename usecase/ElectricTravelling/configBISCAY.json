@@ -1,37 +1,37 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5, "id":"63b4929e-5e82-48d3-87dd-1e9d8522496e-4aecccb5-eb5c-58a0-89b1-64" ,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"ET","timeout":600000,"status":"pending","user_id":"demo","speed":25, "id":"demo" ,
 
 "population" : {
 
-	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "fixed_x" : -2.93486 , "fixed_y" : 43.26275 , "birth" : -1 , "current_road" : "Primary" , "vehicle_type" : "MC_2S_<=150cc_Euro-2" ,
+	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "color" : "Gray" ,  "birth" : -1 , "current_road" : "Primary" , "vehicle_type" : "MC_2S_<=150cc_Euro-2" , 
 	
                             "@behaviours": [  
 
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 0 , "nexts" : ["GTALG"] } ,
+                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" , "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "duration": 1 , "nexts" : ["GTALG"] } ,
 
-                                                        {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  "id": "GTALG" , "transport_mode" : "MOTORCYCLE", "route_optimization" : "QUICKER" , "destination_x" : -2.93457, "destination_y" :  43.26361  , "duration": 1 ,  "nexts" : ["NEXT_DESTINATION"] } ,
+                                                        {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  "id": "GTALG" , "transport_mode" : "<mode>", "route_optimization" : "QUICKER" , "destination_json" : "<destination>" ,  "duration": 1 ,  "nexts" : ["NEXT_DESTINATION"] } ,
 
                                                         {"@gwsclass": "SetNextRouteDestinationBehaviour" ,  "id": "NEXT_DESTINATION" , "duration": 1 ,  "nexts_while_pending_route" : ["DISPLAY_BEFORE_MOVE"] , "nexts_if_finished" : ["STOP"] } , 
                                                         
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_BEFORE_MOVE" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
+                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_BEFORE_MOVE" , "agent_to_send_id" : "<id>" , "duration": 1 ,  "nexts" : ["MOVE"] } ,
                                                         
-                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "<transport_mode>", "maxspeed" : 120 , "route_destination_x_value": "<next_x_value>", "route_destination_y_value": "<next_y_value>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["NEXT_DESTINATION"] , "nexts_if_not_arrived" : ["NOISE"] } , 
+                                                        { "@gwsclass": "MoveThroughRouteBehaviour" ,   "id" : "MOVE" , "duration" : 5 , "transport_network_type" : "<mode>", "maxspeed" : 120 , "route_destination_x_value": "<next_x_value>", "route_destination_y_value": "<next_y_value>", "store_total_moved_distance_as" : "total_moved_distance" , "store_total_travel_time_as" : "total_travel_time" ,  "nexts_if_arrived" : ["NEXT_DESTINATION"] , "nexts_if_not_arrived" : ["DISPLAY_BEFORE_MOVE"] } , 
                                                         
                                                         { "@gwsclass": "VehicleNoiseBehaviour" , "id": "NOISE" , "vehicle_type" : "CAR" , "duration": 0 , "nexts" : ["INDIRECT_POLLUTE"] } ,
                                                         
-                                                        { "@gwsclass": "PolluteBehaviour" , "id": "INDIRECT_POLLUTE" , "transport_mode" : "<transport_mode>" , "current_road_gradient" : 0 ,  "current_road_traffic_situation" : 0.36 , "pollutant_type" : "INDIRECT" , "duration": 0 , "nexts" : ["FCL_POLLUTE"] } ,
+                                                        { "@gwsclass": "PolluteBehaviour" , "id": "INDIRECT_POLLUTE" , "transport_mode" : "<mode>" , "current_road_gradient" : 0 ,  "current_road_traffic_situation" : 0.36 , "pollutant_type" : "INDIRECT" , "duration": 0 , "nexts" : ["FCL_POLLUTE"] } ,
                                                         
-                                                        { "@gwsclass": "PolluteBehaviour" , "id": "FCL_POLLUTE" , "transport_mode" : "<transport_mode>" , "current_road_gradient" : 0 ,  "current_road_traffic_situation" : 0.36 , "pollutant_type" : "FCL" , "duration": 0 , "nexts" : ["DISPLAY_MOVING"] } ,
-                                                        
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,   "id": "DISPLAY_MOVING" , "agent_to_send_id" : "<id>" , "duration": 0 ,  "nexts" : ["MOVE"] } ,
+                                                        { "@gwsclass": "PolluteBehaviour" , "id": "FCL_POLLUTE" , "transport_mode" : "<mode>" , "current_road_gradient" : 0 ,  "current_road_traffic_situation" : 0.36 , "pollutant_type" : "FCL" , "duration": 0 , "nexts" : ["DISPLAY_BEFORE_MOVE"] } ,
                                                         
                                                         { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                             ] } , 
                             
                             
-                            "datasources":[{"entity_type":"CAR","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce" , "limit" : 500 } ] }, 
+                            "datasources":[{"entity_type":"CAR","scenario_id":"6015b897-8390-4409-8dfc-7bdb9c8086e2-545b694b-af38-55ca-bb94-ce" , "limit" : 1000 },
+                            {"entity_type":"MOTORCYCLE","scenario_id":"6015b897-8390-4409-8dfc-7bdb9c8086e2-545b694b-af38-55ca-bb94-ce", "limit" : 1000 },
+                            {"entity_type":"WALK","scenario_id":"6015b897-8390-4409-8dfc-7bdb9c8086e2-545b694b-af38-55ca-bb94-ce" , "limit" : 1000}] }, 
 
-        "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } , "birth" : -1 ,
+        "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "@gwsgroups" : ["KPI"] , "id" : "KPI" , "color" : "Green" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } , "birth" : -1 ,
         
                             "@behaviours": [  
                                 
@@ -52,8 +52,6 @@
                             
 	"WALK"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK"] , "maxspeed" : 4 },
                             "datasources":[
-                            {"entity_type":"Pedestrian","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Residential","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Tertiary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Secondary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Primary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"}
@@ -61,10 +59,11 @@
                             
         "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["CAR","MOTORCYCLE","BUS"] , "maxspeed" : 120 },
                             "datasources":[
-                            {"entity_type":"Tertiary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Secondary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Primary","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Motorway","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce"}
+                            {"entity_type":"Trunk","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Tertiary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Secondary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Primary","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Motorway","scenario_id":"014f1909-82dc-4857-b8bf-ded0c5814dbd-545b694b-af38-55ca-bb94-ce"}
                             ]},
                             
        

@@ -15,6 +15,7 @@ public:
     static QString GTALG_HOST;
     static QString DESTINATION_X;
     static QString DESTINATION_Y;
+    static QString DESTINATION_JSON;
     static QString TRANSPORT_MODE;
     static QString OPTIMIZATION;
 
