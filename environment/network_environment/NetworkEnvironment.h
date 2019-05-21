@@ -40,9 +40,11 @@ public:
     virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
 
 protected:
+
     void upsertAgentToIndex( QSharedPointer<GWSAgent> agent , GWSNetworkEdge edge );
 
 protected slots:
+
     void agentPropertyChanged( QString property_name );
 
 private :

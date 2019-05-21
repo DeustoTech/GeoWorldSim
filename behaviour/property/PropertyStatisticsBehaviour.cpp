@@ -1,11 +1,18 @@
 #include "PropertyStatisticsBehaviour.h"
 
+#include "../../app/App.h"
+#include "../../object/ObjectFactory.h"
+#include "../../environment/time_environment/TimeEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
+#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../util/grid/Grid.h"
 
 QString PropertyStatisticsBehaviour::AGENTS_TYPE = "agents_type";
 QString PropertyStatisticsBehaviour::AGENTS_FILTER = "agents_filter";
 QString PropertyStatisticsBehaviour::AGENTS_PROPERTY_NAME = "agents_property_name";
-QString PropertyStatisticsBehaviour::STORE_TOTAL_AS = "store_total_as";
+QString PropertyStatisticsBehaviour::STORE_AS = "store_as";
+QString PropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
 QString PropertyStatisticsBehaviour::NEXTS = "nexts";
 
 PropertyStatisticsBehaviour::PropertyStatisticsBehaviour() : GWSBehaviour(){
@@ -23,38 +30,82 @@ QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
     QJsonObject agents_filter = this->getProperty( AGENTS_FILTER ).toObject();
     QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
 
-    double count = 0;
-    double total_sum = 0;
+    GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
+    GWSGrid grid( bounds , 100 , 100 );
+
+    unsigned int count = 0;
+    QJsonValue total_sum = 0;
     double average = 0;
 
-    foreach (QSharedPointer<GWSAgent> agent , agents) {
-        
+    foreach( QSharedPointer<GWSAgent> agent , agents ) {
+
+        QJsonValue val = agent->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
+        if( val.isNull() ){ continue; }
+
         bool valid = true;
 
         foreach( QString key , agents_filter.keys() ){
-           // qDebug() << key << agents_filter.value( key ) << agent->getProperty( key );
-
             if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
                 valid = false;
                 break;
             }
         }
-
         if( !valid ){ continue; }
-        
-        double val = agent->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() ).toDouble();
-        if( average == 0 ){ average = val; }
 
-        average = (average + val) / 2;
-        total_sum += val;
+        // GRID
+        GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        grid.addValue( agent_geom , val );
+
+        // AVERAGE
+        if( average == 0 ){ average = val.toDouble(); }
+        average = (average + val.toDouble()) / 2;
+
+        // TOTAL
+        total_sum = GWSObjectFactory::incrementValue( total_sum , val );
+
+        // COUNT
         count++;
     }
 
-    if( count > 0 ){ average = total_sum / count; }
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_count" , (int)count );
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_sum" , total_sum );
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_avg", average );
 
-    agent->setProperty( this->getProperty( STORE_TOTAL_AS ).toString( "statistics_total" ) + "_count" , count );
-    agent->setProperty( this->getProperty( STORE_TOTAL_AS ).toString( "statistics_total" ) + "_sum" , total_sum );
-    agent->setProperty( this->getProperty( STORE_TOTAL_AS ).toString( "statistics_total" ) + "_avg", average );
+    // Socket id to send through (by default the main from the Simulation)
+    QString socket_id = this->getProperty( SOCKET_ID ).toString( GWSApp::globalInstance()->getAppId() );
+
+    // Send the statistics
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( agent->serialize() , socket_id );
+
+    // Send cell points
+    QList<GWSCoordinate> now_sent_coordinates;
+    for(unsigned int i = 0 ; i < grid.getXSize() ; i++){
+        for(unsigned int j = 0 ; j < grid.getYSize() ; j++ ){
+
+            GWSCoordinate coor = GWSCoordinate( grid.getLon( i+0.5 ) , grid.getLat( j+0.5 ) );
+            QJsonValue val = grid.getValue( coor );
+            if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
+
+            now_sent_coordinates.append( coor );
+
+            QJsonObject grid_cell;
+            grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( agent->getUID() ).arg( i ).arg( j ) );
+            grid_cell.insert( "type" , agent->getUID() + "Cell" );
+            grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
+
+            QJsonObject geometry;
+            geometry.insert( "type" , "Point" );
+            QJsonArray coordinates = { coor.getX() , coor.getY() };
+
+            geometry.insert( "coordinates" , coordinates );
+            grid_cell.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geometry );
+            grid_cell.insert( "value" , val );
+            emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
+        }
+    }
+
+    // Keep back reference to update the olds that should be set to null
+    this->previous_sent_coordinates = now_sent_coordinates;
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

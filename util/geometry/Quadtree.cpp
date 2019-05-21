@@ -16,8 +16,18 @@ QStringList GWSQuadtree::getElements() const{
     return this->ids_contained;
 }
 
-const GWSGeometry GWSQuadtree::getBounds() const{
-    return this->index_bounds;
+const GWSGeometry GWSQuadtree::getBounds() const {
+    QJsonObject geom;
+    geom.insert( "type" , "Polygon" );
+    QJsonArray coors;
+    coors.append( QJsonArray({ min_x , min_y }) );
+    coors.append( QJsonArray({ min_x , max_y }) );
+    coors.append( QJsonArray({ max_x , max_y }) );
+    coors.append( QJsonArray({ max_x , min_y }) );
+    coors.append( QJsonArray({ min_x , min_y }) );
+    QJsonArray rings = { coors };
+    geom.insert( "coordinates" , rings );
+    return GWSGeometry( geom );
 }
 
 const GWSGeometry GWSQuadtree::getGeometry( QString object_id ) const {
@@ -225,7 +235,11 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
     }
 
     // Extend the bounds of the index
-    this->index_bounds = GWSGeometryTransformators::transformToFit( this->index_bounds , geom );
+    GWSCoordinate centroid = geom.getCentroid();
+    this->min_x = qMin( centroid.getX() , min_x );
+    this->max_x = qMax( centroid.getX() , max_x );
+    this->min_y = qMin( centroid.getY() , min_y );
+    this->max_y = qMax( centroid.getY() , max_y );
 
     // Create helper element
     this->mutex.lockForRead();

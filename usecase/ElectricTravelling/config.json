@@ -1,9 +1,9 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5, "id":"demo" ,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":5, "id":"283e2305-8c16-4455-8d96-ae0ca3307d4a-545b694b-af38-55ca-bb94-ce" ,
 
 "population" : {
 
-	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "GWSAgent", "Citizen" ], "color" : "Gray" , "fixed_x" : -2.93486 , "fixed_y" : 43.26275 , "birth" : -1 , 
+	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "Citizen" ], "color" : "Gray" , "fixed_x" : -2.93486 , "fixed_y" : 43.26275 , "birth" : -1 , 
 	
                             "@behaviours": [  
 
@@ -29,17 +29,21 @@
                             
                             "datasources":[{"entity_type":"CAR","scenario_id":"9ce840cc-4ef6-4e71-987b-9a168fcee45a-545b694b-af38-55ca-bb94-ce" , "limit" : 100 } ] }, 
 
-        "kpi"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "KPI" , "color" : "Red" , "geometry": { "type": "Point", "coordinates": [ -2.862104, 43.28315 ] } , "birth" : -1 ,
+        "NOISE"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "NOISE" , "color" : "Grey" , "birth" : -1 ,
         
                             "@behaviours": [  
                                 
-                                { "@gwsclass": "SendAgentSnapshotBehaviour" ,  "start" : true , "id": "DISPLAY" , "agent_to_send_id" : "<id>" , "socket_id" : "213e234b-9300-49b4-84a4-394aeb9213e4-545b694b-af38-55ca-bb94-ce::KPI" , "duration": 60 , "nexts" : ["PROP1"] },
+                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "agents_filter" : { "alive" : true } , "store_as" : "total_noise" , "duration": 60 , "nexts" : ["DISPLAY"] },
                                 
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP1" , "agents_type" : "Citizen" , "agents_property_name" : "move_skill_total_travelled_distance" , "store_total_as" : "travelled_distance" , "duration": 0 , "nexts" : ["PROP2"] },
-                                
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP2" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "store_total_as" : "total_noise" , "duration": 0 , "nexts" : ["PROP3"] },
-                                
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "id": "PROP3" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "store_total_as" : "total_CO2" , "duration": 0 , "nexts" : ["DISPLAY"] } 
+                            ] } ,
+                            
+                            "amount" : 1 },
+                            
+        "CO2"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "CO2" , "color" : "Grey" , "birth" : -1 ,
+        
+                            "@behaviours": [  
+    
+                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "agents_filter" : { "alive" : true } , "store_as" : "total_CO2" , "duration": 60 , "nexts" : ["DISPLAY"] },
                                 
                             ] } ,
                             

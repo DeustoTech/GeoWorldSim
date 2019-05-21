@@ -1,6 +1,7 @@
 #include "Grid.h"
 
 #include <QtMath>
+#include <QColor>
 #include <QDebug>
 
 #include "../../object/ObjectFactory.h"
@@ -10,6 +11,8 @@
 #include "../../util/geometry/GeometryComparators.h"
 
 GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size) : QObject(){
+
+    this->grid = new QMap< unsigned int , QMap< unsigned int , QJsonValue >* >();
 
     for(unsigned int i = 0 ; i < x_size ; i++){
 
@@ -36,58 +39,36 @@ GWSGrid::~GWSGrid(){
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSGrid::serialize() const{
-
-    QJsonObject json;
+QJsonObject GWSGrid::getGeoJSON() const{
 
     QJsonObject geojson;
     geojson.insert( "type" , "GeometryCollection" );
     QJsonArray geometries;
 
     // BOUNDS
-    /*GWSGeometry geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
-    double left =   GWSGeometryGetters::getGeometryMinX( geom );
-    double right =  GWSGeometryGetters::getGeometryMaxX( geom );
-    double top =    GWSGeometryGetters::getGeometryMaxY( geom );
-    double bottom = GWSGeometryGetters::getGeometryMinY( geom );
 
-    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX();
-    double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxX();
-    double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY();
-    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY();
-
-    for(int i = 0 ; i < this->getGridXSize() ; i++){
-        for(int j = 0 ; j < this->getGridYSize() ; j++ ){
+    for(int i = 0 ; i < x_size ; i++){
+        for(int j = 0 ; j < y_size ; j++ ){
             QJsonObject geometry;
-            geometry.insert( "type" , "Polygon" );
-            QJsonArray coordinates;
+            geometry.insert( "type" , "Point" );
+            QJsonArray coordinates = {
+                GWSGridCoordinatesConversor::x2lon( i+0.5 , min_x , max_x , x_size ) ,
+                GWSGridCoordinatesConversor::y2lat( j+0.5 , min_y , max_y , y_size )
+            };
 
-            double lon1 = GWSGridCoordinatesConversor::x2lon( i , left , right , this->getGridXSize() );
-            double lat1 = GWSGridCoordinatesConversor::y2lat( j , bottom , top , this->getGridYSize() );
-            double lon2 = GWSGridCoordinatesConversor::x2lon( i+1 , left , right , this->getGridXSize() );
-            double lat2 = GWSGridCoordinatesConversor::y2lat( j+1 , bottom , top , this->getGridYSize() );
+            geometry.insert( "coordinates" , coordinates );
 
-            // COOR1
-            QJsonArray coor1; coor1 << lon1 << lat1;
-            QJsonArray coor2; coor2 << lon1 << lat2;
-            QJsonArray coor3; coor3 << lon2 << lat2;
-            QJsonArray coor4; coor4 << lon2 << lat1;
-
-            coordinates << coor1 << coor2 << coor3 << coor4 << coor1;
-
-            QJsonArray polygons; polygons << coordinates;
-            geometry.insert( "coordinates" , polygons );
-
-            QJsonObject properties; properties.insert( "color" , "#00ff00" );
+            QJsonObject properties;
+            properties.insert( "value" , this->grid->value( i )->value( j ) );
             geometry.insert( "properties" , properties );
 
             geometries.append( geometry );
         }
     }
-    geojson.insert( "geometries" , geometries );
-    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );*/
 
-    return json;
+    geojson.insert( "geometries" , geometries );
+
+    return geojson;
 }
 
 /**********************************************************************
@@ -102,12 +83,20 @@ GWSGeometry GWSGrid::getBounds() const{
     return this->grid_bounds;
 }
 
-int GWSGrid::getXSize() const{
+unsigned int GWSGrid::getXSize() const{
     return this->x_size;
 }
 
-int GWSGrid::getYSize() const{
+unsigned int GWSGrid::getYSize() const{
     return this->y_size;
+}
+
+double GWSGrid::getLon( double x ) const{
+    return GWSGridCoordinatesConversor::x2lon( x , min_x , max_x , x_size );
+}
+
+double GWSGrid::getLat(double y) const{
+    return GWSGridCoordinatesConversor::y2lat( y , min_y , max_y , y_size );
 }
 
 QJsonValue GWSGrid::getValue( GWSCoordinate coor ) const{
@@ -148,23 +137,27 @@ QJsonValue GWSGrid::getValue( GWSGeometry geom ) const{
  SETTERS
 **********************************************************************/
 
+void GWSGrid::addValue( GWSCoordinate coor , QJsonValue value ){
 
-void GWSGrid::setValue( GWSCoordinate coor , QJsonValue value ){
+    if( value.isNull() ){ return; }
 
-    if( !GWSGeometryComparators::contains( this->getBounds() , coor ) ){
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , this->x_size );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , this->y_size );
+    if( x < 0 || x >= x_size || y < 0 || y >= y_size ){
         qWarning() << QString("Value outside grid bounds");
         return;
     }
 
-    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , this->x_size );
-    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , this->y_size );
     QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue() );
-    this->grid->value( x )->insert( y , GWSObjectFactory::incrementValue( existing_value , value ) );
+    QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
+    this->grid->value( x )->insert( y , sum );
 }
 
-void GWSGrid::setValue( GWSGeometry geom , QJsonValue value ){
-    GWSCoordinate centroid = geom.getCentroid();
-    this->setValue( centroid , value );
+void GWSGrid::addValue( GWSGeometry geom , QJsonValue value ){
+    if( geom.isValid() && !value.isNull() ){
+        GWSCoordinate centroid = geom.getCentroid();
+        this->addValue( centroid , value );
+    }
 }
 
 

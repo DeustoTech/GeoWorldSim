@@ -22,18 +22,18 @@ public:
     // GETTERS
     virtual bool isGridEmpty() const;
     GWSGeometry getBounds() const;
-    int getXSize() const;
-    int getYSize() const;
+    QJsonObject getGeoJSON() const;
+    unsigned int getXSize() const;
+    unsigned int getYSize() const;
+    double getLon( double x ) const;
+    double getLat( double y ) const;
     virtual QJsonValue getValue( GWSCoordinate coor ) const;
     virtual QJsonValue getValue( GWSGeometry geom ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
-    // EXPORTERS
-    virtual QJsonObject serialize() const;
-
     // SETTERS
-    void setValue( GWSCoordinate coor , QJsonValue value );
-    void setValue( GWSGeometry geom , QJsonValue value );
+    void addValue( GWSCoordinate coor , QJsonValue value );
+    void addValue( GWSGeometry geom , QJsonValue value );
     //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
@@ -50,10 +50,12 @@ protected:
     QMap< unsigned int , QMap< unsigned int , QJsonValue >* >* grid;
     int x_size = -1;
     int y_size = -1;
-    double min_x;
-    double max_x;
-    double min_y;
-    double max_y;
+
+    // BOUNDS
+    double min_x = 180;
+    double max_x = -180;
+    double min_y = 180;
+    double max_y = -180;
 
 };
 

@@ -41,11 +41,16 @@ GWSGeometry GWSGeometryTransformators::transformUnion( const GWSGeometry geometr
 
 GWSGeometry GWSGeometryTransformators::transformToFit(const GWSGeometry origin, const GWSGeometry extension){
     geos::geom::Geometry* boundary = Q_NULLPTR;
-    if( origin.inner_geometry ) {
-        geos::geom::Geometry* unioned = origin.inner_geometry->Union( extension.inner_geometry );
-        boundary = unioned->getEnvelope();
-        delete unioned;
-    } else {
+    if( origin.inner_geometry && extension.inner_geometry ) {
+        try {
+            geos::geom::Geometry* unioned = origin.inner_geometry->Union( extension.inner_geometry );
+            boundary = unioned->getEnvelope();
+            delete unioned;
+        }
+        catch(...){ }
+    } else if( origin.inner_geometry ) {
+        boundary = origin.inner_geometry->clone();
+    } else if( extension.inner_geometry ) {
         boundary = extension.inner_geometry->clone();
     }
 

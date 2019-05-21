@@ -3,7 +3,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString GWSGridEnvironment::GRID_PROP = "noise";
+QString GWSGridEnvironment::GRID_PROP = "grid";
 
 GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
     static GWSGridEnvironment instance;
@@ -63,7 +63,7 @@ void GWSGridEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
     }
 
     // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
-    QJsonValue value = agent->getProperty( GRID_PROP ).toObject();
+    QJsonValue value = agent->getProperty( GRID_PROP );
 
     // Listen to agent property changes
     this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSGridEnvironment::agentPropertyChanged );
@@ -109,7 +109,7 @@ void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSAgent> agent , QJs
         this->mutex.unlock();
 
         QtConcurrent::run([this , agent_geom , value , family] {
-            this->environment_agent_grids.value( family )->setValue( agent_geom , value );
+            this->environment_agent_grids.value( family )->addValue( agent_geom , value );
         });
     }
 }

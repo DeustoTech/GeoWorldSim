@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
-                         qDebug() << "Data download took " << datasource_download_time.secsTo( QDateTime::currentDateTime() );
+                         qDebug() << QString("Data download took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
                          GWSExecutionEnvironment::globalInstance()->run();
                      }
                  });

@@ -58,7 +58,12 @@ private:
     QMap< QString , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
     QMap< unsigned int , QMap< int , QMap< int , geos::index::quadtree::Quadtree* >* >* > quadtree_layers;
     unsigned int layer_depth_amount = 5;
-    GWSGeometry index_bounds;
+
+    // BOUNDS
+    double min_x = 180;
+    double max_x = -180;
+    double min_y = 180;
+    double max_y = -180;
 
 };
 
