@@ -75,7 +75,8 @@ HEADERS += \
             ## GRAPH
     ../../util/graph/Edge.h \
             ## GRID
-    #../../util/grid/Grid.h \
+    ../../util/grid/Grid.h \
+    ../../util/grid/GridCoordinatesConversor.h \
     ../../util/ai/Intelligence.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
@@ -91,6 +92,7 @@ HEADERS += \
     ../../environment/network_environment/NetworkEnvironment.h \
     ../../environment/network_environment/NetworkEdge.h \
     ../../environment/execution_environment/ExecutionEnvironment.h \
+    ../../environment/grid_environment/GridEnvironment.h \
         # AGENTS`
             ## TRANSPORT LINES
     ../../skill/pollute/PolluteSkill.h \
@@ -144,7 +146,8 @@ SOURCES += main.cpp \
             ## GRAPH
     ../../util/graph/Edge.cpp \
             ## GRID
-    #../../util/grid/Grid.cpp \
+    ../../util/grid/Grid.cpp \
+    ../../util/grid/GridCoordinatesConversor.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
             ## RANDOM
@@ -159,6 +162,7 @@ SOURCES += main.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
     ../../environment/network_environment/NetworkEdge.cpp \
     ../../environment/execution_environment/ExecutionEnvironment.cpp \
+    ../../environment/grid_environment/GridEnvironment.cpp \
         # AGENTS
     ../../skill/pollute/PolluteSkill.cpp \
     ../../behaviour/emissions/PolluteBehaviour.cpp \

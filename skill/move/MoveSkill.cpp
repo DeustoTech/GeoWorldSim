@@ -100,7 +100,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
         // Set the agents position
         GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
         GWSGeometry moved_geometry = GWSGeometryTransformators::transformMove( agent_geom , apply_movement );
-        agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , moved_geometry.geojson );
+        agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , moved_geometry.getGeoJSON() );
     }
 
     agent->setProperty( STORE_ACCUMULATED_DISTANCE_PROP , agent->getProperty( STORE_ACCUMULATED_DISTANCE_PROP ).toDouble() + meters );

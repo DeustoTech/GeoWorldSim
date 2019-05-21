@@ -8,9 +8,7 @@
 
 struct GWSNetworkEdge : GWSEdge {
 
-    // PROPERTIES
-    GWSCoordinate from;
-    GWSCoordinate to;
+public:
 
     // JSON
     static QString EDGE_FROM_X_PROP;
@@ -36,6 +34,12 @@ struct GWSNetworkEdge : GWSEdge {
 
     // SETTERS
     void setLength( GWSLengthUnit length );
+
+protected:
+
+    // PROPERTIES
+    GWSCoordinate from;
+    GWSCoordinate to;
 
 };
 

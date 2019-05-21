@@ -5,11 +5,9 @@
 
 struct GWSEdge {
 
-    // PROPERTIES
-    double cost = 1; // User for length, time, price, etc
-    QString type = "None"; // Used to determine what type of relation
-    const QString from_hash;
-    const QString to_hash;
+    friend class GWSEdgeVisitor;
+
+public:
 
     // CONSTRUCTORS
     GWSEdge() : cost(1) , type("None") , from_hash("None") , to_hash("None"){}
@@ -28,8 +26,16 @@ struct GWSEdge {
     GWSEdge& operator= (const GWSEdge&);
 
     // Returns an unique ID
-    QString getFromNodeUID() const { return this->from_hash; }
-    QString getToNodeUID() const { return this->to_hash; }
+    virtual QString getFromNodeUID() const { return this->from_hash; }
+    virtual QString getToNodeUID() const { return this->to_hash; }
+
+protected:
+
+    // PROPERTIES
+    double cost = 1; // User for length, time, price, etc
+    QString type = "None"; // Used to determine what type of relation
+    const QString from_hash;
+    const QString to_hash;
 
 };
 

@@ -24,8 +24,12 @@ GWSGeometry::~GWSGeometry(){
  GETTERS
 **********************************************************************/
 
-QString GWSGeometry::getUID() const{
+QString GWSGeometry::getUID() const {
     return QJsonDocument( this->geojson ).toBinaryData();
+}
+
+QJsonObject GWSGeometry::getGeoJSON() const{
+    return this->geojson;
 }
 
 bool GWSGeometry::isValid() const{

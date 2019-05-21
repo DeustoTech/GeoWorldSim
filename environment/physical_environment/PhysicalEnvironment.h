@@ -25,6 +25,7 @@ public:
 
     // SPATIAL GETTERS
     const GWSGeometry getBounds() const;
+    const GWSGeometry getBounds( QString class_name ) const;
     GWSCoordinate getRandomCoordinate() const;
     const GWSGeometry getGeometry( QSharedPointer<GWSAgent> agent ) const;
     const GWSGeometry getGeometry( QString agent_id ) const;
@@ -33,9 +34,6 @@ public:
     QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
     QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
-
-    // SETTERS
-    void setBounds( GWSGeometry geom );
 
     // METHODS
     virtual void registerAgent( QSharedPointer<GWSAgent> agent );
@@ -51,9 +49,6 @@ private:
     GWSPhysicalEnvironment();
     GWSPhysicalEnvironment(GWSPhysicalEnvironment const&);
     ~GWSPhysicalEnvironment();
-
-    // PHYSICAL ENVIRONMENT BOUNDS
-    GWSGeometry environment_bounds;
 
     // SPATIAL INDEX
     QStringList environment_agent_index_types;

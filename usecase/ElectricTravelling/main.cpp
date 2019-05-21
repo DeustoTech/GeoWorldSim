@@ -29,7 +29,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
-#include "../../environment/network_environment/NetworkEdge.h"
+#include "../../environment/grid_environment/GridEnvironment.h"
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
@@ -76,10 +76,10 @@ int main(int argc, char* argv[])
     GWSNetworkEnvironment::globalInstance();
     GWSTimeEnvironment::globalInstance();
     GWSCommunicationEnvironment::globalInstance();
+    GWSGridEnvironment::globalInstance();
     GWSAPIDriver::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    //GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteInVehicleBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
-                         qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
+                         qDebug() << "Data download took " << datasource_download_time.secsTo( QDateTime::currentDateTime() );
                          GWSExecutionEnvironment::globalInstance()->run();
                      }
                  });

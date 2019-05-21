@@ -10,6 +10,12 @@ bool GWSGeometryComparators::GWSGeometryComparators::isInBounds( const GWSGeomet
               : false;
 }
 
+bool GWSGeometryComparators::GWSGeometryComparators::contains(const GWSGeometry geometry, GWSCoordinate coor){
+    return geometry.inner_geometry ?
+                geometry.inner_geometry->getEnvelopeInternal()->contains( geos::geom::Coordinate( coor.getX() , coor.getY() , coor.getZ() ) )
+              : false;
+}
+
 bool GWSGeometryComparators::GWSGeometryComparators::intersects( const GWSGeometry geometry , GWSGeometry other ){
     if( other.isValid() ){
         return geometry.inner_geometry ? geometry.inner_geometry->intersects( other.inner_geometry ) : false;

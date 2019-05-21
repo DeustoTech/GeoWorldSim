@@ -12,11 +12,15 @@ GWSQuadtree::GWSQuadtree() : QObject(){
 GWSQuadtree::~GWSQuadtree(){
 }
 
-QStringList GWSQuadtree::getElements(){
+QStringList GWSQuadtree::getElements() const{
     return this->ids_contained;
 }
 
-const GWSGeometry GWSQuadtree::getGeometry( QString object_id ){
+const GWSGeometry GWSQuadtree::getBounds() const{
+    return this->index_bounds;
+}
+
+const GWSGeometry GWSQuadtree::getGeometry( QString object_id ) const {
     this->mutex.lockForWrite();
     GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
     this->mutex.unlock();
@@ -220,6 +224,10 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
         return;
     }
 
+    // Extend the bounds of the index
+    this->index_bounds = GWSGeometryTransformators::transformToFit( this->index_bounds , geom );
+
+    // Create helper element
     this->mutex.lockForRead();
     GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
     this->mutex.unlock();

@@ -1,21 +1,36 @@
 #include "Grid.h"
 
-#include <QColor>
-#include <QPainter>
-#include <QPen>
 #include <QtMath>
 #include <QDebug>
 
-#include "../../agent/Agent.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
+#include "../../object/ObjectFactory.h"
 #include "../../util/grid/GridCoordinatesConversor.h"
 #include "../../util/geometry/GeometryGetters.h"
+#include "../../util/geometry/GeometryTransformators.h"
+#include "../../util/geometry/GeometryComparators.h"
 
-QString GWSGrid::GRID_MAX_VALUE_PROP = "grid_max_value";
-QString GWSGrid::GRID_MIN_VALUE_PROP = "grid_min_value";
-QString GWSGrid::GRID_VALUES_PROP = "grid_values";
-QString GWSGrid::GRID_X_SIZE_PROP = "grid_x_size";
-QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
+GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size) : QObject(){
+
+    for(unsigned int i = 0 ; i < x_size ; i++){
+
+        this->grid->insert( i , new QMap<unsigned int , QJsonValue>() );
+
+        for(unsigned int j = 0 ; j < y_size ; j++){
+            this->grid->value( i )->insert( j , QJsonValue() );
+        }
+    }
+
+    this->x_size = x_size;
+    this->y_size = y_size;
+    this->grid_bounds = bounds;
+    this->max_x = GWSGeometryGetters::getGeometryMaxX( this->grid_bounds );
+    this->max_y = GWSGeometryGetters::getGeometryMaxY( this->grid_bounds );
+    this->min_x = GWSGeometryGetters::getGeometryMinX( this->grid_bounds );
+    this->min_y = GWSGeometryGetters::getGeometryMinY( this->grid_bounds );
+}
+
+GWSGrid::~GWSGrid(){
+}
 
 /**********************************************************************
  EXPORTERS
@@ -24,27 +39,22 @@ QString GWSGrid::GRID_Y_SIZE_PROP = "grid_y_size";
 QJsonObject GWSGrid::serialize() const{
 
     QJsonObject json;
-    json.insert( GRID_MAX_VALUE_PROP , this->max_value );
-    json.insert( GRID_MIN_VALUE_PROP , this->min_value );
 
     QJsonObject geojson;
     geojson.insert( "type" , "GeometryCollection" );
     QJsonArray geometries;
 
-    QSharedPointer<GWSAgent> agent;
-
-
     // BOUNDS
-    GWSGeometry geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
+    /*GWSGeometry geom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent );
     double left =   GWSGeometryGetters::getGeometryMinX( geom );
     double right =  GWSGeometryGetters::getGeometryMaxX( geom );
     double top =    GWSGeometryGetters::getGeometryMaxY( geom );
     double bottom = GWSGeometryGetters::getGeometryMinY( geom );
 
-    /*double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX();
+    double left =   GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinX();
     double right =  GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxX();
     double top =    GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMaxY();
-    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY();*/
+    double bottom = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent )->getGeometryMinY();
 
     for(int i = 0 ; i < this->getGridXSize() ; i++){
         for(int j = 0 ; j < this->getGridYSize() ; j++ ){
@@ -75,7 +85,7 @@ QJsonObject GWSGrid::serialize() const{
         }
     }
     geojson.insert( "geometries" , geometries );
-    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );
+    json.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geojson );*/
 
     return json;
 }
@@ -85,15 +95,32 @@ QJsonObject GWSGrid::serialize() const{
 **********************************************************************/
 
 bool GWSGrid::isGridEmpty() const{
-    return true;
+    return this->grid->isEmpty();
 }
 
-/*const void* GWSGrid::getGridCellValue(unsigned int grid_x, unsigned int grid_y) const{
-    if( grid_x >= this->getGridXSize() || grid_y >= this->getGridYSize() ){
-        return Q_NULLPTR;
-    }
-    return this->values[grid_x][grid_y];
-}*/
+GWSGeometry GWSGrid::getBounds() const{
+    return this->grid_bounds;
+}
+
+int GWSGrid::getXSize() const{
+    return this->x_size;
+}
+
+int GWSGrid::getYSize() const{
+    return this->y_size;
+}
+
+QJsonValue GWSGrid::getValue( GWSCoordinate coor ) const{
+
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , x_size );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , y_size );
+    return this->grid->value( x )->value( y , QJsonValue() );
+}
+
+QJsonValue GWSGrid::getValue( GWSGeometry geom ) const{
+    GWSCoordinate centroid = geom.getCentroid();
+    return this->getValue( centroid );
+}
 
 /*double GWSGrid::getCellValue(GWSCoordinate* coor) const{
     if( this->isEmpty() ){ return 0; }
@@ -115,49 +142,30 @@ bool GWSGrid::isGridEmpty() const{
     return GWSEnvelope( left , right , top , bottom );
 }*/
 
-double GWSGrid::getGridMaxValue() const {
-    return this->max_value;
-}
 
-double GWSGrid::getGridMinValue() const{
-    return this->min_value;
-}
-
-double GWSGrid::getGridCellValue(int grid_x, int grid_y) const{
-    Q_UNUSED( grid_x );
-    Q_UNUSED( grid_y );
-    return 0;
-}
 
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
-/*void GWSGrid::setBounds(GWSEnvelope* bounds){
-    //this->setProperty( GWSGrid::BOUNDS_PROP.toLatin1() , bounds );
-}*/
 
-void GWSGrid::setGridMaxValue(double max){
-    this->max_value = max;
-}
+void GWSGrid::setValue( GWSCoordinate coor , QJsonValue value ){
 
-void GWSGrid::setGridMinValue(double min){
-    this->min_value = min;
-}
-
-/*void GWSGrid::setGridCellValue(unsigned int grid_x, unsigned int grid_y, void* v){
-    this->values[grid_x][grid_y] = v;
-}*/
-
-/*void GWSGrid::setCellValue(GWSCoordinate* coor, double v){
-    if( !this->getBounds()->contains( coor ) ){
-        qWarning() << QString("Coordintate outside grid bounds");
+    if( !GWSGeometryComparators::contains( this->getBounds() , coor ) ){
+        qWarning() << QString("Value outside grid bounds");
         return;
     }
-    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor->getX() , this->getBounds()->getMinX() , this->getBounds()->getMaxX() , this->values.size() );
-    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor->getY() , this->getBounds()->getMinY() , this->getBounds()->getMaxY() , this->values[0].size() );
-    this->setCellValue( x , y , v );
-}*/
+
+    unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , this->x_size );
+    unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , this->y_size );
+    QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue() );
+    this->grid->value( x )->insert( y , GWSObjectFactory::incrementValue( existing_value , value ) );
+}
+
+void GWSGrid::setValue( GWSGeometry geom , QJsonValue value ){
+    GWSCoordinate centroid = geom.getCentroid();
+    this->setValue( centroid , value );
+}
 
 
 /**********************************************************************

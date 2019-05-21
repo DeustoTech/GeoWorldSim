@@ -39,6 +39,24 @@ GWSGeometry GWSGeometryTransformators::transformUnion( const GWSGeometry geometr
     return new_geometry;
 }
 
+GWSGeometry GWSGeometryTransformators::transformToFit(const GWSGeometry origin, const GWSGeometry extension){
+    geos::geom::Geometry* boundary = Q_NULLPTR;
+    if( origin.inner_geometry ) {
+        geos::geom::Geometry* unioned = origin.inner_geometry->Union( extension.inner_geometry );
+        boundary = unioned->getEnvelope();
+        delete unioned;
+    } else {
+        boundary = extension.inner_geometry->clone();
+    }
+
+    if( !boundary ){ return GWSGeometry(); }
+
+    GWSGeometry new_geometry;
+    new_geometry.inner_geometry = boundary;
+    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    return new_geometry;
+}
+
 GWSGeometry GWSGeometryTransformators::transformIntersection( const GWSGeometry geometry , const GWSGeometry other){
     geos::geom::Geometry* intersected = geometry.inner_geometry->intersection( other.inner_geometry );
     GWSGeometry new_geometry;

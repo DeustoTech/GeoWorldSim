@@ -22,8 +22,9 @@ public:
     ~GWSQuadtree();
 
     // GETTERS
-    QStringList getElements();
-    const GWSGeometry getGeometry( QString object_id );
+    QStringList getElements() const;
+    const GWSGeometry getBounds() const;
+    const GWSGeometry getGeometry( QString object_id ) const;
 
     QStringList getElements( const GWSCoordinate coordinate );
     QStringList getElements( const GWSGeometry geom );
@@ -51,12 +52,13 @@ private:
         GWSGeometry geometry;
     };
 
-    QReadWriteLock mutex;
+    mutable QReadWriteLock mutex;
 
     QStringList ids_contained;
     QMap< QString , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
     QMap< unsigned int , QMap< int , QMap< int , geos::index::quadtree::Quadtree* >* >* > quadtree_layers;
-    unsigned int layer_depth_amount = 3;
+    unsigned int layer_depth_amount = 5;
+    GWSGeometry index_bounds;
 
 };
 

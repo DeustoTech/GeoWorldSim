@@ -1,6 +1,7 @@
 #include "PhysicalEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../object/ObjectFactory.h"
+#include "../../util/geometry/GeometryTransformators.h"
 
 QString GWSPhysicalEnvironment::GEOMETRY_PROP = "geometry";
 
@@ -23,11 +24,22 @@ GWSPhysicalEnvironment::~GWSPhysicalEnvironment(){
 /***********************************************************************/
 
 const GWSGeometry GWSPhysicalEnvironment::getBounds() const{
-    return this->environment_bounds;
+    GWSGeometry bounds;
+    foreach( QSharedPointer<GWSQuadtree> t , this->environment_agent_indexes.values() ) {
+        bounds = GWSGeometryTransformators::transformToFit( bounds , t->getBounds() );
+    }
+    return bounds;
+}
+
+const GWSGeometry GWSPhysicalEnvironment::getBounds( QString class_name ) const {
+    if( this->environment_agent_indexes.keys().contains( class_name ) ){
+        return this->environment_agent_indexes.value( class_name )->getBounds();
+    }
+    return GWSGeometry();
 }
 
 GWSCoordinate GWSPhysicalEnvironment::getRandomCoordinate() const{
-    return this->environment_bounds.getCentroid();
+    return this->getBounds().getCentroid();
 }
 
 const GWSGeometry GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSAgent> agent ) const{
@@ -111,14 +123,6 @@ QSharedPointer<GWSAgent> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate c
 }
 
 /**********************************************************************
- SETTERS
-**********************************************************************/
-
-void GWSPhysicalEnvironment::setBounds(GWSGeometry geom){
-    this->environment_bounds = geom;
-}
-
-/**********************************************************************
  METHODS
 **********************************************************************/
 
@@ -173,6 +177,7 @@ void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){
 **********************************************************************/
 
 void GWSPhysicalEnvironment::upsertAgentToIndex(QSharedPointer<GWSAgent> agent, GWSGeometry geom){
+
     foreach (QJsonValue v , agent->getInheritanceFamily() ) {
 
         QString uuid = agent->getUID();

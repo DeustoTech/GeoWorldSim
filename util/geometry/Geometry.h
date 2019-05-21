@@ -12,9 +12,11 @@ using namespace geos::geom;
 
 struct GWSGeometry {
 
-    // PROPERTIES
-    QJsonObject geojson;
-    geos::geom::Geometry* inner_geometry = Q_NULLPTR;
+    friend class GWSGeometryGetters;
+    friend class GWSGeometryComparators;
+    friend class GWSGeometryTransformators;
+
+public:
 
     // CONSTRUCTORS
     GWSGeometry(){}
@@ -24,6 +26,7 @@ struct GWSGeometry {
 
     // GETTERS
     QString getUID() const;
+    QJsonObject getGeoJSON() const;
     bool isValid() const;
     GWSCoordinate getCentroid() const;
 
@@ -32,6 +35,12 @@ struct GWSGeometry {
     bool operator != (const GWSGeometry&) const;
     bool operator < (const GWSGeometry&) const;
     GWSGeometry& operator= (const GWSGeometry&);
+
+private:
+
+    // PROPERTIES
+    QJsonObject geojson;
+    geos::geom::Geometry* inner_geometry = Q_NULLPTR;
 
 };
 
