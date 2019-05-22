@@ -47,7 +47,6 @@ HEADERS += \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/property/PropertyStatisticsBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -100,7 +99,8 @@ HEADERS += \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
     ../../skill/move/StoreMultiRouteSkill.h \
-    ../../behaviour/property/PropertyHeatmapBehaviour.h
+    ../../behaviour/property/PropertyHeatmapBehaviour.h \
+    ../../behaviour/property/SendPropertyStatisticsBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -120,7 +120,6 @@ SOURCES += main.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
@@ -169,7 +168,8 @@ SOURCES += main.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
-    ../../behaviour/property/PropertyHeatmapBehaviour.cpp
+    ../../behaviour/property/PropertyHeatmapBehaviour.cpp \
+    ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

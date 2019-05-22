@@ -1,4 +1,4 @@
-#include "PropertyStatisticsBehaviour.h"
+#include "SendPropertyStatisticsBehaviour.h"
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
@@ -8,14 +8,15 @@
 #include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../util/grid/Grid.h"
 
-QString PropertyStatisticsBehaviour::AGENTS_TYPE = "agents_type";
-QString PropertyStatisticsBehaviour::AGENTS_FILTER = "agents_filter";
-QString PropertyStatisticsBehaviour::AGENTS_PROPERTY_NAME = "agents_property_name";
-QString PropertyStatisticsBehaviour::STORE_AS = "store_as";
-QString PropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
-QString PropertyStatisticsBehaviour::NEXTS = "nexts";
+QString SendPropertyStatisticsBehaviour::AGENTS_TYPE = "agents_type";
+QString SendPropertyStatisticsBehaviour::AGENTS_FILTER = "agents_filter";
+QString SendPropertyStatisticsBehaviour::AGENTS_PROPERTY_NAME = "agents_property_name";
+QString SendPropertyStatisticsBehaviour::STORE_AS = "store_as";
+QString SendPropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
+QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_alive";
+QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_dead";
 
-PropertyStatisticsBehaviour::PropertyStatisticsBehaviour() : GWSBehaviour(){
+SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviour(){
 
 }
 
@@ -23,12 +24,38 @@ PropertyStatisticsBehaviour::PropertyStatisticsBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
+QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString agents_type = this->getProperty( AGENTS_TYPE ).toString();
     QJsonObject agents_filter = this->getProperty( AGENTS_FILTER ).toObject();
     QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
+
+    QList< QSharedPointer<GWSAgent> > valid_agents;
+
+    bool valid = true;
+
+    foreach( QSharedPointer<GWSAgent> agent , agents ) {
+
+        foreach( QString key , agents_filter.keys() ){
+            if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
+                valid = false;
+                break;
+            }
+            else{
+                continue;
+            }
+        }
+        if ( valid ){
+            valid_agents.append( agent );
+        }
+
+    }
+
+    if ( valid_agents.isEmpty() ){
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ALL_DEAD ).toArray() );
+    }
+
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
     GWSGrid grid( bounds , 100 , 100 );
@@ -37,12 +64,12 @@ QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
     QJsonValue total_sum = 0;
     double average = 0;
 
-    foreach( QSharedPointer<GWSAgent> agent , agents ) {
+    foreach( QSharedPointer<GWSAgent> agent , valid_agents ) {
 
         QJsonValue val = agent->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
-        bool valid = true;
+        /*bool valid = true;
 
         foreach( QString key , agents_filter.keys() ){
             if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
@@ -50,7 +77,7 @@ QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
                 break;
             }
         }
-        if( !valid ){ continue; }
+        if( !valid ){ continue; }*/
 
         // GRID
         GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
@@ -107,5 +134,5 @@ QPair< double , QJsonArray > PropertyStatisticsBehaviour::behave(){
     // Keep back reference to update the olds that should be set to null
     this->previous_sent_coordinates = now_sent_coordinates;
 
-    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_STILL_ALIVE ).toArray() );
 }
