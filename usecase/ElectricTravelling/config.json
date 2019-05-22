@@ -7,15 +7,9 @@
 	
                             "@behaviours": [  
 
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" , 
-                                                        "start" : true , 
-                                                        "id": "DISPLAY" , 
-                                                        "agent_to_send_id" : "<id>" , 
-                                                        "duration": 0 , 
-                                                        "nexts" : ["GTALG"] } ,
-
                                                         {"@gwsclass": "CalculateGTAlgRouteBehaviour" ,  
                                                         "id": "GTALG" , 
+                                                        "start" : true ,
                                                         "transport_mode" : "<mode>", 
                                                         "route_optimization" : "QUICKER" , 
                                                         "destination_json" : "<destination>"  , 
@@ -53,7 +47,7 @@
                                                         "current_road_gradient" : 0 ,  
                                                         "current_road_traffic_situation" : 0.36 , 
                                                         "pollutant_type" : "INDIRECT" , 
-                                                        "duration" : 1 , 
+                                                        "duration" : 0 , 
                                                         "nexts" : ["FCL_POLLUTE"] } ,
                                                     
                                                         { "@gwsclass": "PolluteBehaviour" , 
@@ -62,7 +56,7 @@
                                                         "current_road_gradient" : 0 ,  
                                                         "current_road_traffic_situation" : 0.36 , 
                                                         "pollutant_type" : "FCL" , 
-                                                        "duration" : 1 , 
+                                                        "duration" : 0 , 
                                                         "nexts" : ["DISPLAY_MOVING"] } ,
                                                             
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,   

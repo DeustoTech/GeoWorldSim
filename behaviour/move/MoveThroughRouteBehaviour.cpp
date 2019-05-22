@@ -65,13 +65,22 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
 
     // Calculate speed
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    GWSSpeedUnit current_speed = GWSSpeedUnit( this->getProperty( AGENT_CURRENT_SPEED ).toDouble() );
-    GWSSpeedUnit max_speed = GWSSpeedUnit( this->getProperty( AGENT_MAX_SPEED ).toDouble() );
 
-    if( current_speed == 0 ){
-        current_speed = movethroughroute_skill->calculateNewSpeed( current_speed , max_speed , 1.4 );
-        this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
+    // Get all needed speeds
+    GWSSpeedUnit current_speed = GWSSpeedUnit( this->getProperty( AGENT_CURRENT_SPEED ).toDouble( 0 ) );
+    GWSSpeedUnit max_speed = GWSSpeedUnit( this->getProperty( AGENT_MAX_SPEED ).toDouble( 4 ) );
+    QSharedPointer<GWSAgent> current_edge = movethroughroute_skill->getCurrentEdge();
+    if( current_edge ){
+        max_speed = GWSSpeedUnit( current_edge->getProperty( AGENT_MAX_SPEED ).toDouble( 14 ) );
     }
+
+    // Accelerate or Brake
+    if( current_speed == 0 ){
+        current_speed = movethroughroute_skill->calculateNewSpeed( current_speed , max_speed , 1 );
+    } else {
+        current_speed = movethroughroute_skill->calculateNewSpeed( current_speed , max_speed , (max_speed.number() - current_speed.number()) / current_speed.number() );
+    }
+    this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
 
     // Pending time to reach destination can be higher than the duration requested.
     GWSCoordinate agent_position = agent_geom.getCentroid();
@@ -94,7 +103,7 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     }
 
     if ( agent_position_post != destination_coor ){
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() ,  this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
+        return QPair< double , QJsonArray >( duration_of_movement.number() ,  this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
 }

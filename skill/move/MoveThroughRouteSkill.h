@@ -21,6 +21,9 @@ public:
     static QString STORE_CURRENT_ROAD_MAXSPEED;
     static QString STORE_ROUTE_AS;
 
+    // GETTERS
+    QSharedPointer<GWSAgent> getCurrentEdge() const;
+
     // METHODS
     virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );
 

@@ -81,8 +81,14 @@ struct GWSUnit {
         return GWSUnit( this->value - v , this->unit );
     }
 
+    GWSUnit operator *(const GWSUnit other) const{
+        return GWSUnit( this->value * other.value , "" );
+    }
     GWSUnit operator *(const double v) const{
         return GWSUnit( this->value * v , this->unit );
+    }
+    GWSUnit operator /(const GWSUnit other) const{
+        return GWSUnit( this->value / other.value , "" );
     }
     GWSUnit operator /(const double v) const{
         return GWSUnit( this->value / v , this->unit );
