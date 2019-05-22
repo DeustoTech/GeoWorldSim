@@ -43,9 +43,6 @@ public:
     Q_INVOKABLE explicit GWSAgent(); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
     ~GWSAgent();
 
-    // PROPERTIES
-    static QString ALIVE_PROP;
-
     // STYLE PROPERTIES
     static QString STYLE_COLOR_PROP;
     static QString STYLE_OPACITY_PROP;

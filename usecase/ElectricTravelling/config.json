@@ -33,7 +33,7 @@
         
                             "@behaviours": [  
                                 
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "agents_filter" : { "alive" : true } , "store_as" : "total_noise" , "duration": 60 , "nexts" : ["DISPLAY"] },
+                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "agents_filter" : { "running" : true } , "store_as" : "total_noise" , "duration": 60 , "nexts" : ["DISPLAY"] }
                                 
                             ] } ,
                             
@@ -43,7 +43,7 @@
         
                             "@behaviours": [  
     
-                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "agents_filter" : { "alive" : true } , "store_as" : "total_CO2" , "duration": 60 , "nexts" : ["DISPLAY"] },
+                                { "@gwsclass": "PropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "agents_filter" : { "running" : true } , "store_as" : "total_CO2" , "duration": 60 , "nexts" : ["DISPLAY"] }
                                 
                             ] } ,
                             

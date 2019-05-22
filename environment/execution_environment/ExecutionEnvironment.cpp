@@ -14,6 +14,7 @@
 
 QString GWSExecutionEnvironment::AGENT_BIRTH_PROP = "birth";
 QString GWSExecutionEnvironment::AGENT_DEATH_PROP = "death";
+QString GWSExecutionEnvironment::AGENT_RUNNING_PROP = "running";
 QString GWSExecutionEnvironment::STARTED_SIMULATION_TIME = "started_simulation_time";
 QString GWSExecutionEnvironment::STARTED_REAL_TIME = "started_real_time";
 QString GWSExecutionEnvironment::ENDED_SIMULATION_TIME = "ended_simulation_time";
@@ -73,7 +74,7 @@ template <class T> QList< QSharedPointer<T> > GWSExecutionEnvironment::getRunnin
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
-    return this->getProperty("RUNNING").toBool( false );
+    return this->getProperty( AGENT_RUNNING_PROP ).toBool( false );
 }
 
 int GWSExecutionEnvironment::getTicksAmount() const{
@@ -99,6 +100,7 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     }
 
     agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , qMax( (double)agent_time , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
+    agent->setProperty( AGENT_RUNNING_PROP , true );
     agent->incrementBusy();
 
     // Store as running
@@ -119,6 +121,7 @@ void GWSExecutionEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
 
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     agent->setProperty( AGENT_DEATH_PROP , current_datetime );
+    agent->setProperty( AGENT_RUNNING_PROP , false );
 
     agent->incrementBusy();
 
@@ -145,7 +148,7 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    this->setProperty("RUNNING" , true );
+    this->setProperty( AGENT_RUNNING_PROP , true );
     this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 
@@ -253,7 +256,7 @@ void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
-    this->setProperty("RUNNING" , false );
+    this->setProperty( AGENT_RUNNING_PROP , false );
     this->setProperty( ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
     this->setProperty( ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
 

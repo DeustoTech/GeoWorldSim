@@ -19,7 +19,6 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-QString GWSAgent::ALIVE_PROP = "alive";
 QString GWSAgent::STYLE_COLOR_PROP = "color";
 QString GWSAgent::STYLE_OPACITY_PROP = "opacity";
 QString GWSAgent::STYLE_BORDER_COLOR_PROP = "border_color";
@@ -29,7 +28,6 @@ QString GWSAgent::STYLE_ICON_URL_PROP = "icon_url";
 QString GWSAgent::STYLE_ZOOM_LEVEL_PROP = "zoom_level";
 
 GWSAgent::GWSAgent() : GWSObject() , busy_counter(0) {
-    this->setProperty( ALIVE_PROP , true );
 }
 
 GWSAgent::~GWSAgent() {
