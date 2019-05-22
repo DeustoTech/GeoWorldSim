@@ -27,6 +27,8 @@ public:
     unsigned int getYSize() const;
     double getLon( double x ) const;
     double getLat( double y ) const;
+    double getMaxValue() const;
+    double getMinValue() const;
     virtual QJsonValue getValue( GWSCoordinate coor ) const;
     virtual QJsonValue getValue( GWSGeometry geom ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;

@@ -100,6 +100,28 @@ double GWSGrid::getLat(double y) const{
     return GWSGridCoordinatesConversor::y2lat( y , min_y , max_y , y_size );
 }
 
+double GWSGrid::getMaxValue() const{
+    double max;
+    for(int i = 0 ; i < x_size ; i++){
+        for(int j = 0 ; j < y_size ; j++ ){
+            QJsonValue v = this->grid->value( i )->value( j );
+            max = max => v.toDouble() ? max : v.toDouble();
+        }
+    }
+    return max;
+}
+
+double GWSGrid::getMinValue() const{
+    double min;
+    for(int i = 0 ; i < x_size ; i++){
+        for(int j = 0 ; j < y_size ; j++ ){
+            QJsonValue v = this->grid->value( i )->value( j );
+            min = min <= v.toDouble() ? min : v.toDouble();
+        }
+    }
+    return min;
+}
+
 QJsonValue GWSGrid::getValue( GWSCoordinate coor ) const{
 
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , x_size );

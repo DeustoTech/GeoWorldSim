@@ -69,16 +69,6 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
         QJsonValue val = agent->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
-        /*bool valid = true;
-
-        foreach( QString key , agents_filter.keys() ){
-            if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
-                valid = false;
-                break;
-            }
-        }
-        if( !valid ){ continue; }*/
-
         // GRID
         GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         grid.addValue( agent_geom , val );
@@ -106,6 +96,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     // Send cell points
     QList<GWSCoordinate> now_sent_coordinates;
+    double max_value = grid.getMaxValue();
+    double min_value = grid.getMinValue();
     for(unsigned int i = 0 ; i < grid.getXSize() ; i++){
         for(unsigned int j = 0 ; j < grid.getYSize() ; j++ ){
 
@@ -127,6 +119,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             geometry.insert( "coordinates" , coordinates );
             grid_cell.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geometry );
             grid_cell.insert( "value" , val );
+            double normalized = ( val.toDouble(0) - min_value) / (max_value - min_value);
+            grid_cell.insert( "color" , QString("rgb(%1,192,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
             emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
         }
     }
