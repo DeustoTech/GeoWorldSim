@@ -13,11 +13,11 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // PROPERTIES
-    static QString AGENT_ROUTE_DESTINATION_X_VALUE;
-    static QString AGENT_ROUTE_DESTINATION_Y_VALUE;
+    static QString INPUT_ROUTE_DESTINATION_X;
+    static QString INPUT_ROUTE_DESTINATION_Y;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
-    static QString TRANSPORT_NETWORK_TYPE;
+    static QString INPUT_TRANSPORT_NETWORK_TYPE;
 
 protected slots:
     virtual QPair< double , QJsonArray > behave();

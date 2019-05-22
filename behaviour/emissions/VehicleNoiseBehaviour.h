@@ -15,8 +15,8 @@ public:
     Q_INVOKABLE explicit VehicleNoiseBehaviour();
 
     // PROPERTIES
-    static QString VEHICLE_TYPE;
-    static QString STORE_NOISE_AS;
+    static QString INPUT_VEHICLE_TYPE;
+    static QString OUTPUT_NOISE;
     static QString NEXTS;
 
 private slots:

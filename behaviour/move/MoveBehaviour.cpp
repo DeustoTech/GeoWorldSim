@@ -7,10 +7,8 @@
 #include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
-QString MoveBehaviour::AGENT_MAX_SPEED = "maxspeed";
-QString MoveBehaviour::AGENT_CURRENT_SPEED = "current_speed";
-QString MoveBehaviour::AGENT_MOVE_TO_X_VALUE = "move_to_x_value";
-QString MoveBehaviour::AGENT_MOVE_TO_Y_VALUE = "move_to_y_value";
+QString MoveBehaviour::INPUT_MOVE_TO_X = "input_move_to_x";
+QString MoveBehaviour::INPUT_MOVE_TO_Y = "input_move_to_y";
 QString MoveBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
 QString MoveBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
@@ -37,8 +35,8 @@ QPair< double , QJsonArray > MoveBehaviour::behave(){
 
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
-    QJsonValue x_destination = this->getProperty( AGENT_MOVE_TO_X_VALUE );
-    QJsonValue y_destination = this->getProperty( AGENT_MOVE_TO_Y_VALUE );
+    QJsonValue x_destination = this->getProperty( INPUT_MOVE_TO_X );
+    QJsonValue y_destination = this->getProperty( INPUT_MOVE_TO_Y );
 
     GWSCoordinate destination_coor = GWSCoordinate( x_destination.toDouble() , y_destination.toDouble() );
     if( !destination_coor.isValid() ){
@@ -47,12 +45,12 @@ QPair< double , QJsonArray > MoveBehaviour::behave(){
     }
 
     // Calculate speed
-    GWSSpeedUnit current_speed = GWSSpeedUnit( this->getProperty( AGENT_CURRENT_SPEED ).toDouble() );
-    GWSSpeedUnit max_speed = GWSSpeedUnit( this->getProperty( AGENT_MAX_SPEED ).toDouble() );
+    GWSSpeedUnit current_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble() );
+    GWSSpeedUnit max_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::MAX_SPEED ).toDouble() );
 
     if( current_speed == 0 ){
         current_speed = move_skill->calculateNewSpeed( current_speed , max_speed , 1.4 );
-        this->setProperty( AGENT_CURRENT_SPEED , current_speed.number() );
+        agent->setProperty( MoveSkill::CURRENT_SPEED , current_speed.number() );
     }
 
     // Pending time to reach destination can be higher than the duration requested.

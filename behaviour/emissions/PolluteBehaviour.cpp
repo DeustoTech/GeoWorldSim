@@ -6,13 +6,13 @@
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
-QString PolluteBehaviour::POLLUTANT_TYPE_ARRAY = "pollutant_type_array";
-QString PolluteBehaviour::STORE_POLLUTANT_AS = "store_pollutant_as";
-QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "current_road_gradient";
-QString PolluteBehaviour::CURRENT_ROAD_TYPE = "current_road_type";
-QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "current_road_traffic_situation";
-QString PolluteBehaviour::VEHICLE_TYPE = "vehicle_type";
-QString PolluteBehaviour::TRANSPORT_MODE = "transport_mode";
+QString PolluteBehaviour::INPUT_POLLUTANT_TYPES = "input_pollutant_types";
+QString PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
+QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
+QString PolluteBehaviour::CURRENT_ROAD_TYPE = "input_current_road_type";
+QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
+QString PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
+QString PolluteBehaviour::INPUT_TRANSPORT_MODE = "input_transport_mode";
 QString PolluteBehaviour::ABATEMENT_TYPE = "abatement_type";
 QString PolluteBehaviour::NEXTS = "nexts";
 
@@ -41,13 +41,16 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     GWSCoordinate current_coor = agent_geom.getCentroid();
+    GWSLengthUnit distance = current_coor.getDistance( this->last_position );
 
-    QString transport_mode = agent->getProperty( TRANSPORT_MODE ).toString();
+    QString transport_mode = this->getProperty( INPUT_TRANSPORT_MODE ).toString();
 
-    if ( transport_mode == "WALK" || transport_mode == "BICYCLE" ){
+    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    QSharedPointer<GWSAgent> current_edge = movethroughroute_skill->getCurrentEdge();
+
+    if ( transport_mode == "WALK" || transport_mode == "BICYCLE" || current_edge.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
-
 
     // DEFAULT VEHICLE TYPES
     QMap< QString , QString > default_vehicles;
@@ -56,24 +59,20 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
     default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
 
-    QString vehicle_type = agent->getProperty( VEHICLE_TYPE ).toString();
+    QString vehicle_type = agent->getProperty( INPUT_VEHICLE_TYPE ).toString();
 
     if ( vehicle_type.isEmpty() ){
         // Get and set vehicle type from default
        vehicle_type = default_vehicles[ transport_mode ];
     }
 
-    //QString abatement = agent->getProperty( this->getProperty( ABATEMENT_TYPE ).toString() ).toString();
-    GWSSpeedUnit vehicle_speed = this->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).toDouble();
     double gradient = agent->getProperty( CURRENT_ROAD_GRADIENT ).toDouble();
-    QString roadType = agent->getProperty( MoveThroughRouteSkill::STORE_CURRENT_ROAD_TYPE ).toString().toLower();
     double trafficSit = agent->getProperty( CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
-    GWSLengthUnit distance = current_coor.getDistance( this->last_position );
+    GWSSpeedUnit vehicle_speed = agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble();
+    QString roadType = current_edge->getProperty( CURRENT_ROAD_TYPE ).toString().toLower();
      
     QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
-    
-    
-    QJsonArray pollutant_types = this->getProperty( POLLUTANT_TYPE_ARRAY ).toArray();
+    QJsonArray pollutant_types = this->getProperty( INPUT_POLLUTANT_TYPES ).toArray();
     
     foreach ( QJsonValue pollutant , pollutant_types ){
 
@@ -83,7 +82,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
              emission = 0;
          }
          // Store noise
-         agent->setProperty( this->getProperty( STORE_POLLUTANT_AS ).toString("vehicle_" + pollutant.toString() ) , emission.number() );
+         agent->setProperty( this->getProperty( OUTPUT_POLLUTANTS ).toString("vehicle_" + pollutant.toString() ) , emission.number() );
 
     }
 

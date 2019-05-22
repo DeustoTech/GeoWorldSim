@@ -12,10 +12,8 @@ public:
     Q_INVOKABLE explicit MoveBehaviour();
 
     // PROPERTIES
-    static QString AGENT_MAX_SPEED;
-    static QString AGENT_CURRENT_SPEED;
-    static QString AGENT_MOVE_TO_X_VALUE;
-    static QString AGENT_MOVE_TO_Y_VALUE;
+    static QString INPUT_MOVE_TO_X;
+    static QString INPUT_MOVE_TO_Y;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
 

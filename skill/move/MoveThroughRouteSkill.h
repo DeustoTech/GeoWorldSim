@@ -16,9 +16,9 @@ public:
     //- PROPERTIES
     static QString EDGE_CAPACITY_PROP;
     static QString EDGE_INSIDE_AGENT_IDS_PROP;
-    static QString STORE_CURRENT_ROAD_ID;
-    static QString STORE_CURRENT_ROAD_TYPE;
-    static QString STORE_CURRENT_ROAD_MAXSPEED;
+    static QString CURRENT_ROAD_ID;
+    static QString CURRENT_ROAD_TYPE;
+    static QString CURRENT_ROAD_MAXSPEED;
     static QString STORE_ROUTE_AS;
 
     // GETTERS

@@ -14,12 +14,12 @@ public:
     ~MoveSkill();
 
     // PROPERTIES
-    static QString STORE_MAX_SPEED_PROP;
-    static QString STORE_CURRENT_SPEED_PROP;
-    static QString STORE_MOVING_TOWARDS_X_PROP;
-    static QString STORE_MOVING_TOWARDS_Y_PROP;
-    static QString STORE_ACCUMULATED_DISTANCE_PROP;
-    static QString STORE_ACCUMULATED_TIME_PROP;
+    static QString MAX_SPEED;
+    static QString CURRENT_SPEED;
+    static QString MOVING_TOWARDS_X;
+    static QString MOVING_TOWARDS_Y;
+    static QString ACCUMULATED_DISTANCE;
+    static QString ACCUMULATED_TIME;
 
     // GETTERS
     //GWSSpeedUnit getCurrentSpeed();

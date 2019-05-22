@@ -7,12 +7,12 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString MoveSkill::STORE_MAX_SPEED_PROP = "move_skill_maxspeed";
-QString MoveSkill::STORE_CURRENT_SPEED_PROP = "move_skill_current_speed";
-QString MoveSkill::STORE_MOVING_TOWARDS_X_PROP = "move_skill_moving_towards_x";
-QString MoveSkill::STORE_MOVING_TOWARDS_Y_PROP = "move_skill_moving_towards_y";
-QString MoveSkill::STORE_ACCUMULATED_DISTANCE_PROP = "move_skill_total_travelled_distance";
-QString MoveSkill::STORE_ACCUMULATED_TIME_PROP = "move_skill_total_travelled_time";
+QString MoveSkill::MAX_SPEED = "maxspeed";
+QString MoveSkill::CURRENT_SPEED = "current_speed";
+QString MoveSkill::MOVING_TOWARDS_X = "move_skill_moving_towards_x";
+QString MoveSkill::MOVING_TOWARDS_Y = "move_skill_moving_towards_y";
+QString MoveSkill::ACCUMULATED_DISTANCE = "move_skill_total_travelled_distance";
+QString MoveSkill::ACCUMULATED_TIME = "move_skill_total_travelled_time";
 
 MoveSkill::MoveSkill() : GWSSkill(){
 }
@@ -57,9 +57,9 @@ GWSSpeedUnit MoveSkill::calculateNewSpeed(GWSSpeedUnit current_speed , GWSSpeedU
 void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards ){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
-    agent->setProperty( STORE_CURRENT_SPEED_PROP , movement_speed );
-    agent->setProperty( STORE_MOVING_TOWARDS_X_PROP , movement_towards.getX() );
-    agent->setProperty( STORE_MOVING_TOWARDS_Y_PROP , movement_towards.getY() );
+    agent->setProperty( CURRENT_SPEED , movement_speed );
+    agent->setProperty( MOVING_TOWARDS_X , movement_towards.getX() );
+    agent->setProperty( MOVING_TOWARDS_Y , movement_towards.getY() );
 
     if( movement_duration == 0 ){
         // Not move operation
@@ -103,7 +103,7 @@ void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_spee
         agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , moved_geometry.getGeoJSON() );
     }
 
-    agent->setProperty( STORE_ACCUMULATED_DISTANCE_PROP , agent->getProperty( STORE_ACCUMULATED_DISTANCE_PROP ).toDouble() + meters );
-    agent->setProperty( STORE_ACCUMULATED_TIME_PROP , agent->getProperty( STORE_ACCUMULATED_TIME_PROP ).toDouble() + movement_duration.number() );
+    agent->setProperty( ACCUMULATED_DISTANCE , agent->getProperty( ACCUMULATED_DISTANCE ).toDouble() + meters );
+    agent->setProperty( ACCUMULATED_TIME , agent->getProperty( ACCUMULATED_TIME ).toDouble() + movement_duration.number() );
 
 }

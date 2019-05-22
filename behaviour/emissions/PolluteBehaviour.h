@@ -14,14 +14,14 @@ public:
     Q_INVOKABLE explicit PolluteBehaviour();
 
     // PARAMETERS
-    static QString VEHICLE_TYPE;
-    static QString TRANSPORT_MODE;
+    static QString INPUT_VEHICLE_TYPE;
+    static QString INPUT_TRANSPORT_MODE;
     static QString ABATEMENT_TYPE;
-    static QString POLLUTANT_TYPE_ARRAY;
+    static QString INPUT_POLLUTANT_TYPES;
     static QString CURRENT_ROAD_GRADIENT;
     static QString CURRENT_ROAD_TYPE;
     static QString CURRENT_ROAD_TRAFFIC_SITUATION;
-    static QString STORE_POLLUTANT_AS;
+    static QString OUTPUT_POLLUTANTS;
     static QString NEXTS;
 
 protected slots:

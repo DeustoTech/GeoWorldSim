@@ -8,10 +8,9 @@
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
-
-QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_ID = "current_road_id";
-QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_TYPE = "current_road_type";
-QString MoveThroughRouteSkill::STORE_CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
+QString MoveThroughRouteSkill::CURRENT_ROAD_ID = "current_road_id";
+QString MoveThroughRouteSkill::CURRENT_ROAD_TYPE = "current_road_type";
+QString MoveThroughRouteSkill::CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
 QString MoveThroughRouteSkill::STORE_ROUTE_AS = "calculated_route";
 
 MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
@@ -45,9 +44,9 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     // Reset travelling road
-    agent->setProperty( STORE_CURRENT_ROAD_ID , QJsonValue() );
-    agent->setProperty( STORE_CURRENT_ROAD_TYPE , QJsonValue() );
-    agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , QJsonValue() );
+    agent->setProperty( CURRENT_ROAD_ID , QJsonValue() );
+    agent->setProperty( CURRENT_ROAD_TYPE , QJsonValue() );
+    agent->setProperty( CURRENT_ROAD_MAXSPEED , QJsonValue() );
 
     if( !agent_geom.isValid() ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
@@ -111,9 +110,9 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
     // If pending_route_edges is not empty
     QSharedPointer<GWSAgent> current_edge_agent = this->getCurrentEdge();
-    agent->setProperty( STORE_CURRENT_ROAD_ID , current_edge_agent->getUID() );
-    agent->setProperty( STORE_CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "type" ) );
-    agent->setProperty( STORE_CURRENT_ROAD_MAXSPEED , current_edge_agent->getProperty( "maxspeed" ) );
+    agent->setProperty( CURRENT_ROAD_ID , current_edge_agent->getUID() );
+    agent->setProperty( CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "type" ) );
+    agent->setProperty( CURRENT_ROAD_MAXSPEED , current_edge_agent->getProperty( "maxspeed" ) );
 
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
