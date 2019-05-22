@@ -104,7 +104,7 @@ void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSAgent> agent , QJs
 
             this->mutex.lockForWrite();
             this->environment_agent_grid_types.append( family );
-            this->environment_agent_grids.insert( family , QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 ) ) );
+            this->environment_agent_grids.insert( family , QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) ) );
         }
         this->mutex.unlock();
 

@@ -80,7 +80,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                 .arg( this->getProperty( TRANSPORT_MODE ).toString() )
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
-        qDebug() << gtUrl;
+        //qDebug() << gtUrl;
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 

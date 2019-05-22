@@ -10,7 +10,7 @@
 #include "../../util/geometry/GeometryTransformators.h"
 #include "../../util/geometry/GeometryComparators.h"
 
-GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size) : QObject(){
+GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size , QString grid_type) : QObject(){
 
     this->grid = new QMap< unsigned int , QMap< unsigned int , QJsonValue >* >();
 
@@ -23,6 +23,7 @@ GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size) :
         }
     }
 
+    this->grid_type = grid_type;
     this->x_size = x_size;
     this->y_size = y_size;
     this->grid_bounds = bounds;
@@ -149,8 +150,33 @@ void GWSGrid::addValue( GWSCoordinate coor , QJsonValue value ){
     }
 
     QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue() );
-    QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
-    this->grid->value( x )->insert( y , sum );
+
+    // How we add the value depends on the type of grid:
+
+    // The grid cells represent the total value of the cell:
+    if ( this->grid_type == "total" ){
+        QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
+        this->grid->value( x )->insert( y , sum );
+    }
+
+    // The grid cells represent the latest value of the cell:
+    if ( this->grid_type == "latest" ){
+        //QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
+        this->grid->value( x )->insert( y , value );
+    }
+
+    // The grid cells return the maximum between the previous and the latest:
+    if ( this->grid_type == "maximum" ){
+        QJsonValue max = qMax( existing_value.toDouble() , value.toDouble() );
+        this->grid->value( x )->insert( y , max );
+    }
+
+    // The grid cells return the minimum between the previous and the latest:
+    if ( this->grid_type == "minimum" ){
+        QJsonValue min = qMin( existing_value.toDouble() , value.toDouble() );
+        this->grid->value( x )->insert( y , min );
+    }
+
 }
 
 void GWSGrid::addValue( GWSGeometry geom , QJsonValue value ){

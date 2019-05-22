@@ -11,6 +11,7 @@
 QString SendPropertyStatisticsBehaviour::AGENTS_TYPE = "agents_type";
 QString SendPropertyStatisticsBehaviour::AGENTS_FILTER = "agents_filter";
 QString SendPropertyStatisticsBehaviour::AGENTS_PROPERTY_NAME = "agents_property_name";
+QString SendPropertyStatisticsBehaviour::GRID_TYPE = "grid_type";
 QString SendPropertyStatisticsBehaviour::STORE_AS = "store_as";
 QString SendPropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
 QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_still_alive_agents";
@@ -29,25 +30,24 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QString agents_type = this->getProperty( AGENTS_TYPE ).toString();
     QJsonObject agents_filter = this->getProperty( AGENTS_FILTER ).toObject();
-    QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
+    QString grid_type = this->getProperty( GRID_TYPE ).toString();
 
+    QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
     QList< QSharedPointer<GWSAgent> > valid_agents;
 
-    bool valid = true;
+    foreach( QSharedPointer<GWSAgent> a , agents ) {
 
-    foreach( QSharedPointer<GWSAgent> agent , agents ) {
+        bool valid = true;
 
         foreach( QString key , agents_filter.keys() ){
-            if ( ( agent->getProperty( key ).isNull() ) || ( agent->getProperty( key ) != agents_filter.value( key ) ) ){
+            if ( ( a->getProperty( key ).isNull() ) || ( a->getProperty( key ) != agents_filter.value( key ) ) ){
                 valid = false;
                 break;
             }
-            else{
-                continue;
-            }
+
         }
         if ( valid ){
-            valid_agents.append( agent );
+            valid_agents.append( a );
         }
 
     }
@@ -58,7 +58,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
-    GWSGrid grid( bounds , 100 , 100 );
+    GWSGrid grid( bounds , 100 , 100 ,  grid_type );
 
     unsigned int count = 0;
     QJsonValue total_sum = 0;

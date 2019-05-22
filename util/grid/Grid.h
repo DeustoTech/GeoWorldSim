@@ -16,7 +16,7 @@ class GWSGrid : public QObject {
     //[00 , 10 , 20 , 30]
 
 public:
-    GWSGrid( GWSGeometry bounds , unsigned int x_size , unsigned int y_size );
+    GWSGrid( GWSGeometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type);
     ~GWSGrid();
 
     // GETTERS
@@ -50,6 +50,7 @@ protected:
     QMap< unsigned int , QMap< unsigned int , QJsonValue >* >* grid;
     int x_size = -1;
     int y_size = -1;
+    QString grid_type;
 
     // BOUNDS
     double min_x = 180;

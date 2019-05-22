@@ -42,14 +42,29 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     GWSCoordinate current_coor = agent_geom.getCentroid();
 
-    QString vehicle_type = agent->getProperty( VEHICLE_TYPE  ).toString();
-    //QString vehicle_type = "MC_2S_<=150cc_Euro-2";
-
     QString transport_mode = agent->getProperty( TRANSPORT_MODE ).toString();
 
     if ( transport_mode == "WALK" || transport_mode == "BICYCLE" ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
+
+
+    // DEFAULT VEHICLE TYPES
+    QMap< QString , QString > default_vehicles;
+    default_vehicles["CAR"] = "PC_diesel_1,4-<2L_Euro-6_DPF";
+    default_vehicles["MOTORCYCLE"] = "MC_2S_<=150cc_Euro-2";
+    default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
+    default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
+
+    QJsonValue vehicle_type = agent->getProperty( VEHICLE_TYPE ).toString();
+
+    if ( vehicle_type.isNull() ){
+        // Get and set vehicle type from default
+       vehicle_type = default_vehicles[ transport_mode ];
+    }
+
+    qDebug() << vehicle_type;
+
 
     //QString abatement = agent->getProperty( this->getProperty( ABATEMENT_TYPE ).toString() ).toString();
     GWSSpeedUnit vehicle_speed = this->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).toDouble();
@@ -65,7 +80,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
 
     GWSLengthUnit distance = current_coor.getDistance( this->last_position );
 
-    GWSMassUnit emission = pollute_skill->pollute( vehicle_type , transport_mode , pollutant , vehicle_speed , gradient , roadType , trafficSit , distance );
+    GWSMassUnit emission = pollute_skill->pollute( vehicle_type.toString() , transport_mode , pollutant , vehicle_speed , gradient , roadType , trafficSit , distance );
 
     if ( !emission.isValid() ){
 
