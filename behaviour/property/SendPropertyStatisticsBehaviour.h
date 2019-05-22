@@ -29,7 +29,7 @@ private slots:
 
 private:
     QList<GWSCoordinate> previous_sent_coordinates;
-
+    QStringList previous_sent_coordinates_ids;
 };
 
 #endif // GWSPROPERTYSTATISTICSBEHAVIOUR_H

@@ -56,7 +56,6 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
     default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
 
-    qDebug( ) << default_vehicles;
     QString vehicle_type = agent->getProperty( VEHICLE_TYPE ).toString();
 
     if ( vehicle_type.isEmpty() ){
