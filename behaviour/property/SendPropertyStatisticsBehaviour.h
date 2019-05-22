@@ -4,13 +4,13 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../behaviour/Behaviour.h"
 
-class PropertyStatisticsBehaviour : public GWSBehaviour
+class SendPropertyStatisticsBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
 
-    Q_INVOKABLE explicit PropertyStatisticsBehaviour();
+    Q_INVOKABLE explicit SendPropertyStatisticsBehaviour();
 
     // PROPERTIES
     static QString AGENTS_TYPE;
@@ -18,7 +18,8 @@ public:
     static QString AGENTS_PROPERTY_NAME;
     static QString SOCKET_ID;
     static QString STORE_AS;
-    static QString NEXTS;
+    static QString NEXTS_IF_ALIVE;
+    static QString NEXTS_IF_DEAD;
 
 private slots:
 
