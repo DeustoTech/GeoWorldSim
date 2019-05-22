@@ -104,8 +104,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             GWSCoordinate coor = GWSCoordinate( grid.getLon( i+0.5 ) , grid.getLat( j+0.5 ) );
             QJsonValue val = grid.getValue( coor );
             QString coor_id = QString("%1-%2").arg( i ).arg( j );
-            qDebug() << coor_id;
-           // if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
+
+            // if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
 
             if( val.isNull() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){ continue; }
 
