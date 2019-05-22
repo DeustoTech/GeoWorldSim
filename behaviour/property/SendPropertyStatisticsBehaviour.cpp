@@ -44,7 +44,6 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
                 valid = false;
                 break;
             }
-
         }
         if ( valid ){
             valid_agents.append( a );
@@ -96,6 +95,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     // Send cell points
     QList<GWSCoordinate> now_sent_coordinates;
+    QStringList now_sent_coordinates_ids;
     double max_value = grid.getMaxValue();
     double min_value = grid.getMinValue();
     for(unsigned int i = 0 ; i < grid.getXSize() ; i++){
@@ -103,9 +103,16 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
             GWSCoordinate coor = GWSCoordinate( grid.getLon( i+0.5 ) , grid.getLat( j+0.5 ) );
             QJsonValue val = grid.getValue( coor );
-            if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
+            QString coor_id = QString("%1-%2").arg( i ).arg( j );
+            qDebug() << coor_id;
+           // if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
 
-            now_sent_coordinates.append( coor );
+            if( val.isNull() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){ continue; }
+
+            if( !val.isNull() ){
+               // now_sent_coordinates.append( coor );
+                now_sent_coordinates_ids.append( coor_id );
+            }
 
             QJsonObject grid_cell;
             grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( agent->getUID() ).arg( i ).arg( j ) );
@@ -126,7 +133,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     }
 
     // Keep back reference to update the olds that should be set to null
-    this->previous_sent_coordinates = now_sent_coordinates;
+   // this->previous_sent_coordinates = now_sent_coordinates;
+    this->previous_sent_coordinates_ids = now_sent_coordinates_ids;
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_STILL_ALIVE ).toArray() );
 }

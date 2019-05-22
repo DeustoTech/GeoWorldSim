@@ -21,7 +21,7 @@ public:
     static QString CURRENT_ROAD_GRADIENT;
     static QString CURRENT_ROAD_TYPE;
     static QString CURRENT_ROAD_TRAFFIC_SITUATION;
-    static QString STORE_POLLUTANT_VALUE_AS;
+    static QString STORE_POLLUTANT_AS;
     static QString NEXTS;
 
 protected slots:
