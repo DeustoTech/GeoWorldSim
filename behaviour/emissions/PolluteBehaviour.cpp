@@ -7,7 +7,7 @@
 #include "../../skill/move/MoveThroughRouteSkill.h"
 
 QString PolluteBehaviour::POLLUTANT_TYPE = "pollutant_type";
-//QString PolluteBehaviour::STORE_POLLUTANT_VALUE_AS = "store_pollutant_value_as";
+QString PolluteBehaviour::STORE_POLLUTANT_AS = "store_pollutant_as";
 QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "current_road_gradient";
 QString PolluteBehaviour::CURRENT_ROAD_TYPE = "current_road_type";
 QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "current_road_traffic_situation";
@@ -56,15 +56,13 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
     default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
 
-    QJsonValue vehicle_type = agent->getProperty( VEHICLE_TYPE ).toString();
+    qDebug( ) << default_vehicles;
+    QString vehicle_type = agent->getProperty( VEHICLE_TYPE ).toString();
 
-    if ( vehicle_type.isNull() ){
+    if ( vehicle_type.isEmpty() ){
         // Get and set vehicle type from default
        vehicle_type = default_vehicles[ transport_mode ];
     }
-
-    qDebug() << vehicle_type;
-
 
     //QString abatement = agent->getProperty( this->getProperty( ABATEMENT_TYPE ).toString() ).toString();
     GWSSpeedUnit vehicle_speed = this->getProperty( MoveSkill::STORE_CURRENT_SPEED_PROP ).toDouble();
@@ -80,7 +78,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
 
     GWSLengthUnit distance = current_coor.getDistance( this->last_position );
 
-    GWSMassUnit emission = pollute_skill->pollute( vehicle_type.toString() , transport_mode , pollutant , vehicle_speed , gradient , roadType , trafficSit , distance );
+    GWSMassUnit emission = pollute_skill->pollute( vehicle_type, transport_mode , pollutant , vehicle_speed , gradient , roadType , trafficSit , distance );
 
     if ( !emission.isValid() ){
 
@@ -92,9 +90,11 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     qDebug() << "Current emission" << emission.number();
     qDebug() << "New total" << agent->getProperty( "total_" + pollutant ).toDouble() + emission.number();*/
 
+    // Store noise
+    agent->setProperty( this->getProperty( STORE_POLLUTANT_AS ).toString("vehicle_" + pollutant ) , emission.number() );
 
-    agent->setProperty( "total_" + pollutant , agent->getProperty( "total_" + pollutant ).toDouble() + emission.number() );
-    agent->setProperty( "current_" + pollutant , emission.number() );
+    //agent->setProperty( "total_" + pollutant , agent->getProperty( "total_" + pollutant ).toDouble() + emission.number() );
+    //agent->setProperty( "current_" + pollutant , emission.number() );
 
     this->last_position = current_coor;
 

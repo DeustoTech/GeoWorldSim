@@ -82,7 +82,7 @@
         "NOISE"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "NOISE" , "color" : "Grey" , "birth" : -1 ,
         
                             "@behaviours": [  
-                                { "@gwsclass": "SendPropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "agents_filter" : { "running" : true } , "grid_type" : "maximum" ,  "store_as" : "total_noise" , "duration": 60 , "nexts_if_still_alive_agents" : ["DISPLAY"] , "nexts_if_all_agents_dead" : [ "STOP"] },
+                                { "@gwsclass": "SendPropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_noise" , "agents_filter" : { "running" : true } , "grid_type" : "maximum" ,  "store_as" : "maximum_noise" , "duration": 60 , "nexts_if_still_alive_agents" : ["DISPLAY"] , "nexts_if_all_agents_dead" : [ "STOP"] },
                                 
                                 { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
 
@@ -90,16 +90,28 @@
                             
                             "amount" : 1 },
                             
-        "CO2"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "CO2" , "color" : "Grey" , "birth" : -1 ,
+        "INDIRECT"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "INDIRECT" , "color" : "Grey" , "birth" : -1 ,
         
                             "@behaviours": [ 
-                                { "@gwsclass": "SendPropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "current_CO2" , "agents_filter" : { "running" : true } , "grid_type" : "total" , "store_as" : "total_CO2" , "duration": 60 , "nexts_if_still_alive_agents" : ["DISPLAY"] , "nexts_if_all_agents_dead" : [ "STOP"] },
+                                { "@gwsclass": "SendPropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_INDIRECT" , "agents_filter" : { "running" : true } , "grid_type" : "total" , "store_as" : "total_INDIRECT" , "duration": 60 , "nexts_if_still_alive_agents" : ["DISPLAY"] , "nexts_if_all_agents_dead" : [ "STOP"] },
 
                                 { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                             ] } ,
                             
                             "amount" : 1 },
+                            
+                            
 
+         "FCL"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "FCL" , "color" : "Grey" , "birth" : -1 ,
+        
+                            "@behaviours": [ 
+                                { "@gwsclass": "SendPropertyStatisticsBehaviour" , "start" : true , "id": "DISPLAY" , "agents_type" : "Citizen" , "agents_property_name" : "vehicle_FCL" , "agents_filter" : { "running" : true } , "grid_type" : "total" , "store_as" : "total_FCL" , "duration": 60 , "nexts_if_still_alive_agents" : ["DISPLAY"] , "nexts_if_all_agents_dead" : [ "STOP"] },
+
+                                { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
+                            ] } ,
+                            
+                            "amount" : 1 },          
+                            
                             
 	"WALK"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK"] , "maxspeed" : 4 },
                             "datasources":[
