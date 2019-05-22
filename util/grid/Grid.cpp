@@ -105,11 +105,7 @@ double GWSGrid::getMaxValue() const{
     for(int i = 0 ; i < x_size ; i++){
         for(int j = 0 ; j < y_size ; j++ ){
             QJsonValue v = this->grid->value( i )->value( j );
-<<<<<<< HEAD
             max = max >= v.toDouble() ? max : v.toDouble();
-=======
-            max = max >=  v.toDouble() ? max : v.toDouble();
->>>>>>> ffa587c6c9b536c1c2bdd8f76e07fdb4d59c11cb
         }
     }
     return max;
