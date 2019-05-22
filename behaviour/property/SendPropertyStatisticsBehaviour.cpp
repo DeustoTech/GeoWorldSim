@@ -63,13 +63,13 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     QJsonValue total_sum = 0;
     double average = 0;
 
-    foreach( QSharedPointer<GWSAgent> agent , valid_agents ) {
+    foreach( QSharedPointer<GWSAgent> a , valid_agents ) {
 
-        QJsonValue val = agent->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
+        QJsonValue val = a->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
         // GRID
-        GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        GWSGeometry agent_geom = GWSGeometry( a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         grid.addValue( agent_geom , val );
 
         // AVERAGE
