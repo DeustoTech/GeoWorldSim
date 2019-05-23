@@ -34,6 +34,8 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
         QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
        // QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
 
+
+
         QDir dir( svm_path );
 
         if ( dir.exists() ){
@@ -53,6 +55,8 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
         }
 
         else {
+
+            qDebug() << svm_path;
             qDebug() << "No SVM for selected subsegment and/or pollutant!";
 
             polluted_amount = GWSMassUnit( 0 );

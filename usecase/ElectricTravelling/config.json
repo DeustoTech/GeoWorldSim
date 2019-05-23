@@ -46,7 +46,7 @@
                                                         "input_transport_mode" : "<mode>" , 
                                                         "input_current_road_gradient" : 0 ,  
                                                         "input_current_road_traffic_situation" : 0.36 , 
-                                                        "input_pollutant_types" : [ "INDIRECT" , "FCL_POLLUTE"] , 
+                                                        "input_pollutant_types" : [ "INDIRECT" , "FCL"] , 
                                                         "duration" : 0 , 
                                                         "nexts" : ["DISPLAY_MOVING"] } ,
                                                             

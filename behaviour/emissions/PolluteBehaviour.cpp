@@ -69,7 +69,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     double gradient = agent->getProperty( CURRENT_ROAD_GRADIENT ).toDouble();
     double trafficSit = agent->getProperty( CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
     GWSSpeedUnit vehicle_speed = agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble();
-    QString roadType = current_edge->getProperty( CURRENT_ROAD_TYPE ).toString().toLower();
+    QString roadType = current_edge->getProperty( "type" ).toString().toLower();
      
     QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
     QJsonArray pollutant_types = this->getProperty( INPUT_POLLUTANT_TYPES ).toArray();
