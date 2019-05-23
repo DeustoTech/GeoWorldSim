@@ -13,6 +13,7 @@ public:
     static GWSGeometry transformUnion( const GWSGeometry geometry , const GWSGeometry other );
     static GWSGeometry transformToFit( const GWSGeometry origin , const GWSGeometry extension );
     static GWSGeometry transformIntersection( const GWSGeometry geometry , const GWSGeometry other );
+    static GWSGeometry transformSimplify( const GWSGeometry geometry , double tolerance );
 
 };
 

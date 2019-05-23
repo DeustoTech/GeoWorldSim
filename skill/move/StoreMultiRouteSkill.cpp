@@ -1,7 +1,7 @@
 #include "StoreMultiRouteSkill.h"
 
-QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE = "next_x_value";
-QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_Y_VALUE = "next_y_value";
+QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE = "next_destination_x_value";
+QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_Y_VALUE = "next_destination_y_value";
 QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS = "next_agent_id";
 QString GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS = "pending_route_destinations";
 

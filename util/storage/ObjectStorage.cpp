@@ -65,14 +65,6 @@ QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndName( QString class_nam
     return this->getByClassAndName<GWSObject>( class_name , name );
 }
 
-template <class T>
-QSharedPointer<T> GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
-    if ( this->classes_stored.contains( class_name ) ){
-         return this->object_names[ class_name ]->value( name , 0 ).dynamicCast<T>();
-    }
-    return 0;
-}
-
 QList< QSharedPointer<GWSObject> > GWSObjectStorage::getByClass( QString class_name ) const{
     QList< QSharedPointer<GWSObject> > list;
     if( this->classes_stored.contains( class_name ) ){
@@ -91,12 +83,6 @@ QSharedPointer<GWSObject> GWSObjectStorage::getByName( QString name ) const{
     }
     return 0;
 }
-
-template <class T>
-QSharedPointer<T> GWSObjectStorage::getByName( QString name ) const{
-    return this->getByName( name ).dynamicCast<T>();
-}
-
 
 bool GWSObjectStorage::contains( QString class_name ) const{
     return this->classes_stored.contains( class_name );

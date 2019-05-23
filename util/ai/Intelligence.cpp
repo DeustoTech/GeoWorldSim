@@ -8,7 +8,7 @@
 
 QMutex GWSIntelligence::mutex;
 
-GWSIntelligence::GWSIntelligence() : QObject() {
+GWSIntelligence::GWSIntelligence() : GWSObject() {
 
 }
 
@@ -233,7 +233,6 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
 
 /* Load trained network */
 void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_path ){
-
 
     // Load trained:
     GWSIntelligence::mutex.lock(); // Generate single mutex regardless of the number of calls

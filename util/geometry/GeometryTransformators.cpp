@@ -2,6 +2,7 @@
 
 #include <QJsonArray>
 #include "geos/geom/CoordinateArraySequence.h"
+#include "geos/simplify/TopologyPreservingSimplifier.h"
 #include "GeometryToGeoJSON.h"
 
 GWSGeometry GWSGeometryTransformators::transformMove( const GWSGeometry geometry , const GWSCoordinate &apply_movement){
@@ -63,9 +64,23 @@ GWSGeometry GWSGeometryTransformators::transformToFit(const GWSGeometry origin, 
 }
 
 GWSGeometry GWSGeometryTransformators::transformIntersection( const GWSGeometry geometry , const GWSGeometry other){
+    if( !geometry.inner_geometry ){ return geometry; }
     geos::geom::Geometry* intersected = geometry.inner_geometry->intersection( other.inner_geometry );
     GWSGeometry new_geometry;
     new_geometry.inner_geometry = intersected;
+    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    return new_geometry;
+}
+
+GWSGeometry GWSGeometryTransformators::transformSimplify(const GWSGeometry geometry, double tolerance){
+    if( !geometry.inner_geometry ){ return geometry; }
+    GWSGeometry new_geometry;
+    std::auto_ptr<geos::geom::Geometry> geom = geos::simplify::TopologyPreservingSimplifier::simplify( geometry.inner_geometry , tolerance );
+    if( !geom->isValid() ){
+        geom.reset();
+        return geometry;
+    }
+    new_geometry.inner_geometry = geom.release();
     new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }

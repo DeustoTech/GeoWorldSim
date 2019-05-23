@@ -52,6 +52,7 @@ HEADERS += \
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
     ../../util/storage/ObjectStorage.h \
+    ../../util/storage/GlobalObjectStorage.h \
     ../../util/units/Units.h \
     ../../util/ai/InAPItelligence.h \
     ../../util/svm/Svm.h \
@@ -125,6 +126,7 @@ SOURCES += main.cpp \
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
+    ../../util/storage/GlobalObjectStorage.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalListener.cpp \
     ../../util/distributed/ExternalPublisher.cpp \

@@ -5,6 +5,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../app/App.h"
 #include "../../util/geometry/GeometryGetters.h"
+#include "../../util/geometry/GeometryTransformators.h"
 
 QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
 QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
@@ -30,6 +31,19 @@ QSharedPointer<GWSAgent> MoveThroughRouteSkill::getCurrentEdge() const{
         return this->pending_route_edges.at( 0 );
     }
     return Q_NULLPTR;
+}
+
+GWSCoordinate MoveThroughRouteSkill::getCurrentMonvintTowards() const{
+    if( !this->pending_edge_coordinates.isEmpty() ){
+        return  this->pending_edge_coordinates.at( 0 );
+    }
+    if( !this->pending_route_edges.isEmpty() ){
+        QList<GWSCoordinate> coors = GWSGeometryGetters::getCoordinates( GWSGeometry( this->pending_route_edges.at(0)->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ) );
+        if( !coors.isEmpty() ){
+            return coors.at( 0 );
+        }
+    }
+    return GWSCoordinate();
 }
 
 
@@ -159,6 +173,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
         //movement_speed = qMin( starting_current_edge_max_speed.number() , movement_speed.number() + 10 );
 
         GWSGeometry current_edge_agent_geometry = GWSGeometry( current_edge_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        current_edge_agent_geometry = GWSGeometryTransformators::transformSimplify( current_edge_agent_geometry , 0.05 );
         this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
 
         // Set destination to next coordinate

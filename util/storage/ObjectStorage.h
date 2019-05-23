@@ -32,7 +32,12 @@ public:
     QSharedPointer<GWSObject> getByUID( QString uid );
 
     template <class T>
-    QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const;
+    QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const {
+        if ( this->classes_stored.contains( class_name ) ){
+             return this->object_names[ class_name ]->value( name , 0 ).dynamicCast<T>();
+        }
+        return 0;
+    }
     QSharedPointer<GWSObject> getByClassAndName( QString class_name , QString name ) const;
 
     template <class T> QList< QSharedPointer<T> > getByClassCasted( QString class_name ) const{
@@ -45,7 +50,9 @@ public:
     QList< QSharedPointer<GWSObject> > getByClass( QString class_name ) const;
 
     template <class T>
-    QSharedPointer<T> getByName( QString name ) const;
+    QSharedPointer<T> getByName( QString name ) const {
+        return this->getByName( name ).dynamicCast<T>();
+    }
     QSharedPointer<GWSObject> getByName( QString name ) const;
 
     bool contains( QString class_name ) const;

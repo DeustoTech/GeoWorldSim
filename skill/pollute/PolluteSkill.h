@@ -3,7 +3,6 @@
 
 #include "../../util/units/Units.h"
 #include "../../skill/Skill.h"
-
 #include "../../util/svm/Svm.h"
 
 class PolluteSkill : public GWSSkill

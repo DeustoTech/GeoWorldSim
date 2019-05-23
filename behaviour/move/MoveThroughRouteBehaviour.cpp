@@ -55,24 +55,24 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble( 1 );  //qrand() % 100 / 100.0;
 
-    QJsonValue x_destination = this->getProperty( INPUT_ROUTE_DESTINATION_X );
-    QJsonValue y_destination = this->getProperty( INPUT_ROUTE_DESTINATION_Y );
-    GWSCoordinate destination_coor = GWSCoordinate( x_destination.toDouble() , y_destination.toDouble() );
+    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+
+    QJsonValue route_destination_x = this->getProperty( INPUT_ROUTE_DESTINATION_X );
+    QJsonValue route_destination_y = this->getProperty( INPUT_ROUTE_DESTINATION_Y );
+
+    GWSCoordinate destination_coor = GWSCoordinate( route_destination_x.toDouble() , route_destination_y.toDouble() );
     if( !destination_coor.isValid() ){
         qWarning() << QString("Agent %1 %2 has invalid destination to route to").arg( agent->metaObject()->className() ).arg( agent->getUID() );
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
     }
 
-    // Calculate speed
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-
     // Get all needed speeds
     GWSSpeedUnit current_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble( 0 ) );
-    GWSSpeedUnit max_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::MAX_SPEED ).toDouble( 4 ) );
+    GWSSpeedUnit max_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::MAX_SPEED ).toDouble( 14 ) );
     QSharedPointer<GWSAgent> current_edge = movethroughroute_skill->getCurrentEdge();
-    if( current_edge ){
-        max_speed = GWSSpeedUnit( current_edge->getProperty( MoveSkill::MAX_SPEED ).toDouble( 14 ) );
-    }
+    if( current_edge ){ // TODO!
+            max_speed = GWSSpeedUnit( current_edge->getProperty( MoveSkill::MAX_SPEED ).toDouble( max_speed.number() ) );
+     }
 
     // Accelerate or Brake
     if( current_speed == 0 ){
@@ -80,11 +80,13 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     } else {
         current_speed = movethroughroute_skill->calculateNewSpeed( current_speed , max_speed , (max_speed.number() - current_speed.number()) / current_speed.number() );
     }
-    agent->setProperty( MoveSkill::MAX_SPEED , current_speed.number() );
+    agent->setProperty( MoveSkill::CURRENT_SPEED , current_speed.number() );
 
-    // Pending time to reach destination can be higher than the duration requested.
+    // Pending time to reach next route point can be higher than the duration requested.
     GWSCoordinate agent_position = agent_geom.getCentroid();
-    GWSLengthUnit pending_distance = agent_position.getDistance( destination_coor );
+    GWSCoordinate next_route_point = movethroughroute_skill->getCurrentMonvintTowards();
+    if( !next_route_point.isValid() ){ next_route_point = destination_coor; }
+    GWSLengthUnit pending_distance = agent_position.getDistance( next_route_point );
     GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed
     duration_of_movement = qMin( pending_time , duration_of_movement );
 

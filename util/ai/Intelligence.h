@@ -1,13 +1,13 @@
 #ifndef GWSINTELLIGENCE_H
 #define GWSINTELLIGENCE_H
 
-#include <QObject>
+#include "../../object/Object.h"
 #include <QMap>
 #include <QMap>
 #include <QJsonArray>
 #include <QMutex>
 
-class GWSIntelligence : public QObject
+class GWSIntelligence : public GWSObject
 {
     Q_OBJECT
 
@@ -46,7 +46,7 @@ protected:
     virtual void saveModel( QString model_file_path ) = 0;
     virtual void loadModel( QString model_file_path ) = 0;
 
-    // Unique mutex, for avoiding concurrency
+    // Unique mutex for ALL EXISTING GWSIntelligence classes, for avoiding concurrency
     static QMutex mutex;
 };
 

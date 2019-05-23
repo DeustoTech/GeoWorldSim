@@ -28,6 +28,8 @@ SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviou
 QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     QSharedPointer<GWSAgent> agent = this->getAgent();
+    qint64 agent_internal_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+
     QString agents_type = this->getProperty( AGENTS_TYPE ).toString();
     QJsonObject agents_filter = this->getProperty( AGENTS_FILTER ).toObject();
     QString grid_type = this->getProperty( GRID_TYPE ).toString();
@@ -40,7 +42,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
         bool valid = true;
 
         foreach( QString key , agents_filter.keys() ){
-            if ( ( a->getProperty( key ).isNull() ) || ( a->getProperty( key ) != agents_filter.value( key ) ) ){
+
+            if ( ( a->getProperty( key ).isNull() ) || ( a->getProperty( key ) != agents_filter.value( key ) )   ){
                 valid = false;
                 break;
             }
@@ -68,6 +71,11 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
         QJsonValue val = a->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
+        qint64 agent_to_insert_time = a->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+
+        if ( agent_to_insert_time > agent_internal_time ){
+            continue;
+        }
         // GRID
         GWSGeometry agent_geom = GWSGeometry( a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         grid.addValue( agent_geom , val );

@@ -1,9 +1,9 @@
 #ifndef GWSGLOBALGSSOBJECTSTORAGE_H
 #define GWSGLOBALGSSOBJECTSTORAGE_H
 
-#include "object/Object.h"
+#include "../../object/Object.h"
 
-#include "util/storage/ObjectStorage.h"
+#include "../../util/storage/ObjectStorage.h"
 
 class GWSGlobalObjectStorage : public GWSObject
 {
@@ -14,20 +14,22 @@ public:
     static GWSGlobalObjectStorage* globalInstance();
 
     // GETTERS
-    GWSObject* getByClassAndId( QMetaObject metaobject , QString internal_id) const;
-    template <class T> T* getByClassAndId( QMetaObject metaobject , QString internal_id ) const;
+    QSharedPointer<GWSObject> getByClassAndId( QMetaObject metaobject , QString internal_id) const;
+    template <class T> QSharedPointer<T> getByClassAndId( QMetaObject metaobject , QString internal_id ) const;
 
-    GWSObject* getByClassAndName( QMetaObject metaobject , QString name ) const;
-    template <class T> T* getByClassAndName( QMetaObject metaobject , QString name ) const;
+    QSharedPointer<GWSObject>  getByClassAndName( QMetaObject metaobject , QString name ) const;
+    template <class T> QSharedPointer<T> getByClassAndName( QMetaObject metaobject , QString name ) const;
 
-    QList< GWSObject* > getByClass( QMetaObject metaobject ) const;
-    template <class T> QList<T*> getByClass( QMetaObject metaobject ) const;
+    QList< QSharedPointer<GWSObject>  > getByClass( QMetaObject metaobject ) const;
+    template <class T> QList<QSharedPointer<T>> getByClass( QMetaObject metaobject ) const;
 
-    GWSObject* getByName( QString name ) const;
-    template <class T> T* getByName( QString name ) const;
+    QSharedPointer<GWSObject>  getByName( QString name ) const;
+    template <class T> QSharedPointer<T> getByName( QString name ) const {
+        return this->storage->getByName<T>( name );
+    }
 
     // SETTERS
-    void add( GWSObject* object );
+    void add( QSharedPointer<GWSObject> object );
 
 private:
 
