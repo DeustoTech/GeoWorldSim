@@ -60,9 +60,9 @@
                             ] } , 
                             
                             
-                            "datasources":[{"entity_type":"CAR","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 10000 },
-                            {"entity_type":"WALK","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 10000},
-                            {"entity_type":"MOTORCYCLE","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce", "limit" : 10000 }] }, 
+                            "datasources":[{"entity_type":"CAR","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 300 },
+                            {"entity_type":"WALK","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 300},
+                            {"entity_type":"MOTORCYCLE","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce", "limit" : 300 }] }, 
 
         "NOISE"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "NOISE" , "color" : "Grey" ,
         
