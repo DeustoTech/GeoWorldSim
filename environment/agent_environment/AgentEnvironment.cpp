@@ -110,6 +110,11 @@ template <class T> QSharedPointer<T> GWSAgentEnvironment::getByName(QString agen
 
 void GWSAgentEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::registerAgent( agent );
+
+    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+        return;
+    }
+
     this->environment_agents->add( agent );
 }
 

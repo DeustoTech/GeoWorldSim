@@ -65,17 +65,16 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     unsigned int count = 0;
     QJsonValue total_sum = 0;
     double average = 0;
+    qint64 grid_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
     foreach( QSharedPointer<GWSAgent> a , valid_agents ) {
 
         QJsonValue val = a->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
-        qint64 agent_to_insert_time = a->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+        qint64 agent_time = a->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( grid_time );
+        if( agent_time > grid_time ){ continue; }
 
-        if ( agent_to_insert_time > agent_internal_time ){
-            continue;
-        }
         // GRID
         GWSGeometry agent_geom = GWSGeometry( a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         grid.addValue( agent_geom , val );
@@ -125,7 +124,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             QJsonObject grid_cell;
             grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( agent->getUID() ).arg( i ).arg( j ) );
             grid_cell.insert( "type" , agent->getUID() + "Cell" );
-            grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble() );
+            grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)agent_internal_time );
 
             QJsonObject geometry;
             geometry.insert( "type" , "Point" );
@@ -135,7 +134,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             grid_cell.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geometry );
             grid_cell.insert( "value" , val );
             double normalized = ( val.toDouble(0) - min_value) / (max_value - min_value);
-            grid_cell.insert( "color" , QString("rgb(%1,192,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
+            grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
             emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
         }
     }

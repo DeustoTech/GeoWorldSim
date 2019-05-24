@@ -132,6 +132,12 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
         return;
     }
 
+    GWSEnvironment::registerAgent( agent );
+
+    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+        return;
+    }
+
     // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
     QJsonObject geom_json = agent->getProperty( GEOMETRY_PROP ).toObject();
     GWSGeometry geom = GWSGeometry( geom_json );
@@ -150,8 +156,6 @@ void GWSPhysicalEnvironment::registerAgent(QSharedPointer<GWSAgent> agent ){
     }
 
     this->upsertAgentToIndex( agent , geom );
-
-    GWSEnvironment::registerAgent( agent );
 }
 
 void GWSPhysicalEnvironment::unregisterAgent(QSharedPointer<GWSAgent> agent){

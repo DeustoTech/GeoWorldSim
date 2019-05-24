@@ -1,9 +1,9 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":25, "id":"283e2305-8c16-4455-8d96-ae0ca3307d4a-545b694b-af38-55ca-bb94-ce" ,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":25, "start" : 1558656000000 , "id":"283e2305-8c16-4455-8d96-ae0ca3307d4a-545b694b-af38-55ca-bb94-ce" ,
 
 "population" : {
 
-	"citizens"     : { "template" : { "@gwsclass": "GWSAgent",  "@gwsgroups": [ "Citizen" ], "color" : "Gray" , "birth" : -1 , 
+	"citizens"     : { "template" : { "@gwsclass": "GWSAgent", "@gwsgroups": [ "Citizen" ], "color" : "Gray" , "birth" : -1 , 
 	
                             "@behaviours": [  
 
@@ -60,11 +60,11 @@
                             ] } , 
                             
                             
-                            "datasources":[{"entity_type":"CAR","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 300 },
-                            {"entity_type":"WALK","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" , "limit" : 300},
-                            {"entity_type":"MOTORCYCLE","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce", "limit" : 300 }] }, 
+                            "datasources":[{"entity_type":"CAR","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" },
+                            {"entity_type":"WALK","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce"  },
+                            {"entity_type":"MOTORCYCLE","scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce" }] }, 
 
-        "NOISE"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "NOISE" , "color" : "Grey" ,
+        "NOISE"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "NOISE" , "birth" : -1 , "color" : "Grey" , 
         
                             "@behaviours": [  
                                 { "@gwsclass": "SendPropertyStatisticsBehaviour" , 
@@ -85,7 +85,7 @@
                             
                             "amount" : 1 },
                             
-        "INDIRECT"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "INDIRECT" , "color" : "Grey" , 
+        "INDIRECT"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "INDIRECT" , "color" : "Grey"  ,   "birth" : -1 ,
         
                             "@behaviours": [ 
                                 { "@gwsclass": "SendPropertyStatisticsBehaviour" , 
@@ -107,7 +107,7 @@
                             
                             
 
-         "FCL"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "FCL" , "color" : "Grey" ,
+         "FCL"          : { "template" : { "@gwsclass" : "GWSAgent" , "type" : "KPI" , "id" : "FCL" , "color" : "Grey" , "birth" : -1 ,
         
                             "@behaviours": [ 
                                 { "@gwsclass": "SendPropertyStatisticsBehaviour" , 
@@ -127,22 +127,13 @@
                             
                             "amount" : 1 },          
                             
-                            
-	"WALK"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK"] , "maxspeed" : 4 },
+                                                        
+        "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["WALK","CAR","MOTORCYCLE","BUS"] , "maxspeed" : 120 },
                             "datasources":[
-                            {"entity_type":"Pedestrian","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Residential","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Tertiary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Secondary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
-                            {"entity_type":"Primary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"}
-                            ]},
-                            
-        "CAR"        : { "template" : { "@gwsclass":"GWSAgent" , "@gwsgroups":["CAR","MOTORCYCLE","BUS"] , "maxspeed" : 120 },
-                            "datasources":[
-                            {"entity_type":"Residential","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Tertiary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Secondary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Primary","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
+                            {"entity_type":"Trunk","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"},
                             {"entity_type":"Motorway","scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce"}
                             ]},
                             

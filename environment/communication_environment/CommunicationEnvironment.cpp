@@ -121,7 +121,6 @@ void GWSCommunicationEnvironment::sendData(QString signal , QJsonObject data , Q
 
 void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
 
-
     // Dynamic cast sender() method to convert a QObject* into a GWSExternalListener*
     GWSExternalListener* listener = dynamic_cast<GWSExternalListener*>( sender() );
 

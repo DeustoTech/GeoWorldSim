@@ -210,6 +210,10 @@ void GWSExecutionEnvironment::behave(){
 
     if( agents_to_tick ){
 
+        // Store min tick
+        this->last_tick_with_agents = min_tick;
+        GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
+
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
 
@@ -231,7 +235,10 @@ void GWSExecutionEnvironment::behave(){
 
                 QtConcurrent::run( agent.data() , &GWSAgent::tick );
 
-                if( ++ticked_agents >= this->max_agent_amount_per_tick ){ break; }
+                if( ++ticked_agents >= this->max_agent_amount_per_tick ){
+                    who_is_min_tick = agent;
+                    break;
+                }
             }
         }
     }
@@ -248,7 +255,15 @@ void GWSExecutionEnvironment::behave(){
     if( this->isRunning() ) {
         // DO NOT USE QTCONCURRENT FOR THIS.
         // OTHERWISE IT WAITS FOR ALL PENDING AGENTS TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
-        QTimer::singleShot( qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) , this , &GWSExecutionEnvironment::tick );
+        qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
+
+        // DO NOT ADVANCE IN TIME
+        if( !agents_to_tick ){
+            next_tick_in = 1000;
+            GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_agents - (1000 * GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) );
+        }
+
+        QTimer::singleShot( next_tick_in , this , &GWSExecutionEnvironment::tick );
     }
 }
 

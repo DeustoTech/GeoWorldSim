@@ -25,17 +25,13 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
         QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
         QSharedPointer<GWSSvm> pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
 
-        //QSharedPointer<GWSSvm> pollutant_svm = GWSGlobalObjectStorage::getByName( svm_path );
-       // QSharedPointer< GWSObject > getByName( QString name ) const;
         if ( !pollutant_svm ){
-
-           // QString svm_path =  "/home/maialen/Escritorio/WorkSpace/ElectricTravelling/ElectricTravellingImpactTool/data/" + vehicle_type + "/" + pollutant ;
 
             QDir dir( svm_path );
 
             if ( dir.exists() ){
 
-                QSharedPointer<GWSSvm> pollutant_svm = QSharedPointer<GWSSvm>(); ;
+                pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() ); ;
                 pollutant_svm->setObjectName( svm_path );
 
                 QString svm_model = "svm_model";
@@ -46,7 +42,7 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
                 QString totalPath_params = svm_path +  "/" + svm_parameters;
 
                // Load trained SVM model and parameters:
-               //svm->loadTrained( totalPath_model , totalPath_params );
+                pollutant_svm->loadTrained( totalPath_model , totalPath_params );
                 GWSGlobalObjectStorage::globalInstance()->add( pollutant_svm );
 
             }
@@ -62,11 +58,12 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
 
         QMap<QString , QVariant> input;
 
+
         // Extract current speed from agent:
         input.insert( "velocity" , speed.value );
         input.insert( "gradient" , gradient );
-        input.insert( "roadType" , roadType);
-        input.insert( "trafficSit" , 0.36);
+        input.insert( "roadType" , roadType );
+        input.insert( "trafficSit" , 0.36 );
 
         QJsonObject result = pollutant_svm->run( input );
         polluted_amount = result.value( "EFA" ).toDouble() * distance.number() / 1000.;// Because the SVM outputs emissions per km

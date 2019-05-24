@@ -68,8 +68,9 @@ private:
 
     // Threshold from current_time IN MILLISECONDS
     // Otherwise only minest_tick agent is executed (1 per cycle)
+    qint64 last_tick_with_agents = 0;
     const quint64 tick_time_window = 9990 * 2;
-    const uint max_agent_amount_per_tick = 100;
+    const uint max_agent_amount_per_tick;
 
     // Avoid more than one execution at a time
     mutable QMutex mutex;

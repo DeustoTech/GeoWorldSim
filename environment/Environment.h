@@ -8,6 +8,10 @@ class GWSEnvironment : public GWSAgent
     Q_OBJECT
 
 public:
+
+    // PROPERTIES
+    static QString SKIP_INDEXING;
+
     // EXPORTERS
     virtual QJsonObject serialize() const;
 

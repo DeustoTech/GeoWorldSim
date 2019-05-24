@@ -61,9 +61,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         }
 
-
-
-
         qint64 currentDateTime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
         QDateTime timeStamp = QDateTime::fromMSecsSinceEpoch( currentDateTime );
         QDate date = timeStamp.date();
@@ -84,7 +81,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        QTimer::singleShot( 0 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
+        QTimer::singleShot( qrand() % 10000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
 
             QNetworkReply* reply = GWSAPIDriver::globalInstance()->GET( gtUrl );
 

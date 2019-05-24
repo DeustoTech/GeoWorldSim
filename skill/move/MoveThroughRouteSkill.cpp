@@ -37,12 +37,6 @@ GWSCoordinate MoveThroughRouteSkill::getCurrentMonvintTowards() const{
     if( !this->pending_edge_coordinates.isEmpty() ){
         return  this->pending_edge_coordinates.at( 0 );
     }
-    if( !this->pending_route_edges.isEmpty() ){
-        QList<GWSCoordinate> coors = GWSGeometryGetters::getCoordinates( GWSGeometry( this->pending_route_edges.at(0)->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ) );
-        if( !coors.isEmpty() ){
-            return coors.at( 0 );
-        }
-    }
     return GWSCoordinate();
 }
 
@@ -61,6 +55,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     agent->setProperty( CURRENT_ROAD_ID , QJsonValue() );
     agent->setProperty( CURRENT_ROAD_TYPE , QJsonValue() );
     agent->setProperty( CURRENT_ROAD_MAXSPEED , QJsonValue() );
+    agent->setProperty( STORE_ROUTE_AS , QJsonValue() );
 
     if( !agent_geom.isValid() ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
@@ -95,7 +90,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
                 this->last_route_started_from = new_route_start;
             }
 
-            // Store route
+            // Store route ONLY WHEN CALCULATED, afterwards it will be removed
             QJsonObject geojson;
             geojson.insert( "type" , "LineString" );
             QJsonArray coordinates;

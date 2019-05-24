@@ -62,6 +62,12 @@ void GWSGridEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
         return;
     }
 
+    GWSEnvironment::registerAgent( agent );
+
+    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+        return;
+    }
+
     // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
     QJsonValue value = agent->getProperty( GRID_PROP );
 
@@ -73,8 +79,6 @@ void GWSGridEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
     }
 
     this->upsertValueToGrid( agent , value );
-
-    GWSEnvironment::registerAgent( agent );
 }
 
 void GWSGridEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){

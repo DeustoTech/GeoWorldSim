@@ -153,16 +153,19 @@ void GWSNetworkEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
         return;
     }
 
+    GWSEnvironment::registerAgent( agent );
+
+    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+        return;
+    }
+
     // Listen to agent property changes
     this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSNetworkEnvironment::agentPropertyChanged );
 
     // GRAPH EDGE (comes as a QJSONOBJECT, need to extract it and build the GWSEDGE)
     GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
     if( edge.isValid() ){
-
         this->upsertAgentToIndex( agent , edge );
-
-        GWSEnvironment::registerAgent( agent );
     }
 }
 

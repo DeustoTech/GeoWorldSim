@@ -15,7 +15,7 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
 
 GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
     this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble(1);
-    this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
+    this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
     qInfo() << QString("TimeEnvironment created with speed %1 and datetime %2").arg( this->time_speed ).arg( QDateTime::fromMSecsSinceEpoch( this->simulation_datetime_msecs ).toString() );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
@@ -69,6 +69,7 @@ double GWSTimeEnvironment::getTimeSpeed() const{
 void GWSTimeEnvironment::setDatetime(quint64 datetime){
     if( datetime >= 0 ){
         this->simulation_datetime_msecs = datetime;
+        this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
     } else {
         qWarning() << QString("Invalid datetime : %1").arg( datetime );
     }
@@ -99,7 +100,7 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
 
-        quint64 init_internal_time = this->getCurrentDateTime();
+        qint64 init_internal_time = this->getCurrentDateTime();
         QJsonValue internal_time = agent->getProperty( INTERNAL_TIME_PROP );
 
         if( internal_time.isDouble() ){
@@ -110,17 +111,18 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
         }
 
         agent->setProperty( INTERNAL_TIME_PROP , (double)init_internal_time );
-        this->agent_internal_times.insert( agent->getUID() , init_internal_time );
+    }
+
+    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+        return;
     }
 
     // Listen to agent property changes
     this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
-
 }
 
 void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
     GWSEnvironment::unregisterAgent( agent );
-    this->agent_internal_times.remove( agent->getUID() );
 
     this->disconnect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
 }
@@ -135,6 +137,6 @@ void GWSTimeEnvironment::agentPropertyChanged( QString property_name ){
         if( !object ){ return; }
         GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
         if( !agent ){ return; }
-        this->agent_internal_times.insert( agent->getUID() , agent->getProperty( INTERNAL_TIME_PROP ).toDouble() );
+        // Nothing to do
     }
 }

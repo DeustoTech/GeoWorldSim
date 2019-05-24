@@ -117,7 +117,7 @@ QJsonArray GWSObject::getInheritanceFamily() const{
     QJsonArray inheritance_family;
     inheritance_family.append( this->metaObject()->className() );
     const QMetaObject* mobj = this->metaObject();
-    while( mobj ){
+    while( mobj && mobj->className() != QObject::metaObject()->className() ){
         if( !inheritance_family.contains( mobj->className() ) ){
             inheritance_family.append( mobj->className() );
         }
