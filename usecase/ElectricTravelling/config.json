@@ -1,5 +1,5 @@
 {
-"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":100, "start" : 1558656000000 , "id":"283e2305-8c16-4455-8d96-ae0ca3307d4a-545b694b-af38-55ca-bb94-ce" ,
+"target":"gwselectrictravelling","name":"GTET simulation","description":"GTET","timeout":600000,"status":"pending","user_id":"demo","speed":1000, "start" : 1558656000000 , "id":"283e2305-8c16-4455-8d96-ae0ca3307d4a-545b694b-af38-55ca-bb94-ce" ,
 
 "population" : {
 
