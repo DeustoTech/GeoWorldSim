@@ -22,7 +22,8 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
         GWSMassUnit polluted_amount;
 
         //QMap < QString, GWSSvm* > models = this->models;
-        QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
+        //QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
+        QString svm_path = "../../data/ET_EMISSIONS/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
         QSharedPointer<GWSSvm> pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
 
         if ( !pollutant_svm ){
