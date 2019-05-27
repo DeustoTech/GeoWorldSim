@@ -3,6 +3,7 @@
 #include <QtMath>
 
 #include "../../skill/move/MoveSkill.h"
+#include "../../object/ObjectFactory.h"
 
 QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
 QString VehicleNoiseBehaviour::OUTPUT_NOISE = "output_noise";
@@ -63,7 +64,10 @@ QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
     }
 
     // Store noise
+    double existing_value = agent->getProperty( "vehicle_noise" ).toDouble();
     agent->setProperty( this->getProperty( OUTPUT_NOISE ).toString( "vehicle_noise" ) , total_noise );
+    agent->setProperty( "total_noise" , GWSObjectFactory::incrementValue( existing_value , total_noise ));
+
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

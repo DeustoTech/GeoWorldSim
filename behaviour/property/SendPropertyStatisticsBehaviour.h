@@ -1,8 +1,10 @@
-#ifndef GWSPROPERTYSTATISTICSBEHAVIOUR_H
+ #ifndef GWSPROPERTYSTATISTICSBEHAVIOUR_H
 #define GWSPROPERTYSTATISTICSBEHAVIOUR_H
 
 #include "../../util/geometry/Coordinate.h"
 #include "../../behaviour/Behaviour.h"
+#include "../../util/grid/Grid.h"
+
 
 class SendPropertyStatisticsBehaviour : public GWSBehaviour
 {
@@ -30,6 +32,7 @@ private slots:
 private:
     QList<GWSCoordinate> previous_sent_coordinates;
     QStringList previous_sent_coordinates_ids;
+    GWSGrid* total_grid = Q_NULLPTR;
 };
 
 #endif // GWSPROPERTYSTATISTICSBEHAVIOUR_H

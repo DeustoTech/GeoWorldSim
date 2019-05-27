@@ -36,6 +36,7 @@ public:
     // SETTERS
     void addValue( GWSCoordinate coor , QJsonValue value );
     void addValue( GWSGeometry geom , QJsonValue value );
+    void setBounds( GWSGeometry bounds );
     //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);

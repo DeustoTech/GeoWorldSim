@@ -13,7 +13,9 @@ GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     return &instance;
 }
 
-GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() , software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) , simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
+GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() ,
+    software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) ,
+    simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
     this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble(1);
     this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
     qInfo() << QString("TimeEnvironment created with speed %1 and datetime %2").arg( this->time_speed ).arg( QDateTime::fromMSecsSinceEpoch( this->simulation_datetime_msecs ).toString() );

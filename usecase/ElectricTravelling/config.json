@@ -19,10 +19,10 @@
                                                         {"@gwsclass": "SetNextRouteDestinationBehaviour" ,  
                                                         "id": "NEXT_DESTINATION" , 
                                                         "duration": 1 ,  
-                                                        "nexts_while_pending_route" : ["DISPLAY_BEFORE_MOVE"] , "nexts_if_finished" : ["STOP"] } , 
+                                                        "nexts_while_pending_route" : ["DISPLAY"] , "nexts_if_finished" : ["STOP"] } , 
                                                         
                                                         { "@gwsclass": "SendAgentSnapshotBehaviour" ,   
-                                                        "id": "DISPLAY_BEFORE_MOVE" , 
+                                                        "id": "DISPLAY" , 
                                                         "agent_to_send_id" : "<id>" , 
                                                         "duration": 0 ,  
                                                         "nexts" : ["MOVE"] } ,
@@ -48,13 +48,7 @@
                                                         "input_current_road_traffic_situation" : 0.36 , 
                                                         "input_pollutant_types" : [ "INDIRECT" , "FCL"] , 
                                                         "duration" : 0 , 
-                                                        "nexts" : ["DISPLAY_MOVING"] } ,
-                                                            
-                                                        { "@gwsclass": "SendAgentSnapshotBehaviour" ,   
-                                                        "id": "DISPLAY_MOVING" , 
-                                                        "agent_to_send_id" : "<id>" , 
-                                                        "duration": 0 ,  
-                                                        "nexts" : ["MOVE"] } ,
+                                                        "nexts" : ["DISPLAY"] } ,
                                                         
                                                         { "@gwsclass": "StopAgentBehaviour" ,   "id" : "STOP" , "duration" : 1 }
                             ] } , 

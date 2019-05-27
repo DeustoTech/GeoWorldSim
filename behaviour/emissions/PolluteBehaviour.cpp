@@ -5,6 +5,7 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../object/ObjectFactory.h"
 
 QString PolluteBehaviour::INPUT_POLLUTANT_TYPES = "input_pollutant_types";
 QString PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
@@ -82,18 +83,12 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
              emission = 0;
          }
          // Store noise
+         double existing_value = agent->getProperty("total_" + pollutant.toString() ).toDouble();
          agent->setProperty( this->getProperty( OUTPUT_POLLUTANTS ).toString("vehicle_" + pollutant.toString() ) , emission.number() );
+         agent->setProperty( "total_" +  pollutant.toString() , GWSObjectFactory::incrementValue( existing_value , emission.number() ));
 
     }
 
-    // Save polluted amount:
-    /*qDebug() << "Previous total" << agent->getProperty( "total_" + pollutant ).toDouble();
-    qDebug() << "Current emission" << emission.number();
-    qDebug() << "New total" << agent->getProperty( "total_" + pollutant ).toDouble() + emission.number();*/
-
-
-    //agent->setProperty( "total_" + pollutant , agent->getProperty( "total_" + pollutant ).toDouble() + emission.number() );
-    //agent->setProperty( "current_" + pollutant , emission.number() );
 
     this->last_position = current_coor;
 

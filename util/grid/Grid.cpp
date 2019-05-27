@@ -208,6 +208,9 @@ void GWSGrid::addValue( GWSGeometry geom , QJsonValue value ){
     }
 }
 
+void GWSGrid::setBounds(GWSGeometry bounds){
+
+}
 
 /**********************************************************************
  OPERATORS

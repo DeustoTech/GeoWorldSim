@@ -118,7 +118,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                             // Additional properties
                             QJsonObject properties;
                             properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
-                            //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
+                            properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
                             properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
 
                             multiroute_skill->addDestination( destination_coor , properties );

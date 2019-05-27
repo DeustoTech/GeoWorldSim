@@ -32,8 +32,8 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() :
     GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
     this->running_agents = new GWSObjectStorage();
-    this->setProperty( AGENT_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start_time" ).toDouble( -1 ) );
-    this->setProperty( AGENT_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end_time" ).toDouble( INFINITY ) );
+    this->setProperty( AGENT_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) );
+    this->setProperty( AGENT_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( INFINITY ) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
@@ -94,12 +94,11 @@ void GWSExecutionEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
 
     // Whichever its BIRTH_DATE is, register the agent in this environment,
     // It needs to be executed in the future, so set its INTERNAL_TIME to that future
-    qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+    qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
     if( agent_time <= 0 ){
-        agent_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+        qint64 agent_birth = agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 );
+        agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , agent_birth );
     }
-
-    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , qMax( (double)agent_time , agent->getProperty( GWSExecutionEnvironment::AGENT_BIRTH_PROP ).toDouble( -1 ) ) );
     agent->setProperty( AGENT_RUNNING_PROP , true );
     agent->incrementBusy();
 
@@ -203,7 +202,7 @@ void GWSExecutionEnvironment::behave(){
 
         qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( current_datetime );
 
-        if( agent_time >= 0 ){ min_tick = qMin( min_tick , agent_time ); }
+        if( agent_time > 0 ){ min_tick = qMin( min_tick , agent_time ); }
         if( min_tick == agent_time ){ who_is_min_tick = agent; }
         agents_to_tick = true;
     }
@@ -212,6 +211,7 @@ void GWSExecutionEnvironment::behave(){
 
         // Store min tick
         this->last_tick_with_agents = min_tick;
+        GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
@@ -220,7 +220,7 @@ void GWSExecutionEnvironment::behave(){
                 continue;
             }
 
-            qint64 agent_next_tick = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( 0 );
+            qint64 agent_next_tick = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
             if ( !agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).isNull() && current_datetime >= agent->getProperty( GWSExecutionEnvironment::AGENT_DEATH_PROP ).toDouble() ){
                 this->unregisterAgent( agent );
@@ -228,6 +228,8 @@ void GWSExecutionEnvironment::behave(){
             }
 
             if( agent && !agent->deleted && !agent->isBusy() && agent_next_tick <= limit ){
+
+                if( agent_next_tick <= 0 ){ agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , min_tick ); }
 
                 // Call behave through tick for it to be executed in the agents thread (important to avoid msec < 100)
                 agent->incrementBusy(); // Increment here, Decrement after agent Tick()
@@ -240,8 +242,6 @@ void GWSExecutionEnvironment::behave(){
                 }
             }
         }
-    } else {
-        GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_agents );
     }
 
     qInfo() << QString("Ticked %4 , Agents %2 / %3 , Min tick %5" )
