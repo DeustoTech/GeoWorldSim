@@ -28,8 +28,18 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
     agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
 
         QJsonObject template_to_be_constructed = this->joinJSON( json , data );
-        if ( !template_to_be_constructed.isEmpty() ){
-            QSharedPointer<GWSAgent> agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
+        if ( template_to_be_constructed.isEmpty() ){
+            return;
+        }
+
+        // Check if agent already exists
+        QString new_agent_id = template_to_be_constructed.value( GWSObject::GWS_UID_PROP ).toString();
+        QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( new_agent_id );
+        if( agent ){
+            qWarning() << QString("Skipping duplicate agent (Duplicate UID %1 found)").arg( new_agent_id );
+            return;
+        } else {
+            agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
         }
 
     });
