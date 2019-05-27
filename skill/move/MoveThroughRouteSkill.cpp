@@ -128,7 +128,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         GWSCoordinate next_coordinate = this->pending_edge_coordinates.at( 0 );
-        if( current_coor == next_coordinate ){
+        if( current_coor.getDistance( next_coordinate ) < GWSLengthUnit( 0.5 ) ){
             this->pending_edge_coordinates.removeAt( 0 );
         }
 

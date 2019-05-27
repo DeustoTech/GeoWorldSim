@@ -74,6 +74,4 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
 
         return polluted_amount;
 
-
-
 }
