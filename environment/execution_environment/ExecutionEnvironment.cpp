@@ -212,7 +212,6 @@ void GWSExecutionEnvironment::behave(){
 
         // Store min tick
         this->last_tick_with_agents = min_tick;
-        GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick agent is executed
         foreach( QSharedPointer<GWSAgent> agent , currently_running_agents ){
@@ -241,6 +240,8 @@ void GWSExecutionEnvironment::behave(){
                 }
             }
         }
+    } else {
+        GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_agents );
     }
 
     qInfo() << QString("Ticked %4 , Agents %2 / %3 , Min tick %5" )
