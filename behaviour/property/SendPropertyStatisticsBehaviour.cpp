@@ -132,7 +132,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
             geometry.insert( "coordinates" , coordinates );
             grid_cell.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geometry );
-            grid_cell.insert( "value" , val );
+            grid_cell.insert( "cellValue" , val );
             double normalized = ( val.toDouble(0) - min_value) / (max_value - min_value);
             grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
             emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
