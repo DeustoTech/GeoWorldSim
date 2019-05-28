@@ -1,7 +1,6 @@
 ﻿#include "Environment.h"
 
 #include <QJsonObject>
-#include <QPainter>
 #include <QTimer>
 
 #include "../../util/parallelism/ParallelismController.h"

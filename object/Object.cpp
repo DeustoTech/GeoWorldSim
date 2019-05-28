@@ -3,10 +3,9 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QEvent>
+#include <QJsonArray>
 
 #include "../../app/App.h"
-#include "../../util/geometry/OldGeometry.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
 QString GWSObject::GWS_UID_PROP = "id";

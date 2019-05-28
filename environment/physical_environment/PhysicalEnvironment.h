@@ -6,7 +6,6 @@
 #include <QtConcurrent/QtConcurrent>
 
 #include "../../util/geometry/Geometry.h"
-#include "../../util/geometry/OldGeometry.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"

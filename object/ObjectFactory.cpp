@@ -2,11 +2,9 @@
 
 #include <QDebug>
 #include <QJsonDocument>
+#include <QJsonArray>
 
 #include "../../app/App.h"
-#include "../../agent/Agent.h"
-#include "../../skill/Skill.h"
-#include "../../behaviour/Behaviour.h"
 
 #include "../../util/parallelism/ParallelismController.h"
 
@@ -18,9 +16,9 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
-    this->registerType( GWSAgent::staticMetaObject );
-    this->registerType( GWSSkill::staticMetaObject );
-    this->registerType( GWSBehaviour::staticMetaObject );
+    //this->registerType( GWSAgent::staticMetaObject );
+    //this->registerType( GWSSkill::staticMetaObject );
+    //this->registerType( GWSBehaviour::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

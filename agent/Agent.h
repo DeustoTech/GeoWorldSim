@@ -8,8 +8,6 @@
 #include <QJsonArray>
 #include <QSqlRecord>
 #include <QStringList>
-#include <QPointer>
-#include <QImage>
 #include <QMutex>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>

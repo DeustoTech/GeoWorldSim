@@ -2,7 +2,6 @@
 
 #include <QCoreApplication>
 #include <QDir>
-#include <QImage>
 #include <QJsonDocument>
 
 #include "../../app/App.h"

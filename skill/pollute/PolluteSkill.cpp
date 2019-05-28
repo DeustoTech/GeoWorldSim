@@ -32,7 +32,7 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
 
             if ( dir.exists() ){
 
-                pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() ); ;
+                pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() );
                 pollutant_svm->setObjectName( svm_path );
 
                 QString svm_model = "svm_model";

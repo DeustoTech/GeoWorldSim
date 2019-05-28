@@ -5,7 +5,6 @@
 #include "geos/geom/CoordinateSequenceFilter.h"
 
 #include <QJsonObject>
-#include <QImage>
 #include <QColor>
 
 #include "../../object/Object.h"

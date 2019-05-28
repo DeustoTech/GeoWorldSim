@@ -4,7 +4,6 @@
 #include <QSqlField>
 #include <QJsonValue>
 #include <QJsonDocument>
-#include <QPainter>
 #include <QThread>
 
 #include "../../app/App.h"

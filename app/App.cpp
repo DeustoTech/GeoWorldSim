@@ -56,7 +56,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     if( this->property("console").toBool() ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
             if( type >= 2 ){
-                GWSLogger::log( QString("[%1 - %2] %3").arg( QDateTime::currentDateTime().toString() ).arg( type ).arg( msg ) , GWSApp::globalInstance()->getAppId() ); Q_UNUSED( context );
+                //GWSLogger::log( QString("[%1 - %2] %3").arg( QDateTime::currentDateTime().toString() ).arg( type ).arg( msg ) , GWSApp::globalInstance()->getAppId() ); Q_UNUSED( context );
             }
         } );
     }
