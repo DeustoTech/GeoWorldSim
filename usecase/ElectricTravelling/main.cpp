@@ -59,6 +59,7 @@
 #include "../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h"
 #include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
 #include "../../behaviour/emissions/PolluteBehaviour.h"
+#include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
 
 int main(int argc, char* argv[])
 {
@@ -88,7 +89,6 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
-
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;

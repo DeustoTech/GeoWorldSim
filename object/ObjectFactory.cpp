@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 #include "../../app/App.h"
-
+#include "../../agent/Agent.h"
 #include "../../util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){

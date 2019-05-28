@@ -15,7 +15,7 @@ PolluteSkill::~PolluteSkill(){
 }
 
 
-GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode, QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit , GWSLengthUnit distance ){
+GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subtype , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit , GWSLengthUnit distance ){
 
         QSharedPointer<GWSAgent> agent = this->getAgent();
 
@@ -23,7 +23,7 @@ GWSMassUnit PolluteSkill::pollute( QString vehicle_type , QString transport_mode
 
         //QMap < QString, GWSSvm* > models = this->models;
         //QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
-        QString svm_path = "../../data/ET_EMISSIONS/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
+        QString svm_path = "../../data/" + transport_mode + "/" + vehicle_subtype + "/" + pollutant;
         QSharedPointer<GWSSvm> pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
 
         if ( !pollutant_svm ){

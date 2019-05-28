@@ -14,7 +14,7 @@ public:
     Q_INVOKABLE explicit PolluteBehaviour();
 
     // PARAMETERS
-    static QString INPUT_VEHICLE_TYPE;
+    static QString INPUT_VEHICLE_SUBTYPE;
     static QString INPUT_TRANSPORT_MODE;
     static QString ABATEMENT_TYPE;
     static QString INPUT_POLLUTANT_TYPES;

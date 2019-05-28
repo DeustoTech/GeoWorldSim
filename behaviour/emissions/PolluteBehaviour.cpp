@@ -12,7 +12,7 @@ QString PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
 QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
 QString PolluteBehaviour::CURRENT_ROAD_TYPE = "input_current_road_type";
 QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
-QString PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
+QString PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "input_vehicle_subtype";
 QString PolluteBehaviour::INPUT_TRANSPORT_MODE = "input_transport_mode";
 QString PolluteBehaviour::ABATEMENT_TYPE = "abatement_type";
 QString PolluteBehaviour::NEXTS = "nexts";
@@ -60,11 +60,11 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
     default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
 
-    QString vehicle_type = agent->getProperty( INPUT_VEHICLE_TYPE ).toString();
+    QString vehicle_subtype = agent->getProperty( INPUT_VEHICLE_SUBTYPE ).toString();
 
-    if ( vehicle_type.isEmpty() ){
+    if ( vehicle_subtype.isEmpty() ){
         // Get and set vehicle type from default
-       vehicle_type = default_vehicles[ transport_mode ];
+       vehicle_subtype = default_vehicles[ transport_mode ];
     }
 
     double gradient = agent->getProperty( CURRENT_ROAD_GRADIENT ).toDouble();
@@ -77,7 +77,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     
     foreach ( QJsonValue pollutant , pollutant_types ){
 
-         GWSMassUnit emission = pollute_skill->pollute( vehicle_type, transport_mode , pollutant.toString() , vehicle_speed , gradient , roadType , trafficSit , distance );
+         GWSMassUnit emission = pollute_skill->pollute( transport_mode , vehicle_subtype, pollutant.toString() , vehicle_speed , gradient , roadType , trafficSit , distance );
 
          if ( !emission.isValid() ){
              emission = 0;

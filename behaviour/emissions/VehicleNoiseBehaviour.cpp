@@ -5,7 +5,7 @@
 #include "../../skill/move/MoveSkill.h"
 #include "../../object/ObjectFactory.h"
 
-QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
+QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_transport_mode";
 QString VehicleNoiseBehaviour::OUTPUT_NOISE = "output_noise";
 QString VehicleNoiseBehaviour::NEXTS = "nexts";
 
