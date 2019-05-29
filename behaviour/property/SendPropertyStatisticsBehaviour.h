@@ -30,6 +30,10 @@ private slots:
     virtual QPair< double , QJsonArray > behave();
 
 private:
+
+    // STORAGES
+    QJsonValue accumulated_total;
+
     QList<GWSCoordinate> previous_sent_coordinates;
     QStringList previous_sent_coordinates_ids;
     GWSGrid* total_grid = Q_NULLPTR;
