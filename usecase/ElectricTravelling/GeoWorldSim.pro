@@ -26,6 +26,7 @@ QMAKE_CXXFLAGS += -std=c++14
 TARGET      = gws-electric
 CONFIG      += console
 CONFIG      -= app_bundle
+CONFIG      += resources_big
 
 TEMPLATE = app
 
