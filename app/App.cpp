@@ -19,6 +19,7 @@
 #include "../../environment/social_environment/SocialEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
 #include "../../util/parallelism/ParallelismController.h"
@@ -56,7 +57,17 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     if( this->property("console").toBool() ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
             if( type >= 2 ){
-                //GWSLogger::log( QString("[%1 - %2] %3").arg( QDateTime::currentDateTime().toString() ).arg( type ).arg( msg ) , GWSApp::globalInstance()->getAppId() ); Q_UNUSED( context );
+                QJsonObject message;
+                message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getUserId() );
+                message.insert( "type" , QString("Simulation-Log-%1").arg( type ) );
+                message.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+                message.insert( "status" , msg );
+                message.insert( "version" , context.version );
+                message.insert( "file" , context.file );
+                message.insert( "line" , context.line );
+                message.insert( "category" , context.category );
+                message.insert( "function" , context.function );
+                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message );
             }
         } );
     }

@@ -34,15 +34,15 @@ void GWSDatasourceReader::requestPaginated(int page){
     qDebug() << QString("Requesting %1 from datasource %2, %3 / %4").arg( this->entities_type ).arg( this->scenario_id ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 
     // EXECUTE WHEN POOL HAS AVAILABLE THREADS
-    QtConcurrent::run( [ this , paginated_url ](){
+   // QtConcurrent::run( [ this , paginated_url ](){
 
         // BUT, EXECUTE IN THE MAIN THREAD
-        QTimer::singleShot( 0 , GWSAPIDriver::globalInstance() , [ this , paginated_url ](){
+       // QTimer::singleShot( 0 , GWSAPIDriver::globalInstance() , [ this , paginated_url ](){
             QNetworkReply* reply = GWSAPIDriver::globalInstance()->GET( paginated_url );
             reply->connect( reply , &QNetworkReply::finished , this , &GWSDatasourceReader::dataReceived );
-        });
+      //  });
 
-    });
+  //  });
 }
 
 void GWSDatasourceReader::dataReceived(){
