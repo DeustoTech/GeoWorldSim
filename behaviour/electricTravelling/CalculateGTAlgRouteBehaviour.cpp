@@ -111,7 +111,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                         foreach( QJsonValue v , legs_array ){
 
                             QJsonObject leg = v.toObject();
-                            QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"}};
+                            QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"},{"ELECTRIC","Lime"}};
 
                             GWSCoordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
 
