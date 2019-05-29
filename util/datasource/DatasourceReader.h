@@ -38,7 +38,7 @@ private:
     unsigned int downloaded_total = 0;
     unsigned int download_limit;
 
-    QJsonArray downloaded_data;
+   // QJsonArray downloaded_data;
     bool downloaded_finished = false;
 
 };

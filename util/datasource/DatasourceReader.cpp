@@ -21,7 +21,8 @@ void GWSDatasourceReader::startReading(){
 }
 
 QJsonArray GWSDatasourceReader::getDownloadedData(){
-    return this->downloaded_data;
+    //return this->downloaded_data;
+    return QJsonArray();
 }
 
 bool GWSDatasourceReader::downloadedFinished(){
@@ -53,7 +54,7 @@ void GWSDatasourceReader::dataReceived(){
         QJsonObject data_received = j.toObject();
         if( this->downloaded_total < this->download_limit ){
             emit this->dataValueReadSignal( data_received );
-            this->downloaded_data.append( data_received );
+           // this->downloaded_data.append( data_received );
         }
         this->downloaded_total++;
     }
