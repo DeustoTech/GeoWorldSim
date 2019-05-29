@@ -10,6 +10,7 @@
 #include <QBuffer>
 #include <QJsonObject>
 
+
 class GWSAPIDriver : public QObject
 {
     Q_OBJECT

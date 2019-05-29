@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QtConcurrent/QtConcurrent>
+
+using namespace QtConcurrent;
 
 class GWSDatasourceReader : public QObject
 {
