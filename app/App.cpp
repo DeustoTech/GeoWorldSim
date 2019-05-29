@@ -54,11 +54,11 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     Q_ASSERT( !this->getUserId().isEmpty() );
 
     // Redirect outputs to file
-    if( this->property("console").toBool() ){
+    if( this->getConfiguration().value("console").toBool() ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= 2 ){
+            if( type >= 1 ){
                 QJsonObject message;
-                message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getUserId() );
+                message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getAppId() );
                 message.insert( "type" , QString("Simulation-Log-%1").arg( type ) );
                 message.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
                 message.insert( "status" , msg );
