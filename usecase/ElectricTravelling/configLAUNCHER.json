@@ -1,73 +1,63 @@
-{"target":"gws-electric",
-"name":"Electric travelling simulation",
-"description":"Electric travelling simulation.",
-"speed":1000,
-"timeout":1200000,
-"status":"pending",
-"user_id":"b6de5f00-215e-56a5-bb41-09b0d2f97bd7",
-"id":"demo",
+{"target":"gws-electric","name":"Electric travelling simulation","description":"Electric travelling simulation.","speed":1000,"timeout":1200000,"status":"pending","user_id":"b6de5f00-215e-56a5-bb41-09b0d2f97bd7", "id":"demo",
+
 "population":{
-    "citizens":{"template":{"@gwsclass":"GWSAgent",
-        "@gwsgroups":["Citizen"],
-        "color":"Gray",
-        "birth":-1,
-        "@behaviours":[{"@gwsclass":"CalculateGTAlgRouteBehaviour","start":true,"id":"GTALG","transport_mode":"<mode>","route_optimization":"QUICKER","destination_json":"<destination>","duration":1,"nexts":["NEXT_DESTINATION"]},
-        
-        {"@gwsclass":"SetNextRouteDestinationBehaviour","id":"NEXT_DESTINATION","duration":1,"nexts_while_pending_route":["DISPLAY"],"nexts_if_finished":["STOP"]},
-        
-        {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY","agent_to_send_id":"<id>","duration":1,"nexts":["MOVE"]},
-        
-        {"@gwsclass":"MoveThroughRouteBehaviour","id":"MOVE","duration":5,"input_transport_network_type":"<mode>","input_route_destination_x":"<next_destination_x_value>","input_route_destination_y":"<next_destination_y_value>","nexts_if_arrived":["NEXT_DESTINATION"],"nexts_if_not_arrived":["NOISE"]},
-        
-        {"@gwsclass":"VehicleNoiseBehaviour","id":"NOISE","input_vehicle_type":"<mode>","duration":0,"nexts":["POLLUTE"]},
-        
-        {"@gwsclass":"PolluteBehaviour","id":"POLLUTE","input_transport_mode":"<mode>","input_current_road_gradient":0,"input_current_road_traffic_situation":0.36,"input_pollutant_types":["INDIRECT","FCL","INDIRECT_ELECTRIC_ES","INDIRECT_ELECTRIC_PL","INDIRECT_ELECTRIC_HU","INDIRECT_ELECTRIC_NL","WH"],"duration":0,"nexts":["DISPLAY"]},
+
+"citizens":{"template":{"@gwsclass":"GWSAgent","@gwsgroups":["Citizen"],"color":"Gray","birth":-1,
+            "@behaviours":[{"@gwsclass":"CalculateGTAlgRouteBehaviour","start":true,"id":"GTALG","transport_mode":"<mode>","route_optimization":"QUICKER","destination_json":"<destination>","duration":1,"nexts":["NEXT_DESTINATION"]},
+            
+            {"@gwsclass":"SetNextRouteDestinationBehaviour","id":"NEXT_DESTINATION","duration":1,"nexts_while_pending_route":["DISPLAY"],"nexts_if_finished":["STOP"]},
+            
+            {"@gwsclass":"SendAgentSnapshotBehaviour","id":"DISPLAY","agent_to_send_id":"<id>","duration":1,"nexts":["MOVE"]},{"@gwsclass":"MoveThroughRouteBehaviour","id":"MOVE","duration":5,"input_transport_network_type":"<mode>","input_route_destination_x":"<next_destination_x_value>","input_route_destination_y":"<next_destination_y_value>","nexts_if_arrived":["NEXT_DESTINATION"],"nexts_if_not_arrived":["NOISE"]},
+            
+            {"@gwsclass":"VehicleNoiseBehaviour","id":"NOISE","input_vehicle_type":"<mode>","duration":0,"nexts":["POLLUTE"]},
+            
+            {"@gwsclass":"PolluteBehaviour","id":"POLLUTE","input_transport_mode":"<mode>","input_current_road_gradient":0,"input_current_road_traffic_situation":0.36,"input_pollutant_types":["INDIRECT","FCL","INDIRECT_ELECTRIC_ES","INDIRECT_ELECTRIC_PL","INDIRECT_ELECTRIC_HU","INDIRECT_ELECTRIC_NL","WH"],"duration":0,"nexts":["DISPLAY"]},
+            
+            {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},
+            "datasources":[
+            {"scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"CAR"},
+            {"scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"MOTORCYCLE"}]},
+
+"noise":{"template":{"@gwsclass":"GWSAgent","type":"NOISE","id":"NOISE","color":"Grey","birth":-1,
+        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_noise","agents_filter":{"running":true},"grid_type":"maximum","store_as":"maximum_noise","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
         
         {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},
+        "amount":1},
 
-        "datasources":[{"scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"CAR"},{"scenario_id":"b87e3ae9-9ac4-40db-ac7a-bb3481ac5d48-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"MOTORCYCLE"}]},
+"indirect":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT","id":"INDIRECT","color":"Gray","birth":-1,
+        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
+        
+        {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
 
-    "noise":{"template":{"@gwsclass":"GWSAgent",
-                        "type":"NOISE",
-                        "id":"NOISE",
-                        "color":"Grey",
-                        "birth":-1,
-                        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_noise","agents_filter":{"running":true},"grid_type":"maximum","store_as":"maximum_noise","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
-                        
-                        {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"fcl":{"template":{"@gwsclass":"GWSAgent","type":"FCL","id":"FCL","color":"Gray","birth":-1,
+        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_FCL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_FCL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
+        
+        {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},
+        "amount":1},
 
-    "indirect":{"template":{"@gwsclass":"GWSAgent",
-                        "type":"INDIRECT",
-                        "id":"INDIRECT",
-                        "color":"Gray",
-                        "birth":-1,
-                        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
-                        
-                        {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"wh":{"template":{"@gwsclass":"GWSAgent","type":"WH","id":"WH","color":"Gray","birth":-1,
+        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_WH","agents_filter":{"running":true},"grid_type":"total","store_as":"total_WH","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},
+        "amount":1},
 
-    "fcl":{"template":{"@gwsclass":"GWSAgent",
-    "type":"FCL",
-    "id":"FCL",
-    "color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_FCL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_FCL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"indirect_electric_ES":{"template" :{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_ES","id":"INDIRECT_ELECTRIC_ES","color":"Gray","birth":-1,
+        "@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_ES","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_ES","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},
+        
+        {"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
 
-    "wh":{"template":{"@gwsclass":"GWSAgent","type":"WH","id":"WH","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_WH","agents_filter":{"running":true},"grid_type":"total","store_as":"total_WH","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"indirect_electric_PL":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_PL","id":"INDIRECT_ELECTRIC_PL","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_PL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_PL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
 
-    "indirect_electric_ES":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_ES","id":"INDIRECT_ELECTRIC_ES","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_ES","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_ES","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"indirect_electric_NL":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_NL","id":"INDIRECT_ELECTRIC_NL","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_NL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_NL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
 
-    "indirect_electric_PL":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_PL","id":"INDIRECT_ELECTRIC_PL","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_PL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_PL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"indirect_electric_HU":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_HU","id":"INDIRECT_ELECTRIC_HU","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_HU","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_HU","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
 
-    "indirect_electric_NL":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_NL","id":"INDIRECT_ELECTRIC_NL","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_NL","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_NL","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"NETWORK0":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Motorway"}]},
 
-    "indirect_electric_HU":{"template":{"@gwsclass":"GWSAgent","type":"INDIRECT_ELECTRIC_HU","id":"INDIRECT_ELECTRIC_HU","color":"Gray","birth":-1,"@behaviours":[{"@gwsclass":"SendPropertyStatisticsBehaviour","start":true,"id":"DISPLAY","agents_type":"Citizen","agents_property_name":"vehicle_INDIRECT_ELECTRIC_HU","agents_filter":{"running":true},"grid_type":"total","store_as":"total_INDIRECT_ELECTRIC_HU","duration":60,"nexts_if_still_alive_agents":["DISPLAY"],"nexts_if_all_agents_dead":["STOP"]},{"@gwsclass":"StopAgentBehaviour","id":"STOP","duration":1}]},"amount":1},
+"NETWORK1":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Primary"}]},
 
-    "NETWORK0":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Motorway"}]},
+"NETWORK2":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Secondary"}]},
 
-    "NETWORK1":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Primary"}]},
+"NETWORK3":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Tertiary"}]},
 
-    "NETWORK2":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Secondary"}]},
+"NETWORK4":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Trunk"}]},
 
-    "NETWORK3":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Tertiary"}]},
-
-    "NETWORK4":{"template":{"@gwsclass":"GWSAgent","@type":"Network","@gwsgroups":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"]},"datasources":[{"allowed_modes":["ELECTRIC","CAR","WALK","MOTORCYCLE","BUS"],"scenario_id":"f8531508-056b-44aa-8823-cac0a56ceff1-545b694b-af38-55ca-bb94-ce","attribute":null,"entity_type":"Trunk"}]},
-
-    "chargers":{"template":{"@gwsclass":"GWSAgent","@type":"Chargers"},"datasources":[{"scenario_id":"dd0057f4-e391-4e6f-b6b8-7e2568fd3b32-4aecccb5-eb5c-58a0-89b1-64","attribute":null,"entity_type":"Chargers"}]}}}
+"chargers":{"template":{"@gwsclass":"GWSAgent","@type":"Chargers"},"datasources":[{"scenario_id":"dd0057f4-e391-4e6f-b6b8-7e2568fd3b32-4aecccb5-eb5c-58a0-89b1-64","attribute":null,"entity_type":"Chargers"}]}}}
