@@ -60,14 +60,14 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
                 QJsonObject message;
                 message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getAppId() );
                 message.insert( "type" , QString("Simulation-Log-%1").arg( type ) );
-                message.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+                //message.insert( "simulation_time" , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
                 message.insert( "status" , msg );
                 message.insert( "version" , context.version );
                 message.insert( "file" , context.file );
                 message.insert( "line" , context.line );
                 message.insert( "category" , context.category );
                 message.insert( "function" , context.function );
-                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message );
+                //emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message );
             }
         } );
     }
