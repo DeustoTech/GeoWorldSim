@@ -33,10 +33,11 @@ private:
 
     // STORAGES
     QJsonValue accumulated_total;
+    GWSGrid* accumulated_grid = Q_NULLPTR;
 
     QList<GWSCoordinate> previous_sent_coordinates;
     QStringList previous_sent_coordinates_ids;
-    GWSGrid* total_grid = Q_NULLPTR;
+
 };
 
 #endif // GWSPROPERTYSTATISTICSBEHAVIOUR_H

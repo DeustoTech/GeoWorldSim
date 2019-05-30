@@ -101,25 +101,11 @@ double GWSGrid::getLat(double y) const{
 }
 
 double GWSGrid::getMaxValue() const{
-    double max;
-    for(int i = 0 ; i < x_size ; i++){
-        for(int j = 0 ; j < y_size ; j++ ){
-            QJsonValue v = this->grid->value( i )->value( j );
-            max = max >= v.toDouble() ? max : v.toDouble();
-        }
-    }
-    return max;
+    return this->max_value;
 }
 
 double GWSGrid::getMinValue() const{
-    double min;
-    for(int i = 0 ; i < x_size ; i++){
-        for(int j = 0 ; j < y_size ; j++ ){
-            QJsonValue v = this->grid->value( i )->value( j );
-            min = min <= v.toDouble() ? min : v.toDouble();
-        }
-    }
-    return min;
+    return this->min_value;
 }
 
 QJsonValue GWSGrid::getValue( GWSCoordinate coor ) const{
@@ -179,24 +165,31 @@ void GWSGrid::addValue( GWSCoordinate coor , QJsonValue value ){
     if ( this->grid_type == "total" ){
         QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
         this->grid->value( x )->insert( y , sum );
+        this->max_value = qMax( this->max_value , sum.toDouble() );
+        this->min_value = qMin( this->min_value , sum.toDouble() );
     }
 
     // The grid cells represent the latest value of the cell:
     if ( this->grid_type == "latest" ){
-        //QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
         this->grid->value( x )->insert( y , value );
+        this->max_value = qMax( this->max_value , value.toDouble() );
+        this->min_value = qMin( this->min_value , value.toDouble() );
     }
 
     // The grid cells return the maximum between the previous and the latest:
     if ( this->grid_type == "maximum" ){
         QJsonValue max = qMax( existing_value.toDouble() , value.toDouble() );
         this->grid->value( x )->insert( y , max );
+        this->max_value = qMax( this->max_value , max.toDouble() );
+        this->min_value = qMin( this->min_value , max.toDouble() );
     }
 
     // The grid cells return the minimum between the previous and the latest:
     if ( this->grid_type == "minimum" ){
         QJsonValue min = qMin( existing_value.toDouble() , value.toDouble() );
         this->grid->value( x )->insert( y , min );
+        this->max_value = qMax( this->max_value , min.toDouble() );
+        this->min_value = qMin( this->min_value , min.toDouble() );
     }
 
 }
@@ -209,6 +202,42 @@ void GWSGrid::addValue( GWSGeometry geom , QJsonValue value ){
 }
 
 void GWSGrid::setBounds(GWSGeometry bounds){
+
+    if( this->grid_bounds == bounds ){
+        return;
+    }
+
+    QMap<GWSCoordinate , QJsonValue > old_values;
+
+    // Before resizing the grid, retrieve the coordinates and values
+    for(unsigned int i = 0 ; i < this->getXSize() ; i++){
+        for(unsigned int j = 0 ; j < this->getYSize() ; j++ ){
+            GWSCoordinate coor = GWSCoordinate( this->getLon( i+0.5 ) , this->getLat( j+0.5 ) );
+            QJsonValue val = this->getValue( coor );
+            if( !val.isNull() ){
+                old_values.insert( coor , val );
+            }
+        }
+        this->grid->value( i )->clear();
+    }
+
+    // Delete old grid
+    for(int i = 0 ; i < x_size ; i++){
+        delete this->grid->value( i );
+    }
+    this->grid->clear();
+
+    // Set new bounds
+    this->grid_bounds = bounds;
+    this->max_x = GWSGeometryGetters::getGeometryMaxX( this->grid_bounds );
+    this->max_y = GWSGeometryGetters::getGeometryMaxY( this->grid_bounds );
+    this->min_x = GWSGeometryGetters::getGeometryMinX( this->grid_bounds );
+    this->min_y = GWSGeometryGetters::getGeometryMinY( this->grid_bounds );
+
+    // Put back the old values
+    foreach(GWSCoordinate c , old_values.keys()) {
+        this->addValue( c , old_values.value( c ) );
+    }
 
 }
 

@@ -18,7 +18,7 @@ QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_agent
 
 SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviour(){
     QString grid_type = this->getProperty( GRID_TYPE ).toString();
-    //this->total_grid = new GWSGrid( GWSGeometry() , 100 , 100 , grid_type );
+    this->accumulated_grid = new GWSGrid( GWSGeometry() , 100 , 100 , grid_type );
 }
 
 /**********************************************************************
@@ -50,6 +50,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
     GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
+    this->accumulated_grid->setBounds( bounds );
 
     int agent_count = 0;
     QJsonValue acc_value;
@@ -66,6 +67,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
         // GRID
         GWSGeometry agent_geom = GWSGeometry( a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         instant_grid.addValue( agent_geom , val );
+        this->accumulated_grid->addValue( agent_geom , val );
 
         // TOTAL
         acc_value = GWSObjectFactory::incrementValue( acc_value , val );
@@ -92,29 +94,29 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( agent->serialize() , socket_id );
 
     // Send cell points
-    QList<GWSCoordinate> now_sent_coordinates;
     QStringList now_sent_coordinates_ids;
-    double max_value = instant_grid.getMaxValue();
-    double min_value = instant_grid.getMinValue();
+
+    double instant_grid_max_value = instant_grid.getMaxValue();
+    double instant_grid_min_value = instant_grid.getMinValue();
+
     for(unsigned int i = 0 ; i < instant_grid.getXSize() ; i++){
         for(unsigned int j = 0 ; j < instant_grid.getYSize() ; j++ ){
 
             GWSCoordinate coor = GWSCoordinate( instant_grid.getLon( i+0.5 ) , instant_grid.getLat( j+0.5 ) );
-            QJsonValue val = instant_grid.getValue( coor );
+            QJsonValue instant_value = instant_grid.getValue( coor );
+            QJsonValue accumulated_value = this->accumulated_grid->getValue( coor );
             QString coor_id = QString("%1-%2").arg( i ).arg( j );
 
-            // if( val.isNull() && !this->previous_sent_coordinates.contains( coor ) ){ continue; }
-
-            if( val.isNull() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){ continue; }
-
-            if( !val.isNull() ){
-               // now_sent_coordinates.append( coor );
+            if( ( instant_value.isNull() || accumulated_value.isNull() ) && !this->previous_sent_coordinates_ids.contains( coor_id ) ){
+                continue;
+            }
+            if( !instant_value.isNull() || !accumulated_value.isNull() ){
                 now_sent_coordinates_ids.append( coor_id );
             }
 
             QJsonObject grid_cell;
             grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( agent->getUID() ).arg( i ).arg( j ) );
-            grid_cell.insert( "type" , agent->getUID() + "Cell" );
+            grid_cell.insert( "type" , agent->getUID() + "GridCell" );
             grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)agent_internal_time );
 
             QJsonObject geometry;
@@ -123,9 +125,10 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
             geometry.insert( "coordinates" , coordinates );
             grid_cell.insert( GWSPhysicalEnvironment::GEOMETRY_PROP , geometry );
-            grid_cell.insert( "instant_value" , val );
-            double normalized = ( val.toDouble(0) - min_value) / (max_value - min_value);
-            grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
+            grid_cell.insert( "instant_value" , instant_value );
+            grid_cell.insert( "accumulated_value" , accumulated_value );
+            double normalized = ( instant_value.toDouble(0) - instant_grid_min_value) / (instant_grid_max_value - instant_grid_min_value);
+            grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( ( 1-normalized * 255 ) ) );
             emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
         }
     }

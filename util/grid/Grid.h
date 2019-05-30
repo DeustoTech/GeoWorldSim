@@ -61,6 +61,10 @@ protected:
     double min_y = 180;
     double max_y = -180;
 
+    // MIN AND MAX
+    double min_value = 0;
+    double max_value = 0;
+
 };
 
 
