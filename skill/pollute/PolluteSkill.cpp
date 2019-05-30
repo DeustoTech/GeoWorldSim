@@ -28,12 +28,12 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
 
         if ( !pollutant_svm ){
 
+            pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() );
+            pollutant_svm->setObjectName( svm_path );
+
             QDir dir( svm_path );
 
             if ( dir.exists() ){
-
-                pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() );
-                pollutant_svm->setObjectName( svm_path );
 
                 QString svm_model = "svm_model";
                 QString svm_parameters = "params_model";
@@ -44,16 +44,14 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
 
                // Load trained SVM model and parameters:
                 pollutant_svm->loadTrained( totalPath_model , totalPath_params );
-                GWSGlobalObjectStorage::globalInstance()->add( pollutant_svm );
 
             }
             else {
 
                 qWarning() << QString("Could not find SVM file %1").arg( svm_path );
-
-                polluted_amount = GWSMassUnit( 0 );
-                return polluted_amount;
             }
+
+            GWSGlobalObjectStorage::globalInstance()->add( pollutant_svm );
         }
 
         QMap<QString , QVariant> input;
@@ -66,7 +64,7 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
         input.insert( "trafficSit" , 0.36 );
 
         QJsonObject result = pollutant_svm->run( input );
-        polluted_amount = result.value( "EFA" ).toDouble() * distance.number() / 1000.;// Because the SVM outputs emissions per km
+        polluted_amount = result.value( "EFA" ).toDouble( 0 ) * distance.number() / 1000.;// Because the SVM outputs emissions per km
 
         // Save polluted amount:
         // agent->setProperty( "total"+ pollutant +"amount" , agent->getProperty( "total"+ pollutant +"amount").toDouble() + polluted_amount );

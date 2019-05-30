@@ -24,6 +24,11 @@ CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
+    // If GWSAPIDriver is too loaded, call this again in some time
+    if( GWSAPIDriver::globalInstance()->getRequestsAmount() > 10 ){
+        return QPair< double , QJsonArray >( 0 , QJsonArray({ this->getUID() }) );
+    }
+
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
@@ -116,7 +121,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                             // Additional properties
                             QJsonObject properties;
                             properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
-                            properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
+                            //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
                             properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
 
                             multiroute_skill->addDestination( destination_coor , properties );

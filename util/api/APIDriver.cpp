@@ -32,6 +32,14 @@ GWSAPIDriver::~GWSAPIDriver(){
 }
 
 /**********************************************************************
+ GETTERS
+**********************************************************************/
+
+int GWSAPIDriver::getRequestsAmount() const{
+    return this->current_requests_amount;
+}
+
+/**********************************************************************
  GET
 **********************************************************************/
 
@@ -141,6 +149,14 @@ QNetworkReply* GWSAPIDriver::operation(QNetworkAccessManager::Operation operatio
         if( operation == QNetworkAccessManager::PutOperation ){ unfinished_reply = this->access_manager->put( request , &buffer ); }
         if( operation == QNetworkAccessManager::CustomOperation ){ unfinished_reply = this->access_manager->sendCustomRequest( request , custom_operation , &buffer ); }
         if( operation == QNetworkAccessManager::DeleteOperation ){ unfinished_reply = this->access_manager->deleteResource( request ); }
+
+        if( unfinished_reply ){
+            qDebug() << QString("Performing %1 HTTP Request while %2 pending").arg( operation ).arg( this->current_requests_amount );
+            this->current_requests_amount++;
+            unfinished_reply->connect( unfinished_reply , &QNetworkReply::finished , [this](){
+                this->current_requests_amount--;
+            });
+        }
 
     } catch(...){
         qWarning() << QString("Crashed request %1 %2").arg( operation ).arg( url.toString() );

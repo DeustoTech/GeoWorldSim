@@ -121,6 +121,10 @@ void GWSSvm::loadModel( QString model_file_path ){
 
 QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
 
+    if( !this->model ){
+        return QJsonObject();
+    }
+
     svm_node* x = new svm_node[ inputs.size() + 1 ];
 
     QJsonObject result;

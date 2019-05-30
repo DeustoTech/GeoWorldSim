@@ -19,6 +19,9 @@ public:
 
     static GWSAPIDriver* globalInstance();
 
+    // GETTERS
+    int getRequestsAmount() const;
+
     // GET
     virtual QNetworkReply* GET( QUrl url, QMap<QString, QString> headers = QMap<QString, QString>() );
 
@@ -44,6 +47,7 @@ private:
     virtual QNetworkReply* operation( QNetworkAccessManager::Operation operation , QUrl url , QMap<QString, QString> headers = QMap<QString, QString>() , QByteArray data = QByteArray() , QByteArray custom_operation = QByteArray() );
 
     QNetworkAccessManager* access_manager;
+    int current_requests_amount = 0;
 
 };
 
