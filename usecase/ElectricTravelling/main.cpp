@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
-                         qDebug() << QString("Data download took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
+                         qInfo() << QString("Agent data downloaded. Took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
                          GWSExecutionEnvironment::globalInstance()->run();
                      }
                  });
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
                  GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
              }
          }
-        qDebug() << QString("Creating population %1").arg( key );
+        qInfo() << QString("Creating population %1").arg( key );
      }
      if( pending_datasources.isEmpty() ){
          GWSExecutionEnvironment::globalInstance()->run();

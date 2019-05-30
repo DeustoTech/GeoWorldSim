@@ -102,7 +102,6 @@ HEADERS += \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
     ../../skill/move/StoreMultiRouteSkill.h \
-    ../../behaviour/property/PropertyHeatmapBehaviour.h \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.h
 
 
@@ -173,7 +172,6 @@ SOURCES += main.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
-    ../../behaviour/property/PropertyHeatmapBehaviour.cpp \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp
 
 

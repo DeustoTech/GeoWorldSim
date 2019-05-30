@@ -49,8 +49,7 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
             }
             else {
 
-                qDebug() << svm_path;
-                qDebug() << "No SVM for selected subsegment and/or pollutant!";
+                qWarning() << QString("Could not find SVM file %1").arg( svm_path );
 
                 polluted_amount = GWSMassUnit( 0 );
                 return polluted_amount;

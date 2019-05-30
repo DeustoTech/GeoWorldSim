@@ -40,7 +40,6 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
         this->exit( -1 );
     }
 
-    qDebug() << "Found configuration FILE" << argv[1];
     QFile file( argv[1] );
     file.open( QFile::ReadOnly );
     this->json_configuration = QJsonDocument::fromJson( file.readAll() , &jerror ).object();
@@ -54,14 +53,16 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     Q_ASSERT( !this->getUserId().isEmpty() );
 
     // Redirect outputs to file
-    if( this->getConfiguration().value("console").toBool() ){
+    if( this->getConfiguration().value("console").toInt( -1 ) >= 0 ){
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= 1 ){
+            if( type >= this->getConfiguration().value("console").toInt( -1 ) ){
+                QMap<QtMsgType , QString> message_types = {{ QtDebugMsg , "Debug" },{ QtWarningMsg , "Warning" } , { QtCriticalMsg , "Critical" } , { QtFatalMsg , "Fatal" } , { QtInfoMsg , "Info" } };
                 QJsonObject message;
                 message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getAppId() );
-                message.insert( "type" , QString("Simulation-Log-%1").arg( type ) );
+                message.insert( "type" , QString("Simulation-Log") );
+                message.insert( "log_type" , message_types.value( type ) );
+                message.insert( "log" , msg );
                 message.insert( "simulation_time" , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
-                message.insert( "status" , msg );
                 message.insert( "version" , context.version );
                 message.insert( "file" , context.file );
                 message.insert( "line" , context.line );
