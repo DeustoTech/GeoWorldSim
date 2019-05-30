@@ -7,19 +7,31 @@ GWSAreaUnit GWSGeometryGetters::getArea(GWSGeometry geometry){
 }
 
 double GWSGeometryGetters::getGeometryMaxX(GWSGeometry geometry){
-    return geometry.inner_geometry->getEnvelopeInternal()->getMaxX();
+    if( geometry.inner_geometry && geometry.inner_geometry->getEnvelopeInternal() ){
+        return geometry.inner_geometry->getEnvelopeInternal()->getMaxX();
+    }
+    return 0;
 }
 
 double GWSGeometryGetters::getGeometryMinX(GWSGeometry geometry){
-    return geometry.inner_geometry->getEnvelopeInternal()->getMinX();
+    if( geometry.inner_geometry && geometry.inner_geometry->getEnvelopeInternal() ){
+        return geometry.inner_geometry->getEnvelopeInternal()->getMinX();
+    }
+    return 0;
 }
 
 double GWSGeometryGetters::getGeometryMaxY(GWSGeometry geometry){
-    return geometry.inner_geometry->getEnvelopeInternal()->getMaxY();
+    if( geometry.inner_geometry && geometry.inner_geometry->getEnvelopeInternal() ){
+        return geometry.inner_geometry->getEnvelopeInternal()->getMaxY();
+    }
+    return 0;
 }
 
 double GWSGeometryGetters::getGeometryMinY(GWSGeometry geometry){
-    return geometry.inner_geometry->getEnvelopeInternal()->getMinY();
+    if( geometry.inner_geometry && geometry.inner_geometry->getEnvelopeInternal() ){
+        return geometry.inner_geometry->getEnvelopeInternal()->getMinY();
+    }
+    return 0;
 }
 
 GWSCoordinate GWSGeometryGetters::getCentroid(GWSGeometry geometry){

@@ -112,7 +112,11 @@ QJsonValue GWSGrid::getValue( GWSCoordinate coor ) const{
 
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , x_size );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , y_size );
-    return this->grid->value( x )->value( y , QJsonValue() );
+
+    if( this->grid->value( x ) ){
+        return this->grid->value( x )->value( y , QJsonValue() );
+    }
+    return QJsonValue();
 }
 
 QJsonValue GWSGrid::getValue( GWSGeometry geom ) const{
@@ -210,22 +214,19 @@ void GWSGrid::setBounds(GWSGeometry bounds){
     QMap<GWSCoordinate , QJsonValue > old_values;
 
     // Before resizing the grid, retrieve the coordinates and values
-    for(unsigned int i = 0 ; i < this->getXSize() ; i++){
-        for(unsigned int j = 0 ; j < this->getYSize() ; j++ ){
-            GWSCoordinate coor = GWSCoordinate( this->getLon( i+0.5 ) , this->getLat( j+0.5 ) );
-            QJsonValue val = this->getValue( coor );
-            if( !val.isNull() ){
-                old_values.insert( coor , val );
+    if( this->grid_bounds.isValid() ){
+        for(unsigned int i = 0 ; i < this->getXSize() ; i++){
+            for(unsigned int j = 0 ; j < this->getYSize() ; j++ ){
+                GWSCoordinate coor = GWSCoordinate( this->getLon( i+0.5 ) , this->getLat( j+0.5 ) );
+                QJsonValue val = this->getValue( coor );
+                if( !val.isNull() ){
+                    old_values.insert( coor , val );
+                }
+                this->grid->value( i )->insert( j , QJsonValue() );
             }
-        }
-        this->grid->value( i )->clear();
-    }
 
-    // Delete old grid
-    for(int i = 0 ; i < x_size ; i++){
-        delete this->grid->value( i );
+        }
     }
-    this->grid->clear();
 
     // Set new bounds
     this->grid_bounds = bounds;

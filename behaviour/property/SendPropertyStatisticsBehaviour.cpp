@@ -17,9 +17,8 @@ QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_still_
 QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_agents_dead";
 
 SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviour(){
-    QString grid_type = this->getProperty( GRID_TYPE ).toString();
-    this->accumulated_grid = new GWSGrid( GWSGeometry() , 100 , 100 , grid_type );
 }
+
 
 /**********************************************************************
  METHODS
@@ -50,7 +49,14 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
     GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
-    this->accumulated_grid->setBounds( bounds );
+
+    // Create accumulated_grid
+    if( !this->accumulated_grid ){
+        this->accumulated_grid = new GWSGrid( bounds , 100 , 100 , grid_type );
+    } else {
+        //this->accumulated_grid->setBounds( bounds );
+    }
+
 
     int agent_count = 0;
     QJsonValue acc_value;
@@ -107,10 +113,10 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             QJsonValue accumulated_value = this->accumulated_grid->getValue( coor );
             QString coor_id = QString("%1-%2").arg( i ).arg( j );
 
-            if( ( instant_value.isNull() || accumulated_value.isNull() ) && !this->previous_sent_coordinates_ids.contains( coor_id ) ){
+            if( instant_value.isNull() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){
                 continue;
             }
-            if( !instant_value.isNull() || !accumulated_value.isNull() ){
+            if( !instant_value.isNull() ){
                 now_sent_coordinates_ids.append( coor_id );
             }
 
