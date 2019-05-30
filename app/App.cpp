@@ -63,7 +63,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
                 message.insert( "type" , QString("Simulation-Log") );
                 message.insert( "log_type" , message_types.value( type ) );
                 message.insert( "log" , msg );
-                message.insert( "simulation_time" , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+                message.insert( "time" , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
                 message.insert( "version" , context.version );
                 message.insert( "file" , context.file );
                 message.insert( "line" , context.line );
