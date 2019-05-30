@@ -16,7 +16,7 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
-    //this->registerType( GWSAgent::staticMetaObject );
+    this->registerType( GWSAgent::staticMetaObject );
     //this->registerType( GWSSkill::staticMetaObject );
     //this->registerType( GWSBehaviour::staticMetaObject );
 }
