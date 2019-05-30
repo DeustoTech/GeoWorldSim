@@ -24,11 +24,6 @@ CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
-    // If GWSAPIDriver is too loaded, call this again in some time
-    if( GWSAPIDriver::globalInstance()->getRequestsAmount() > 10 ){
-        return QPair< double , QJsonArray >( 0 , QJsonArray({ this->getUID() }) );
-    }
-
     QSharedPointer<GWSAgent> agent = this->getAgent();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
@@ -84,7 +79,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        QTimer::singleShot( qrand() % 10000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
+        QTimer::singleShot( qrand() % 1000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
 
             QNetworkReply* reply = GWSAPIDriver::globalInstance()->GET( gtUrl );
 
