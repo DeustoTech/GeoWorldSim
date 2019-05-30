@@ -79,51 +79,56 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
+        QTimer::singleShot( qrand() % 1000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
 
-            reply->connect( reply , &QNetworkReply::finished , [ agent , reply , this ] {
+            GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
 
-                QJsonObject json = QJsonDocument::fromJson( reply->readAll() ).object();
+                reply->connect( reply , &QNetworkReply::finished , [ agent , reply , this ] {
 
-                // We are only interested in the "itineraries.legs" field of the QJsonObject
+                    QJsonObject json = QJsonDocument::fromJson( reply->readAll() ).object();
 
-                if ( !json.isEmpty() ){
+                    // We are only interested in the "itineraries.legs" field of the QJsonObject
 
-                    QJsonObject plan = json.value( "plan" ).toObject();
-                    QJsonArray itineraries = plan.value( "itineraries" ).toArray();
-                    QJsonObject optimal_itinerary = itineraries.at( 0 ).toObject();
-                    QJsonArray legs_array = optimal_itinerary.value( "legs" ).toArray();
+                    if ( !json.isEmpty() ){
 
-                    if( !legs_array.isEmpty() ){
+                        QJsonObject plan = json.value( "plan" ).toObject();
+                        QJsonArray itineraries = plan.value( "itineraries" ).toArray();
+                        QJsonObject optimal_itinerary = itineraries.at( 0 ).toObject();
+                        QJsonArray legs_array = optimal_itinerary.value( "legs" ).toArray();
 
-                        // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
-                        QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
-                        if( !multiroute_skill ){
-                            multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
-                            agent->addSkill( multiroute_skill );
-                        }
+                        if( !legs_array.isEmpty() ){
 
-                        // Extract array of ordered legs
-                        foreach( QJsonValue v , legs_array ){
+                            // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
+                            QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
+                            if( !multiroute_skill ){
+                                multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
+                                agent->addSkill( multiroute_skill );
+                            }
 
-                            QJsonObject leg = v.toObject();
-                            QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"},{"ELECTRIC","Lime"}};
+                            // Extract array of ordered legs
+                            foreach( QJsonValue v , legs_array ){
 
-                            GWSCoordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
+                                QJsonObject leg = v.toObject();
+                                QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"},{"ELECTRIC","Lime"}};
 
-                            // Additional properties
-                            QJsonObject properties;
-                            properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
-                            //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
-                            properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
+                                GWSCoordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
 
-                            multiroute_skill->addDestination( destination_coor , properties );
+                                // Additional properties
+                                QJsonObject properties;
+                                properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
+                                //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
+                                properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
+
+                                multiroute_skill->addDestination( destination_coor , properties );
+                            }
                         }
                     }
-                }
 
-                reply->deleteLater();
-                agent->decrementBusy();
+                    reply->deleteLater();
+                    agent->decrementBusy();
+
+                });
+
 
             });
 
