@@ -9,6 +9,7 @@
 #include <QNetworkReply>
 #include <QBuffer>
 #include <QJsonObject>
+#include <QReadWriteLock>
 
 class GWSAPIDriver : public QObject
 {
@@ -59,6 +60,7 @@ private:
     QNetworkAccessManager* access_manager;
     QList< GWSAPIDriverElement > pending_requests;
     int current_requests_amount = 0;
+    QReadWriteLock mutex;
 
 };
 
