@@ -36,7 +36,7 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         QString new_agent_id = template_to_be_constructed.value( GWSObject::GWS_UID_PROP ).toString();
         QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( new_agent_id );
         if( agent ){
-            qWarning() << QString("Skipping duplicate agent (Duplicate UID %1 found)").arg( new_agent_id );
+            //qWarning() << QString("Skipping duplicate agent (Duplicate UID %1 found)").arg( new_agent_id );
             return;
         } else {
             agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();

@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfAgentsRunningBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QList<GWSAgentGeneratorDatasource*> pending_datasources;

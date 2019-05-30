@@ -198,7 +198,7 @@ void GWSExecutionEnvironment::behave(){
         qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( current_datetime );
 
         if( agent_time > 0 && min_tick <= 0 ){ min_tick = agent_time; }
-        else if( agent_time > 0 ){ min_tick = qMin( min_tick , agent_time ); }
+        if( agent_time > 0 && min_tick > 0 ){ min_tick = qMin( min_tick , agent_time ); }
         if( min_tick == agent_time ){ who_is_min_tick = agent; }
         agents_to_tick = true;
     }
