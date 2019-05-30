@@ -5,7 +5,7 @@
 #include "../../skill/move/MoveSkill.h"
 #include "../../object/ObjectFactory.h"
 
-QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_transport_mode";
+QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
 QString VehicleNoiseBehaviour::OUTPUT_NOISE = "output_noise";
 QString VehicleNoiseBehaviour::NEXTS = "nexts";
 
@@ -25,7 +25,7 @@ QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
     GWSSpeedUnit vehicle_speed = agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble();
     QString vehicle_type = this->getProperty( INPUT_VEHICLE_TYPE ).toString();
 
-    double total_noise;
+    double accumulated_noise;
 
     if( vehicle_type.toUpper() == "CAR" ){
         A_roll = 93.9;
@@ -57,16 +57,16 @@ QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
 
     // Total Noise:
     if ( vehicle_type == "WALK" || vehicle_type == "BICYCLE" ){
-        total_noise = 0;
+         accumulated_noise = 0;
     }
     else{
-        total_noise = 10 * log10( qPow( 10 , rolling_noise / 10.0 )  +  qPow( 10 , propulsion_noise / 10.0 ) );
+         accumulated_noise = 10 * log10( qPow( 10 , rolling_noise / 10.0 )  +  qPow( 10 , propulsion_noise / 10.0 ) );
     }
 
     // Store noise
-    double existing_value = agent->getProperty( "vehicle_noise" ).toDouble();
-    agent->setProperty( this->getProperty( OUTPUT_NOISE ).toString( "vehicle_noise" ) , total_noise );
-    agent->setProperty( "total_noise" , GWSObjectFactory::incrementValue( existing_value , total_noise ));
+    double existing_value = agent->getProperty( "instant_noise" ).toDouble();
+    agent->setProperty( this->getProperty( OUTPUT_NOISE ).toString( "instant_noise" ) ,  accumulated_noise );
+    agent->setProperty( "accumulated_noise" , GWSObjectFactory::incrementValue( existing_value ,  accumulated_noise ));
 
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

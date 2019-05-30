@@ -13,7 +13,7 @@ QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
 QString PolluteBehaviour::CURRENT_ROAD_TYPE = "input_current_road_type";
 QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
 QString PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "input_vehicle_subtype";
-QString PolluteBehaviour::INPUT_TRANSPORT_MODE = "input_transport_mode";
+QString PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
 QString PolluteBehaviour::ABATEMENT_TYPE = "abatement_type";
 QString PolluteBehaviour::NEXTS = "nexts";
 
@@ -44,7 +44,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     GWSCoordinate current_coor = agent_geom.getCentroid();
     GWSLengthUnit distance = current_coor.getDistance( this->last_position );
 
-    QString transport_mode = this->getProperty( INPUT_TRANSPORT_MODE ).toString();
+    QString transport_mode = this->getProperty( INPUT_VEHICLE_TYPE ).toString();
 
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
     QSharedPointer<GWSAgent> current_edge = movethroughroute_skill->getCurrentEdge();
