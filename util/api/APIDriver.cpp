@@ -145,7 +145,6 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     // Add callback
     pending_request.callback = callback;
 
-
     if( this->current_requests_amount > 10 ){
         this->pending_requests.append( pending_request );
     } else {
@@ -177,6 +176,7 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
             ref_reply->connect( ref_reply , &QNetworkReply::finished , [ this ](){
 
                 this->current_requests_amount--;
+
                 if( !this->pending_requests.isEmpty() ){
 
                     GWSAPIDriverElement next = this->pending_requests.at( 0 );
