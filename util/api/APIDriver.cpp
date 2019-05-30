@@ -49,8 +49,8 @@ int GWSAPIDriver::getRequestsAmount() const{
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::GET( QUrl url , QMap<QString, QString> headers ){
-    return this->operation( QNetworkAccessManager::GetOperation , url , headers );
+void GWSAPIDriver::GET( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
+    this->operation( QNetworkAccessManager::GetOperation , url , callback , headers );
 }
 
 /**********************************************************************
@@ -63,12 +63,12 @@ QNetworkReply* GWSAPIDriver::GET( QUrl url , QMap<QString, QString> headers ){
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QByteArray data ){
-    return this->operation( QNetworkAccessManager::PostOperation , url , headers , data );
+void GWSAPIDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+    this->operation( QNetworkAccessManager::PostOperation , url , callback , headers , data );
 }
 
-QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QJsonObject data){
-    return this->POST( url , headers , QJsonDocument( data ).toJson() );
+void GWSAPIDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
+    this->POST( url , callback , headers , QJsonDocument( data ).toJson() );
 }
 
 /**********************************************************************
@@ -81,12 +81,12 @@ QNetworkReply* GWSAPIDriver::POST(QUrl url, QMap<QString, QString> headers, QJso
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::PUT(QUrl url, QMap<QString, QString> headers, QByteArray data ){
-    return this->operation( QNetworkAccessManager::PutOperation , url , headers , data );
+void GWSAPIDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+    this->operation( QNetworkAccessManager::PutOperation , url , callback , headers , data );
 }
 
-QNetworkReply* GWSAPIDriver::PUT(QUrl url, QMap<QString, QString> headers, QJsonObject data){
-    return this->POST( url , headers , QJsonDocument( data ).toJson() );
+void GWSAPIDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
+    this->POST( url , callback , headers , QJsonDocument( data ).toJson() );
 }
 
 /**********************************************************************
@@ -99,8 +99,8 @@ QNetworkReply* GWSAPIDriver::PUT(QUrl url, QMap<QString, QString> headers, QJson
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::PATCH(QUrl url, QMap<QString, QString> headers, QByteArray data ){
-    return this->operation( QNetworkAccessManager::CustomOperation , url , headers , data , "PATCH" );
+void GWSAPIDriver::PATCH(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+    this->operation( QNetworkAccessManager::CustomOperation , url , callback , headers , data , "PATCH" );
 }
 
 /**********************************************************************
@@ -113,55 +113,84 @@ QNetworkReply* GWSAPIDriver::PATCH(QUrl url, QMap<QString, QString> headers, QBy
  * @param url
  * @return
  */
-QNetworkReply* GWSAPIDriver::DELETE( QUrl url, QMap<QString, QString> headers ){
-    return this->operation( QNetworkAccessManager::DeleteOperation , url , headers );
+void GWSAPIDriver::DELETE( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
+    this->operation( QNetworkAccessManager::DeleteOperation , url , callback , headers );
 }
 
 /**********************************************************************
  PROTECTED
 **********************************************************************/
 
-QNetworkReply* GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl url, QMap<QString, QString> headers, QByteArray data, QByteArray custom_operation){
+void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl url, std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data , QByteArray custom_operation ){
+
+    GWSAPIDriverElement pending_request;
 
     // Request
-    QNetworkRequest request(url);
+    pending_request.request = QNetworkRequest(url);
     QSslConfiguration sslConfiguration( QSslConfiguration::defaultConfiguration() );
     sslConfiguration.setProtocol( QSsl::TlsV1_2 );
-    request.setSslConfiguration( sslConfiguration );
+    pending_request.request.setSslConfiguration( sslConfiguration );
+
+    // Operation
+    pending_request.operation = operation;
 
     // Add request headers
     foreach ( const QString header, headers.keys() ){
-        request.setRawHeader( header.toStdString().c_str(), headers.value( header ).toStdString().c_str() );
+        pending_request.request.setRawHeader( header.toStdString().c_str(), headers.value( header ).toStdString().c_str() );
     }
 
     // Add data
-    QBuffer buffer;
-    buffer.open( ( QBuffer::ReadWrite ) );
-    buffer.write( data );
-    buffer.seek( 0 );
+    pending_request.data = data;
 
-    QNetworkReply* unfinished_reply = Q_NULLPTR;
+    // Add callback
+    pending_request.callback = callback;
+
+
+    if( this->current_requests_amount > 1 ){
+        this->pending_requests.append( pending_request );
+    } else {
+        this->executePendingOperation( pending_request );
+    }
+
+}
+
+void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
 
     try {
 
-        if( operation == QNetworkAccessManager::GetOperation ){ unfinished_reply = this->access_manager->get( request ); }
-        if( operation == QNetworkAccessManager::PostOperation ){ unfinished_reply = this->access_manager->post( request , &buffer ); }
-        if( operation == QNetworkAccessManager::PutOperation ){ unfinished_reply = this->access_manager->put( request , &buffer ); }
-        if( operation == QNetworkAccessManager::CustomOperation ){ unfinished_reply = this->access_manager->sendCustomRequest( request , custom_operation , &buffer ); }
-        if( operation == QNetworkAccessManager::DeleteOperation ){ unfinished_reply = this->access_manager->deleteResource( request ); }
+        QNetworkReply* ref_reply = Q_NULLPTR;
+        QBuffer data;
+        data.open( ( QBuffer::ReadWrite ) );
+        data.write( pending.data );
+        data.seek( 0 );
 
-        if( unfinished_reply ){
-            qDebug() << QString("Performing %1 HTTP Request while %2 pending").arg( operation ).arg( this->current_requests_amount );
+        if( pending.operation == QNetworkAccessManager::GetOperation ){ ref_reply = this->access_manager->get( pending.request ); }
+        if( pending.operation == QNetworkAccessManager::PostOperation ){ ref_reply = this->access_manager->post( pending.request , &data ); }
+        if( pending.operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending.request , &data ); }
+        if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
+        if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
+
+        if( ref_reply ){
+
             this->current_requests_amount++;
-            unfinished_reply->connect( unfinished_reply , &QNetworkReply::finished , [this](){
+
+            ref_reply->connect( ref_reply , &QNetworkReply::finished , [ this ](){
+
                 this->current_requests_amount--;
+                if( !this->pending_requests.isEmpty() ){
+
+                    GWSAPIDriverElement next = this->pending_requests.at( 0 );
+                    this->pending_requests.removeAt( 0 );
+                    this->executePendingOperation( next );
+
+                }
             });
         }
+        pending.callback( ref_reply );
 
     } catch(...){
-        qWarning() << QString("Crashed request %1 %2").arg( operation ).arg( url.toString() );
+        qWarning() << QString("Crashed request %1 %2").arg( pending.operation ).arg( pending.request.url().toString() );
     }
 
-    return unfinished_reply; // Unfinished reply, receiver will need to connect to finished signal
 }
 

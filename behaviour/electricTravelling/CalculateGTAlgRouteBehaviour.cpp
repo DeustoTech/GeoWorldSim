@@ -79,9 +79,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        QTimer::singleShot( qrand() % 1000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
-
-            QNetworkReply* reply = GWSAPIDriver::globalInstance()->GET( gtUrl );
+        GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
 
             reply->connect( reply , &QNetworkReply::finished , [ agent , reply , this ] {
 
@@ -128,6 +126,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                 agent->decrementBusy();
 
             });
+
 
         });
 
