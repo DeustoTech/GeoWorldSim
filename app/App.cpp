@@ -54,8 +54,9 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
 
     // Redirect outputs to file
     if( this->getConfiguration().value("console").toInt( -1 ) >= 0 ){
+
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= this->getConfiguration().value("console").toInt( -1 ) ){
+            if( type >= GWSApp::globalInstance()->getConfiguration().value("console").toInt(-1) ){
                 QMap<QtMsgType , QString> message_types = {{ QtDebugMsg , "Debug" },{ QtWarningMsg , "Warning" } , { QtCriticalMsg , "Critical" } , { QtFatalMsg , "Fatal" } , { QtInfoMsg , "Info" } };
                 QJsonObject message;
                 message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getAppId() );
