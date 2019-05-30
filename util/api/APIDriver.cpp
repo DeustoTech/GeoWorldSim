@@ -146,7 +146,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     pending_request.callback = callback;
 
 
-    if( this->current_requests_amount > 1 ){
+    if( this->current_requests_amount > 10 ){
         this->pending_requests.append( pending_request );
     } else {
         this->executePendingOperation( pending_request );
