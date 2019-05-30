@@ -51,9 +51,8 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
     GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
 
-    unsigned int count = 0;
-    QJsonValue total_sum = 0;
-    double average = 0;
+    int agent_count = 0;
+    QJsonValue acc_value;
     qint64 grid_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
     foreach( QSharedPointer<GWSAgent> a , valid_agents ) {
@@ -68,20 +67,23 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
         GWSGeometry agent_geom = GWSGeometry( a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         instant_grid.addValue( agent_geom , val );
 
-        // AVERAGE
-        if( average == 0 ){ average = val.toDouble(); }
-        average = (average + val.toDouble()) / 2;
-
         // TOTAL
-        total_sum = GWSObjectFactory::incrementValue( total_sum , val );
+        acc_value = GWSObjectFactory::incrementValue( acc_value , val );
 
         // COUNT
-        count++;
+        agent_count++;
     }
 
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_count" , (int)count );
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_sum" , total_sum );
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_avg", average );
+    // AVERAGE
+    double average = acc_value.toDouble() / agent_count;
+
+    // GLOBAL ACCUMULATOR
+    this->accumulated_total = GWSObjectFactory::incrementValue( this->accumulated_total , acc_value );
+
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_accumulated" , this->accumulated_total );
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_agent_count" , agent_count );
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_current" , acc_value );
+    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_average", average );
 
     // Socket id to send through (by default the main from the Simulation)
     QString socket_id = this->getProperty( SOCKET_ID ).toString( GWSApp::globalInstance()->getAppId() );
@@ -129,7 +131,6 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     }
 
     // Keep back reference to update the olds that should be set to null
-   // this->previous_sent_coordinates = now_sent_coordinates;
     this->previous_sent_coordinates_ids = now_sent_coordinates_ids;
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_STILL_ALIVE ).toArray() );

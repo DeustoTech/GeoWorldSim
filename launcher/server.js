@@ -78,7 +78,7 @@ app.post('/' , async (req, res) => {
         fs.writeFileSync( filename , JSON.stringify(configuration) , 'utf8');
         
         // SPAWN CHILDREN PASSING CONFIG FILE
-        var child = spawn( `${__dirname}/targets/${configuration.target}`, [ filename ] );
+        var child = spawn( `${__dirname}/targets/${configuration.target}` , [ filename ] , { cwd : `${__dirname}/targets` } );
         
         // SET TIMEOUT
         let timer = false;//setTimeout( () => { child.kill() } , (configuration.timeout * 1000) || 600000 );
