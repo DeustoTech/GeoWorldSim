@@ -139,6 +139,27 @@ bool GWSAgent::isBusy() const{
     return busy_counter > 0;
 }
 
+bool GWSAgent::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
+    bool valid = true;
+    foreach( QString key , filter.keys() ){
+
+        QJsonValue v = this->getProperty( key );
+
+        if( v != filter.value( key ) ){
+            valid = false;
+        }
+
+        if( v.isNull() && nulls_allowed ){
+            valid = true;
+        }
+
+        if( !valid ){
+            break;
+        }
+    }
+    return valid;
+}
+
 QSharedPointer<GWSAgent> GWSAgent::getSharedPointer() const{
     QSharedPointer<GWSObject> obj = GWSObject::getSharedPointer();
     return obj.dynamicCast<GWSAgent>();

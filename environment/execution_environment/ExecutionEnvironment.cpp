@@ -65,11 +65,7 @@ int GWSExecutionEnvironment::getRunningAgentsAmount() const{
 }
 
 QList< QSharedPointer< GWSAgent > > GWSExecutionEnvironment::getRunningAgents() const {
-    return this->running_agents->getByClassCasted<GWSAgent>( GWSAgent::staticMetaObject.className() );
-}
-
-template <class T> QList< QSharedPointer<T> > GWSExecutionEnvironment::getRunningAgentsByClass( QString class_name ) const{
-    return this->running_agents->getByClassCasted<T>( class_name );
+    return this->running_agents->getByClass<GWSAgent>( GWSAgent::staticMetaObject.className() );
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
@@ -185,7 +181,7 @@ void GWSExecutionEnvironment::behave(){
 
     // Wait for agents that are delayed (if WAIT_FOR_ME).
     // Get min tick time and add some threshold to execute the agents that are more delayed.
-    qint64 min_tick = current_datetime;
+    qint64 min_tick = -1;
     QSharedPointer<GWSAgent> who_is_min_tick;
     bool agents_to_tick = false;
     int ticked_agents = 0;
@@ -201,7 +197,8 @@ void GWSExecutionEnvironment::behave(){
 
         qint64 agent_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( current_datetime );
 
-        if( agent_time > 0 ){ min_tick = qMin( min_tick , agent_time ); }
+        if( agent_time > 0 && min_tick <= 0 ){ min_tick = agent_time; }
+        else if( agent_time > 0 ){ min_tick = qMin( min_tick , agent_time ); }
         if( min_tick == agent_time ){ who_is_min_tick = agent; }
         agents_to_tick = true;
     }
@@ -209,6 +206,7 @@ void GWSExecutionEnvironment::behave(){
     if( agents_to_tick ){
 
         // Store min tick
+        if( min_tick <= 0 ){  min_tick = current_datetime; }
         this->last_tick_with_agents = min_tick;
         GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
 
@@ -253,13 +251,15 @@ void GWSExecutionEnvironment::behave(){
 
     // Call again this function
     if( this->isRunning() ) {
+
         // DO NOT USE QTCONCURRENT FOR THIS.
         // OTHERWISE IT WAITS FOR ALL PENDING AGENTS TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
+        // DIRECTLY USE QTIMER::SINGLESHOT
         qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
 
         // DO NOT ADVANCE IN TIME
         if( !agents_to_tick ){
-            next_tick_in = 1000;
+            next_tick_in = 5 * 1000;
             GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_agents - (1000 * GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) );
         }
 

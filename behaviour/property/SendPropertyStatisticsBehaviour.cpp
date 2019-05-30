@@ -38,20 +38,9 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     QList< QSharedPointer<GWSAgent> > valid_agents;
 
     foreach( QSharedPointer<GWSAgent> a , agents ) {
-
-        bool valid = true;
-
-        foreach( QString key , agents_filter.keys() ){
-
-            if ( ( a->getProperty( key ).isNull() ) || ( a->getProperty( key ) != agents_filter.value( key ) )   ){
-                valid = false;
-                break;
-            }
-        }
-        if ( valid ){
+        if( a->fulfillsFilter( agents_filter ) ){
             valid_agents.append( a );
         }
-
     }
 
     if ( valid_agents.isEmpty() ){

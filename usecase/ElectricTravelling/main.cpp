@@ -54,6 +54,7 @@
 #include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/property/SendPropertyStatisticsBehaviour.h"
+#include "../../behaviour/execution/CheckIfAgentsRunningBehaviour.h"
 #include "../../behaviour/execution/StopAgentBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h"

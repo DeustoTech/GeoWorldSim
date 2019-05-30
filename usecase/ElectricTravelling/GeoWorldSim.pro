@@ -47,6 +47,7 @@ HEADERS += \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/execution/StopAgentBehaviour.h \
+    ../../behaviour/execution/CheckIfAgentsRunningBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -121,6 +122,7 @@ SOURCES += main.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/execution/StopAgentBehaviour.cpp \
+    ../../behaviour/execution/CheckIfAgentsRunningBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \

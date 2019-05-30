@@ -40,7 +40,7 @@ public:
     }
     QSharedPointer<GWSObject> getByClassAndName( QString class_name , QString name ) const;
 
-    template <class T> QList< QSharedPointer<T> > getByClassCasted( QString class_name ) const{
+    template <class T> QList< QSharedPointer<T> > getByClass( QString class_name ) const{
         QList< QSharedPointer<T> > objs;
         foreach( QSharedPointer<GWSObject> o , this->getByClass( class_name ) ){
             objs.append( o.dynamicCast<T>() );

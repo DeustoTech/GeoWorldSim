@@ -35,7 +35,9 @@ public:
     bool containsAgent( QSharedPointer<GWSAgent> agent ) const;
     int getRunningAgentsAmount() const;
     QList< QSharedPointer<GWSAgent> > getRunningAgents() const;
-    template <class T> QList< QSharedPointer<T> > getRunningAgentsByClass( QString class_name ) const;
+    template <class T> QList< QSharedPointer<T> > getRunningAgentsByClass( QString class_name ) const{
+        return this->running_agents->getByClass<T>( class_name );
+    }
     bool isRunning() const;
     int getTicksAmount() const;
 

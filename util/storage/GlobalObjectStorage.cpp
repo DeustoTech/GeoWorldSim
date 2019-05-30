@@ -35,7 +35,7 @@ QList< QSharedPointer<GWSObject> > GWSGlobalObjectStorage::getByClass( QMetaObje
     return this->storage->getByClass( metaobject.className() );
 }
 template <class T> QList<QSharedPointer<T>> GWSGlobalObjectStorage::getByClass( QMetaObject metaobject ) const{
-    return this->storage->getByClassCasted<T>( metaobject );
+    return this->storage->getByClass<T>( metaobject );
 }
 
 QSharedPointer<GWSObject> GWSGlobalObjectStorage::getByName( QString name ) const{

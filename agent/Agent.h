@@ -60,6 +60,7 @@ public:
     // GETTERS
     QList<GWSEnvironment*> getEnvironments() const;
     bool isBusy() const;
+    bool fulfillsFilter( QJsonObject filter , bool nulls_allowed = true ) const;
     QSharedPointer<GWSAgent> getSharedPointer() const;
 
     // SKILLS
