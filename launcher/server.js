@@ -81,12 +81,12 @@ app.post('/' , async (req, res) => {
         var child = spawn( `${__dirname}/targets/${configuration.target}` , [ filename ] , { cwd : `${__dirname}/targets` } );
         
         // SET TIMEOUT
-        let timer = setTimeout( () => { 
+        let timer = setTimeout( function(){ 
             console.log( `Timeout for Simulation ${configuration.target}:${configuration.id}` );
             child.kill();
         } , (configuration.timeout * 1000) || 600000 );
         
-        console.log( `Simulation ${configuration.target}:${configuration.id} started. Will be killed in ${configuration.timeout * 1000 || 600 * 1000}` )
+        console.log( `Simulation ${configuration.target}:${configuration.id} started. Will be killed in ${(configuration.timeout || 600) / 3600} hours` )
         
         var access = fs.createWriteStream( `${__dirname}/logs/${configuration.id}_console.log` , { flags: 'a' })
         , error = fs.createWriteStream( `${__dirname}/logs/${configuration.id}_error.log` , { flags: 'a' });
