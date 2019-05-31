@@ -81,23 +81,31 @@ app.post('/' , async (req, res) => {
         var child = spawn( `${__dirname}/targets/${configuration.target}` , [ filename ] , { cwd : `${__dirname}/targets` } );
         
         // SET TIMEOUT
-        let timer = false;//setTimeout( () => { child.kill() } , (configuration.timeout * 1000) || 600000 );
+        let timer = setTimeout( () => { child.kill() } , (configuration.timeout * 1000) || 600000 );
+        
+        console.log( `Simulation ${configuration.target}:${configuration.id} started. Will be killed in ${configuration.timeout * 1000 || 600 * 1000}` )
+        
         child.stdout.on('data', (data) => {
             //console.log(data.toString());
         });
         child.stderr.on('data', (data) => {
-            console.log(data.toString());
+            //console.log(data.toString());
         });
         
         // PROCESS FINISHED OR CRASHED
         child.on('exit', (code , signal) => {
-            console.log(`child process exited with code ${code}`);
+            
+            console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
+
             fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : (code != 0 ? 'crashed' : 'finished') }) })
             .then( () => {
                     clearTimeout( timer );
                     fs.unlinkSync( filename );
             })
             .catch( err => {});
+            
+            
+            
         });
         
         var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
