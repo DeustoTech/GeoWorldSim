@@ -53,7 +53,7 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     Q_ASSERT( !this->getUserId().isEmpty() );
 
     // Redirect outputs to file
-    if( this->getConfiguration().value("console").toInt( -1 ) >= 0 ){
+    /*if( this->getConfiguration().value("console").toInt( -1 ) >= 0 ){
 
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
             if( type >= GWSApp::globalInstance()->getConfiguration().value("console").toInt(-1) ){
@@ -69,10 +69,10 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
                 message.insert( "line" , context.line );
                 message.insert( "category" , context.category );
                 message.insert( "function" , context.function );
-                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message );
+                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message , GWSApp::globalInstance()->getAppId() + "-LOG" );
             }
         } );
-    }
+    }*/
 
     // Init random generators
     qsrand( QDateTime::currentDateTime().time().second() );
