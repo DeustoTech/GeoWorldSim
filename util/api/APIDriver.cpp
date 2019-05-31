@@ -3,6 +3,7 @@
 #include <QNetworkProxyFactory>
 #include <QNetworkProxy>
 #include <QJsonDocument>
+#include <QThreadPool>
 
 
 GWSAPIDriver* GWSAPIDriver::globalInstance(){
@@ -145,9 +146,16 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     // Add callback
     pending_request.callback = callback;
 
-    if( this->current_requests_amount > 10 ){
+    this->mutex.lockForRead();
+    if( this->current_requests_amount > QThreadPool::globalInstance()->maxThreadCount() ){
+        this->mutex.unlock();
+
+        this->mutex.lockForWrite();
         this->pending_requests.append( pending_request );
+        this->mutex.unlock();
+
     } else {
+        this->mutex.unlock();
         this->executePendingOperation( pending_request );
     }
 
@@ -171,21 +179,33 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
 
         if( ref_reply ){
 
+            this->mutex.lockForWrite();
             this->current_requests_amount++;
+            this->mutex.unlock();
 
             ref_reply->connect( ref_reply , &QNetworkReply::finished , [ this ](){
 
+                this->mutex.lockForWrite();
                 this->current_requests_amount--;
+                this->mutex.unlock();
 
+                this->mutex.lockForRead();
                 if( !this->pending_requests.isEmpty() ){
+                    this->mutex.unlock();
 
+                    this->mutex.lockForWrite();
                     GWSAPIDriverElement next = this->pending_requests.at( 0 );
                     this->pending_requests.removeAt( 0 );
+                    this->mutex.unlock();
+
                     this->executePendingOperation( next );
 
+                } else {
+                    this->mutex.unlock();
                 }
             });
         }
+
         pending.callback( ref_reply );
 
     } catch(...){

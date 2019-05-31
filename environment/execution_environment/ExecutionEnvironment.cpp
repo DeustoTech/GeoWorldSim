@@ -241,10 +241,10 @@ void GWSExecutionEnvironment::behave(){
         }
     }
 
-    qInfo() << QString("Ticked %4 , Agents %2 / %3 , Min tick %5" )
+    qInfo() << QString("Ticked %1 , Agents %2 / %3 , Min tick %4" )
+               .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
                .arg( ticked_agents )
                .arg( currently_running_agents.size() )
-               .arg( QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
                .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
