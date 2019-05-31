@@ -85,12 +85,11 @@ app.post('/' , async (req, res) => {
         
         console.log( `Simulation ${configuration.target}:${configuration.id} started. Will be killed in ${configuration.timeout * 1000 || 600 * 1000}` )
         
-        child.stdout.on('data', (data) => {
-            //console.log(data.toString());
-        });
-        child.stderr.on('data', (data) => {
-            //console.log(data.toString());
-        });
+        var access = fs.createWriteStream( `${__dirname}/logs/${configuration.id}_console.log` , { flags: 'a' })
+        , error = fs.createWriteStream( `${__dirname}/logs/${configuration.id}_error.log` , { flags: 'a' });
+        
+        child.stdout.pipe(access);
+        child.stderr.pipe(error);
         
         // PROCESS FINISHED OR CRASHED
         child.on('exit', (code , signal) => {
