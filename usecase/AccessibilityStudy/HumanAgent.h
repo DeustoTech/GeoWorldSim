@@ -1,9 +1,9 @@
 #ifndef HUMANAGENT_H
 #define HUMANAGENT_H
 
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
-class HumanAgent : public GWSAgent
+class HumanAgent : public GWSEntity
 {
     Q_OBJECT
 

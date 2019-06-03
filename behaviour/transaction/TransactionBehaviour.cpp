@@ -6,12 +6,12 @@
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
-QString TransactionBehaviour::EMITTING_AGENT_ID = "emitting_agent_id";
-QString TransactionBehaviour::RECEIVING_AGENT_ID = "receiving_agent_id";
+QString TransactionBehaviour::EMITTING_ENTITY_ID = "emitting_entity_id";
+QString TransactionBehaviour::RECEIVING_ENTITY_ID = "receiving_entity_id";
 QString TransactionBehaviour::TRANSACTION_TYPE = "transaction_type";
 QString TransactionBehaviour::TRANSACTION_DATA = "transaction_data";
 QString TransactionBehaviour::NEXTS = "nexts";
@@ -23,14 +23,14 @@ TransactionBehaviour::TransactionBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
-    QSharedPointer< GWSAgent > emitter;
-    QSharedPointer< GWSAgent > receiver;
+    QSharedPointer< GWSEntity > emitter;
+    QSharedPointer< GWSEntity > receiver;
 
     // Get emitter
-    emitter = GWSAgentEnvironment::globalInstance()->getByClassAndUID( GWSAgent::staticMetaObject.className() , this->getProperty( EMITTING_AGENT_ID ).toString() );
+    emitter = GWSEntityEnvironment::globalInstance()->getByClassAndUID( GWSEntity::staticMetaObject.className() , this->getProperty( EMITTING_ENTITY_ID ).toString() );
 
     // Get receiver
-    receiver = GWSAgentEnvironment::globalInstance()->getByClassAndUID( GWSAgent::staticMetaObject.className() , this->getProperty( RECEIVING_AGENT_ID ).toString() );
+    receiver = GWSEntityEnvironment::globalInstance()->getByClassAndUID( GWSEntity::staticMetaObject.className() , this->getProperty( RECEIVING_ENTITY_ID ).toString() );
 
     if( emitter.isNull() || receiver.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

@@ -35,17 +35,17 @@ HEADERS += \
     ../../app/App.h \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
-    ../../agent/Agent.h \
-    ../../agent/AgentSource.h \
+    ../../entity/Entity.h \
+    ../../entity/EntitySource.h \
         # SKILLS
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
-    ../../behaviour/property/CompareAgentPropertyBehaviour.h \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.h \
+    ../../behaviour/property/CompareEntityPropertyBehaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
-    ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/property/SetAgentPropertyBehaviour.h \
+    ../../behaviour/execution/StopEntityBehaviour.h \
+    ../../behaviour/property/SetEntityPropertyBehaviour.h \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
         # UTILS
@@ -69,7 +69,7 @@ HEADERS += \
     ../../util/routing/TSPRouting.h \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.h \
-    ../../util/datasource/AgentGeneratorDatasource.h \
+    ../../util/datasource/EntityGeneratorDatasource.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
     ../../util/distributed/ExternalListener.h \
@@ -80,7 +80,7 @@ HEADERS += \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
-    ../../environment/agent_environment/AgentEnvironment.h \
+    ../../environment/entity_environment/EntityEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
@@ -90,8 +90,6 @@ HEADERS += \
     ../../environment/social_environment/SocialEnvironment.h \
     ../../environment/social_environment/SocialRelation.h \
         # AGENTS
-    #agent/person/Person.h \
-    HumanAgent.h \
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h
 
@@ -102,16 +100,16 @@ SOURCES += mainAccesibility.cpp \
     ../../app/App.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
-    ../../agent/Agent.cpp \
-    ../../agent/AgentSource.cpp \
+    ../../entity/Entity.cpp \
+    ../../entity/EntitySource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
-    ../../behaviour/property/CompareAgentPropertyBehaviour.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
+    ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
+    ../../behaviour/execution/StopEntityBehaviour.cpp \
+    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
         # UTILS
@@ -124,7 +122,7 @@ SOURCES += mainAccesibility.cpp \
     ../../util/io/ImporterExporter.cpp \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.cpp \
-    ../../util/datasource/AgentGeneratorDatasource.cpp \
+    ../../util/datasource/EntityGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Coordinate.cpp \
@@ -144,7 +142,7 @@ SOURCES += mainAccesibility.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
-    ../../environment/agent_environment/AgentEnvironment.cpp \
+    ../../environment/entity_environment/EntityEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
     ../../environment/network_environment/NetworkEnvironment.cpp \
@@ -154,7 +152,6 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/social_environment/SocialRelation.cpp \
         # AGENTS
-    HumanAgent.cpp \
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp
 

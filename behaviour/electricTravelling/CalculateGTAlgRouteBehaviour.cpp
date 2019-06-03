@@ -125,6 +125,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                         }
                     }
 
+
                     reply->deleteLater();
                     agent->decrementBusy();
 

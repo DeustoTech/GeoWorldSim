@@ -19,7 +19,7 @@ GWSSocialEnvironment::~GWSSocialEnvironment(){
  GETTERS
 **********************************************************************/
 
-QStringList GWSSocialEnvironment::getOutRelationeds(QSharedPointer<GWSAgent> agent, QString relation_type){
+QStringList GWSSocialEnvironment::getOutRelationeds(QSharedPointer<GWSEntity> agent, QString relation_type){
     QStringList agent_uids;
     foreach (GWSSocialRelation rel , this->out_relations.value( relation_type ).value( agent->getUID() ) ) {
         //agent_uids.append( rel.to_agent_uid );
@@ -28,7 +28,7 @@ QStringList GWSSocialEnvironment::getOutRelationeds(QSharedPointer<GWSAgent> age
 }
 
 
-QStringList GWSSocialEnvironment::getInRelationeds(QSharedPointer<GWSAgent> agent, QString relation_type){
+QStringList GWSSocialEnvironment::getInRelationeds(QSharedPointer<GWSEntity> agent, QString relation_type){
     QStringList agent_uids;
     foreach (GWSSocialRelation rel , this->in_relations.value( relation_type ).value( agent->getUID() ) ) {
         //agent_uids.append( rel.from_agent_uid );
