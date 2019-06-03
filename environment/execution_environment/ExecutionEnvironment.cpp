@@ -9,7 +9,7 @@
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
-#include "../../util/parallelism/ParallelismController.h"
+#include "../../util/api/APIDriver.h"
 
 QString GWSExecutionEnvironment::AGENT_BIRTH_PROP = "birth";
 QString GWSExecutionEnvironment::AGENT_DEATH_PROP = "death";
@@ -148,11 +148,20 @@ void GWSExecutionEnvironment::run(){
 
     emit this->runningExecutionSignal();
 
+    // Set timeout not to have infinite simulations
     int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 60 );
     QTimer::singleShot( timeout * 1000 , []{
         GWSApp::globalInstance()->exit( -1 );
     });
 
+    // Make Scenario to listen
+    GWSAPIDriver::globalInstance()->GET(
+                QString("https://history.geoworldsim.com/api/scenario/%1/socket").arg( GWSApp::globalInstance()->getAppId() ) ,
+                []( QNetworkReply* reply ){
+                   reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
+    });
+
+    // Start ticking
     QtConcurrent::run([ this ] { this->tick(); });
 }
 
@@ -241,11 +250,16 @@ void GWSExecutionEnvironment::behave(){
         }
     }
 
-    qInfo() << QString("Ticked %1 , Agents %2 / %3 , Min tick %4" )
-               .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
-               .arg( ticked_agents )
-               .arg( currently_running_agents.size() )
-               .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" );
+    QString message = QString("Ticked %1 , Agents %2 / %3 , Min tick %4" )
+            .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
+            .arg( ticked_agents )
+            .arg( currently_running_agents.size() )
+            .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" );
+
+    qInfo() << message;
+
+    emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
     emit this->tickEndedSignal( this->executed_ticks_amount++ );
 

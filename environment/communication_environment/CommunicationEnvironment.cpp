@@ -110,13 +110,17 @@ void GWSCommunicationEnvironment::sendMessage(QJsonObject message_json, QString 
 }
 
 void GWSCommunicationEnvironment::sendData(QString signal , QJsonObject data , QString socket_id ){
-    GWSExternalPublisher* publisher = this->publishers.value( socket_id , 0 );
-    if( !publisher ){
-        qDebug() << QString("Creating external publisher %1").arg( socket_id );
-        publisher = new GWSExternalPublisher( socket_id );
-        this->publishers.insert( socket_id , publisher );
-    }
-    publisher->sendMessage( signal , data );
+
+    // To be done in the main thread
+    QTimer::singleShot( 0 , GWSApp::globalInstance() , [ this , signal , data , socket_id ](){
+        GWSExternalPublisher* publisher = this->publishers.value( socket_id , 0 );
+        if( !publisher ){
+            qDebug() << QString("Creating external publisher %1").arg( socket_id );
+            publisher = new GWSExternalPublisher( socket_id );
+            this->publishers.insert( socket_id , publisher );
+        }
+        publisher->sendMessage( signal , data );
+    });
 }
 
 void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
