@@ -1,17 +1,17 @@
-#ifndef SETAGENTPROPERTYBEHAVIOUR_H
-#define SETAGENTPROPERTYBEHAVIOUR_H
+#ifndef SETENTITYTPROPERTYBEHAVIOUR_H
+#define SETENTITYTPROPERTYBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
 
-class SetAgentPropertyBehaviour : public GWSBehaviour
+class SetEntityPropertyBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit SetAgentPropertyBehaviour();
+    Q_INVOKABLE explicit SetEntityPropertyBehaviour();
 
     //- PROPERTIES
-    static QString AGENT_ID;
+    static QString ENTITY_ID;
     static QString PROPERTIES;
     static QString NEXTS;
 
@@ -19,4 +19,4 @@ protected:
      virtual QPair< double , QJsonArray > behave();
 };
 
-#endif // SETAGENTPROPERTYBEHAVIOUR_H
+#endif // SETENTITYTPROPERTYBEHAVIOUR_H

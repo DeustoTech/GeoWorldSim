@@ -4,11 +4,11 @@
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
 
-QString FindDirectClosestBehaviour::AGENT_TO_ACCESS_TYPE = "facility_type";  // e.g. glass ContainerAgent
+QString FindDirectClosestBehaviour::ENTITY_TO_ACCESS_TYPE = "facility_type";  // e.g. glass ContainerAgent
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_ID_AS = "store_direct_closest_id_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_X_AS = "store_direct_closest_x_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_Y_AS = "store_direct_closest_y_as";
@@ -30,14 +30,14 @@ FindDirectClosestBehaviour::~FindDirectClosestBehaviour(){
  ***********************************************************/
 QPair< double , QJsonArray > FindDirectClosestBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     GWSCoordinate agent_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( agent ).getCentroid();
 
-    QString facility_to_access = this->getProperty( AGENT_TO_ACCESS_TYPE ).toString();
-    QList<QSharedPointer<GWSAgent> > agents_to_access = GWSAgentEnvironment::globalInstance()->getByClass( facility_to_access );
+    QString facility_to_access = this->getProperty( ENTITY_TO_ACCESS_TYPE ).toString();
+    QList<QSharedPointer<GWSEntity> > agents_to_access = GWSEntityEnvironment::globalInstance()->getByClass( facility_to_access );
 
     // Obtain direct closest agent parameters:
-    QSharedPointer<GWSAgent> nearest_agent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor , agents_to_access );
+    QSharedPointer<GWSEntity> nearest_agent = GWSPhysicalEnvironment::globalInstance()->getNearestAgent( agent_coor , agents_to_access );
     if( !nearest_agent ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NO_DIRECT_CLOSEST_FOUND ).toArray() );
     }

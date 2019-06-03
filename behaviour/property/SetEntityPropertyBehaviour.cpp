@@ -1,20 +1,20 @@
-#include "SetAgentPropertyBehaviour.h"
+#include "SetEntityPropertyBehaviour.h"
 
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString SetAgentPropertyBehaviour::AGENT_ID = "agent_to_set_id";
-QString SetAgentPropertyBehaviour::PROPERTIES = "properties";
-QString SetAgentPropertyBehaviour::NEXTS = "nexts";
+QString SetEntityPropertyBehaviour::ENTITY_ID = "agent_to_set_id";
+QString SetEntityPropertyBehaviour::PROPERTIES = "properties";
+QString SetEntityPropertyBehaviour::NEXTS = "nexts";
 
-SetAgentPropertyBehaviour::SetAgentPropertyBehaviour() : GWSBehaviour(){
+SetEntityPropertyBehaviour::SetEntityPropertyBehaviour() : GWSBehaviour(){
 
 }
 
 
-QPair< double , QJsonArray > SetAgentPropertyBehaviour::behave(){
+QPair< double , QJsonArray > SetEntityPropertyBehaviour::behave(){
 
-    QString agent_id = this->getProperty( AGENT_ID ).toString();
-    QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id );
+    QString agent_id = this->getProperty( ENTITY_ID ).toString();
+    QSharedPointer<GWSEntity> agent = GWSEntityEnvironment::globalInstance()->getByUID( agent_id );
     
     if( !agent ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

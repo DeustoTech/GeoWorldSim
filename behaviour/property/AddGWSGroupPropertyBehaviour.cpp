@@ -16,7 +16,7 @@ AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
 
 QPair< double , QJsonArray > AddGWSGroupPropertyBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
 
     QString property_to_add = this->getProperty( PROPERTY_TO_ADD_TO_GWSGROUP ).toString();
 

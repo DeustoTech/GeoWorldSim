@@ -3,15 +3,15 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class CompareAgentPropertyBehaviour : public GWSBehaviour
+class CompareEntityPropertyBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit CompareAgentPropertyBehaviour();
+    Q_INVOKABLE explicit CompareEntityPropertyBehaviour();
 
     // PROPERTIES
-    static QString AGENT_PROPERTY_TO_COMPARE;
+    static QString ENTITY_PROPERTY_TO_COMPARE;
     static QString COMPARISON_OPERATOR;
     static QString COMPARISON_VALUE;
     static QString NEXTS_IF_TRUE;

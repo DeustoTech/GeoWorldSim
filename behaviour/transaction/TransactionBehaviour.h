@@ -16,8 +16,8 @@ public:
     // PROPERTIES
     static QString TRANSACTION_TYPE;
     static QString TRANSACTION_DATA;
-    static QString EMITTING_AGENT_ID;
-    static QString RECEIVING_AGENT_ID;
+    static QString EMITTING_ENTITY_ID;
+    static QString RECEIVING_ENTITY_ID;
     static QString NEXTS;
 
 protected slots:

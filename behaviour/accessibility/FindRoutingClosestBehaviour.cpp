@@ -2,11 +2,11 @@
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/network_environment/NetworkEdge.h"
 
-QString FindRoutingClosestBehaviour::AGENT_TO_ACCESS_TYPE = "facility_type";  // e.g. glass ContainerAgent
+QString FindRoutingClosestBehaviour::ENTITY_TO_ACCESS_TYPE = "facility_type";  // e.g. glass ContainerAgent
 QString FindRoutingClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  //
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ID_AS = "store_routing_closest_id_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ROUTE_AS = "store_routing_closest_route_as";
@@ -23,17 +23,17 @@ FindRoutingClosestBehaviour::FindRoutingClosestBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
 
     GWSPhysicalEnvironment* env = GWSPhysicalEnvironment::globalInstance();
     GWSGeometry agent_geom = env->getGeometry( agent );
     GWSCoordinate agent_coor = agent_geom.getCentroid();
 
     // Set agent type to search
-    QList< QSharedPointer<GWSAgent> > all_agents_of_type = GWSAgentEnvironment::globalInstance()->getByClass( this->getProperty( AGENT_TO_ACCESS_TYPE ).toString() );
+    QList< QSharedPointer<GWSEntity> > all_agents_of_type = GWSEntityEnvironment::globalInstance()->getByClass( this->getProperty( ENTITY_TO_ACCESS_TYPE ).toString() );
     QMap< GWSCoordinate , QString > coor_to_agent;
 
-    foreach ( QSharedPointer<GWSAgent> a, all_agents_of_type  ){
+    foreach ( QSharedPointer<GWSEntity> a, all_agents_of_type  ){
          GWSGeometry geom = env->getGeometry( a );
          if( geom.isValid() ){
             coor_to_agent.insert( geom.getCentroid() , a->getUID() );
@@ -42,11 +42,11 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     // Obtain routes to all agent coordinates
     QList< GWSCoordinate > coors_of_all_agents_of_type = coor_to_agent.keys();
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > >  closest_coor_and_route =
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > >  closest_coor_and_route =
             GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
-    QList< QSharedPointer<GWSAgent> > closest_route = closest_coor_and_route.second;
+    QList< QSharedPointer<GWSEntity> > closest_route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
     if ( closest_route.isEmpty() ){
@@ -64,7 +64,7 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
         closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_coor );
 
         // During route start til route end
-        foreach ( QSharedPointer<GWSAgent> edge , closest_route ){
+        foreach ( QSharedPointer<GWSEntity> edge , closest_route ){
 
             GWSGeometry edge_geom = edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
             GWSCoordinate edge_coor = edge_geom.getCentroid();
@@ -92,7 +92,7 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
     QJsonArray coordinates;
     coordinates.append( QJsonArray({ agent_coor.getX() , agent_coor.getY() , agent_coor.getZ() }) );
 
-    foreach ( QSharedPointer<GWSAgent> edge , closest_coor_and_route.second ) {
+    foreach ( QSharedPointer<GWSEntity> edge , closest_coor_and_route.second ) {
 
         GWSGeometry edge_geom = edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
         GWSCoordinate edge_coor = edge_geom.getCentroid();

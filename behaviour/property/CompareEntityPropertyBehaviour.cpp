@@ -1,24 +1,24 @@
-#include "CompareAgentPropertyBehaviour.h"
+#include "CompareEntityPropertyBehaviour.h"
 
 #include "../../app/App.h"
 
-QString CompareAgentPropertyBehaviour::AGENT_PROPERTY_TO_COMPARE = "agent_property_to_compare";
-QString CompareAgentPropertyBehaviour::COMPARISON_OPERATOR = "comparison_operator";
-QString CompareAgentPropertyBehaviour::COMPARISON_VALUE = "comparison_value";
+QString CompareEntityPropertyBehaviour::ENTITY_PROPERTY_TO_COMPARE = "agent_property_to_compare";
+QString CompareEntityPropertyBehaviour::COMPARISON_OPERATOR = "comparison_operator";
+QString CompareEntityPropertyBehaviour::COMPARISON_VALUE = "comparison_value";
 
-QString CompareAgentPropertyBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
-QString CompareAgentPropertyBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
+QString CompareEntityPropertyBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
+QString CompareEntityPropertyBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
 
 
-CompareAgentPropertyBehaviour::CompareAgentPropertyBehaviour() : GWSBehaviour(){
+CompareEntityPropertyBehaviour::CompareEntityPropertyBehaviour() : GWSBehaviour(){
 
 }
 
 
-QPair< double , QJsonArray > CompareAgentPropertyBehaviour::behave(){
+QPair< double , QJsonArray > CompareEntityPropertyBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    QString property_to_compare = this->getProperty( AGENT_PROPERTY_TO_COMPARE ).toString();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QString property_to_compare = this->getProperty( ENTITY_PROPERTY_TO_COMPARE ).toString();
     QString comparison_operator = this->getProperty( COMPARISON_OPERATOR ).toString();
     QJsonValue comparison_value = this->getProperty( COMPARISON_VALUE );
 

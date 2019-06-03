@@ -68,9 +68,9 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( FindDirectClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( CompareAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CompareEntityPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetAgentPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( AddGWSGroupPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
 
