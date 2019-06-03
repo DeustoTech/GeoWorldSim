@@ -120,7 +120,7 @@
                 if( signal == 'entity' ){
                 
                     var id = body['id'];
-                    var type = body['@gwsclass'];
+                    var type = (body['@gwsclass'] || '') + (body['type'] || '');
                     var family = body['@gwsgroups'];
                     if( family && family.join ){ type = body['@gwsgroups'].join() };
                     

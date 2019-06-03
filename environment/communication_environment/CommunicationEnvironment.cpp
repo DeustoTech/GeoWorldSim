@@ -1,6 +1,6 @@
 #include "CommunicationEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
 GWSCommunicationEnvironment* GWSCommunicationEnvironment::globalInstance(){
