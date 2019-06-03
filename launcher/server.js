@@ -81,8 +81,10 @@ app.post('/' , async (req, res) => {
         var child = spawn( `${__dirname}/targets/${configuration.target}` , [ filename ] , { cwd : `${__dirname}/targets` } );
         
         // SET TIMEOUT
+        let timeout = false;
         let timer = setTimeout( function(){ 
             console.log( `Timeout for Simulation ${configuration.target}:${configuration.id}` );
+            timeout = true;
             child.kill();
         } , (configuration.timeout * 1000) || 600000 );
         
@@ -98,15 +100,17 @@ app.post('/' , async (req, res) => {
             
             console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
 
-            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : (code != 0 ? 'crashed' : 'finished') }) })
+            let status = 'crashed';
+            if( code == 0 ){ status = 'finished' }
+            if( timeout ){ status = 'timeout' }
+            
+            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
             .then( () => {
                     clearTimeout( timer );
                     fs.unlinkSync( filename );
             })
             .catch( err => {});
-            
-            
-            
+             
         });
         
         var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
