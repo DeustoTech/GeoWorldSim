@@ -4,12 +4,12 @@
 #include <QStringList>
 
 #include "../../object/Object.h"
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
 class GWSBehaviour : public GWSObject
 {
     Q_OBJECT
-    friend class GWSAgent; // Agent can check behaviour insides
+    friend class GWSEntity; // Agent can check behaviour insides
 
 public:
     Q_INVOKABLE explicit GWSBehaviour();
@@ -21,13 +21,13 @@ public:
     static QString START_BEHAVIOUR_PROP;
 
     // IMPORTERS
-    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> behaving_agent );
+    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> behaving_entity );
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    QSharedPointer<GWSAgent> getAgent() const;
+    QSharedPointer<GWSEntity> getEntity() const;
     QList< QSharedPointer<GWSBehaviour> > getSubs() const;
     virtual const QJsonValue getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
     virtual const void setProperty( QString name , const QJsonValue &value );
@@ -51,7 +51,7 @@ private slots: // SLOTS, always invoke them by SLOT, it will make to be executed
 private:
     quint64 behaving_time = 0;
 
-    QSharedPointer<GWSAgent> behaving_agent;
+    QSharedPointer<GWSEntity> behaving_entity;
 };
 
 #endif // GWSBEHAVIOUR_H

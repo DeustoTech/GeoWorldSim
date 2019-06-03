@@ -7,7 +7,6 @@
 
 #include <geos/index/quadtree/Quadtree.h>
 
-#include "../../agent/Agent.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Geometry.h"
 

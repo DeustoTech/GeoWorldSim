@@ -14,8 +14,8 @@ public:
     // SETTERS
      void addEnvironment( GWSEnvironment* subenvironment );
 
-    void registerAgent( QSharedPointer<GWSAgent> agent );
-    void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    void registerEntity( QSharedPointer<GWSEntity> agent );
+    void unregisterAgent( QSharedPointer<GWSEntity> agent );
 
 protected:
     GWSEnvironmentsGroup();

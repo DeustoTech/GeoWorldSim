@@ -2,6 +2,8 @@
 
 #include "GeometryGetters.h"
 #include "GeometryTransformators.h"
+#include <QJsonArray>
+#include <QtConcurrent/QtConcurrent>
 
 GWSQuadtree::GWSQuadtree() : QObject(){
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){

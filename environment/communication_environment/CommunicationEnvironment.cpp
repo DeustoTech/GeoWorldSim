@@ -30,11 +30,11 @@ GWSCommunicationEnvironment::~GWSCommunicationEnvironment(){
  METHODS
 **********************************************************************/
 
-void GWSCommunicationEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
+void GWSCommunicationEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
     Q_UNUSED(agent);
 }
 
-void GWSCommunicationEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
+void GWSCommunicationEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
     Q_UNUSED(agent);
 }
 

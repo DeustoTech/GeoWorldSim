@@ -36,20 +36,19 @@ HEADERS += \
     ../../app/App.h \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
-    ../../agent/Agent.h \
-    ../../agent/AgentSource.h \
+    ../../entity/Entity.h \
+    ../../entity/EntitySource.h \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
     ../../skill/move/MoveThroughRouteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/execution/CheckIfAgentsRunningBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
+    ../../behaviour/property/SendPropertyStatisticsBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -71,6 +70,7 @@ HEADERS += \
     ../../util/distributed/ExternalPublisher.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
+    ../../util/datasource/EntityGeneratorDatasource.h \
     ../../util/routing/EdgeVisitor.hpp \
     ../../util/routing/Routing.h \
     ../../util/routing/TSPRouting.h \
@@ -83,11 +83,10 @@ HEADERS += \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
             ## DATASOURCES
-    ../../util/datasource/AgentGeneratorDatasource.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
-    ../../environment/agent_environment/AgentEnvironment.h \
+    ../../environment/entity_environment/EntityEnvironment.h \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
@@ -102,7 +101,8 @@ HEADERS += \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
     ../../skill/move/StoreMultiRouteSkill.h \
-    ../../behaviour/property/SendPropertyStatisticsBehaviour.h
+    ../../behaviour/execution/StopEntityBehaviour.h \
+    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h \
 
 
 SOURCES += main.cpp \
@@ -110,20 +110,19 @@ SOURCES += main.cpp \
     ../../app/App.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
-    ../../agent/Agent.cpp \
-    ../../agent/AgentSource.cpp \
+    ../../entity/Entity.cpp \
+    ../../entity/EntitySource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
     ../../skill/move/MoveThroughRouteSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/execution/CheckIfAgentsRunningBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
+    ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
@@ -134,10 +133,10 @@ SOURCES += main.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
+    ../../util/datasource/EntityGeneratorDatasource.cpp \
     ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
             ## DATASOURCES
-    ../../util/datasource/AgentGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Coordinate.cpp \
@@ -158,7 +157,7 @@ SOURCES += main.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
-    ../../environment/agent_environment/AgentEnvironment.cpp \
+    ../../environment/entity_environment/EntityEnvironment.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
@@ -172,7 +171,8 @@ SOURCES += main.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
-    ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp
+    ../../behaviour/execution/StopEntityBehaviour.cpp \
+    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

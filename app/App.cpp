@@ -13,7 +13,7 @@
 #include <QString>
 
 
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/grid_environment/GridEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/social_environment/SocialEnvironment.h"

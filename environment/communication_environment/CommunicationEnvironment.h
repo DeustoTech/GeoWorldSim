@@ -14,8 +14,8 @@ public:
     static GWSCommunicationEnvironment* globalInstance();
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
     void listenSocket( QString socket_id );

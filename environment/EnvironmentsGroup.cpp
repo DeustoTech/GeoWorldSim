@@ -17,16 +17,16 @@ GWSEnvironmentsGroup::~GWSEnvironmentsGroup(){
  METHODS
 **********************************************************************/
 
-void GWSEnvironmentsGroup::registerAgent( QSharedPointer<GWSAgent> agent){
+void GWSEnvironmentsGroup::registerEntity( QSharedPointer<GWSEntity> agent){
     foreach (GWSEnvironment* e, this->sub_environments ) {
-        e->registerAgent( agent );
+        e->registerEntity( agent );
     }
 }
 
-void GWSEnvironmentsGroup::unregisterAgent( QSharedPointer<GWSAgent> agent){
+void GWSEnvironmentsGroup::unregisterAgent( QSharedPointer<GWSEntity> agent){
 
     foreach( GWSEnvironment* e , this->sub_environments ){
-        e->unregisterAgent( agent );
+        e->unregisterEntity( agent );
     }
 }
 

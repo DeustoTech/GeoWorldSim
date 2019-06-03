@@ -4,7 +4,6 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 #include "../../app/App.h"
-#include "../../agent/Agent.h"
 #include "../../skill/move/MoveSkill.h"
 
 QString MoveBehaviour::INPUT_MOVE_TO_X = "input_move_to_x";
@@ -21,7 +20,7 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > MoveBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
 
     // Tick in 1 second duration to move in small parts
     GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble();

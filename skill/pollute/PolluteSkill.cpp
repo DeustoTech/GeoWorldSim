@@ -17,7 +17,7 @@ PolluteSkill::~PolluteSkill(){
 
 GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subtype , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit , GWSLengthUnit distance ){
 
-        QSharedPointer<GWSAgent> agent = this->getAgent();
+        QSharedPointer<GWSEntity> agent = this->getEntity();
 
         GWSMassUnit polluted_amount;
 

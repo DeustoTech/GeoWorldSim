@@ -15,7 +15,7 @@ VehicleNoiseBehaviour::VehicleNoiseBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > VehicleNoiseBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     double A_roll = 0;
     double B_roll = 0;
     double A_prop = 0;

@@ -9,7 +9,7 @@
 
 #include "../../util/graph/OldEdge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 
 GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {
     this->transport_network_type = transport_network_type;
@@ -144,10 +144,10 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
             QStringList route = routes.at(j);
-            QList< QSharedPointer<GWSAgent> > route_agents = GWSAgentEnvironment::globalInstance()->getByUIDS( route );
+            QList< QSharedPointer<GWSEntity> > route_agents = GWSEntityEnvironment::globalInstance()->getByUIDS( route );
 
             GWSLengthUnit length = 0;
-            foreach( QSharedPointer<GWSAgent> e , route_agents ){
+            foreach( QSharedPointer<GWSEntity> e , route_agents ){
                 //length = length + GWSEdge( e->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
             }
             if( length <= GWSLengthUnit( 0 ) ){

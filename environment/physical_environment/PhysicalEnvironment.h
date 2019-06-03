@@ -26,23 +26,23 @@ public:
     const GWSGeometry getBounds() const;
     const GWSGeometry getBounds( QString class_name ) const;
     GWSCoordinate getRandomCoordinate() const;
-    const GWSGeometry getGeometry( QSharedPointer<GWSAgent> agent ) const;
+    const GWSGeometry getGeometry( QSharedPointer<GWSEntity> agent ) const;
     const GWSGeometry getGeometry( QString agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
     QStringList getAgentsIntersecting( const GWSGeometry geometry, QString class_name ) const;
     QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
-    QSharedPointer<GWSAgent> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSAgent> > agents ) const;
+    QSharedPointer<GWSEntity> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSEntity> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 protected:
-    void upsertAgentToIndex( QSharedPointer<GWSAgent> agent , GWSGeometry geom );
+    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , GWSGeometry geom );
 
 protected slots:
-    void agentPropertyChanged( QString property_name );
+    void entityPropertyChanged( QString property_name );
 
 private:
     GWSPhysicalEnvironment();
@@ -50,11 +50,11 @@ private:
     ~GWSPhysicalEnvironment();
 
     // SPATIAL INDEX
-    QStringList environment_agent_index_types;
-    QMap< QString , QSharedPointer< GWSQuadtree > > environment_agent_indexes; // Spatial indexes
+    QStringList environment_entity_index_types;
+    QMap< QString , QSharedPointer< GWSQuadtree > > environment_entity_indexes; // Spatial indexes
 
     // Agent geometries
-    QStringList agent_ids;
+    QStringList entity_ids;
 
     // Mutex, for avoiding concurrency
     QReadWriteLock mutex;

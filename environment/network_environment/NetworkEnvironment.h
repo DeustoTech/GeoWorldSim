@@ -33,15 +33,15 @@ public:
     QStringList getShortestPath( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
     QList< QStringList > getShortestPath( QList< GWSCoordinate > ordered_coors , QString class_name ) const;
     QList< QStringList > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const;
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSAgent> > > getNearestNodeAndPath( GWSCoordinate coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > getNearestNodeAndPath( GWSCoordinate coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 protected:
 
-    void upsertAgentToIndex( QSharedPointer<GWSAgent> agent , GWSNetworkEdge edge );
+    void upsertAgentToIndex( QSharedPointer<GWSEntity> agent , GWSNetworkEdge edge );
 
 protected slots:
 
@@ -57,7 +57,7 @@ private :
     QString getNearestNodeUID( GWSCoordinate coor , QString class_name ) const;
 
     // Storages
-    QStringList environment_agent_index_types;
+    QStringList environment_entity_index_types;
     QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
     QMap<QString , QSharedPointer< GWSRouting > > network_routings;
 

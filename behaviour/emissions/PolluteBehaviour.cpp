@@ -26,7 +26,7 @@ PolluteBehaviour::PolluteBehaviour() : GWSBehaviour (){
 
 void PolluteBehaviour::afterCreateHook(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
 
     // Check if agent has a MoveSkill, otherwise create it and set its max_speed
     QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
@@ -39,7 +39,7 @@ void PolluteBehaviour::afterCreateHook(){
 
 QPair< double , QJsonArray >  PolluteBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     GWSCoordinate current_coor = agent_geom.getCentroid();
     GWSLengthUnit distance = current_coor.getDistance( this->last_position );
@@ -47,7 +47,7 @@ QPair< double , QJsonArray >  PolluteBehaviour::behave(){
     QString transport_mode = this->getProperty( INPUT_VEHICLE_TYPE ).toString();
 
     QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    QSharedPointer<GWSAgent> current_edge = movethroughroute_skill->getCurrentEdge();
+    QSharedPointer<GWSEntity> current_edge = movethroughroute_skill->getCurrentEdge();
 
     if ( transport_mode == "WALK" || transport_mode == "BICYCLE" || current_edge.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

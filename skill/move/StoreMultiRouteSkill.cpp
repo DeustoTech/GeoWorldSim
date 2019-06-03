@@ -15,7 +15,7 @@ GWSStoreMultiRouteSkill::GWSStoreMultiRouteSkill(){
 
 void GWSStoreMultiRouteSkill::addDestination( QString agent_id , QJsonObject extra_properties ){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( PENDING_ROUTE_DESTINATIONS ).toArray();
 
     QJsonObject new_destination = extra_properties;
@@ -27,7 +27,7 @@ void GWSStoreMultiRouteSkill::addDestination( QString agent_id , QJsonObject ext
 
 void GWSStoreMultiRouteSkill::addDestination( GWSCoordinate coor , QJsonObject extra_properties ){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( PENDING_ROUTE_DESTINATIONS ).toArray();
 
     QJsonObject new_destination = extra_properties;

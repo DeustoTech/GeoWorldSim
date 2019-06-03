@@ -7,7 +7,7 @@
 
 QString GWSEnvironment::SKIP_INDEXING = "skip_indexing";
 
-GWSEnvironment::GWSEnvironment() : GWSAgent(){
+GWSEnvironment::GWSEnvironment() : GWSEntity(){
     emit this->environmentCreatedSignal();
 }
 
@@ -23,13 +23,13 @@ QJsonObject GWSEnvironment::serialize() const{
     return GWSObject::serialize(); // Jump all agent serialisation
 }
 
-void GWSEnvironment::registerAgent( QSharedPointer<GWSAgent> agent){
-    if( agent->environments_registerd_in.contains( this ) ){
+void GWSEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
+    if( entity->environments_registerd_in.contains( this ) ){
         return;
     }
-    agent->environments_registerd_in.append( this );
+    entity->environments_registerd_in.append( this );
 }
 
-void GWSEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
-    agent->environments_registerd_in.removeAll( this );
+void GWSEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity){
+    entity->environments_registerd_in.removeAll( this );
 }

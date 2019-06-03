@@ -3,7 +3,6 @@
 
 #include "../../environment/Environment.h"
 
-#include "../../agent/Agent.h"
 #include "../../util/grid/Grid.h"
 
 class GWSGridEnvironment : public GWSEnvironment
@@ -19,17 +18,17 @@ public:
     const GWSGeometry getBounds() const;
     const GWSGeometry getBounds( QString class_name ) const;
     const QJsonValue getValue( QString class_name , GWSGeometry geom ) const;
-    const QJsonValue getValue( QSharedPointer<GWSAgent> agent ) const;
+    const QJsonValue getValue( QSharedPointer<GWSEntity> entity ) const;
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent);
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent);
+    virtual void registerEntity( QSharedPointer<GWSEntity> entity);
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> entity);
 
 protected:
-    void upsertValueToGrid( QSharedPointer<GWSAgent> agent , QJsonValue value );
+    void upsertValueToGrid( QSharedPointer<GWSEntity> entity , QJsonValue value );
 
 protected slots:
-    void agentPropertyChanged( QString property_name );
+    void entityPropertyChanged( QString property_name );
 
 private:
     GWSGridEnvironment();
@@ -37,8 +36,8 @@ private:
     ~GWSGridEnvironment();
 
     // SPATIAL INDEX
-    QStringList environment_agent_grid_types;
-    QMap< QString , QSharedPointer<GWSGrid> > environment_agent_grids; // Spatial indexes
+    QStringList environment_entity_grid_types;
+    QMap< QString , QSharedPointer<GWSGrid> > environment_entity_grids; // Spatial indexes
 
     // Mutex, for avoiding concurrency
     QReadWriteLock mutex;

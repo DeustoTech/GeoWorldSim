@@ -19,14 +19,14 @@ GWSBehaviour::GWSBehaviour() : GWSObject(){
 **********************************************************************/
 
 void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behaving_agent){
-    this->behaving_agent = behaving_agent.dynamicCast<GWSAgent>();
+    this->behaving_entity = behaving_agent.dynamicCast<GWSEntity>();
     GWSObject::deserialize( json , behaving_agent );
 
     // SUBBEHAVIOURS
     if( json.keys().contains( SUB_BEHAVIOURS_PROP ) ){
         QJsonArray arr = json.value( SUB_BEHAVIOURS_PROP ).toArray();
         foreach(QJsonValue jb , arr ){
-            QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( jb.toObject() , this->getAgent() ).dynamicCast<GWSBehaviour>();
+            QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( jb.toObject() , this->getEntity() ).dynamicCast<GWSBehaviour>();
             if( behaviour ){
                 this->addSubbehaviour( behaviour );
             }
@@ -35,7 +35,7 @@ void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behav
 
     // START BEHAVIOUR
     if( json.keys().contains( START_BEHAVIOUR_PROP ) && json.value( START_BEHAVIOUR_PROP ).toBool() ){
-        this->getAgent()->addCurrentlyExecutingBehaviour( this->getSharedPointer().dynamicCast<GWSBehaviour>() );
+        this->getEntity()->addCurrentlyExecutingBehaviour( this->getSharedPointer().dynamicCast<GWSBehaviour>() );
     }
 
 }
@@ -67,8 +67,8 @@ QJsonObject GWSBehaviour::serialize() const{
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSAgent> GWSBehaviour::getAgent() const{
-    return this->behaving_agent;
+QSharedPointer<GWSEntity> GWSBehaviour::getEntity() const{
+    return this->behaving_entity;
 }
 
 QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
@@ -81,7 +81,7 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
 
     // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent
     if( property_value_as_string.startsWith("<") && property_value_as_string.endsWith(">") ){
-        QSharedPointer<GWSAgent> agent = this->getAgent();
+        QSharedPointer<GWSEntity> agent = this->getEntity();
         QString property_name = property_value_as_string.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         return agent->getProperty( property_name );
@@ -92,7 +92,7 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
 const void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){
 
     if( name.startsWith("<") && name.endsWith(">") ){
-        QSharedPointer<GWSAgent> agent = this->getAgent();
+        QSharedPointer<GWSEntity> agent = this->getEntity();
         name = name.remove( 0 , 1 );
         name = name.remove( name.length() - 1 , 1 );
         agent->setProperty( name , value );
@@ -122,7 +122,7 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
  **/
 QPair< double , QJsonArray > GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     QPair< double , QJsonArray > nexts;

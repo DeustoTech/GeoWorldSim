@@ -24,7 +24,7 @@ CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : GWSBehaviour(){
 
 QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
     // If legs are empty, calculate them through algorithm:

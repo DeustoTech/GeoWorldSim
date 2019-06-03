@@ -22,7 +22,7 @@ public:
     static QString STORE_ROUTE_AS;
 
     // GETTERS
-    QSharedPointer<GWSAgent> getCurrentEdge() const;
+    QSharedPointer<GWSEntity> getCurrentEdge() const;
     GWSCoordinate getCurrentMonvintTowards() const;
 
     // METHODS
@@ -30,7 +30,7 @@ public:
 
 protected:
 
-    QList< QSharedPointer<GWSAgent> > pending_route_edges;
+    QList< QSharedPointer<GWSEntity> > pending_route_edges;
     QList< GWSCoordinate > pending_edge_coordinates;
     GWSCoordinate last_route_started_from;
 

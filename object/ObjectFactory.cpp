@@ -5,7 +5,7 @@
 #include <QJsonArray>
 
 #include "../../app/App.h"
-#include "../../agent/Agent.h"
+#include "../../agent/Entity.h"
 #include "../../util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
@@ -16,7 +16,7 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
-    this->registerType( GWSAgent::staticMetaObject );
+    this->registerType( GWSEntity::staticMetaObject );
     //this->registerType( GWSSkill::staticMetaObject );
     //this->registerType( GWSBehaviour::staticMetaObject );
 }

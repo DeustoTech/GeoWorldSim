@@ -12,8 +12,8 @@ public:
     static GWSSocialEnvironment* globalInstance();
 
     // GETTERS
-    QStringList getOutRelationeds( QSharedPointer<GWSAgent> agent , QString relation_type );
-    QStringList getInRelationeds( QSharedPointer<GWSAgent> agent , QString relation_type );
+    QStringList getOutRelationeds( QSharedPointer<GWSEntity> agent , QString relation_type );
+    QStringList getInRelationeds( QSharedPointer<GWSEntity> agent , QString relation_type );
 
     // METHODS
     //virtual void registerAgent( QSharedPointer<GWSAgent> agent );

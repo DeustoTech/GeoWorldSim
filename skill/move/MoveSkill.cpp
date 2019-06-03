@@ -56,7 +56,7 @@ GWSSpeedUnit MoveSkill::calculateNewSpeed(GWSSpeedUnit current_speed , GWSSpeedU
 
 void MoveSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards ){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     agent->setProperty( CURRENT_SPEED , movement_speed );
     agent->setProperty( MOVING_TOWARDS_X , movement_towards.getX() );
     agent->setProperty( MOVING_TOWARDS_Y , movement_towards.getY() );

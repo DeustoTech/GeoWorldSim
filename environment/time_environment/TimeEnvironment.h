@@ -25,7 +25,6 @@ public:
     * IMPORTANT Given in MSecsSinceEpoch
     */
     static QString INTERNAL_TIME_PROP;
-    static QString WAIT_FOR_ME_PROP;
 
     // IMPORTERS
     void deserialize(QJsonObject json);
@@ -45,8 +44,8 @@ public:
     //void incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds );
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 protected slots:
     void agentPropertyChanged( QString property_name );

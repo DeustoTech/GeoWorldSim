@@ -5,16 +5,16 @@
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString SendPropertyStatisticsBehaviour::AGENTS_TYPE = "agents_type";
-QString SendPropertyStatisticsBehaviour::AGENTS_FILTER = "agents_filter";
-QString SendPropertyStatisticsBehaviour::AGENTS_PROPERTY_NAME = "agents_property_name";
+QString SendPropertyStatisticsBehaviour::ENTITY_TYPE = "entity_type";
+QString SendPropertyStatisticsBehaviour::ENTITY_FILTER = "entity_filter";
+QString SendPropertyStatisticsBehaviour::ENTITY_PROPERTY_NAME = "entity_property_name";
 QString SendPropertyStatisticsBehaviour::GRID_TYPE = "grid_type";
 QString SendPropertyStatisticsBehaviour::STORE_AS = "store_as";
 QString SendPropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
-QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_still_alive_agents";
-QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_agents_dead";
+QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_still_alive_entities";
+QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_entites_dead";
 
 SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviour(){
 }
@@ -26,28 +26,28 @@ SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviou
 
 QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
-    qint64 agent_internal_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+    QSharedPointer<GWSEntity> entity = this->getEntity();
+    qint64 entity_internal_time = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
-    QString agents_type = this->getProperty( AGENTS_TYPE ).toString();
-    QJsonObject agents_filter = this->getProperty( AGENTS_FILTER ).toObject();
+    QString entity_type = this->getProperty( ENTITY_TYPE ).toString();
+    QJsonObject entity_filter = this->getProperty( ENTITY_FILTER ).toObject();
     QString grid_type = this->getProperty( GRID_TYPE ).toString();
 
-    QList< QSharedPointer<GWSAgent> > agents = GWSAgentEnvironment::globalInstance()->getByClass( agents_type );
-    QList< QSharedPointer<GWSAgent> > valid_agents;
+    QList< QSharedPointer<GWSEntity> > entities = GWSEntityEnvironment::globalInstance()->getByClass( entity_type );
+    QList< QSharedPointer<GWSEntity> > valid_entities;
 
-    foreach( QSharedPointer<GWSAgent> a , agents ) {
-        if( a->fulfillsFilter( agents_filter ) ){
-            valid_agents.append( a );
+    foreach( QSharedPointer<GWSEntity> a , entities ) {
+        if( a->fulfillsFilter( entity_filter ) ){
+            valid_entities.append( a );
         }
     }
 
-    if ( valid_agents.isEmpty() ){
+    if ( valid_entities.isEmpty() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ALL_DEAD ).toArray() );
     }
 
 
-    GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( agents_type );
+    GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( entity_type );
     GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
 
     // Create accumulated_grid
@@ -60,11 +60,11 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
     int agent_count = 0;
     QJsonValue acc_value;
-    qint64 grid_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+    qint64 grid_time = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
-    foreach( QSharedPointer<GWSAgent> a , valid_agents ) {
+    foreach( QSharedPointer<GWSEntity> a , valid_entities ) {
 
-        QJsonValue val = a->getProperty( this->getProperty( AGENTS_PROPERTY_NAME ).toString() );
+        QJsonValue val = a->getProperty( this->getProperty( ENTITY_PROPERTY_NAME ).toString() );
         if( val.isNull() ){ continue; }
 
         qint64 agent_time = a->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( grid_time );
@@ -88,16 +88,16 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     // GLOBAL ACCUMULATOR
     this->accumulated_total = GWSObjectFactory::incrementValue( this->accumulated_total , acc_value );
 
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_accumulated" , this->accumulated_total );
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_agent_count" , agent_count );
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_current" , acc_value );
-    agent->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_average", average );
+    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_accumulated" , this->accumulated_total );
+    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_agent_count" , agent_count );
+    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_current" , acc_value );
+    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_average", average );
 
     // Socket id to send through (by default the main from the Simulation)
     QString socket_id = this->getProperty( SOCKET_ID ).toString( GWSApp::globalInstance()->getAppId() );
 
     // Send the statistics
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( agent->serialize() , socket_id );
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( entity->serialize() , socket_id );
 
     // Send cell points
     QStringList now_sent_coordinates_ids;
@@ -121,9 +121,9 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             }
 
             QJsonObject grid_cell;
-            grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( agent->getUID() ).arg( i ).arg( j ) );
-            grid_cell.insert( "type" , agent->getUID() + "GridCell" );
-            grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)agent_internal_time );
+            grid_cell.insert( GWS_UID_PROP , QString("%1-%2-%3").arg( entity->getUID() ).arg( i ).arg( j ) );
+            grid_cell.insert( "type" , entity->getUID() + "GridCell" );
+            grid_cell.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)entity_internal_time );
 
             QJsonObject geometry;
             geometry.insert( "type" , "Point" );

@@ -1,9 +1,9 @@
 #ifndef GWSENVIRONMENT_H
 #define GWSENVIRONMENT_H
 
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
-class GWSEnvironment : public GWSAgent
+class GWSEnvironment : public GWSEntity
 {
     Q_OBJECT
 
@@ -16,8 +16,8 @@ public:
     virtual QJsonObject serialize() const;
 
     // METHODS
-    virtual void registerAgent( QSharedPointer<GWSAgent> agent );
-    virtual void unregisterAgent( QSharedPointer<GWSAgent> agent );
+    virtual void registerEntity( QSharedPointer<GWSEntity> entity );
+    virtual void unregisterEntity( QSharedPointer<GWSEntity> entity );
 
 signals:
     void environmentCreatedSignal();

@@ -15,9 +15,9 @@ public:
     Q_INVOKABLE explicit SendPropertyStatisticsBehaviour();
 
     // PROPERTIES
-    static QString AGENTS_TYPE;
-    static QString AGENTS_FILTER;
-    static QString AGENTS_PROPERTY_NAME;
+    static QString ENTITY_TYPE;
+    static QString ENTITY_FILTER;
+    static QString ENTITY_PROPERTY_NAME;
     static QString GRID_TYPE;
     static QString SOCKET_ID;
     static QString STORE_AS;

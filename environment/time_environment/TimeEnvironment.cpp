@@ -6,7 +6,6 @@
 #include "../../environment/EnvironmentsGroup.h"
 
 QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "time";
-QString GWSTimeEnvironment::WAIT_FOR_ME_PROP = "wait_for_me";
 
 GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
     static GWSTimeEnvironment instance;
@@ -96,8 +95,8 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
  METHODS
 **********************************************************************/
 
-void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
-    GWSEnvironment::registerAgent( agent );
+void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
+    GWSEnvironment::registerEntity( agent );
 
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
@@ -120,13 +119,13 @@ void GWSTimeEnvironment::registerAgent( QSharedPointer<GWSAgent> agent) {
     }
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
+    this->connect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
 }
 
-void GWSTimeEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent){
-    GWSEnvironment::unregisterAgent( agent );
+void GWSTimeEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent){
+    GWSEnvironment::unregisterEntity( agent );
 
-    this->disconnect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
+    this->disconnect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
 }
 
 /**********************************************************************
@@ -137,7 +136,7 @@ void GWSTimeEnvironment::agentPropertyChanged( QString property_name ){
     if( property_name == INTERNAL_TIME_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
-        GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
+        GWSEntity* agent = dynamic_cast<GWSEntity*>( object );
         if( !agent ){ return; }
         // Nothing to do
     }

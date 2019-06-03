@@ -98,12 +98,12 @@ app.post('/' , async (req, res) => {
         // PROCESS FINISHED OR CRASHED
         child.on('exit', (code , signal) => {
             
-            console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
-
             let status = 'crashed';
             if( code == 0 ){ status = 'finished' }
             if( timeout ){ status = 'timeout' }
             
+            console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
+
             fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
             .then( () => {
                     clearTimeout( timer );

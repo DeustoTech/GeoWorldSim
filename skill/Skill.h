@@ -4,28 +4,28 @@
 #include <QSharedPointer>
 
 #include "../../object/Object.h"
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
 class GWSSkill : public GWSObject
 {
     Q_OBJECT
-    friend class GWSAgent; // Agent can check skill insides
+    friend class GWSEntity; // Entity can check skill insides
 
 public:
     Q_INVOKABLE explicit GWSSkill();
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json, QSharedPointer<GWSObject> skilled_agent);
+    virtual void deserialize(QJsonObject json, QSharedPointer<GWSObject> skilled_entity);
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    QSharedPointer<GWSAgent> getAgent() const;
+    QSharedPointer<GWSEntity> getEntity() const;
     virtual const QJsonValue getProperty( QString name ) const;
 
 private:
-    QSharedPointer<GWSAgent> skilled_agent;
+    QSharedPointer<GWSEntity> skilled_entity;
 };
 
 #endif // GWSSKILL_H

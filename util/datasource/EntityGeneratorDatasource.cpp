@@ -1,19 +1,18 @@
-#include "AgentGeneratorDatasource.h"
+#include "EntityGeneratorDatasource.h"
+
+#include "../../app/App.h"
 #include "../../util/datasource/DatasourceReader.h"
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 #include "../../object/ObjectFactory.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
-
-#include "../../app/App.h"
-#include "../../agent/Agent.h"
 
 #include <QObject>
 #include <QTimer>
 
-GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QString scenario_id , QString entities_type , QString entities_filter , int amount ) : QObject ()
+GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject json, QString scenario_id , QString entity_type , QString entity_filter , int amount ) : QObject ()
 {
 
     if( json.isEmpty() ){
@@ -21,11 +20,11 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         return;
     }
 
-    GWSDatasourceReader* agentReader = new GWSDatasourceReader( scenario_id , entities_type , entities_filter , amount );
-    agentReader->connect( agentReader , &GWSDatasourceReader::dataReadingFinishedSignal , [this](){
+    GWSDatasourceReader* reader = new GWSDatasourceReader( scenario_id , entity_type , entity_filter , amount );
+    reader->connect( reader , &GWSDatasourceReader::dataReadingFinishedSignal , [this](){
         emit this->dataReadingFinishedSignal();
     });
-    agentReader->connect( agentReader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
+    reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
 
         QJsonObject template_to_be_constructed = this->joinJSON( json , data );
         if ( template_to_be_constructed.isEmpty() ){
@@ -33,22 +32,22 @@ GWSAgentGeneratorDatasource::GWSAgentGeneratorDatasource(QJsonObject json, QStri
         }
 
         // Check if agent already exists
-        QString new_agent_id = template_to_be_constructed.value( GWSObject::GWS_UID_PROP ).toString();
-        QSharedPointer<GWSAgent> agent = GWSAgentEnvironment::globalInstance()->getByUID( new_agent_id );
-        if( agent ){
-            //qWarning() << QString("Skipping duplicate agent (Duplicate UID %1 found)").arg( new_agent_id );
+        QString new_entity_id = template_to_be_constructed.value( GWSObject::GWS_UID_PROP ).toString();
+        QSharedPointer<GWSEntity> entity = GWSEntityEnvironment::globalInstance()->getByUID( new_entity_id );
+        if( entity ){
+            //qWarning() << QString("Skipping duplicate (Duplicate UID %1 found)").arg( new_entity_id );
             return;
         } else {
-            agent = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSAgent>();
+            entity = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSEntity>();
         }
 
     });
 
-    agentReader->startReading();
+    reader->startReading();
 
 }
 
-QJsonObject GWSAgentGeneratorDatasource::joinJSON(QJsonObject json_template, QJsonObject json_data){
+QJsonObject GWSEntityGeneratorDatasource::joinJSON(QJsonObject json_template, QJsonObject json_data){
 
     foreach ( QString key , json_data.keys() ) {
 

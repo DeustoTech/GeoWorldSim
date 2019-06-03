@@ -24,30 +24,30 @@ GWSGridEnvironment::~GWSGridEnvironment(){
 
 const GWSGeometry GWSGridEnvironment::getBounds() const{
     GWSGeometry bounds;
-    foreach( QSharedPointer<GWSGrid> t , this->environment_agent_grids.values() ) {
+    foreach( QSharedPointer<GWSGrid> t , this->environment_entity_grids.values() ) {
         bounds = GWSGeometryTransformators::transformToFit( bounds , t->getBounds() );
     }
     return bounds;
 }
 
 const GWSGeometry GWSGridEnvironment::getBounds( QString class_name ) const {
-    if( this->environment_agent_grids.keys().contains( class_name ) ){
-        return this->environment_agent_grids.value( class_name )->getBounds();
+    if( this->environment_entity_grids.keys().contains( class_name ) ){
+        return this->environment_entity_grids.value( class_name )->getBounds();
     }
     return GWSGeometry();
 }
 
 const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry geom ) const {
-    if( this->environment_agent_grids.keys().contains( class_name ) ){
-        return this->environment_agent_grids.value( class_name )->getValue( geom );
+    if( this->environment_entity_grids.keys().contains( class_name ) ){
+        return this->environment_entity_grids.value( class_name )->getValue( geom );
     }
     return QJsonValue();
 }
 
-const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSAgent> agent ) const {
-    if( this->environment_agent_grids.keys().contains( agent->metaObject()->className() ) ){
-        GWSGeometry geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        return this->environment_agent_grids.value( agent->metaObject()->className() )->getValue( geom );
+const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
+    if( this->environment_entity_grids.keys().contains( entity->metaObject()->className() ) ){
+        GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        return this->environment_entity_grids.value( entity->metaObject()->className() )->getValue( geom );
     }
     return QJsonValue();
 }
@@ -56,32 +56,32 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSAgent> agent ) 
  PRIVATE
 **********************************************************************/
 
-void GWSGridEnvironment::registerAgent( QSharedPointer<GWSAgent> agent ){
+void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
-    if( agent.isNull() || agent->getProperty( GRID_PROP ).isNull() ){
+    if( entity.isNull() || entity->getProperty( GRID_PROP ).isNull() ){
         return;
     }
 
-    GWSEnvironment::registerAgent( agent );
+    GWSEnvironment::registerEntity( entity );
 
-    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+    if( entity->getProperty( SKIP_INDEXING ).toBool() ){
         return;
     }
 
     // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
-    QJsonValue value = agent->getProperty( GRID_PROP );
+    QJsonValue value = entity->getProperty( GRID_PROP );
 
-    // Listen to agent property changes
-    this->connect( agent.data() , &GWSAgent::propertyChangedSignal , this , &GWSGridEnvironment::agentPropertyChanged );
+    // Listen to entity property changes
+    this->connect( entity.data() , &GWSEntity::propertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 
     if( value.isNull() ){
         return;
     }
 
-    this->upsertValueToGrid( agent , value );
+    this->upsertValueToGrid( entity , value );
 }
 
-void GWSGridEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
+void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
 
 }
 
@@ -90,40 +90,40 @@ void GWSGridEnvironment::unregisterAgent( QSharedPointer<GWSAgent> agent ){
  PROTECTED
 **********************************************************************/
 
-void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSAgent> agent , QJsonValue value ){
+void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , QJsonValue value ){
 
-    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-    if( !agent_geom.isValid() ){ return; }
+    GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    if( !entity_geom.isValid() ){ return; }
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds();
 
-    foreach (QJsonValue v , agent->getInheritanceFamily() ) {
+    foreach (QJsonValue v , entity->getInheritanceFamily() ) {
 
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
         this->mutex.lockForRead();
-        if( !this->environment_agent_grid_types.contains( family ) ){
+        if( !this->environment_entity_grid_types.contains( family ) ){
             this->mutex.unlock();
 
             this->mutex.lockForWrite();
-            this->environment_agent_grid_types.append( family );
-            this->environment_agent_grids.insert( family , QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) ) );
+            this->environment_entity_grid_types.append( family );
+            this->environment_entity_grids.insert( family , QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) ) );
         }
         this->mutex.unlock();
 
-        QtConcurrent::run([this , agent_geom , value , family] {
-            this->environment_agent_grids.value( family )->addValue( agent_geom , value );
+        QtConcurrent::run([this , entity_geom , value , family] {
+            this->environment_entity_grids.value( family )->addValue( entity_geom , value );
         });
     }
 }
 
-void GWSGridEnvironment::agentPropertyChanged( QString property_name ){
+void GWSGridEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == GRID_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
-        GWSAgent* agent = dynamic_cast<GWSAgent*>( object );
-        if( !agent ){ return; }
-        this->upsertValueToGrid( agent->getSharedPointer() , agent->getProperty( GRID_PROP ) );
+        GWSEntity* entity = dynamic_cast<GWSEntity*>( object );
+        if( !entity ){ return; }
+        this->upsertValueToGrid( entity->getSharedPointer() , entity->getProperty( GRID_PROP ) );
     }
 }

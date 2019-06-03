@@ -2,7 +2,7 @@
 
 #include "../../skill/move/StoreMultiRouteSkill.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 
@@ -15,7 +15,7 @@ SetNextRouteDestinationBehaviour::SetNextRouteDestinationBehaviour() : GWSBehavi
 
 QPair< double , QJsonArray > SetNextRouteDestinationBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toArray();
 
     // Finished following destinations
@@ -34,7 +34,7 @@ QPair< double , QJsonArray > SetNextRouteDestinationBehaviour::behave(){
         QString next_destination_agent_id = next_destination.toString();
         agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id );
 
-        QSharedPointer<GWSAgent> destination_agent = GWSAgentEnvironment::globalInstance()->getByUID( next_destination_agent_id );
+        QSharedPointer<GWSEntity> destination_agent = GWSEntityEnvironment::globalInstance()->getByUID( next_destination_agent_id );
         GWSCoordinate next_destination_agent_coor = GWSGeometry( destination_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getCentroid();
 
         agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE ) , next_destination_agent_coor.getX() );

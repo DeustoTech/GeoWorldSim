@@ -17,13 +17,11 @@
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
-
-
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -36,7 +34,7 @@
 #include "../../util/geometry/Envelope.h"
 #include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
-#include "../../util/datasource/AgentGeneratorDatasource.h"
+#include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
@@ -51,11 +49,11 @@
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
-#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
+#include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/property/SendPropertyStatisticsBehaviour.h"
-#include "../../behaviour/execution/CheckIfAgentsRunningBehaviour.h"
-#include "../../behaviour/execution/StopAgentBehaviour.h"
+#include "../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h"
+#include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h"
 #include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
@@ -72,7 +70,7 @@ int main(int argc, char* argv[])
 
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
-    GWSAgentEnvironment::globalInstance();
+    GWSEntityEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
@@ -83,17 +81,17 @@ int main(int argc, char* argv[])
 
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( SendPropertyStatisticsBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfAgentsRunningBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckIfEntitiesRunningBehaviour::staticMetaObject );
 
     // CREATE POPULATION
-    QList<GWSAgentGeneratorDatasource*> pending_datasources;
+    QList<GWSEntityGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
     QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
      foreach( QString key , json_population.keys() ) {
@@ -116,14 +114,14 @@ int main(int argc, char* argv[])
                      qWarning() << "Asked to download from scenario without ID or entity_type";
                  }
 
-                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
+                 GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
                  pending_datasources.append( ds );
 
-                 ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                 ds->connect( ds , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
-                         qInfo() << QString("Agent data downloaded. Took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
+                         qInfo() << QString("Entities data downloaded. Took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
                          GWSExecutionEnvironment::globalInstance()->run();
                      }
                  });
@@ -133,8 +131,8 @@ int main(int argc, char* argv[])
 
          if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
              for ( int i = 0; i < population.value("amount").toInt() ; i++){
-                 // Use template to generate amount agents
-                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
+                 // Use template to generate amount entities
+                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();
              }
          }
         qInfo() << QString("Creating population %1").arg( key );
