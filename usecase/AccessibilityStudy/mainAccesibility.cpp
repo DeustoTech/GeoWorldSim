@@ -24,6 +24,7 @@
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
 #include "../../behaviour/property/AddGWSGroupPropertyBehaviour.h"
 #include "../../behaviour/transaction/TransactionBehaviour.h"
+#include "../../behaviour/property/CheckPropertyValueBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -73,6 +74,8 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( AddGWSGroupPropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject );
+
 
 
     // CREATE POPULATION

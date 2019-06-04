@@ -91,7 +91,8 @@ HEADERS += \
     ../../environment/social_environment/SocialRelation.h \
         # AGENTS
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
-    ../../behaviour/transaction/TransactionBehaviour.h
+    ../../behaviour/transaction/TransactionBehaviour.h \
+    ../../behaviour/property/CheckPropertyValueBehaviour.h
 
 
 
@@ -153,7 +154,8 @@ SOURCES += mainAccesibility.cpp \
     ../../environment/social_environment/SocialRelation.cpp \
         # AGENTS
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
-    ../../behaviour/transaction/TransactionBehaviour.cpp
+    ../../behaviour/transaction/TransactionBehaviour.cpp\
+    ../../behaviour/property/CheckPropertyValueBehaviour.cpp
 
 
 

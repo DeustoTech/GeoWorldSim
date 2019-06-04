@@ -46,10 +46,10 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
             GWSNetworkEnvironment::globalInstance()->getNearestNodeAndPath( agent_coor , coors_of_all_agents_of_type , this->getProperty( TRANSPORT_NETWORK_TYPE ).toString() );
 
     // Extract and store the route to nearest node it:
-    QList< QSharedPointer<GWSEntity> > closest_route = closest_coor_and_route.second;
+    QList< QSharedPointer<GWSEntity> > route = closest_coor_and_route.second;
 
     // If agent can not be connected to road network nearest node. Closest nearest node is null
-    if ( closest_route.isEmpty() ){
+    if ( route.isEmpty() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_NO_ROUTING_CLOSEST_FOUND ).toArray() );
     }
 
@@ -58,21 +58,22 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     {
         // From Agent to route start
-        GWSGeometry closest_geom = closest_route.at( 0 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
-        GWSCoordinate closest_coor = closest_geom.getCentroid();
+        GWSGeometry closest_geom = route.at( 0 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        GWSCoordinate iterating_coor = closest_geom.getCentroid();
 
-        closest_route_distance = closest_route_distance + agent_coor.getDistance( closest_coor );
+        closest_route_distance = closest_route_distance + agent_coor.getDistance( iterating_coor );
 
         // During route start til route end
-        foreach ( QSharedPointer<GWSEntity> edge , closest_route ){
+        foreach ( QSharedPointer<GWSEntity> edge , route ){
 
             GWSGeometry edge_geom = edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
             GWSCoordinate edge_coor = edge_geom.getCentroid();
-            closest_route_distance = closest_route_distance + agent_coor.getDistance( edge_coor );
+            closest_route_distance = closest_route_distance + iterating_coor.getDistance( edge_coor );
+            iterating_coor = edge_coor;
         }
 
         // From route end to nearest_agent
-        GWSGeometry geom = closest_route.at( closest_route.size() - 1 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
+        GWSGeometry geom = route.at( route.size() - 1 )->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
         GWSCoordinate coor = geom.getCentroid();
         closest_route_distance = closest_route_distance + closest_coor_and_route.first.getDistance( coor );
     }

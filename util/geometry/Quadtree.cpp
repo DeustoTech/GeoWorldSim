@@ -179,7 +179,7 @@ QString GWSQuadtree::getNearestElement( GWSCoordinate coor ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( coor ) ) {
 
-        this->mutex.lockForWrite();
+        this->mutex.lockForRead();
         GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
         this->mutex.unlock();
 
@@ -206,7 +206,7 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( geom ) ) {
 
-        this->mutex.lockForWrite();
+        this->mutex.lockForRead();
         GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
         this->mutex.unlock();
 

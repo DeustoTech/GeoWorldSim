@@ -15,9 +15,7 @@ public:
 
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
-    static QString PROPERTY_TO_COMPARE_NAME;
-    static QString REFERENCE_VALUE_TO_COMPARE;
-    static QString COMPARISON_OPERATOR;
+    static QString PROPERTY_TO_COMPARE;
 
 
 protected slots:

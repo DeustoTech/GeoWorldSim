@@ -70,7 +70,6 @@ QList< QStringList > GWSRouting::getShortestPath( QStringList ordered_hashes ){
         if( !dijkstra_algorithm.run( start , end ) ){
             qDebug() << QString("Can not reach end node (%2) from start (%1)").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end , route );
-            this->mutex.unlock();
             result_routes.append( route );
             continue;
         }
