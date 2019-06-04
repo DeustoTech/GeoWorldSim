@@ -101,9 +101,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
 
 
     QJsonDocument jsonDailyGeneration = QJsonDocument::fromJson( daily_generation.toUtf8() );
-
     QJsonObject dailyGenerationObject = jsonDailyGeneration.object();
-
     this->setProperty( "daily_generation_kg_person" , dailyGenerationObject );
 
     // Zamudio characterization From W4T_M1_ZamudioEnero19.xlsx:
@@ -251,9 +249,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                 "}");
 
     QJsonDocument jsonCharacterization = QJsonDocument::fromJson( characterization.toUtf8() );
-
     QJsonObject characterizationObject = jsonCharacterization.object();
-
     this->setProperty( "characterization" , characterizationObject );
 }
 
@@ -270,7 +266,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
       urb   | 12.48 | 12.44 |*/
 
 
-double GenerateWasteZamudioModelBehaviour::partialModel ( double rest, double uni, double tasParo , double urb){
+double GenerateWasteZamudioModelBehaviour::partialModel( double rest, double uni, double tasParo , double urb){
 
     // Fracción resto kg / habitante / año:
 
@@ -281,55 +277,30 @@ double GenerateWasteZamudioModelBehaviour::partialModel ( double rest, double un
 
 QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();    
-    int family_members = agent->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt(1);
+    QSharedPointer<GWSEntity> entity = this->getEntity();
+    int family_members = entity->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt( 1 );
 
     QJsonObject generationObject = this->getProperty( "daily_generation_kg_person" ).toObject();
     QJsonObject characterizationObject = this->getProperty( "characterization" ).toObject();
-    QJsonObject generated = agent->getProperty( "GENERATED" ).toObject();
+    QJsonObject generated = entity->getProperty( "GENERATED" ).toObject();
 
     //qDebug() << characterizationObject.keys();
 
     // Check if the agent already has any waste stored:
 
-    foreach( QString sorting_type , characterizationObject.keys() ){
+    foreach( QString waste_type , generationObject.keys() ){
 
-       QJsonObject to_throw_to_this_sorting_type = generated.value( sorting_type ).toObject();
+        double waste_generated = generationObject.value( waste_type );
 
-       double total = 0;
+        foreach( QString sorting_type , characterizationObject.keys() ){
 
-       foreach ( QString waste , generationObject.keys() ){
+            double percentage_to_sorting_type = characterizationObject.value( sorting_type ).toObject().value( waste_type ).toDouble( 0 );
+            GWSMassUnit generated_waste_going_to_sorting_type = GWSMassUnit( waste_generated * percentage_to_sorting_type );
 
-           // qDebug() << waste << generationObject.value( waste );
-
-            // Units are grams:
-            GWSMassUnit waste_amount = GWSMassUnit( generationObject.value( waste ).toDouble(0) * 1000 * family_members );
-
-            double percentage = characterizationObject.value( sorting_type ).toObject().value( waste ).toDouble();
-            GWSMassUnit waste_that_goes_to_this_sorting_type = waste_amount * percentage;
-            to_throw_to_this_sorting_type.insert( waste , to_throw_to_this_sorting_type.value( waste ).toDouble( 0 ) + waste_that_goes_to_this_sorting_type.number() );
-
-            total += to_throw_to_this_sorting_type.value( waste ).toDouble();
-
-       }
-
-       generated.insert( sorting_type , to_throw_to_this_sorting_type );
-       agent->setProperty( sorting_type , total );
-
+        }
     }
 
-    agent->setProperty( "GENERATED" , generated );
-
-    //qDebug() << agent->getProperty( waste_type1 );
-    // Your are full, go to next behaviour
-    /*QStringList nexts;
-    if ( total_amount_waste1 >= this->getProperty( MAX_VALUE ).toDouble()  ){
-        nexts = this->getProperty( NEXTS_IF_TRUE ).toStringList();
-    }
-    else {
-        nexts = this->getProperty( NEXTS_IF_FALSE ).toStringList();
-    }*/
-
+    entity->setProperty( "GENERATED" , generated );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
