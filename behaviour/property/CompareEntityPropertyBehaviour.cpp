@@ -2,7 +2,7 @@
 
 #include "../../app/App.h"
 
-QString CompareEntityPropertyBehaviour::ENTITY_PROPERTY_TO_COMPARE = "agent_property_to_compare";
+QString CompareEntityPropertyBehaviour::ENTITY_PROPERTY_TO_COMPARE = "entity_property_to_compare";
 QString CompareEntityPropertyBehaviour::COMPARISON_OPERATOR = "comparison_operator";
 QString CompareEntityPropertyBehaviour::COMPARISON_VALUE = "comparison_value";
 
