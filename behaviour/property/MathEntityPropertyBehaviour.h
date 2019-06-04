@@ -1,21 +1,22 @@
-#ifndef MATHAGENTPROPERTYBEHAVIOUR_H
-#define MATHAGENTPROPERTYBEHAVIOUR_H
+#ifndef MATHENTITYPROPERTYBEHAVIOUR_H
+#define MATHENTITYPROPERTYBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 
-class MathAgentPropertyBehaviour : public GWSBehaviour
+class MathEntityPropertyBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit MathAgentPropertyBehaviour();
+    Q_INVOKABLE explicit MathEntityPropertyBehaviour();
 
 
     // PROPERTIES
     static QString OPERATOR;
     static QString OPERAND_VALUE;
     static QString OPERAND_PROPERTY;
-    static QString AGENT_ID_TO_OPERATE_ON;
+    static QString ENTITY_ID_TO_OPERATE_ON;
     static QString NEXTS;
 
 protected slots:
@@ -24,4 +25,4 @@ protected slots:
 
 };
 
-#endif // MATHAGENTPROPERTYBEHAVIOUR_H
+#endif // MATHENTITYPROPERTYBEHAVIOUR_H

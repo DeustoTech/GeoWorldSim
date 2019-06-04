@@ -35,40 +35,25 @@ HEADERS += \
     ../../app/App.h \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
-    ../../agent/Agent.h \
-    ../../agent/AgentSource.h \
+    ../../entity/Entity.h \
+    ../../entity/EntitySource.h \
         # SKILLS
     ../../skill/Skill.h \
-    ../../skill/move/MoveSkill.h \
-    ../../skill/move/MoveThroughRouteSkill.h \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.h \
-    ../../skill/view/ViewSkill.h \
-    ../../skill/pollute/PolluteSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
-    ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
-    ../../util/datasource/AgentGeneratorDatasource.h \
-    ../../behaviour/move/MoveBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.h \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.h \
-    ../../behaviour/property/GatherAgentPropertyBehaviour.h \
-    ../../behaviour/property/CopyPropertyBehaviour.h \
+    ../../util/datasource/EntityGeneratorDatasource.h \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.h \
     ../../behaviour/property/CheckPropertyValueBehaviour.h \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
-    ../../behaviour/execution/StopAgentBehaviour.h \
-    ../../behaviour/random/SetRandomColorBehaviour.h \
-    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.h \
-    ../../behaviour/property/SetAgentPropertyBehaviour.h \
-    ../../behaviour/property/IncrementPropertyBehaviour.h \
+    ../../behaviour/execution/StopEntityBehaviour.h \
+    ../../behaviour/property/SetEntityPropertyBehaviour.h \\
+    ../../behaviour/property/MathEntityPropertyBehaviour.h \
+    ../../behaviour/time/WaitUntilTimeBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
-    ../../util/io/csv/CsvImporter.h \
-    ../../util/io/ImporterExporter.h \
     ../../util/storage/ObjectStorage.h \
     ../../util/units/Units.h \
             ## GEOMETRIES
@@ -78,24 +63,21 @@ HEADERS += \
     ../../util/geometry/GeometryTransformators.h  \
     ../../util/geometry/GeometryGetters.h  \
     ../../util/geometry/GeometryToGeoJSON.h \
+    ../../util/routing/Routing.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
-    ../../util/routing/Routing.h \
     ../../util/routing/EdgeVisitor.hpp \
-    ../../util/routing/TSPRouting.h \
             ## GRID
             ## RANDOM
     ../../util/random/UniformDistribution.h \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
-    ../../util/ai/Intelligence.h \
-    ../../util/svm/Svm.h \
     ../../util/graph/Edge.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
     ../../environment/EnvironmentsGroup.h \
-    ../../environment/agent_environment/AgentEnvironment.h \
+    ../../environment/entity_environment/EntityEnvironment.h \
     ../../environment/physical_environment/PhysicalEnvironment.h \
     ../../environment/time_environment/TimeEnvironment.h \
     ../../environment/network_environment/NetworkEnvironment.h \
@@ -103,16 +85,7 @@ HEADERS += \
     ../../environment/communication_environment/CommunicationEnvironment.h \
     ../../environment/social_environment/SocialEnvironment.h \
     ../../environment/social_environment/SocialRelation.h \
-    ../../environment/network_environment/NetworkEdge.h \
-        # AGENTS
-    #agent/person/Person.h \
-    ContainerAgent.h \
-    HumanAgent.h \
-    TruckAgent.h \
-    RecyclingPlantAgent.h \
-    ../../behaviour/information/ListenToMessagesBehaviour.h \
-    ../../behaviour/property/MathAgentPropertyBehaviour.h \
-    ../../behaviour/time/WaitUntilTimeBehaviour.h
+    ../../environment/network_environment/NetworkEdge.h
             ## TRANSPORT LINE
 
 
@@ -122,46 +95,29 @@ SOURCES += mainlauncher.cpp \
     ../../app/App.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
-    ../../agent/Agent.cpp \
-    ../../agent/AgentSource.cpp \
+    ../../entity/Entity.cpp \
+    ../../entity/EntitySource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
-    ../../skill/move/MoveSkill.cpp \
-    ../../skill/view/ViewSkill.cpp \
-    ../../skill/move/MoveThroughRouteSkill.cpp \
-    ../../skill/pollute/PolluteSkill.cpp \
-    ../../skill/move/MoveThroughRouteInVehicleSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
-    ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
-    ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
-    ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
-    ../../behaviour/property/GatherAgentPropertyBehaviour.cpp \
-    ../../behaviour/property/CopyPropertyBehaviour.cpp \
+    ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
     ../../behaviour/property/CheckPropertyValueBehaviour.cpp \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
     ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
-    ../../behaviour/execution/StopAgentBehaviour.cpp \
-    ../../behaviour/random/SetRandomColorBehaviour.cpp \
-    ../../behaviour/random/ChooseRandomValueFromSetBehaviour.cpp \
-    ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteInVehicleBehaviour.cpp \
-    ../../behaviour/property/SetAgentPropertyBehaviour.cpp \
-    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
+    ../../behaviour/execution/StopEntityBehaviour.cpp \
+    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/MathEntityPropertyBehaviour.cpp \
+    ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/api/APIDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
-    ../../util/routing/Routing.cpp \
-    ../../util/routing/TSPRouting.cpp \
-    ../../util/io/csv/CsvImporter.cpp \
-    ../../util/io/ImporterExporter.cpp \
             ## DATASOURCES
-    ../../util/datasource/AgentGeneratorDatasource.cpp \
+    ../../util/datasource/EntityGeneratorDatasource.cpp \
             ## GEOMETRIES
     ../../util/geometry/Coordinate.cpp \
     ../../util/geometry/Geometry.cpp \
@@ -169,21 +125,18 @@ SOURCES += mainlauncher.cpp \
     ../../util/geometry/GeometryTransformators.cpp  \
     ../../util/geometry/GeometryGetters.cpp  \
     ../../util/geometry/GeometryToGeoJSON.cpp \
-    #../../util/graph/Graph.cpp \
-    #../../util/graph/GraphUtils.cpp \
+    ../../util/routing/Routing.cpp \
             ## GRID
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
     ../../util/distributed/ExternalListener.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
-    ../../util/ai/Intelligence.cpp \
-    ../../util/svm/Svm.cpp \
     ../../util/graph/Edge.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
-    ../../environment/agent_environment/AgentEnvironment.cpp \
+    ../../environment/entity_environment/EntityEnvironment.cpp \
     ../../environment/physical_environment/PhysicalEnvironment.cpp \
     #../../environment/social_environment/Message.cpp \
     ../../environment/time_environment/TimeEnvironment.cpp \
@@ -192,16 +145,8 @@ SOURCES += mainlauncher.cpp \
     ../../environment/communication_environment/CommunicationEnvironment.cpp \
     ../../environment/social_environment/SocialEnvironment.cpp \
     ../../environment/social_environment/SocialRelation.cpp \
-    ../../environment/network_environment/NetworkEdge.cpp \
-        # AGENTS
-    #agent/person/Person.cpp \
-    ContainerAgent.cpp \
-    HumanAgent.cpp \
-    TruckAgent.cpp \
-    RecyclingPlantAgent.cpp \
-    ../../behaviour/information/ListenToMessagesBehaviour.cpp \
-    ../../behaviour/property/MathAgentPropertyBehaviour.cpp \
-    ../../behaviour/time/WaitUntilTimeBehaviour.cpp
+    ../../environment/network_environment/NetworkEdge.cpp
+
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

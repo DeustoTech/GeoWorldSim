@@ -14,10 +14,10 @@ GenerateRandomValueBehaviour::GenerateRandomValueBehaviour() : GWSBehaviour (){
 
 QPair< double , QJsonArray > GenerateRandomValueBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> entity = this->getEntity();
     double random_number = UniformDistribution::uniformDistribution( );
     random_number = random_number * this->getProperty( MULTIPLIER ).toDouble();
-    agent->setProperty( this->getProperty( STORE_RANDOM_VALUE_AS ).toString() , random_number );
+    entity->setProperty( this->getProperty( STORE_RANDOM_VALUE_AS ).toString() , random_number );
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
 
