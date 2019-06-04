@@ -264,7 +264,11 @@ void GWSExecutionEnvironment::behave(){
         qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
 
         // DO NOT ADVANCE IN TIME
-        if( min_tick <= 0 || ticked_entities <= 0 ){
+        if( ticked_entities <= 0 ){
+            next_tick_in = next_tick_in*2;
+        }
+
+        if( min_tick <= 0 ){
             next_tick_in = 1000;
             GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_entities - (1000 * GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) );
         }
