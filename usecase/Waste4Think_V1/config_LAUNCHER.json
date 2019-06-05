@@ -1,5 +1,6 @@
 {"target":"gwswastesimulation",
 "name":"Waste generation simulation",
+"id" : "demo",
 "description":"Waste generation simulation.",
 "start_time":1577836800000,
 "end_time":1609459200000,
@@ -67,7 +68,7 @@
                         
                         {"@gwsclass":"CheckPropertyValueBehaviour",
                         "id":"CHECK_RESIDUAL",
-                        "duration":1,
+                        "duration":1,launcher/config.json
                         "properties":"residual",
                         "nexts_if_true":["TRANSFER_RESIDUAL"],
                         "nexts_if_false":["CHECK_PAPER"]},
