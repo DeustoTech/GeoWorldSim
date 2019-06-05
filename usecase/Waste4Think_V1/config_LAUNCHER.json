@@ -68,7 +68,7 @@
                         
                         {"@gwsclass":"CheckPropertyValueBehaviour",
                         "id":"CHECK_RESIDUAL",
-                        "duration":1,launcher/config.json
+                        "duration":1,
                         "properties":"residual",
                         "nexts_if_true":["TRANSFER_RESIDUAL"],
                         "nexts_if_false":["CHECK_PAPER"]},
