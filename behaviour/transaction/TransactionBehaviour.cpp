@@ -73,9 +73,11 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
            transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
            transaction.insert( "refEmitter" , emitter->getUID() );
+           transaction.insert( "refEmitterType" , emitter->getProperty("type") );
            transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
            transaction.insert( "refReceiver" , receiver->getUID() );
+           transaction.insert( "refReceiverType" , receiver->getProperty("type") );
            transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
            transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
