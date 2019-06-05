@@ -95,6 +95,70 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     return obj;
 }
 
+QJsonValue GWSObjectFactory::simpleOrParentPropertyName(QJsonValue property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
+
+    // PROPERTY KEY, IS ALWAYS STRING
+    // IS STRING AND <>
+
+    QString property_name_as_string = property_name.toString();
+
+    // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
+    if( property_name_as_string.startsWith("<") && property_name_as_string.endsWith(">") ){
+        QString property_key = property_name_as_string.remove( 0 , 1 );
+        property_key = property_key.remove( property_key.length() - 1 , 1 );
+        return parent->getProperty( property_key ).toString();
+    }
+
+    // ELSE
+
+    return property_name_as_string;
+}
+
+QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_value ,  QSharedPointer<GWSObject> object , QSharedPointer<GWSObject> parent){
+
+    // IS STRING AND <>
+
+    QString value_as_string = property_value.toString();
+    qDebug() << value_as_string;
+
+    // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
+    if( value_as_string.startsWith("<") && value_as_string.endsWith(">") ){
+        QString property_key = value_as_string.remove( 0 , 1 );
+        property_key = property_key.remove( property_key.length() - 1 , 1 );
+        return parent->getProperty( property_key );
+    }
+
+    // IS OBJECT
+
+    if( property_value.isObject() ){
+
+        QJsonObject obj;
+        foreach( QString key , property_value.toObject().keys() ) {
+
+            QJsonValue k = GWSObjectFactory::simpleOrParentPropertyName( key , object ,  parent );
+            QJsonValue v = GWSObjectFactory::simpleOrParentPropertyValue( property_value.toObject().value( key ) , object , parent );
+            obj.insert( k.toString() , v );
+        }
+        return obj;
+    }
+
+    // IS ARRAY
+
+    if( property_value.isArray() ){
+
+        QJsonArray arr;
+        foreach (QJsonValue v , property_value.toArray()) {
+            arr.append( GWSObjectFactory::simpleOrParentPropertyValue( v , object , parent ) );
+        }
+
+        return arr;
+    }
+
+    // ELSE
+
+    return object->GWSObject::getProperty( value_as_string );
+}
+
 QJsonValue GWSObjectFactory::incrementValue(QJsonValue existing_value, QJsonValue increment){
 
     if( existing_value.isNull() ){
