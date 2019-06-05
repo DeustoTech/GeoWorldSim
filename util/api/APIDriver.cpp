@@ -4,7 +4,7 @@
 #include <QNetworkProxy>
 #include <QJsonDocument>
 #include <QThreadPool>
-
+#include <QtConcurrent/QtConcurrent>
 
 GWSAPIDriver* GWSAPIDriver::globalInstance(){
     static GWSAPIDriver instance;
@@ -156,7 +156,10 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
 
     } else {
         this->mutex.unlock();
-        this->executePendingOperation( pending_request );
+
+        QtConcurrent::run([this , &pending_request] {
+            this->executePendingOperation( pending_request );
+        });
     }
 
 }
@@ -198,7 +201,9 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
                     this->pending_requests.removeAt( 0 );
                     this->mutex.unlock();
 
-                    this->executePendingOperation( next );
+                    QtConcurrent::run([this , &next] {
+                        this->executePendingOperation( next );
+                    });
 
                 } else {
                     this->mutex.unlock();

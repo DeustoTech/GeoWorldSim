@@ -14,7 +14,7 @@ GWSQuadtree::GWSQuadtree() : QObject(){
 GWSQuadtree::~GWSQuadtree(){
 }
 
-QStringList GWSQuadtree::getElements() const{
+QStringList GWSQuadtree::getElements() const {
     return this->ids_contained;
 }
 
@@ -162,6 +162,7 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     this->mutex.lockForWrite();
     this->quadtree_layers.value( qMin( x_decimal_count , y_decimal_count ) )->value( x_hash )->value( y_hash )->query( &env , ids );
     this->mutex.unlock();
+
     foreach(void* id, ids) {
         GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
         if( !ptr ){ continue; }

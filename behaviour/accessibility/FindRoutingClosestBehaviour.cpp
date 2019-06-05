@@ -13,6 +13,7 @@ QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ROUTE_AS = "store_rou
 QString FindRoutingClosestBehaviour::STORE_ROUTING_DISTANCE_AS = "store_routing_distance_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_X_AS = "store_routing_closest_agent_x_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_Y_AS = "store_routing_closest_agent_y_as";
+QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_GEOM_AS = "store_routing_closest_agent_geom_as";
 QString FindRoutingClosestBehaviour::NEXTS = "nexts";
 QString FindRoutingClosestBehaviour::NEXTS_IF_NO_ROUTING_CLOSEST_FOUND = "nexts_if_no_routing_closest_found";
 
@@ -31,12 +32,12 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
 
     // Set agent type to search
     QList< QSharedPointer<GWSEntity> > all_agents_of_type = GWSEntityEnvironment::globalInstance()->getByClass( this->getProperty( ENTITY_TO_ACCESS_TYPE ).toString() );
-    QMap< GWSCoordinate , QString > coor_to_agent;
+    QMap< GWSCoordinate , QSharedPointer<GWSEntity> > coor_to_agent;
 
-    foreach ( QSharedPointer<GWSEntity> a, all_agents_of_type  ){
-         GWSGeometry geom = env->getGeometry( a );
+    foreach ( QSharedPointer<GWSEntity> a , all_agents_of_type  ){
+         GWSGeometry geom = a->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
          if( geom.isValid() ){
-            coor_to_agent.insert( geom.getCentroid() , a->getUID() );
+            coor_to_agent.insert( geom.getCentroid() , a );
          }
     }
 
@@ -79,12 +80,14 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
     }
 
     // Extract and store closest node ID and coordinates:
-    QString closest_agent_id = coor_to_agent.value( closest_coor_and_route.first );
+    QSharedPointer<GWSEntity> closest_agent = coor_to_agent.value( closest_coor_and_route.first );
+    GWSGeometry closest_agent_geom = closest_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
 
     // Save results back to agent
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_agent_id" ) , closest_agent_id );
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_agent_x" ) , closest_coor_and_route.first.getX() );
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_agent_y" ) , closest_coor_and_route.first.getY() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_agent_id" ) , closest_agent->getUID() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_agent_x" ) , closest_agent_geom.getCentroid().getX() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_agent_y" ) , closest_agent_geom.getCentroid().getY() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_GEOM_AS ).toString( "routing_closest_agent_geom" ) , closest_agent_geom.getGeoJSON() );
     agent->setProperty( this->getProperty( STORE_ROUTING_DISTANCE_AS ).toString("routing_closest_agent_distance") , closest_route_distance.number() );
 
     QJsonObject geojson;

@@ -9,10 +9,10 @@
 
 QString MoveSkill::MAX_SPEED = "maxspeed";
 QString MoveSkill::CURRENT_SPEED = "current_speed";
-QString MoveSkill::MOVING_TOWARDS_X = "move_skill_moving_towards_x";
-QString MoveSkill::MOVING_TOWARDS_Y = "move_skill_moving_towards_y";
-QString MoveSkill::ACCUMULATED_DISTANCE = "move_skill_total_travelled_distance";
-QString MoveSkill::ACCUMULATED_TIME = "move_skill_total_travelled_time";
+QString MoveSkill::MOVING_TOWARDS_X = "moving_towards_x";
+QString MoveSkill::MOVING_TOWARDS_Y = "moving_towards_y";
+QString MoveSkill::ACCUMULATED_DISTANCE = "accumulated_travelled_distance";
+QString MoveSkill::ACCUMULATED_TIME = "accumulated_travelled_time";
 
 MoveSkill::MoveSkill() : GWSSkill(){
 }
