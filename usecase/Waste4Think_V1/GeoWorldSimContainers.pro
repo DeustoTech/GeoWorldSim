@@ -44,7 +44,7 @@ HEADERS += \
     ../../behaviour/transaction/TransactionBehaviour.h \
     ../../util/datasource/EntityGeneratorDatasource.h \
     ../../behaviour/information/SendEntitySnapshotBehaviour.h \
-    ../../behaviour/property/CheckPropertyValueBehaviour.h \
+    ../../behaviour/property/CompareEntityPropertyBehaviour.h \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
@@ -103,7 +103,7 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
     ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
-    ../../behaviour/property/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
     ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
     ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \

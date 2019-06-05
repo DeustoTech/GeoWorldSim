@@ -106,8 +106,7 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
 
         if( internal_time.isDouble() ){
             init_internal_time = internal_time.toDouble( init_internal_time );
-        }
-        else {
+        } else {
             init_internal_time = QDateTime::fromString( internal_time.toString() ).toMSecsSinceEpoch();
         }
 

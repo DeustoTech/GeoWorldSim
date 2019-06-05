@@ -12,6 +12,7 @@
 
 QString TransactionBehaviour::EMITTING_ENTITY_ID = "emitting_entity_id";
 QString TransactionBehaviour::RECEIVING_ENTITY_ID = "receiving_entity_id";
+QString TransactionBehaviour::PROPERTY_NAMES_TO_TRANSFER = "property_names_to_transfer";
 QString TransactionBehaviour::TRANSACTION_TYPE = "transaction_type";
 QString TransactionBehaviour::TRANSACTION_DATA = "transaction_data";
 QString TransactionBehaviour::NEXTS = "nexts";
@@ -36,60 +37,40 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
 
+    // Perform property transfers
+    QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();
+    foreach (QJsonValue v , property_names ) {
+        QString property_name = v.toString();
+        QJsonValue to_be_set_in_receiver = GWSObjectFactory::incrementValue( receiver->getProperty( property_name ) , emitter->getProperty( property_name ) );
+        emitter->setProperty( property_name , QJsonValue() );
+        receiver->setProperty( property_name , to_be_set_in_receiver );
+    }
 
-    QJsonObject transaction_data = this->getProperty( TRANSACTION_DATA ).toObject();
+    // Increment emitter transaction_count
+    emitter->setProperty("emitted_transaction_count", emitter->getProperty( "transaction_count" ).toInt( 0 ) + 1 );
 
-    foreach( QString key , transaction_data.keys() ){
+    // Increment receiver transaction_count
+    receiver->setProperty("received_transaction_count", receiver->getProperty( "transaction_count" ).toInt( 0 ) + 1 );
 
-           // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one agent's value
-           if( key.startsWith("<") && key.endsWith(">") ){
-               QString property_key = key.remove( 0 , 1 );
-               property_key = property_key.remove( property_key.length() - 1 , 1 );
-               key = emitter->getProperty( property_key ).toString();
-           }
+    // Store transfers entity
+    QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
 
-           QJsonValue increment = transaction_data.value( key );
+    QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
+    transaction.insert( GWSObject::GWS_UID_PROP , id );
 
-           // If it comes between '<>', it is not a value, but a key to fetch that property from the agent
-           if( increment.toString().startsWith("<") && increment.toString().endsWith(">") ){
-               QString property_name = increment.toString().remove( 0 , 1 );
-               property_name = property_name.remove( property_name.length() - 1 , 1 );
-               increment = emitter->getProperty( property_name );
-           }
+    transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+    transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
-           QJsonValue receiver_existing_value = receiver->getProperty( key );
-           QJsonValue values_sum = GWSObjectFactory::incrementValue( receiver_existing_value , increment );
+    transaction.insert( "refEmitter" , emitter->getUID() );
+    transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
-           receiver->setProperty( key , values_sum );
-           emitter->setProperty( key , QJsonValue() );
+    transaction.insert( "refReceiver" , receiver->getUID() );
+    transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
-           // Store transfers log
-           QJsonObject transaction;
+    transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
 
-           QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
-           transaction.insert( GWSObject::GWS_UID_PROP , id );
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
-           transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-           transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-
-           transaction.insert( "refEmitter" , emitter->getUID() );
-           transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
-
-           transaction.insert( "refReceiver" , receiver->getUID() );
-           transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
-
-           transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-           transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
-
-           transaction.insert( key , values_sum );
-
-           emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
-        }
-
-        // Set a counter of how many transactions have there been towards the corresponding receiver:
-        int transaction_count = receiver->getProperty( "transaction_count" ).toInt();
-        transaction_count = transaction_count + 1;
-        receiver->setProperty("transaction_count", transaction_count );
-
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-   }
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+}

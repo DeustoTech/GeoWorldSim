@@ -67,7 +67,6 @@ int GWSExecutionEnvironment::getRunningAmount() const{
 QList< QSharedPointer< GWSEntity > > GWSExecutionEnvironment::getRunning() const {
     return this->running_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
 }
-
 bool GWSExecutionEnvironment::isRunning() const{
     return this->getProperty( ENTITY_RUNNING_PROP ).toBool( false );
 }
@@ -91,9 +90,10 @@ void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
     // It needs to be executed in the future, so set its INTERNAL_TIME to that future
     qint64 entity_time = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
     if( entity_time <= 0 ){
-        qint64 birth = entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).toDouble( -1 );
-        entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , birth );
+        entity_time = entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).toDouble( -1 );
+        entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , entity_time );
     }
+
     entity->setProperty( ENTITY_RUNNING_PROP , true );
     entity->incrementBusy();
 
@@ -112,10 +112,7 @@ void GWSExecutionEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity
         return;
     }
 
-    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
-    entity->setProperty( ENTITY_DEATH_PROP , current_datetime );
     entity->setProperty( ENTITY_RUNNING_PROP , false );
-
     entity->incrementBusy();
 
     // Remove from running lists
