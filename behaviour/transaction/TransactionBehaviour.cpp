@@ -34,7 +34,6 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     if( emitter.isNull() || receiver.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-
     }
 
 
@@ -74,22 +73,23 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
            transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
            transaction.insert( "refEmitter" , emitter->getUID() );
+           transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
            transaction.insert( "refReceiver" , receiver->getUID() );
+           transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
+
            transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
            transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
 
            transaction.insert( key , values_sum );
 
            emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+        }
 
-       }
+        // Set a counter of how many transactions have there been towards the corresponding receiver:
+        int transaction_count = receiver->getProperty( "transaction_count" ).toInt();
+        transaction_count = transaction_count + 1;
+        receiver->setProperty("transaction_count", transaction_count );
 
-
-    // Set a counter of how many transactions have there been towards the corresponding receiver:
-     int transaction_count = receiver->getProperty( "transaction_count" ).toInt();
-     transaction_count = transaction_count + 1;
-     receiver->setProperty("transaction_count", transaction_count );
-
-       return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
    }
