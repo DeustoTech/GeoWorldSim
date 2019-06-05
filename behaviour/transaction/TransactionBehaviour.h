@@ -18,13 +18,11 @@ public:
     static QString TRANSACTION_DATA;
     static QString EMITTING_ENTITY_ID;
     static QString RECEIVING_ENTITY_ID;
+    static QString PROPERTY_NAMES_TO_TRANSFER;
     static QString NEXTS;
 
 protected slots:
      virtual QPair< double , QJsonArray > behave();
-
-private:
-    QJsonValue incrementQJsonValue( QJsonValue existing_value , QJsonValue increment );
 };
 
 #endif // TRANSFERAGENTPROPERTYBEHAVIOUR_H

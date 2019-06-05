@@ -156,10 +156,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
 
     } else {
         this->mutex.unlock();
-
-        QtConcurrent::run([this , &pending_request] {
-            this->executePendingOperation( pending_request );
-        });
+        this->executePendingOperation( pending_request );
     }
 
 }
@@ -201,9 +198,7 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
                     this->pending_requests.removeAt( 0 );
                     this->mutex.unlock();
 
-                    QtConcurrent::run([this , &next] {
-                        this->executePendingOperation( next );
-                    });
+                    this->executePendingOperation( next );
 
                 } else {
                     this->mutex.unlock();
