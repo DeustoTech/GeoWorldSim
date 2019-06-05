@@ -97,8 +97,18 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
     // PROPERTY IS ARRAY
     if( property_value.isArray() ){
         QJsonArray arr;
-        foreach (QJsonValue key , property_value.toArray()) {
-            arr.append( this->getProperty( key.toString() ) );
+        foreach (QJsonValue obj_value , property_value.toArray()) {
+
+            QString obj_value_as_string = obj_value.toString();
+
+            // If it comes between '<>', it is not the property name, but a key to fetch that property from the agent
+            if( obj_value_as_string.startsWith("<") && obj_value_as_string.endsWith(">") ){
+                QString property_name = obj_value_as_string.remove( 0 , 1 );
+                property_name = property_name.remove( property_name.length() - 1 , 1 );
+                obj_value = this->getEntity()->getProperty( property_name );
+            }
+
+            arr.append( obj_value );
         }
         property_value = arr;
     }
