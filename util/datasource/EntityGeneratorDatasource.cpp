@@ -53,6 +53,11 @@ QJsonObject GWSEntityGeneratorDatasource::joinJSON(QJsonObject json_template, QJ
 
         QJsonValue value = json_data.value( key );
 
+        // If value from template must prevail, skip data joining
+        if( json_template.value( key ).toObject().value( "override" ).toBool() ){
+            value = json_template.value( key );
+        }
+
         // Extract THE_REAL_VALUE from { type : "string|number|..." , metadata : {} , value : THE_REAL_VALUE }
         if( value.toObject().keys().contains("value") ){ value = value.toObject().value("value"); }
 
