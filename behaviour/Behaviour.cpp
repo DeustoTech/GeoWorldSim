@@ -76,8 +76,7 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
 }
 
 const QJsonValue GWSBehaviour::getProperty( QString name ) const{
-    qDebug() << name;
-    return GWSObjectFactory::simpleOrParentPropertyValue( name , this->getSharedPointer() , this->getEntity() );
+   return GWSObjectFactory::simpleOrParentPropertyName( name , this->getSharedPointer() , this->getEntity() );
 }
 
 const void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){

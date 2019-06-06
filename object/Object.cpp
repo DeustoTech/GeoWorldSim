@@ -132,9 +132,11 @@ QJsonArray GWSObject::getInheritanceFamily() const{
     return inheritance_family;
 }
 
-const QJsonValue GWSObject::getProperty( QString name ) const{
+bool GWSObject::hasProperty(QString name) const{
+    return !QObject::property( name.toUtf8() ).isNull();
+}
 
-    qDebug() << name;
+const QJsonValue GWSObject::getProperty( QString name ) const{
 
     // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){

@@ -31,5 +31,5 @@ QSharedPointer<GWSEntity> GWSSkill::getEntity() const{
 }
 
 const QJsonValue GWSSkill::getProperty( QString name ) const{
-    return GWSObjectFactory::simpleOrParentPropertyValue( name , this->getSharedPointer() , this->getEntity() );
+    return GWSObjectFactory::simpleOrParentPropertyName( name , this->getSharedPointer() , this->getEntity() );
 }

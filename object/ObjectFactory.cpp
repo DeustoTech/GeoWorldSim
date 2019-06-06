@@ -95,37 +95,37 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     return obj;
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyName(QJsonValue property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
+QJsonValue GWSObjectFactory::simpleOrParentPropertyName(QString property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
 
-    // PROPERTY KEY, IS ALWAYS STRING
     // IS STRING AND <>
 
-    QString property_name_as_string = property_name.toString();
-
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
-    if( property_name_as_string.startsWith("<") && property_name_as_string.endsWith(">") ){
-        QString property_key = property_name_as_string.remove( 0 , 1 );
-        property_key = property_key.remove( property_key.length() - 1 , 1 );
-        return parent->getProperty( property_key ).toString();
+    if( property_name.startsWith("<") && property_name.endsWith(">") ){
+        property_name.remove( 0 , 1 );
+        property_name.remove( property_name.length() - 1 , 1 );
+        return parent->getProperty( property_name );
     }
 
-    // ELSE
+    // IS SIMPLE STRING
+    return GWSObjectFactory::simpleOrParentPropertyValue( object->GWSObject::getProperty( property_name ) , object , parent );
 
-    return property_name_as_string;
 }
 
 QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_value ,  QSharedPointer<GWSObject> object , QSharedPointer<GWSObject> parent){
 
+    // IS NULL
+
+    if( property_value.isNull() ){
+        return QJsonValue();
+    }
+
     // IS STRING AND <>
 
     QString value_as_string = property_value.toString();
-    qDebug() << value_as_string;
 
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
     if( value_as_string.startsWith("<") && value_as_string.endsWith(">") ){
-        QString property_key = value_as_string.remove( 0 , 1 );
-        property_key = property_key.remove( property_key.length() - 1 , 1 );
-        return parent->getProperty( property_key );
+        return GWSObjectFactory::simpleOrParentPropertyName( value_as_string , object , parent );
     }
 
     // IS OBJECT
@@ -135,9 +135,16 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_va
         QJsonObject obj;
         foreach( QString key , property_value.toObject().keys() ) {
 
-            QJsonValue k = GWSObjectFactory::simpleOrParentPropertyName( key , object ,  parent );
+            QString k = key;
+            // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
+            if( k.startsWith("<") && k.endsWith(">") ){
+                k.remove( 0 , 1 );
+                k.remove( k.length() - 1 , 1 );
+                return parent->getProperty( k );
+            }
+
             QJsonValue v = GWSObjectFactory::simpleOrParentPropertyValue( property_value.toObject().value( key ) , object , parent );
-            obj.insert( k.toString() , v );
+            obj.insert( k , v );
         }
         return obj;
     }
@@ -156,7 +163,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_va
 
     // ELSE
 
-    return object->GWSObject::getProperty( value_as_string );
+    return property_value;
 }
 
 QJsonValue GWSObjectFactory::incrementValue(QJsonValue existing_value, QJsonValue increment){
