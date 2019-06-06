@@ -74,6 +74,10 @@ app.post('/' , async (req, res) => {
         const fs = require('fs');
         let filename = `${__dirname}/${configuration.id}.json`;
         
+        if( !fs.existsSync( `${__dirname}/targets/${configuration.target}` ){
+            return res.status(404).send();
+        }
+        
         // CREATE CONFIG FILE
         fs.writeFileSync( filename , JSON.stringify(configuration) , 'utf8');
         
