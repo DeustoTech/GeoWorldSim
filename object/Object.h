@@ -40,6 +40,7 @@ public:
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;
     virtual const QJsonValue getProperty( QString name ) const;
+    bool hasProperty( QString name ) const;
     const QJsonValue operator[]( QString name ) const;
 
     // SETTERS

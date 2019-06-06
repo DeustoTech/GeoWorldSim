@@ -37,7 +37,29 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
 
-    // Perform property transfers
+    // Notify the transaction
+    QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
+
+    QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
+    transaction.insert( GWSObject::GWS_UID_PROP , id );
+
+    transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+    transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
+
+    transaction.insert( "refEmitter" , emitter->getUID() );
+    transaction.insert( "refEmitterType" , emitter->getProperty("type") );
+    transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
+
+    transaction.insert( "refReceiver" , receiver->getUID() );
+    transaction.insert( "refReceiverType" , receiver->getProperty("type") );
+    transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
+
+    transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
+
+    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+
+    // Perform the transaction
     QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();
     foreach (QJsonValue v , property_names ) {
         QString property_name = v.toString();
@@ -51,28 +73,6 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     // Increment receiver transaction_count
     receiver->setProperty("received_transaction_count", receiver->getProperty( "transaction_count" ).toInt( 0 ) + 1 );
-
-    // Store transfers entity
-    QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
-
-    QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
-    transaction.insert( GWSObject::GWS_UID_PROP , id );
-
-    transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-    transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
-
-   transaction.insert( "refEmitter" , emitter->getUID() );
-   transaction.insert( "refEmitterType" , emitter->getProperty("type") );
-   transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
-
-   transaction.insert( "refReceiver" , receiver->getUID() );
-   transaction.insert( "refReceiverType" , receiver->getProperty("type") );
-   transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
-
-    transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-    transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
-
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }
