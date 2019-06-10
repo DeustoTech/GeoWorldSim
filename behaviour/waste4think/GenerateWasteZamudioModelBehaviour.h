@@ -13,7 +13,8 @@ public:
 
     // PROPERTIES
 
-    static QString GENERATED_WASTE_AMOUNT;
+    static QString DAILY_GENERATION_PER_WASTE_CATEGORY;
+    static QString CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE;
     static QString SAVE_GENERATED_WASTE_AS;
     static QString FAMILY_MEMBERS;
     static QString MAX_VALUE;

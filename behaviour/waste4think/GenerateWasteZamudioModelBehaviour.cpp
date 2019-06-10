@@ -6,6 +6,8 @@
 #include "../../object/ObjectFactory.h"
 
 QString GenerateWasteZamudioModelBehaviour::FAMILY_MEMBERS = "family_members";
+QString GenerateWasteZamudioModelBehaviour::DAILY_GENERATION_PER_WASTE_CATEGORY = "daily_generation_per_waste_category";
+QString GenerateWasteZamudioModelBehaviour::CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE = "characterization_per_waste_category_and_sorting_type";
 QString GenerateWasteZamudioModelBehaviour::NEXTS = "nexts";
 
 GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBehaviour(){
@@ -158,7 +160,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                      " \"10_mm_sieved_fraction\" :     0.0018 , "
                                      " \"other_not_in_other_categories\" :   0.0010 "
                               "} ,"
-                                 " \"plastic\" : { "
+                                 " \"packaging\" : { "
                                          " \"food_waste\" : 0.0014 ,"
                                          " \"no_food_waste\" :    0.0037, "
                                          " \"gardening_waste\" :  0.00 , "
@@ -203,7 +205,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                          " \"cardboard_packaging\" :  0.0005 ,"
                                          " \"paper_cardboard_no_packaging\" :  0.0018 , "
                                          " \"glass_packaging\" :  0.00 , "
-                                         " \"glass_no_packaging\" :  0.0006 , "
+                                         " \"glass_no_packaging\"0,1 :  0.0006 , "
                                          " \"rigid_plastic_packaging\" :  0.0056 , "
                                          " \"plastic_film_packaging\" : 0.0015, "
                                          " \"plastic_film_no_packaging_and_waste_collection_plastic_bags\" :   0.0020 , "
@@ -262,8 +264,8 @@ QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
     QSharedPointer<GWSEntity> entity = this->getEntity();
     int family_members = entity->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt( 1 );
 
-    QJsonObject generationObject = this->getProperty( "daily_generation_kg_person" ).toObject();
-    QJsonObject characterizationObject = this->getProperty( "characterization" ).toObject();
+    QJsonObject generationObject = this->getProperty( DAILY_GENERATION_PER_WASTE_CATEGORY ).toObject( this->getProperty("daily_generation_kg_person" ).toObject());
+    QJsonObject characterizationObject = this->getProperty( CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE ).toObject( this->getProperty( "characterization" ).toObject());
     QJsonObject instant_generated = QJsonObject();
     QJsonObject accumulated_generated = entity->getProperty( "accumulated_generated" ).toObject();
 
@@ -276,7 +278,14 @@ QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
         foreach (QString waste_category , characterizationObject.value( sorting_type ).toObject().keys() ) {
 
             double individual_waste_generated = generationObject.value( waste_category ).toDouble();
-            double percentage_to_sorting_type = characterizationObject.value( sorting_type ).toObject().value( waste_category ).toDouble( 0 );
+
+            QJsonValue charObj = characterizationObject.value( sorting_type ).toObject().value( waste_category );
+
+            if ( charObj.isString() ){
+                charObj = charObj.toString().toDouble();
+            }
+
+            double percentage_to_sorting_type = charObj.toDouble( 0 );
             GWSMassUnit generated_individual_waste_going_to_sorting_type = GWSMassUnit( individual_waste_generated * percentage_to_sorting_type * family_members);
 
             // STORE INSTANT PER SORTING TYPE

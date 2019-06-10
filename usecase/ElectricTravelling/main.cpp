@@ -51,6 +51,7 @@
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
+#include "../../behaviour/property/SetEntityPropertyBehaviour.h"
 #include "../../behaviour/property/SendPropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h"
 #include "../../behaviour/execution/StopEntityBehaviour.h"
@@ -89,6 +90,7 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CheckIfEntitiesRunningBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QList<GWSEntityGeneratorDatasource*> pending_datasources;

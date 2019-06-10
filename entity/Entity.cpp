@@ -239,8 +239,8 @@ void GWSEntity::addSkill( QSharedPointer<GWSSkill> skill ){
     if( !this->skills ){
         this->skills = new GWSObjectStorage();
     }
-    this->skills->add( skill );
     skill->skilled_entity = this->getSharedPointer();
+    this->skills->add( skill );
 }
 
 void GWSEntity::removeSkill(QSharedPointer<GWSSkill> skill){
@@ -251,6 +251,7 @@ void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     if( !this->behaviours ){
         this->behaviours = new GWSObjectStorage();
     }
+    behaviour->behaving_entity = this->getSharedPointer();
     this->behaviours->add( behaviour );
 }
 

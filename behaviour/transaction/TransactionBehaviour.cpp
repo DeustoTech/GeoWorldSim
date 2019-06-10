@@ -40,7 +40,7 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     // Notify the transaction
     QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
 
-    QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toString() );
+    QString id = QString("%1%2%3").arg( emitter->getUID() ).arg( receiver->getUID() ).arg( emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP).toDouble() );
     transaction.insert( GWSObject::GWS_UID_PROP , id );
 
     transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
