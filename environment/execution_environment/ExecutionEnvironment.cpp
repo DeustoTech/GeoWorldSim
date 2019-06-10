@@ -26,7 +26,7 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 }
 
 GWSExecutionEnvironment::GWSExecutionEnvironment() :
-    tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 10 ) * 9999 ) ,
+    tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 9999 ) ,
     max_entity_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value("tick_entity_amount").toDouble( 500 ) ) ,
     GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
@@ -204,7 +204,7 @@ void GWSExecutionEnvironment::behave(){
     if( entities_to_tick ){
 
         // Store min tick
-        if( min_tick <= 0 ){  min_tick = current_datetime; }
+        if( min_tick <= 0 ){ min_tick = current_datetime; }
         this->last_tick_with_entities = min_tick;
         GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
 
