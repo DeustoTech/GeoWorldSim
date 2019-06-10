@@ -1,6 +1,6 @@
-gradient;roadType:tertiary;trafficSit;velocity;roadType:residential;roadType:service;roadType:secondary;roadType:trunk;roadType:motorway;roadType:primary
+gradient;roadType:service;trafficSit;velocity;roadType:tertiary;roadType:trunk;roadType:motorway;roadType:primary;roadType:residential;roadType:secondary
 6;1;1;142.634;1;1;1;1;1;1
 -6;1;0;12.7299;1;1;1;1;1;1
 EFA
-2.40516
+384.083
 0.00254688
