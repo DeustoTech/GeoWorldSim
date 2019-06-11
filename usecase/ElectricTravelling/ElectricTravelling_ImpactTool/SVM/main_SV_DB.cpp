@@ -15,8 +15,8 @@
 #include <QSqlError>
 
 // Utils
-#include "../../../../util/ai/Intelligence.h"
-#include "../../../../util/svm/Svm.h"
+#include "../../util/ai/Intelligence.h"
+#include "../../util/svm/Svm.h"
 
 
 int main(int argc, char **argv)
@@ -198,7 +198,7 @@ int main(int argc, char **argv)
                     dir.mkpath(".");
 
                     qDebug() << "SVM" << input_list.size() << output_list.size();
-                    GWSSvm* svm = new GWSSvm();
+                    QSharedPointer<GWSSvm> svm =  QSharedPointer<GWSSvm>( new GWSSvm() );
                     svm->trainFromJSON( input_list, output_list );
                     svm->saveTrained( path +  "/svm_model" , path + "/params_model" );
                     svm->deleteLater();

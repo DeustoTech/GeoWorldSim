@@ -7,7 +7,7 @@
 #include <QJsonArray>
 #include <QMutex>
 
-class GWSIntelligence : public GWSObject
+class GWSIntelligence : public QObject
 {
     Q_OBJECT
 
@@ -32,17 +32,23 @@ protected:
     QMap< QString , int> input_positions; // { "input1:value_str1" : 0 , "input1:value_str2" : 1 , "input2" : 3 }
     QMap< QString , double > input_maximums; // { pos0 : 2.43 , pos1 : 42 ...
     QMap< QString , double > input_minimums; // { pos0 : 2.43 , pos1 : 0 ...
+    QMap< QString , double > input_means; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double > input_stdevs; // { pos0 : 2.43 , pos1 : 0 ...
 
     // Outputs
     QMap< QString , int> output_positions; // { "output1:value_str1" : 0 , "output1:value_str2" : 1 , "output2" : 3 }
     QMap< QString , double > output_maximums; // { pos0 : 2.43 , pos1 : 42 ...
     QMap< QString , double > output_minimums; // { pos0 : 2.43 , pos1 : 0 ...
+    QMap< QString , double > output_means; // { pos0 : 2.43 , pos1 : 42 ...
+    QMap< QString , double > output_stdevs; // { pos0 : 2.43 , pos1 : 0 ...
 
     // Methods
-    void generatePositions( QList< QMap< QString , QVariant> > data_rows ,  QMap< QString , int> &positions , QMap< QString , double > &maximums , QMap< QString , double > &minimums );
+    void generatePositions( QList< QMap< QString , QVariant> > data_rows ,  QMap< QString , int> &positions , QMap< QString , double > &maximums , QMap< QString , double > &minimums , QMap< QString , double > &means , QMap< QString , double > &stdevs );
     QString getIOName( QString key , QVariant value );
-    double normalizeIO( QVariant value , QString hash , QMap< QString , double > maximums , QMap< QString , double > minimums );
-    double denormalizeIO( double normalized_value , int position );
+    double normalizeIOMinMax( QVariant value , QString hash , QMap< QString , double > maximums , QMap< QString , double > minimums );
+    double denormalizeIOMinMax( double normalized_value , int position );
+    double normalizeIOMeanStdev( QVariant value , QString hash , QMap< QString , double > means , QMap< QString , double > stdevs );
+    double denormalizeIOMeanStdev( double normalized_value , int position );
     virtual void saveModel( QString model_file_path ) = 0;
     virtual void loadModel( QString model_file_path ) = 0;
 
