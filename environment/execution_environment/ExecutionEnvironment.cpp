@@ -206,7 +206,7 @@ void GWSExecutionEnvironment::behave(){
         // Store min tick
         if( min_tick <= 0 ){ min_tick = current_datetime; }
         this->last_tick_with_entities = min_tick;
-        GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
+        if( min_tick < current_datetime ){ GWSTimeEnvironment::globalInstance()->setDatetime( min_tick ); }
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick entity is executed
         foreach( QSharedPointer<GWSEntity> entity , currently_running_entities ){
