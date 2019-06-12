@@ -1,5 +1,7 @@
 #include "Intelligence.h"
 
+#include <math.h>
+#include <numeric>
 #include <QFile>
 #include <QTextStream>
 #include <QJsonObject>
@@ -8,7 +10,7 @@
 
 QMutex GWSIntelligence::mutex;
 
-GWSIntelligence::GWSIntelligence() : GWSObject() {
+GWSIntelligence::GWSIntelligence() : QObject() {
 
 }
 
@@ -121,8 +123,8 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
         file.close();
     }
 
-    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
-    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
+    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums , this->input_means , this->input_stdevs );
+    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums , this->output_means , this->output_stdevs );
 
     this->train( inputs , outputs );
 }
@@ -150,8 +152,8 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
         outputs.insert( 0 , qpair_list );
     }
 
-    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums );
-    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums );
+    this->generatePositions( inputs  , this->input_positions , this->input_maximums , this->input_minimums , this->input_means , this->input_stdevs );
+    this->generatePositions( outputs , this->output_positions , this->output_maximums , this->output_minimums , this->output_means , this->output_stdevs );
 
     this->train( inputs , outputs );
 
@@ -194,6 +196,27 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
                stream << str << endl;
            }
 
+           // Input means
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_means.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Input variances
+           {
+               QString str;
+               for(int i = 0 ; i < this->input_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->input_stdevs.value( this->input_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+
            // Output positions
            {
                QString str;
@@ -220,6 +243,26 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
                for(int i = 0 ; i < this->output_positions.values().size() ; i++){
                    if( !str.isEmpty() ){ str += ";"; }
                    str += QString::number( this->output_minimums.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output means
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_means.value( this->output_positions.key( i ) ) );
+               }
+               stream << str << endl;
+           }
+
+           // Output variances
+           {
+               QString str;
+               for(int i = 0 ; i < this->output_positions.values().size() ; i++){
+                   if( !str.isEmpty() ){ str += ";"; }
+                   str += QString::number( this->output_stdevs.value( this->output_positions.key( i ) ) );
                }
                stream << str << endl;
            }
@@ -272,7 +315,27 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
             }
         }
 
-        // Fourth line = output_positions
+        // Third line = input_means
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_means.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Fourth line = input_variances
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->input_positions.key( i );
+                this->input_stdevs.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Fifth line = output_positions
         {
             QString line = stream.readLine();
             foreach( QString key , line.split(";") ){
@@ -299,6 +362,26 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
                 this->output_minimums.insert( key , values.at( i ).toDouble() );
             }
         }
+
+        // Fifth line = output_means
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_means.insert( key , values.at( i ).toDouble() );
+            }
+        }
+
+        // Sixth line = output_variances
+        {
+            QString line = stream.readLine();
+            QStringList values = line.split(";");
+            for( int i = 0 ; i < values.size() ; i++ ){
+                QString key = this->output_positions.key( i );
+                this->output_stdevs.insert( key , values.at( i ).toDouble() );
+            }
+        }
     }
 
 
@@ -316,7 +399,9 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
 /*  Allocate positions to input fields and get maximum and minimum values
     for eventual normalization (FANN data formatting requirement)        */
 
-void GWSIntelligence::generatePositions(QList<QMap<QString, QVariant> > data_rows, QMap<QString, int> &positions, QMap<QString, double> &maximums, QMap<QString, double> &minimums){
+void GWSIntelligence::generatePositions(QList< QMap< QString, QVariant> > data_rows, QMap<QString, int> &positions, QMap<QString, double> &maximums, QMap<QString, double> &minimums, QMap<QString, double> &means, QMap<QString, double> &stdevs){
+
+    QMap< QString , QList< double > > column_values;
 
     // Give positions to the outputs
     for( int i = 0 ; i < data_rows.size() ; i ++ ) {
@@ -341,20 +426,35 @@ void GWSIntelligence::generatePositions(QList<QMap<QString, QVariant> > data_row
                 positions.insert( hash , positions.keys().size() );
             }
 
-            // Initialize maximum
-            if( !maximums.keys().contains( hash ) ){
-                maximums.insert( hash , -9999999999999 );
+            // Store value
+            if( !column_values.keys().contains( hash ) ){
+                column_values.insert( hash , QList< double >() );
             }
-            maximums.insert( hash , qMax( maximums.value( hash ) , value_double ) );
-
-            // Initialize minimum
-            if( !minimums.keys().contains( hash ) ){
-                minimums.insert( hash , 9999999999999 );
-            }
-            minimums.insert( hash , qMin( minimums.value( hash ) , value_double ) );
+            column_values[ hash ].append( value_double );
         }
     }
 
+
+    foreach( QString key , column_values.keys( ) ){
+
+        QList<double> values = column_values.value( key );
+
+        // Initialize maximum
+        maximums.insert( key , *std::max_element(values.begin(), values.end())  );
+
+        // Initialize minimum
+        minimums.insert( key , *std::min_element(values.begin(), values.end()) );
+
+        // Initialize mean
+        double sum = std::accumulate(values.begin(), values.end(), 0.0);
+        double mean = sum / values.size();
+        means.insert( key , mean );
+
+        // Initialize stdev
+        double sq_sum = std::inner_product(values.begin(), values.end(), values.begin(), 0.0);
+        stdevs.insert( key , std::sqrt(sq_sum / values.size() - mean * mean) );
+
+    }
 }
 
 QString GWSIntelligence::getIOName( QString key , QVariant value){
@@ -366,7 +466,7 @@ QString GWSIntelligence::getIOName( QString key , QVariant value){
     return QString("%1").arg( key );
 }
 
-double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, double> maximums, QMap<QString, double> minimums){
+double GWSIntelligence::normalizeIOMinMax(QVariant value, QString hash, QMap<QString, double> maximums, QMap<QString, double> minimums){
 
     double value_double = value.toDouble();
 
@@ -388,7 +488,7 @@ double GWSIntelligence::normalizeIO(QVariant value, QString hash, QMap<QString, 
 }
 
 
-double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
+double GWSIntelligence::denormalizeIOMinMax( double normalized_value , int position ){
 
     double min = this->output_minimums.value( this->output_positions.key( position ) );
     double max = this->output_maximums.value( this->output_positions.key( position ) );
@@ -402,5 +502,34 @@ double GWSIntelligence::denormalizeIO( double normalized_value , int position ){
     //qDebug() << normalized_value;
     return normalized_value;
 
+}
+
+double GWSIntelligence::normalizeIOMeanStdev(QVariant value, QString hash, QMap<QString, double> means, QMap<QString, double> stdevs){
+    double value_double = value.toDouble();
+
+    if( value.type() == QVariant::String ){
+        value_double = 1;
+    } else {
+
+        double mean = means.value( hash );
+        double stdev = stdevs.value( hash );
+
+        // To normalize in [ 0 , 1 ] range
+        value_double = ( value_double - mean ) / stdev;
+    }
+
+    return value_double;
+}
+
+
+double GWSIntelligence::denormalizeIOMeanStdev(double normalized_value, int position){
+
+    double mean = this->output_means.value( this->output_positions.key( position ) );
+    double stdev = this->output_stdevs.value( this->output_positions.key( position ) );
+
+    // Denormalize from [ 0 , 1 ] range:
+    normalized_value = normalized_value * stdev + mean;
+
+    return normalized_value;
 }
 

@@ -19,7 +19,7 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
     this->parameters.cache_size = 100;
     this->parameters.C = 1;
     this->parameters.eps = 1e-8;
-    this->parameters.p = 0.1;
+    this->parameters.p = 0.1;    // epsilon in epsilon SVR
     this->parameters.shrinking = 1;
     this->parameters.probability = 0;
     this->parameters.nr_weight = 0;
@@ -71,7 +71,7 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
         hash = this->getIOName( hash , value_variant );
 
         // Outputs have no position, since only one output is allowed
-        problem.y[ i ] = this->normalizeIO( value_variant , hash , this->output_maximums , this->output_minimums );
+        problem.y[ i ] = this->normalizeIOMeanStdev( value_variant , hash , this->output_means , this->output_stdevs );
     }
 
     // Set inputs
@@ -88,7 +88,7 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
             QVariant value_variant = row.value( hash );
             hash = this->getIOName( hash , value_variant );
 
-            double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
+            double value_double = this->normalizeIOMeanStdev( value_variant , hash , this->input_means , this->input_stdevs );
 
             int position = this->input_positions.value( hash , -1 );
             if( position > -1 ){
@@ -136,7 +136,7 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
         QVariant value_variant = inputs.value( hash );
         hash = this->getIOName( hash , value_variant );
 
-        double value_double = this->normalizeIO( value_variant , hash , this->input_maximums , this->input_minimums );
+        double value_double = this->normalizeIOMeanStdev( value_variant , hash , this->input_means , this->input_stdevs );
 
         int position = this->input_positions.value( hash , -1 );
         if( position > -1 ){
@@ -156,7 +156,7 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
 
     double normResult = svm_predict( this->model , x );
 
-    double denormResult =  this->denormalizeIO( normResult , 0 );
+    double denormResult =  this->denormalizeIOMeanStdev( normResult , 0 );
 
     result.insert( this->output_positions.keys().at(0) , denormResult );
     return result;
