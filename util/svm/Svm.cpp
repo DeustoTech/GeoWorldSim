@@ -57,9 +57,11 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
     svm_problem problem;
 
     // Set problem size
+
     problem.l = input_train_dataset.size();
 
     // Set outputs
+
     problem.y = new double[ problem.l ];
     for( int i = 0 ; i < output_train_dataset.size() ; i++ ) {
 
@@ -153,7 +155,6 @@ QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
     x[ inputs.size() ].index = -1;
 
     // Predict SVM result on test input:
-
     double normResult = svm_predict( this->model , x );
 
     double denormResult =  this->denormalizeIOMeanStdev( normResult , 0 );

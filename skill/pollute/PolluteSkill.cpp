@@ -24,7 +24,7 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
         //QMap < QString, GWSSvm* > models = this->models;
         //QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
         QString svm_path = "../../data/" + transport_mode + "/" + vehicle_subtype + "/" + pollutant;
-        QSharedPointer<GWSSvm> pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
+        QSharedPointer< GWSSvm > pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
 
         if ( !pollutant_svm ){
 
@@ -56,7 +56,6 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
 
         QMap<QString , QVariant> input;
 
-
         // Extract current speed from agent:
         input.insert( "velocity" , speed.value );
         input.insert( "gradient" , gradient );
@@ -65,9 +64,6 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
 
         QJsonObject result = pollutant_svm->run( input );
         polluted_amount = result.value( "EFA" ).toDouble( 0 ) * distance.number() / 1000.;// Because the SVM outputs emissions per km
-
-        // Save polluted amount:
-        // agent->setProperty( "total"+ pollutant +"amount" , agent->getProperty( "total"+ pollutant +"amount").toDouble() + polluted_amount );
 
         return polluted_amount;
 
