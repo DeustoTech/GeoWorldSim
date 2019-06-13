@@ -6,12 +6,14 @@ QString CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
 QString CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
 QString CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
+QString CalculateGTAlgRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
 
 QString CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
 
 
 #include "../../util/api/APIDriver.h"
 #include "../../util/geometry/Coordinate.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -26,6 +28,14 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
+
+    bool stop_if_no_route = false;
+
+    if ( !this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).isNull() ){
+
+        stop_if_no_route = this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool();
+    }
+
 
     // If legs are empty, calculate them through algorithm:
     if ( next_destinations.isEmpty() ){
@@ -125,7 +135,12 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                         }
                     }
 
+                    else if ( json.isEmpty() && this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool()){
 
+                          GWSExecutionEnvironment::globalInstance()->unregisterEntity( agent );
+
+
+                    }
                     reply->deleteLater();
                     agent->decrementBusy();
 
