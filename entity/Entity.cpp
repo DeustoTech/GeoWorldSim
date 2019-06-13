@@ -171,12 +171,12 @@ bool GWSEntity::hasSkill( QString class_name ) const{
 
 QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent ) const{
       if( !this->skills ){ return Q_NULLPTR; }
-    const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
-    if( objs.isEmpty() ){
+    const QList< QSharedPointer<GWSSkill> > skills = this->skills->getByClass<GWSSkill>( class_name );
+    if( skills.isEmpty() ){
         if( !silent ){ qDebug() << QString("%1:%2 has no skill %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name ); }
         return Q_NULLPTR;
     }
-    return objs.at(0).dynamicCast<GWSSkill>();
+    return skills.at(0);
 }
 
 /*template <class T> QSharedPointer<T> GWSEntity::getSkill( QString class_name ) const{
@@ -190,12 +190,8 @@ QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent )
 }*/
 
 QList< QSharedPointer<GWSSkill> > GWSEntity::getSkills( QString class_name ) const{
-    QList< QSharedPointer<GWSSkill> > s;
-    if( !this->skills ){ return s; }
-    foreach( QSharedPointer<GWSObject> obj , this->skills->getByClass( class_name )){
-        s.append( obj.dynamicCast<GWSSkill>() );
-    }
-    return s;
+    if( !this->skills ){ return QList< QSharedPointer<GWSSkill> >(); }
+    return this->skills->getByClass<GWSSkill>( class_name );
 }
 
 /*template <class T> QList< QSharedPointer<T> > GWSEntity::getSkills( QString class_name ) const{
@@ -216,11 +212,8 @@ QSharedPointer<GWSBehaviour> GWSEntity::getBehaviour( QString id ) const {
 }
 
 QList< QSharedPointer<GWSBehaviour> > GWSEntity::getBehaviours(QString class_name) const{
-    QList< QSharedPointer<GWSBehaviour> > behaviours;
-    foreach( QSharedPointer<GWSObject> o , this->behaviours->getByClass( class_name ) ){
-        behaviours.append( o.dynamicCast<GWSBehaviour>() );
-    }
-    return behaviours;
+    if( !this->behaviours ){ return QList< QSharedPointer<GWSBehaviour> >(); }
+    return this->behaviours->getByClass<GWSBehaviour>( class_name );
 }
 
 /**********************************************************************
@@ -239,8 +232,8 @@ void GWSEntity::addSkill( QSharedPointer<GWSSkill> skill ){
     if( !this->skills ){
         this->skills = new GWSObjectStorage();
     }
-    this->skills->add( skill );
     skill->skilled_entity = this->getSharedPointer();
+    this->skills->add( skill );
 }
 
 void GWSEntity::removeSkill(QSharedPointer<GWSSkill> skill){
@@ -251,6 +244,7 @@ void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     if( !this->behaviours ){
         this->behaviours = new GWSObjectStorage();
     }
+    behaviour->behaving_entity = this->getSharedPointer();
     this->behaviours->add( behaviour );
 }
 

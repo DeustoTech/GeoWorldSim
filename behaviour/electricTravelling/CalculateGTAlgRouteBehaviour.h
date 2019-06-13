@@ -18,6 +18,7 @@ public:
     static QString DESTINATION_JSON;
     static QString TRANSPORT_MODE;
     static QString OPTIMIZATION;
+    static QString STOP_ENTITY_IF_NO_ROUTE;
 
     static QString NEXTS;
 

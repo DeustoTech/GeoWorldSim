@@ -19,7 +19,7 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
     this->parameters.cache_size = 100;
     this->parameters.C = 1;
     this->parameters.eps = 1e-8;
-    this->parameters.p = 0.1;
+    this->parameters.p = 0.1;    // epsilon in epsilon SVR
     this->parameters.shrinking = 1;
     this->parameters.probability = 0;
     this->parameters.nr_weight = 0;

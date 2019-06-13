@@ -10,7 +10,7 @@
 
 #include "../../object/Object.h"
 
-class GWSObjectStorage : public GWSObject
+class GWSObjectStorage : public QObject
 {
     Q_OBJECT
 
@@ -24,43 +24,42 @@ public:
 
     template <class T>
     QList< QSharedPointer<T> > getAll() const;
-    QList< QSharedPointer<GWSObject> > getAll() const;
+    QList< QSharedPointer<QObject> > getAll() const;
 
     template <class T>
-    QSharedPointer<T> getByClassAndUID( QString class_name , QString uid ) const;
-    QSharedPointer<GWSObject> getByClassAndUID( QString class_name , QString uid ) const;
-    QSharedPointer<GWSObject> getByUID( QString uid );
+    QSharedPointer<T> getByClassAndUID( QString class_name , QString uid ) const{
+        return this->getByClassAndUID( class_name , uid ).dynamicCast<T>();
+    }
+    QSharedPointer<QObject> getByClassAndUID( QString class_name , QString uid ) const;
+    QSharedPointer<QObject> getByUID( QString uid );
 
     template <class T>
     QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const {
-        if ( this->classes_stored.contains( class_name ) ){
-             return this->object_names[ class_name ]->value( name , 0 ).dynamicCast<T>();
-        }
-        return 0;
+        return this->getByClassAndName( class_name , name ).dynamicCast<T>();
     }
-    QSharedPointer<GWSObject> getByClassAndName( QString class_name , QString name ) const;
+    QSharedPointer<QObject> getByClassAndName( QString class_name , QString name ) const;
 
     template <class T> QList< QSharedPointer<T> > getByClass( QString class_name ) const{
         QList< QSharedPointer<T> > objs;
-        foreach( QSharedPointer<GWSObject> o , this->getByClass( class_name ) ){
+        foreach( QSharedPointer<QObject> o , this->getByClass( class_name ) ){
             objs.append( o.dynamicCast<T>() );
         }
         return objs;
     }
-    QList< QSharedPointer<GWSObject> > getByClass( QString class_name ) const;
+    QList< QSharedPointer<QObject> > getByClass( QString class_name ) const;
 
     template <class T>
     QSharedPointer<T> getByName( QString name ) const {
         return this->getByName( name ).dynamicCast<T>();
     }
-    QSharedPointer<GWSObject> getByName( QString name ) const;
+    QSharedPointer<QObject> getByName( QString name ) const;
 
     bool contains( QString class_name ) const;
-    bool contains( QSharedPointer<GWSObject> object ) const;
+    bool contains( QSharedPointer<QObject> object ) const;
 
     // SETTERS
-    virtual void add( QSharedPointer<GWSObject> object );
-    virtual void remove( QSharedPointer<GWSObject> object );
+    virtual void add( QSharedPointer<QObject> object );
+    virtual void remove( QSharedPointer<QObject> object );
     virtual void deleteAll();
 
 protected:
@@ -69,9 +68,9 @@ protected:
      * STORAGE
     **/
     QStringList classes_stored;
-    QHash<QString, QList< QSharedPointer<GWSObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
-    QHash<QString, QHash< QString , QSharedPointer<GWSObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
-    QHash<QString, QHash< QString , QSharedPointer<GWSObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
+    QHash<QString, QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
+    QHash<QString, QHash< QString , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
+    QHash<QString, QHash< QString , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
 
     mutable QMutex mutex;
 };

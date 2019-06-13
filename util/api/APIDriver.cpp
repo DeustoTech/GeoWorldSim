@@ -147,7 +147,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     pending_request.callback = callback;
 
     this->mutex.lockForRead();
-    if( this->current_requests_amount > QThreadPool::globalInstance()->maxThreadCount() ){
+    if( this->current_requests_amount > 6 ){ // Magic number set by Qt : https://doc.qt.io/qt-5/qnetworkaccessmanager.html
         this->mutex.unlock();
 
         this->mutex.lockForWrite();

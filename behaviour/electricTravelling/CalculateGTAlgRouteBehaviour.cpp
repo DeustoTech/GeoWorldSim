@@ -6,12 +6,14 @@ QString CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
 QString CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
 QString CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
+QString CalculateGTAlgRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
 
 QString CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
 
 
 #include "../../util/api/APIDriver.h"
 #include "../../util/geometry/Coordinate.h"
+#include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -26,6 +28,8 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
+
+
 
     // If legs are empty, calculate them through algorithm:
     if ( next_destinations.isEmpty() ){
@@ -96,6 +100,8 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                         QJsonObject optimal_itinerary = itineraries.at( 0 ).toObject();
                         QJsonArray legs_array = optimal_itinerary.value( "legs" ).toArray();
 
+                        bool stop_if_no_route = this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool();
+
                         if( !legs_array.isEmpty() ){
 
                             // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
@@ -117,14 +123,18 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                                 QJsonObject properties;
                                 properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
                                 //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
-                                properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
                                 properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
 
                                 multiroute_skill->addDestination( destination_coor , properties );
                             }
                         }
-                    }
+                        else if ( legs_array.isEmpty() && stop_if_no_route ){
 
+                              GWSExecutionEnvironment::globalInstance()->unregisterEntity( agent );
+
+
+                        }
+                    }
 
                     reply->deleteLater();
                     agent->decrementBusy();

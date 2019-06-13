@@ -2,7 +2,7 @@
 
 #include <QJsonArray>
 
-GWSObjectStorage::GWSObjectStorage() : GWSObject(){
+GWSObjectStorage::GWSObjectStorage() : QObject(){
 
 }
 
@@ -11,15 +11,15 @@ GWSObjectStorage::GWSObjectStorage() : GWSObject(){
 **********************************************************************/
 
 bool GWSObjectStorage::isEmpty() const{
-    if( this->objects.keys().contains( GWSObject::staticMetaObject.className() ) ){
-        return this->objects.value( GWSObject::staticMetaObject.className() )->isEmpty();
+    if( this->objects.keys().contains( QObject::staticMetaObject.className() ) ){
+        return this->objects.value( QObject::staticMetaObject.className() )->isEmpty();
     }
     return true;
 }
 
 quint64 GWSObjectStorage::getAmount() const{
-    if( this && this->classes_stored.contains( GWSObject::staticMetaObject.className() ) ){
-        return this->objects.value( GWSObject::staticMetaObject.className() )->size();
+    if( this && this->classes_stored.contains( QObject::staticMetaObject.className() ) ){
+        return this->objects.value( QObject::staticMetaObject.className() )->size();
     }
     return 0;
 }
@@ -28,48 +28,51 @@ const QStringList GWSObjectStorage::getClasses() const{
     return this->classes_stored;
 }
 
-QList<QSharedPointer<GWSObject>> GWSObjectStorage::getAll() const{
-    return this->getByClass( GWSObject::staticMetaObject.className() );
+QList< QSharedPointer<QObject> > GWSObjectStorage::getAll() const{
+    return this->getByClass( QObject::staticMetaObject.className() );
 }
 
 template <class T>
 QList< QSharedPointer<T> > GWSObjectStorage::getAll() const{
     QList< QSharedPointer<T> > list;
-    foreach( QSharedPointer<GWSObject> obj , this->getAll() ){
+    foreach( QSharedPointer<QObject> obj , this->getAll() ){
         list.append( obj.dynamicCast<T>() );
     }
     return list;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
-    return this->getByClassAndUID<GWSObject>( class_name , uid );
+QSharedPointer<QObject> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
+    if ( this->classes_stored.contains( class_name ) ){
+        return this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
+    }
+    return Q_NULLPTR;
 }
 
-template <class T>
-QSharedPointer<T> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
-    if ( this->classes_stored.contains( class_name ) ){
-        QSharedPointer<GWSObject> obj = this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
+QSharedPointer<QObject> GWSObjectStorage::getByUID( QString uid ){
+    foreach( QString class_name , this->classes_stored ) {
+        QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
         if( !obj.isNull() ){
-            return obj.dynamicCast<T>();
+            return obj;
         }
     }
     return Q_NULLPTR;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getByUID( QString uid ){
-    return this->getByUID( uid );
+QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
+    if ( this->classes_stored.contains( class_name ) ){
+        QSharedPointer<QObject> obj = this->object_names.value( class_name )->value( name , Q_NULLPTR );
+        if( !obj.isNull() ){
+            return obj;
+        }
+    }
+    return Q_NULLPTR;
 }
 
-
-QSharedPointer<GWSObject> GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
-    return this->getByClassAndName<GWSObject>( class_name , name );
-}
-
-QList< QSharedPointer<GWSObject> > GWSObjectStorage::getByClass( QString class_name ) const{
-    QList< QSharedPointer<GWSObject> > list;
+QList< QSharedPointer<QObject> > GWSObjectStorage::getByClass( QString class_name ) const{
+    QList< QSharedPointer<QObject> > list;
     if( this->classes_stored.contains( class_name ) ){
         this->mutex.lock();
-        foreach (QSharedPointer<GWSObject> o, *this->objects.value( class_name ) ) {
+        foreach (QSharedPointer<QObject> o, *this->objects.value( class_name ) ) {
             list.append( o );
         }
         this->mutex.unlock();
@@ -77,18 +80,21 @@ QList< QSharedPointer<GWSObject> > GWSObjectStorage::getByClass( QString class_n
     return list;
 }
 
-QSharedPointer<GWSObject> GWSObjectStorage::getByName( QString name ) const{
-    foreach(QString class_name , this->classes_stored){
-        return this->object_names[ class_name ]->value( name , 0 );
+QSharedPointer<QObject> GWSObjectStorage::getByName( QString name ) const{
+    foreach( QString class_name , this->classes_stored){
+        QSharedPointer<QObject> obj = this->object_names.value( class_name )->value( name , Q_NULLPTR );
+        if( !obj.isNull() ){
+            return obj;
+        }
     }
-    return 0;
+    return Q_NULLPTR;
 }
 
 bool GWSObjectStorage::contains( QString class_name ) const{
     return this->classes_stored.contains( class_name );
 }
 
-bool GWSObjectStorage::contains( QSharedPointer<GWSObject> object ) const{
+bool GWSObjectStorage::contains( QSharedPointer<QObject> object ) const{
     if( !this->classes_stored.contains( object->metaObject()->className() ) ){
         return false;
     }
@@ -99,10 +105,17 @@ bool GWSObjectStorage::contains( QSharedPointer<GWSObject> object ) const{
  SETTERS
 **********************************************************************/
 
-void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
+void GWSObjectStorage::add( QSharedPointer<QObject> object ){
+
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() });
+    QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
 
     // Create storages
-    QJsonArray classes = object->getInheritanceFamily();
+    QSharedPointer<GWSObject> gws_object = object.dynamicCast<GWSObject>();
+    if( gws_object ){
+        classes = gws_object->getInheritanceFamily();
+        uid = gws_object->getUID();
+    }
     foreach( QJsonValue v , classes ){
 
         QString c = v.toString();
@@ -110,13 +123,13 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
 
         if( !this->classes_stored.contains( c ) ){
 
-            QList< QSharedPointer<GWSObject> >* list = new QList< QSharedPointer<GWSObject> >();
+            QList< QSharedPointer<QObject> >* list = new QList< QSharedPointer<QObject> >();
             this->objects.insert( c , list );
 
-            QHash<QString , QSharedPointer<GWSObject> >* map = new QHash<QString , QSharedPointer<GWSObject> >();
+            QHash<QString , QSharedPointer<QObject> >* map = new QHash<QString , QSharedPointer<QObject> >();
             this->object_names.insert( c , map );
 
-            QHash<QString , QSharedPointer<GWSObject> >* map2 = new QHash<QString , QSharedPointer<GWSObject> >();
+            QHash<QString , QSharedPointer<QObject> >* map2 = new QHash<QString , QSharedPointer<QObject> >();
             this->object_uids.insert( c , map2 );
 
             this->classes_stored.append( c );
@@ -133,16 +146,24 @@ void GWSObjectStorage::add( QSharedPointer<GWSObject> object ){
 
         this->objects[ c ]->append( object );
         this->object_names[ c ]->insert( object->objectName() , object );
-        this->object_uids[ c ]->insert( object->getUID() , object );
+        this->object_uids[ c ]->insert( uid , object );
 
         this->mutex.unlock();
     }
 }
 
-void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
+void GWSObjectStorage::remove( QSharedPointer<QObject> object ){
 
-    // Remove from storage
-    QJsonArray classes = object->getInheritanceFamily();
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() });
+    QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
+
+    // Remove from storages
+    QSharedPointer<GWSObject> gws_object = object.dynamicCast<GWSObject>();
+    if( gws_object ){
+        classes = gws_object->getInheritanceFamily();
+        uid = gws_object->getUID();
+    }
+
     foreach( QJsonValue v , classes ){
 
         QString c = v.toString();
@@ -153,7 +174,7 @@ void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
 
             this->objects.value( c )->removeAll( object );
             this->object_names.value( c )->remove( object->objectName() );
-            this->object_uids.value( c )->remove( object->getUID() );
+            this->object_uids.value( c )->remove( uid );
 
             if( this->objects.value( c )->isEmpty() ){
                 this->classes_stored.removeAll( c );
@@ -164,7 +185,7 @@ void GWSObjectStorage::remove( QSharedPointer<GWSObject> object ){
 }
 
 void GWSObjectStorage::deleteAll(){
-    foreach( QSharedPointer<GWSObject> obj , this->getAll() ){
+    foreach( QSharedPointer<QObject> obj , this->getAll() ){
         obj.clear();
     }
 }

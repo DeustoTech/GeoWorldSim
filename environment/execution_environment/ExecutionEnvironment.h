@@ -71,7 +71,6 @@ private:
 
     // Threshold from current_time IN MILLISECONDS
     // Otherwise only minest_tick entity is executed (1 per cycle)
-    qint64 last_tick_with_entities = 0;
     const quint64 tick_time_window;
     const uint max_entity_amount_per_tick;
 

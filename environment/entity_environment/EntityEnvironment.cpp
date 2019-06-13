@@ -30,11 +30,7 @@ bool GWSEntityEnvironment::contains(QString class_name) const{
 }
 
 QSharedPointer<GWSEntity> GWSEntityEnvironment::getRandomByClass(QString class_name){
-    return this->getRandomByClass<GWSEntity>( class_name );
-}
-
-template <class T> QSharedPointer<T> GWSEntityEnvironment::getRandomByClass( QString class_name ){
-    QList< QSharedPointer<T> > all = this->getByClass<T>( class_name );
+    QList< QSharedPointer<GWSEntity> > all = this->environment_entities->getByClass<GWSEntity>( class_name );
     return all.at( qrand() % all.size() );
 }
 
@@ -59,49 +55,25 @@ QList< QSharedPointer<GWSEntity> > GWSEntityEnvironment::getByUIDS(QJsonArray js
 }
 
 QSharedPointer<GWSEntity> GWSEntityEnvironment::getByClassAndUID( QString class_name , QString id) const{
-    return this->getByClassAndUID<GWSEntity>( class_name , id );
-}
-
-template <class T> QSharedPointer<T> GWSEntityEnvironment::getByClassAndUID( QString class_name , QString id ) const{
     if( this->environment_entities ){
-        QSharedPointer<GWSObject> obj = this->environment_entities->getByClassAndUID( class_name , id );
+        QSharedPointer<GWSEntity> obj = this->environment_entities->getByClassAndUID<GWSEntity>( class_name , id );
         if( !obj.isNull() ){
-            try {
-                return obj.dynamicCast<T>();
-            } catch(...){}
-
+            return obj;
         }
     }
-    return 0;
+    return Q_NULLPTR;
 }
 
 QSharedPointer<GWSEntity> GWSEntityEnvironment::getByClassAndName( QString class_name , QString agent_name) const{
-    return this->getByClassAndName<GWSEntity>( class_name , agent_name );
-}
-
-template <class T> QSharedPointer<T> GWSEntityEnvironment::getByClassAndName( QString class_name , QString agent_name) const{
-    return this->environment_entities->getByClassAndName( class_name , agent_name ).dynamicCast<T>();
+    return this->environment_entities->getByClassAndName<GWSEntity>( class_name , agent_name );
 }
 
 QList< QSharedPointer<GWSEntity> > GWSEntityEnvironment::getByClass( QString class_name ) const{
-    return this->getByClass<GWSEntity>( class_name );
+    return this->environment_entities->getByClass<GWSEntity>( class_name );
 }
-
-template <class T> QList<QSharedPointer<T> > GWSEntityEnvironment::getByClass( QString class_name ) const{
-    QList< QSharedPointer<T> > entities;
-    foreach( QSharedPointer<GWSObject> o , this->environment_entities->getByClass( class_name ) ){
-        entities.append( o.dynamicCast<T>() );
-    }
-    return entities;
-}
-
 
 QSharedPointer<GWSEntity> GWSEntityEnvironment::getByName( QString agent_name ) const{
-    return this->getByName<GWSEntity>( agent_name );
-}
-
-template <class T> QSharedPointer<T> GWSEntityEnvironment::getByName(QString agent_name) const{
-    return this->environment_entities->getByName( agent_name ).dynamicCast<T>();
+    return this->environment_entities->getByName<GWSEntity>( agent_name );
 }
 
 /**********************************************************************
