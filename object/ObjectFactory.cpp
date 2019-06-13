@@ -6,6 +6,8 @@
 
 #include "../../app/App.h"
 #include "../../entity/Entity.h"
+#include "../../skill/Skill.h"
+#include "../../behaviour/Behaviour.h"
 #include "../../util/parallelism/ParallelismController.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
@@ -16,9 +18,9 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
-    //this->registerType( GWSEntity::staticMetaObject );
-    //this->registerType( GWSSkill::staticMetaObject );
-    //this->registerType( GWSBehaviour::staticMetaObject );
+    this->registerType( GWSEntity::staticMetaObject );
+    this->registerType( GWSSkill::staticMetaObject );
+    this->registerType( GWSBehaviour::staticMetaObject );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){

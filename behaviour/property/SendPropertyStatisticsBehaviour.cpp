@@ -54,7 +54,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     if( !this->accumulated_grid ){
         this->accumulated_grid = new GWSGrid( bounds , 100 , 100 , grid_type );
     } else {
-        //this->accumulated_grid->setBounds( bounds );
+        this->accumulated_grid->setBounds( bounds );
     }
 
 

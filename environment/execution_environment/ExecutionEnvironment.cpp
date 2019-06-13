@@ -26,7 +26,7 @@ GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
 }
 
 GWSExecutionEnvironment::GWSExecutionEnvironment() :
-    tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 9999 ) ,
+    tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 999 ) ,
     max_entity_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value("tick_entity_amount").toDouble( 500 ) ) ,
     GWSEnvironment() {
     qInfo() << "ExecutionEnvironment created";
@@ -204,9 +204,10 @@ void GWSExecutionEnvironment::behave(){
     if( entities_to_tick ){
 
         // Store min tick
-        if( min_tick <= 0 ){ min_tick = current_datetime; }
-        this->last_tick_with_entities = min_tick;
-        if( min_tick < current_datetime ){ GWSTimeEnvironment::globalInstance()->setDatetime( min_tick ); }
+        if( min_tick <= 0 || min_tick > current_datetime ){ min_tick = current_datetime; }
+        if( min_tick < current_datetime ){
+            GWSTimeEnvironment::globalInstance()->setDatetime( min_tick );
+        }
 
         qint64 limit = min_tick + this->tick_time_window; // Add threshold, otherwise only the minest_tick entity is executed
         foreach( QSharedPointer<GWSEntity> entity , currently_running_entities ){
@@ -217,7 +218,7 @@ void GWSExecutionEnvironment::behave(){
 
             qint64 entity_next_tick = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
-            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && current_datetime >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
+            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
                 this->unregisterEntity( entity );
                 continue;
             }
@@ -260,14 +261,15 @@ void GWSExecutionEnvironment::behave(){
         // DIRECTLY USE QTIMER::SINGLESHOT
         qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
 
-        // DO NOT ADVANCE IN TIME
+        // WAIT SOME MORE
         if( ticked_entities <= 0 ){
             next_tick_in = next_tick_in*2;
         }
 
+        // DO NOT ADVANCE IN TIME
         if( min_tick <= 0 ){
             next_tick_in = 1000;
-            GWSTimeEnvironment::globalInstance()->setDatetime( this->last_tick_with_entities - (1000 * GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) );
+            GWSTimeEnvironment::globalInstance()->setDatetime( current_datetime - (1000 * GWSTimeEnvironment::globalInstance()->getTimeSpeed() ) );
         }
 
         QTimer::singleShot( next_tick_in , this , &GWSExecutionEnvironment::tick );

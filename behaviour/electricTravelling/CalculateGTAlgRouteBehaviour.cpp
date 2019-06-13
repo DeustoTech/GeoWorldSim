@@ -29,12 +29,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
-    bool stop_if_no_route = false;
-
-    if ( !this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).isNull() ){
-
-        stop_if_no_route = this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool();
-    }
 
 
     // If legs are empty, calculate them through algorithm:
@@ -106,6 +100,8 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                         QJsonObject optimal_itinerary = itineraries.at( 0 ).toObject();
                         QJsonArray legs_array = optimal_itinerary.value( "legs" ).toArray();
 
+                        bool stop_if_no_route = this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool();
+
                         if( !legs_array.isEmpty() ){
 
                             // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
@@ -127,20 +123,19 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                                 QJsonObject properties;
                                 properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
                                 //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
-                                properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
                                 properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
 
                                 multiroute_skill->addDestination( destination_coor , properties );
                             }
                         }
+                        else if ( legs_array.isEmpty() && stop_if_no_route ){
+
+                              GWSExecutionEnvironment::globalInstance()->unregisterEntity( agent );
+
+
+                        }
                     }
 
-                    else if ( json.isEmpty() && this->getProperty( STOP_ENTITY_IF_NO_ROUTE ).toBool()){
-
-                          GWSExecutionEnvironment::globalInstance()->unregisterEntity( agent );
-
-
-                    }
                     reply->deleteLater();
                     agent->decrementBusy();
 

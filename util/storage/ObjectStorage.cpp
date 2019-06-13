@@ -43,10 +43,7 @@ QList< QSharedPointer<T> > GWSObjectStorage::getAll() const{
 
 QSharedPointer<QObject> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
     if ( this->classes_stored.contains( class_name ) ){
-        QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
-        if( !obj.isNull() ){
-            return obj;
-        }
+        return this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
     }
     return Q_NULLPTR;
 }

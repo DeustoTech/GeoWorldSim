@@ -28,20 +28,14 @@ public:
 
     template <class T>
     QSharedPointer<T> getByClassAndUID( QString class_name , QString uid ) const{
-        if ( this->classes_stored.contains( class_name ) ){
-            return this->getByClassAndUID( class_name , uid ).dynamicCast<T>();
-        }
-        return Q_NULLPTR;
+        return this->getByClassAndUID( class_name , uid ).dynamicCast<T>();
     }
     QSharedPointer<QObject> getByClassAndUID( QString class_name , QString uid ) const;
     QSharedPointer<QObject> getByUID( QString uid );
 
     template <class T>
     QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const {
-        if ( this->classes_stored.contains( class_name ) ){
-             return this->object_names[ class_name ]->value( name , 0 ).dynamicCast<T>();
-        }
-        return Q_NULLPTR;
+        return this->getByClassAndName( class_name , name ).dynamicCast<T>();
     }
     QSharedPointer<QObject> getByClassAndName( QString class_name , QString name ) const;
 
