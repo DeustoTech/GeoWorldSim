@@ -35,10 +35,9 @@ QPair< double , QJsonArray > SetNextRouteDestinationBehaviour::behave(){
         agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id );
 
         QSharedPointer<GWSEntity> destination_agent = GWSEntityEnvironment::globalInstance()->getByUID( next_destination_agent_id );
-        GWSCoordinate next_destination_agent_coor = GWSGeometry( destination_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getCentroid();
+        GWSGeometry next_destination_agent_geom= GWSGeometry( destination_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
-        agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_X_VALUE ) , next_destination_agent_coor.getX() );
-        agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_Y_VALUE ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_Y_VALUE ) , next_destination_agent_coor.getY() );
+        agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ) , next_destination_agent_geom.getGeoJSON() );
 
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray() );
 
