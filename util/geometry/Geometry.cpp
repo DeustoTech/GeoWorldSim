@@ -27,10 +27,7 @@ GWSGeometry::GWSGeometry( const GWSCoordinate &coor ){
     this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
 }
 
-GWSGeometry::GWSGeometry(const GWSGeometry &other ){
-    this->geojson = QJsonObject( other.geojson );
-    this->inner_geometry = other.inner_geometry ? other.inner_geometry->clone() : Q_NULLPTR;
-}
+GWSGeometry::GWSGeometry(const GWSGeometry &other ) : GWSGeometry( other.geojson ){}
 
 GWSGeometry::~GWSGeometry(){
     if( this->inner_geometry ){
@@ -52,7 +49,7 @@ QJsonObject GWSGeometry::getGeoJSON() const{
 }
 
 bool GWSGeometry::isValid() const{
-    return this->inner_geometry && !this->geojson.isEmpty();
+    return this->inner_geometry != Q_NULLPTR && !this->geojson.isEmpty();
 }
 
 GWSCoordinate GWSGeometry::getCentroid() const{

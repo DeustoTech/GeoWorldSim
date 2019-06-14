@@ -34,5 +34,8 @@ bool GWSGeometryComparators::GWSGeometryComparators::equals( const GWSGeometry &
 }
 
 GWSLengthUnit GWSGeometryComparators::GWSGeometryComparators::getDistance( const GWSGeometry &geometry , const GWSGeometry &other ){
-    return GWSLengthUnit( geometry.inner_geometry ? geometry.inner_geometry->distance( other.inner_geometry )  * 110574 : -1 );
+    if( geometry.isValid() && other.isValid() ){
+        return GWSLengthUnit( geometry.inner_geometry->distance( other.inner_geometry ) * 110574 );
+    }
+    return -1;
 }

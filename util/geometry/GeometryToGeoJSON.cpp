@@ -15,7 +15,9 @@
 geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( const QJsonObject &geojson ){
 
     QString geom_type = geojson.value("type").toString();
-    if( geom_type.isEmpty() ){ return Q_NULLPTR; }
+    if( geom_type.isEmpty() ){
+        return Q_NULLPTR;
+    }
 
     const geos::geom::GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
     geos::geom::Geometry* geom = Q_NULLPTR;
