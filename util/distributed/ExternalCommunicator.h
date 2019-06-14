@@ -10,7 +10,7 @@ class GWSExternalCommunicator : public QObject
     Q_OBJECT
 
 public:
-    GWSExternalCommunicator( QString socket_id );
+    GWSExternalCommunicator( const QString &socket_id );
 
 public slots:
 

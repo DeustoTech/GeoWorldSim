@@ -34,22 +34,22 @@ void GWSObjectFactory::registerType( QMetaObject metaobject ){
     this->constructors.insert( metaobject.className() , metaobject );
 }
 
-const QMetaObject GWSObjectFactory::getRegisteredType( QString type_name ){
+const QMetaObject GWSObjectFactory::getRegisteredType( const QString &type_name ){
     return this->constructors.value( type_name );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromType( QString type , QSharedPointer<GWSObject> parent ){
+QSharedPointer<GWSObject> GWSObjectFactory::fromType( const QString &type , QSharedPointer<GWSObject> parent ){
     QJsonObject json;
     json.insert( GWSObject::GWS_CLASS_PROP , type );
     return this->fromJSON( json , parent );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromBytes(QByteArray json_bytes, QSharedPointer<GWSObject> parent){
+QSharedPointer<GWSObject> GWSObjectFactory::fromBytes( const QByteArray &json_bytes, QSharedPointer<GWSObject> parent){
     QJsonObject object = QJsonDocument::fromJson( json_bytes ).object();
     return this->fromJSON( object , parent );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent ){
+QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
 
     if( json.isEmpty() ){
         qWarning() << QString("Object Factory received empty JSON");
@@ -97,7 +97,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( QJsonObject json , QShared
     return obj;
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyName(QString property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
+QJsonValue GWSObjectFactory::simpleOrParentPropertyName( QString &property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
 
     // IS STRING AND <>
 
@@ -170,7 +170,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_va
     return property_value;
 }
 
-QJsonValue GWSObjectFactory::incrementValue(QJsonValue existing_value, QJsonValue increment){
+QJsonValue GWSObjectFactory::incrementValue( QJsonValue existing_value , QJsonValue increment){
 
     if( existing_value.isNull() ){
         return increment;
@@ -217,7 +217,7 @@ QJsonValue GWSObjectFactory::incrementValue(QJsonValue existing_value, QJsonValu
 
     if( existing_value.isObject() ){
         foreach( QString key , existing_value.toObject().keys() ){
-            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
+            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject().value(key) , increment.toObject().value(key) ) );
         }
     }
 

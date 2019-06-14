@@ -48,6 +48,10 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
 
 
     GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds( entity_type );
+    if( !bounds.isValid() ){
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_STILL_ALIVE ).toArray() );
+    }
+
     GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
 
     // Create accumulated_grid

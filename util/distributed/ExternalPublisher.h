@@ -1,5 +1,5 @@
-#ifndef EXTERNALPUBLISHER_H
-#define EXTERNALPUBLISHER_H
+#ifndef GWSEXTERNALPUBLISHER_H
+#define GWSEXTERNALPUBLISHER_H
 
 #include <QJsonObject>
 
@@ -10,10 +10,10 @@ class GWSExternalPublisher : public GWSExternalCommunicator
 Q_OBJECT
 
 public:
-    GWSExternalPublisher(QString socket_id);
+    GWSExternalPublisher(const QString &socket_id);
 
-    void sendMessage(QString signal , QJsonValue json);
+    void sendMessage(const QString &signal , const QJsonValue &json);
 
 };
 
-#endif // EXTERNALPUBLISHER_H
+#endif // GWSEXTERNALPUBLISHER_H

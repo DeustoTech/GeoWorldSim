@@ -66,8 +66,8 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     GWSSpeedUnit max_speed = GWSSpeedUnit( entity->getProperty( MoveSkill::MAX_SPEED ).toDouble( 14 ) );
     QSharedPointer<GWSEntity> current_edge = movethroughroute_skill->getCurrentEdge();
     if( current_edge ){ // TODO!
-            max_speed = GWSSpeedUnit( current_edge->getProperty( MoveSkill::MAX_SPEED ).toDouble( max_speed.number() ) );
-     }
+        max_speed = GWSSpeedUnit( current_edge->getProperty( MoveSkill::MAX_SPEED ).toDouble( max_speed.number() ) );
+    }
 
     // Accelerate or Brake
     if( current_speed == 0 ){
@@ -79,7 +79,7 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
 
     // Pending time to reach next route point can be higher than the duration requested.
     GWSCoordinate entity_position = entity_geom.getCentroid();
-    GWSCoordinate next_route_point = movethroughroute_skill->getCurrentMonvintTowards();
+    GWSCoordinate next_route_point = movethroughroute_skill->getCurrentMovingTowards();
     if( !next_route_point.isValid() ){ next_route_point = destination_coor; }
     GWSLengthUnit pending_distance = entity_position.getDistance( next_route_point );
     GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed

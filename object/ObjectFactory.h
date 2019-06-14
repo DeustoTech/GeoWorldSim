@@ -17,15 +17,15 @@ public:
 
     // METHODS
     void registerType( const QMetaObject metaobject );
-    const QMetaObject getRegisteredType( QString type_name );
-    QSharedPointer<GWSObject> fromType( QString type , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
-    QSharedPointer<GWSObject> fromBytes( QByteArray bytes , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
-    QSharedPointer<GWSObject> fromJSON( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    const QMetaObject getRegisteredType( const QString &type_name );
+    QSharedPointer<GWSObject> fromType( const QString &type , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    QSharedPointer<GWSObject> fromBytes( const QByteArray &bytes , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    QSharedPointer<GWSObject> fromJSON( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // STATICS
-    static QJsonValue simpleOrParentPropertyName( QString property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
-    static QJsonValue simpleOrParentPropertyValue(QJsonValue property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
-    static QJsonValue incrementValue(QJsonValue existing_value , QJsonValue increment);
+    static QJsonValue simpleOrParentPropertyName( QString &property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
+    static QJsonValue simpleOrParentPropertyValue( QJsonValue property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
+    static QJsonValue incrementValue( QJsonValue existing_value , QJsonValue increment);
 
 protected:
     GWSObjectFactory();

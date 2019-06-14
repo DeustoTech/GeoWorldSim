@@ -19,21 +19,21 @@ public:
 
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
     void listenSocket( QString socket_id );
-    void sendAgentSignal( QJsonObject agent_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendMessageSignal( QJsonObject message_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
-    void dataReceivedSignal( QJsonObject message_json , QString socket_id );
+    void sendAgentSignal( const QJsonObject &agent_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendMessageSignal( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void dataReceivedSignal( const QJsonObject &message_json , const QString &socket_id );
 
 private slots:
     void dataReceivedFromSocket( QJsonObject data );
 
     // SOCKETS
-    void connectExternalSocket( QString socket_id );
-    void disconnectExternalSocket( QString socket_id );
+    void connectExternalSocket( const QString &socket_id );
+    void disconnectExternalSocket( const QString &socket_id );
 
     // SOCKET DATA
-    void sendAgent( QJsonObject agent_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendMessage( QJsonObject message_json , QString socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendData( QString signal , QJsonObject data , QString socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendAgent( const QJsonObject &agent_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendMessage( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendData( const QString &signal , const QJsonObject &data , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
 
 private:
     GWSCommunicationEnvironment();

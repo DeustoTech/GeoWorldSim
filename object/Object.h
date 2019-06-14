@@ -45,10 +45,10 @@ public:
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
-    bool setProperty(const QString name, const GWSUnit &value);
-    bool setProperty(const QString name, const QJsonValue &value);
-    bool incrementProperty(const QString name , const QJsonValue &value);
-    void copyProperties(const GWSObject &other);
+    bool setProperty( const QString &name, const GWSUnit &value);
+    bool setProperty( const QString &name, const QJsonValue &value);
+    bool incrementProperty( QString &name , const QJsonValue &value);
+    void copyProperties( GWSObject &other);
 
     // EVENTS
     bool event(QEvent *event);
@@ -57,7 +57,7 @@ public:
     bool deleted = true; // IMPORTANT
 
 signals:
-    void propertyChangedSignal( QString name );
+    void propertyChangedSignal( const QString &name );
 
 protected:
 

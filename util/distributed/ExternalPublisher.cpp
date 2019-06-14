@@ -5,11 +5,11 @@
 
 #include <QJsonDocument>
 
-GWSExternalPublisher::GWSExternalPublisher(QString socket_id) : GWSExternalCommunicator( socket_id){
+GWSExternalPublisher::GWSExternalPublisher(const QString &socket_id) : GWSExternalCommunicator( socket_id){
 
 }
 
-void GWSExternalPublisher::sendMessage(QString signal , QJsonValue json){
+void GWSExternalPublisher::sendMessage(const QString &signal , const QJsonValue &json){
 
     // TO sockets.geoworldsim.com
     QJsonObject socket_json;

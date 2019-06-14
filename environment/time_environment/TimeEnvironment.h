@@ -39,7 +39,7 @@ public:
 
     // SETTERS
     void setDatetime( quint64 current_datetime_msecs );
-    void setTimeSpeed(double time_speed = 1);
+    void setTimeSpeed( double time_speed = 1 );
     //void setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime );
     //void incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds );
 

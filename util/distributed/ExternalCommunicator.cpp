@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QTimer>
 
-GWSExternalCommunicator::GWSExternalCommunicator( QString socket_id ) : QObject (){
+GWSExternalCommunicator::GWSExternalCommunicator( const QString &socket_id ) : QObject (){
     this->socket_id = socket_id;
     this->startSocket();
 }

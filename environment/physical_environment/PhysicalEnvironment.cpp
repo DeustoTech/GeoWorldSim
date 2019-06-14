@@ -31,7 +31,7 @@ const GWSGeometry GWSPhysicalEnvironment::getBounds() const{
     return bounds;
 }
 
-const GWSGeometry GWSPhysicalEnvironment::getBounds( QString class_name ) const {
+const GWSGeometry GWSPhysicalEnvironment::getBounds(QString &class_name ) const {
     if( this->environment_entity_indexes.keys().contains( class_name ) ){
         return this->environment_entity_indexes.value( class_name )->getBounds();
     }
@@ -46,7 +46,7 @@ const GWSGeometry GWSPhysicalEnvironment::getGeometry( QSharedPointer<GWSEntity>
     return this->getGeometry( agent->getUID() );
 }
 
-const GWSGeometry GWSPhysicalEnvironment::getGeometry( QString agent_id ) const{
+const GWSGeometry GWSPhysicalEnvironment::getGeometry(const QString &agent_id ) const{
     if( this->environment_entity_indexes.keys().contains( GWSEntity::staticMetaObject.className() ) ){
         return this->environment_entity_indexes.value( GWSEntity::staticMetaObject.className() )->getGeometry( agent_id );
     }

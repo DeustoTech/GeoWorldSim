@@ -132,7 +132,7 @@ QJsonArray GWSObject::getInheritanceFamily() const{
     return inheritance_family;
 }
 
-bool GWSObject::hasProperty(QString name) const{
+bool GWSObject::hasProperty( QString name) const{
     return !QObject::property( name.toUtf8() ).isNull();
 }
 
@@ -160,18 +160,18 @@ const QJsonValue GWSObject::operator []( QString name ) const{
  SETTERS
 **********************************************************************/
 
-bool GWSObject::setProperty(const QString name, const GWSUnit &value){
+bool GWSObject::setProperty( const QString &name, const GWSUnit &value){
     return this->setProperty( name , value.number() );
 }
 
-bool GWSObject::setProperty(const QString name, const QJsonValue &value){
+bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
     this->mutex.lock();
     bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
     this->mutex.unlock();
     return ok;
 }
 
-void GWSObject::copyProperties(const GWSObject &other){
+void GWSObject::copyProperties( GWSObject &other){
     /*for (int i = 0; i < other.dynamicPropertyNames().size(); ++i) {
         const char* property_name = other.dynamicPropertyNames().at( i );
         const QVariant property_value = other.getProperty( property_name );
@@ -179,7 +179,7 @@ void GWSObject::copyProperties(const GWSObject &other){
     }*/
 }
 
-bool GWSObject::incrementProperty(const QString name, const QJsonValue &value){
+bool GWSObject::incrementProperty( QString &name, const QJsonValue &value){
     QJsonValue existing_value = this->getProperty( name );
     QJsonValue values_sum = GWSObjectFactory::incrementValue( existing_value , value );
     return this->setProperty( name , values_sum );

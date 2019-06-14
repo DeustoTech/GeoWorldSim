@@ -38,7 +38,7 @@ void GWSCommunicationEnvironment::unregisterEntity( QSharedPointer<GWSEntity> ag
     Q_UNUSED(agent);
 }
 
-void GWSCommunicationEnvironment::connectExternalSocket(QString socket_id){
+void GWSCommunicationEnvironment::connectExternalSocket(const QString &socket_id){
     GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
     if( !listener ){
         qDebug() << QString("Creating external listener %1").arg( socket_id );
@@ -48,7 +48,7 @@ void GWSCommunicationEnvironment::connectExternalSocket(QString socket_id){
         }
 }
 
-void GWSCommunicationEnvironment::disconnectExternalSocket(QString socket_id){
+void GWSCommunicationEnvironment::disconnectExternalSocket(const QString &socket_id){
     GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
     if( listener ){
         listener->disconnect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::dataReceivedFromSocket );
@@ -101,15 +101,15 @@ void GWSCommunicationEnvironment::disconnectExternalSocket(QString socket_id){
  DATA
 **********************************************************************/
 
-void GWSCommunicationEnvironment::sendAgent(QJsonObject agent_json, QString socket_id){
+void GWSCommunicationEnvironment::sendAgent(const QJsonObject &agent_json, const QString &socket_id){
     this->sendData( "entity" , agent_json , socket_id );
 }
 
-void GWSCommunicationEnvironment::sendMessage(QJsonObject message_json, QString socket_id){
+void GWSCommunicationEnvironment::sendMessage(const QJsonObject &message_json, const QString &socket_id){
     this->sendData( "message" , message_json , socket_id );
 }
 
-void GWSCommunicationEnvironment::sendData(QString signal , QJsonObject data , QString socket_id ){
+void GWSCommunicationEnvironment::sendData(const QString &signal , const QJsonObject &data , const QString &socket_id ){
 
     // To be done in the main thread
     QTimer::singleShot( 0 , GWSApp::globalInstance() , [ this , signal , data , socket_id ](){

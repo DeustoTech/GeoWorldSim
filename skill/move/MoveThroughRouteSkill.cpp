@@ -33,7 +33,7 @@ QSharedPointer<GWSEntity> MoveThroughRouteSkill::getCurrentEdge() const{
     return Q_NULLPTR;
 }
 
-GWSCoordinate MoveThroughRouteSkill::getCurrentMonvintTowards() const{
+GWSCoordinate MoveThroughRouteSkill::getCurrentMovingTowards() const{
     if( !this->pending_edge_coordinates.isEmpty() ){
         return  this->pending_edge_coordinates.at( 0 );
     }
@@ -121,7 +121,7 @@ void MoveThroughRouteSkill::move( GWSTimeUnit movement_duration , GWSSpeedUnit m
     QSharedPointer<GWSEntity> current_edge_agent = this->getCurrentEdge();
     agent->setProperty( CURRENT_ROAD_ID , current_edge_agent->getUID() );
     agent->setProperty( CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "type" ) );
-    agent->setProperty( CURRENT_ROAD_MAXSPEED , current_edge_agent->getProperty( "maxspeed" ) );
+    agent->setProperty( CURRENT_ROAD_MAXSPEED , current_edge_agent->getProperty( MoveSkill::MAX_SPEED ) );
 
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
