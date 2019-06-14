@@ -23,19 +23,19 @@ public:
     // GETTERS
     QStringList getElements() const;
     const GWSGeometry getBounds() const;
-    const GWSGeometry getGeometry( QString object_id ) const;
+    const GWSGeometry getGeometry( const QString &object_id ) const;
 
-    QStringList getElements( const GWSCoordinate coordinate );
-    QStringList getElements( const GWSGeometry geom );
+    QStringList getElements( const GWSCoordinate &coordinate );
+    QStringList getElements( const GWSGeometry &geom );
     QStringList getElements( double minX, double maxX, double minY, double maxY );
 
-    QString getNearestElement( GWSCoordinate coor );
-    QString getNearestElement( GWSGeometry geometry );
+    QString getNearestElement( const GWSCoordinate &coor );
+    QString getNearestElement( const GWSGeometry &geometry );
 
     // SETTERS
-    void upsert( QString object_id , GWSCoordinate coor );
-    void upsert( QString object_id , const GWSGeometry geom );
-    void remove( QString object_id );
+    void upsert( const QString &object_id , const GWSCoordinate &coor );
+    void upsert( const QString &object_id , const GWSGeometry &geom );
+    void remove( const QString &object_id );
 
 protected:
 

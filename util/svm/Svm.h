@@ -16,7 +16,7 @@ public:
 
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset );
-    virtual QJsonObject run(  QMap< QString, QVariant> inputs );
+    virtual QJsonObject run( const QMap< QString, QVariant> &inputs );
     virtual void saveModel( QString model_file_path );
     virtual void loadModel( QString model_file_path );
 

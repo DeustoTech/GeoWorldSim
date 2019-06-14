@@ -12,8 +12,7 @@ public:
     Q_INVOKABLE explicit MoveBehaviour();
 
     // PROPERTIES
-    static QString INPUT_MOVE_TO_X;
-    static QString INPUT_MOVE_TO_Y;
+    static QString INPUT_MOVE_TO;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
 

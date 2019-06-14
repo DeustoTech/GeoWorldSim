@@ -32,7 +32,7 @@ const GWSGeometry GWSQuadtree::getBounds() const {
     return GWSGeometry( geom );
 }
 
-const GWSGeometry GWSQuadtree::getGeometry( QString object_id ) const {
+const GWSGeometry GWSQuadtree::getGeometry(const QString &object_id ) const {
     this->mutex.lockForWrite();
     GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
     this->mutex.unlock();
@@ -41,7 +41,7 @@ const GWSGeometry GWSQuadtree::getGeometry( QString object_id ) const {
     return GWSGeometry();
 }
 
-QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
+QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
     QStringList objects_ids;
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
@@ -87,7 +87,7 @@ QStringList GWSQuadtree::getElements( GWSCoordinate coor ){
     return objects_ids;
 }
 
-QStringList GWSQuadtree::getElements(const GWSGeometry geom){
+QStringList GWSQuadtree::getElements( const GWSGeometry &geom ){
     return this->getElements(
                 GWSGeometryGetters::getGeometryMinX( geom ) ,
                 GWSGeometryGetters::getGeometryMaxX( geom ) ,
@@ -172,7 +172,7 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     return objects_ids;
 }
 
-QString GWSQuadtree::getNearestElement( GWSCoordinate coor ) {
+QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
 
     if( !coor.isValid() ){ return QString(); }
 
@@ -199,7 +199,7 @@ QString GWSQuadtree::getNearestElement( GWSCoordinate coor ) {
     return nearest_object_id;
 }
 
-QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {
+QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
 
     if( !geom.isValid() ){ return QString(); }
 
@@ -226,12 +226,12 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry geom ) {
     return nearest_object_id;
 }
 
-void GWSQuadtree::upsert( QString object_id , GWSCoordinate coor ){
-    GWSGeometry geom = GWSGeometryTransformators::transformMove( GWSGeometry() , coor );
+void GWSQuadtree::upsert( const QString &object_id , const GWSCoordinate &coor ){
+    GWSGeometry geom = GWSGeometry( coor );
     this->upsert( object_id , geom );
 }
 
-void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
+void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
     if( object_id.isEmpty() ){
         return;
@@ -322,7 +322,7 @@ void GWSQuadtree::upsert( QString object_id , const GWSGeometry geom ){
 
 }
 
-void GWSQuadtree::remove( QString object_id ){
+void GWSQuadtree::remove( const QString &object_id ){
 
     if( object_id.isEmpty() ){
         return;

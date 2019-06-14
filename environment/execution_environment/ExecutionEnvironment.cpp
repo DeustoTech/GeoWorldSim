@@ -142,7 +142,7 @@ void GWSExecutionEnvironment::run(){
     emit this->runningExecutionSignal();
 
     // Set timeout not to have infinite simulations
-    int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 60 );
+    int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 5 );
     QTimer::singleShot( timeout * 1000 , []{
         GWSApp::globalInstance()->exit( -1 );
     });
@@ -163,8 +163,8 @@ void GWSExecutionEnvironment::behave(){
     QList< QSharedPointer<GWSEntity> > currently_running_entities = this->getRunning();
 
     if( currently_running_entities.isEmpty() ){
+        GWSApp::globalInstance()->exit( 0 );
         this->stop();
-        QTimer::singleShot( 10*1000 , [](){ GWSApp::exit( 0 ); });
         return;
     }
 
@@ -176,8 +176,8 @@ void GWSExecutionEnvironment::behave(){
 
     // If simulation end_time reached
     if( current_datetime > this->getProperty( ENTITY_DEATH_PROP ).toDouble() ){
+        GWSApp::globalInstance()->exit( 0 );
         this->stop();
-        QTimer::singleShot( 10*1000 , [](){ GWSApp::exit( 0 ); });
         return;
     }
 

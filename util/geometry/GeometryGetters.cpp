@@ -48,7 +48,7 @@ QList<GWSCoordinate> GWSGeometryGetters::getCoordinates(GWSGeometry geometry){
     if( geometry.isValid() && geometry.inner_geometry ){
         geos::geom::CoordinateSequence* seq = geometry.inner_geometry->getCoordinates();
         if( seq ){
-            for(int i = 0; i < seq->size() ; i++){
+            for(unsigned int i = 0; i < seq->size() ; i++){
                 const geos::geom::Coordinate coor = seq->getAt( i );
                 coordinates.append( GWSCoordinate( coor.x , coor.y , coor.z ) );
             }

@@ -313,7 +313,7 @@ void GWSEntity::behave(){
         QSharedPointer<GWSBehaviour> behaviour = this->getBehaviour( id );
         if( behaviour.isNull() ){
             qCritical() << QString("Entity %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( id );
-            GWSApp::exit( -1 );
+            GWSApp::globalInstance()->exit( -1 );
         } else {
             next_execute_behaviours.append( behaviour );
         }

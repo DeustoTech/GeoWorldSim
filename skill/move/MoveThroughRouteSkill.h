@@ -23,10 +23,10 @@ public:
 
     // GETTERS
     QSharedPointer<GWSEntity> getCurrentEdge() const;
-    GWSCoordinate getCurrentMovingTowards() const;
+    GWSGeometry getCurrentMovingTowards() const;
 
     // METHODS
-    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );
+    virtual void move( const GWSTimeUnit &movement_duration , const GWSSpeedUnit &movement_speed , GWSGeometry &route_destination_geom , QString &graph_type );
 
 protected:
 

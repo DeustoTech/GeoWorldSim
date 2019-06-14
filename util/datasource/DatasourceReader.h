@@ -13,7 +13,7 @@ class GWSDatasourceReader : public QObject
     Q_OBJECT
 
 public:
-    explicit GWSDatasourceReader( QString scenario_id , QString entities_type , QString entities_filter = "" , int limit = 9999999999);
+    explicit GWSDatasourceReader( QString scenario_id , QString entities_type , QString entities_filter = "" , int limit = 99999999);
 
     // METHODS
     void startReading();

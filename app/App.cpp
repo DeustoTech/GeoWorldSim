@@ -12,7 +12,6 @@
 #include <QException>
 #include <QString>
 
-
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/grid_environment/GridEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
@@ -21,9 +20,6 @@
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
-
-#include "../../util/parallelism/ParallelismController.h"
-#include "../../util/io/log/Logger.h"
 
 GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
     // int &argc, char *argv[]
@@ -104,6 +100,7 @@ QJsonObject GWSApp::getConfiguration(){
 **********************************************************************/
 
 int GWSApp::exec(){
+    qInfo() << QString("Simulation with UID %1 starting at %2").arg( this->getAppId() ).arg( QDateTime::currentDateTime().toString() );
 
     try {
         QCoreApplication::exec(); // Real exec()
@@ -112,4 +109,9 @@ int GWSApp::exec(){
     }
 
     return -1;
+}
+
+void GWSApp::exit(int retcode){
+    qInfo() << QString("Simulation with UID %1 exiting at %2 with code %3").arg( this->getAppId() ).arg( QDateTime::currentDateTime().toString() ).arg( retcode );
+    QCoreApplication::exit(retcode);
 }

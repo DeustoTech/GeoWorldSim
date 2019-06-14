@@ -18,7 +18,7 @@ bool GWSObjectStorage::isEmpty() const{
 }
 
 quint64 GWSObjectStorage::getAmount() const{
-    if( this && this->classes_stored.contains( QObject::staticMetaObject.className() ) ){
+    if( this != Q_NULLPTR && this->classes_stored.contains( QObject::staticMetaObject.className() ) ){
         return this->objects.value( QObject::staticMetaObject.className() )->size();
     }
     return 0;

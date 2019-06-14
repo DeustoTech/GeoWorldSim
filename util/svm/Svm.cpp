@@ -121,7 +121,7 @@ void GWSSvm::loadModel( QString model_file_path ){
     }
 }
 
-QJsonObject GWSSvm::run(QMap<QString, QVariant> inputs){
+QJsonObject GWSSvm::run( const QMap<QString, QVariant> &inputs){
 
     if( !this->model ){
         return QJsonObject();

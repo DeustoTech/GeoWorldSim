@@ -16,6 +16,9 @@ class GWSApp : public QCoreApplication
 public:
     static GWSApp* globalInstance(int argc = 0, char* argv[] = 0);
 
+    enum exit_codes {
+    };
+
     // GETTERS
     QString getAppId();
     QString getUserId();
@@ -25,6 +28,7 @@ public slots:
 
     // METHODS
     int exec();
+    void exit(int retcode);
 
 private:
     GWSApp(int argc, char* argv[]);

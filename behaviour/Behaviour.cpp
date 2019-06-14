@@ -79,7 +79,7 @@ const QJsonValue GWSBehaviour::getProperty( QString name ) const{
    return GWSObjectFactory::simpleOrParentPropertyName( name , this->getSharedPointer() , this->getEntity() );
 }
 
-const void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){
+void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){
 
     if( name.startsWith("<") && name.endsWith(">") ){
         QSharedPointer<GWSEntity> agent = this->getEntity();

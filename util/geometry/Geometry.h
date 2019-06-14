@@ -20,8 +20,9 @@ public:
 
     // CONSTRUCTORS
     GWSGeometry(){}
-    GWSGeometry( QJsonObject geojson );
-    GWSGeometry(const GWSGeometry &other) : GWSGeometry(other.geojson){}
+    GWSGeometry( const QJsonObject &geojson );
+    GWSGeometry( const GWSCoordinate &coor );
+    GWSGeometry( const GWSGeometry &other ) : GWSGeometry(other.geojson){}
     ~GWSGeometry();
 
     // GETTERS
@@ -29,6 +30,7 @@ public:
     QJsonObject getGeoJSON() const;
     bool isValid() const;
     GWSCoordinate getCentroid() const;
+    GWSLengthUnit getDistance( const GWSGeometry& other ) const;
 
     // OPERATORS
     bool operator == (const GWSGeometry&) const;

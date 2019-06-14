@@ -143,8 +143,6 @@ int main(int argc, char* argv[])
          GWSExecutionEnvironment::globalInstance()->run();
      }
 
-
-
      // LISTEN TO EXTERNAL SIMULATIONS
      // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
      QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
@@ -156,7 +154,6 @@ int main(int argc, char* argv[])
          }
          qDebug() << QString("Creating external listener %1").arg( key );
       }
-
 
      app->exec();
 

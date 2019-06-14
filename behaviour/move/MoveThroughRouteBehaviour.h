@@ -13,8 +13,7 @@ public:
     ~MoveThroughRouteBehaviour();
 
     // PROPERTIES
-    static QString INPUT_ROUTE_DESTINATION_X;
-    static QString INPUT_ROUTE_DESTINATION_Y;
+    static QString INPUT_ROUTE_DESTINATION;
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
     static QString INPUT_TRANSPORT_NETWORK_TYPE;

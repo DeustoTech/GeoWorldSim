@@ -24,7 +24,7 @@ public:
 
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset ) = 0;
-    virtual QJsonObject run(  QMap< QString, QVariant> inputs ) = 0;
+    virtual QJsonObject run( const QMap< QString, QVariant> &inputs ) = 0;
 
 protected:
 
