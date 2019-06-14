@@ -27,8 +27,8 @@ public:
     QList< QStringList > getShortestPaths( QString from_one_hash , QStringList to_many_hashes );
 
     // METHODS
-    void upsert( QString object_id , GWSEdge edge );
-    void remove( QString object_id );
+    void upsert(const QString &object_id , const GWSEdge &edge );
+    void remove( const QString &object_id );
 
 protected:
 

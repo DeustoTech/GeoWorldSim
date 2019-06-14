@@ -166,7 +166,7 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
  METHODS
 **********************************************************************/
 
-void GWSRouting::upsert(QString object_id , const GWSEdge edge){
+void GWSRouting::upsert(const QString &object_id , const GWSEdge &edge){
 
     try {
 
@@ -201,7 +201,7 @@ void GWSRouting::upsert(QString object_id , const GWSEdge edge){
     } catch(...){}
 }
 
-void GWSRouting::remove( QString object_id ){
+void GWSRouting::remove(const QString &object_id ){
 
     lemon::ListDigraph::Arc arc = this->arc_to_object_ids->key( object_id );
     if( this->routing_graph->id( arc ) > 0 ){
