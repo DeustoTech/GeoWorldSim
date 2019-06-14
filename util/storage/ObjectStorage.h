@@ -69,8 +69,8 @@ protected:
     **/
     QStringList classes_stored;
     QMap< std::string , QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
-    QMap< std::string , QHash< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
-    QMap< std::string , QHash< std::string , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
+    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
+    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
 
     mutable QMutex mutex;
 };
