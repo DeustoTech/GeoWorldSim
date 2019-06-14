@@ -33,8 +33,9 @@ const GWSGeometry GWSQuadtree::getBounds() const {
 }
 
 const GWSGeometry GWSQuadtree::getGeometry(const QString &object_id ) const {
+    QByteArray ba = object_id.toUtf8();
     this->mutex.lockForWrite();
-    GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+    GWSQuadtreeElement* elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( elm ){ return elm->geometry; }
@@ -180,8 +181,9 @@ QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( coor ) ) {
 
+        QByteArray ba = object_id.toUtf8();
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+        GWSQuadtreeElement* elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
@@ -207,8 +209,9 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( geom ) ) {
 
+        QByteArray ba = object_id.toUtf8();
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+        GWSQuadtreeElement* elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
@@ -243,13 +246,14 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
     this->max_x = qMax( centroid.getX() , max_x );
     this->min_y = qMin( centroid.getY() , min_y );
     this->max_y = qMax( centroid.getY() , max_y );
+    QByteArray ba = object_id.toUtf8();
 
     // Create helper element
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
     this->mutex.unlock();
 
-    GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id , geom );
+    GWSQuadtreeElement* elm = new GWSQuadtreeElement( ba.data() , geom );
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
@@ -328,8 +332,9 @@ void GWSQuadtree::remove( const QString &object_id ){
         return;
     }
 
+    QByteArray ba = object_id.toUtf8();
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( object_id , Q_NULLPTR );
+    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( !previous_elm ){ return; }
