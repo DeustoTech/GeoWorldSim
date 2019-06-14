@@ -23,15 +23,15 @@ public:
 
     // GETTERS
     QSharedPointer<GWSEntity> getCurrentEdge() const;
-    GWSCoordinate getCurrentMonvintTowards() const;
+    GWSGeometry getCurrentMonvintTowards() const;
 
     // METHODS
-    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate route_destination , QString graph_type );
+    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSGeometry route_destination_geom , QString graph_type );
 
 protected:
 
     QList< QSharedPointer<GWSEntity> > pending_route_edges;
-    QList< GWSCoordinate > pending_edge_coordinates;
+    QList< GWSGeometry > pending_edge_geometries;
     GWSCoordinate last_route_started_from;
 
 };

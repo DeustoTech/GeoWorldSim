@@ -16,8 +16,7 @@ public:
     // PROPERTIES
     static QString MAX_SPEED;
     static QString CURRENT_SPEED;
-    static QString MOVING_TOWARDS_X;
-    static QString MOVING_TOWARDS_Y;
+    static QString MOVING_TOWARDS;
     static QString ACCUMULATED_DISTANCE;
     static QString ACCUMULATED_TIME;
 
@@ -30,7 +29,7 @@ public:
 
     // METHODS
     virtual GWSSpeedUnit calculateNewSpeed( GWSSpeedUnit current_speed , GWSSpeedUnit max_speed , double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
-    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSCoordinate movement_towards );
+    virtual void move( GWSTimeUnit movement_duration , GWSSpeedUnit movement_speed , GWSGeometry movement_towards_geom );
 
 signals:
     void speedChangedSignal( GWSSpeedUnit current_speed );
