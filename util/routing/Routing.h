@@ -22,9 +22,9 @@ public:
     ~GWSRouting();
 
     // GETTERS
-    QStringList getShortestPath( QString from_hash , QString to_hash );
-    QList< QStringList > getShortestPath( QStringList ordered_hashes );
-    QList< QStringList > getShortestPaths( QString from_one_hash , QStringList to_many_hashes );
+    QStringList getShortestPath( const QString &from_hash , const QString &to_hash );
+    QList< QStringList > getShortestPath( const QStringList &ordered_hashes );
+    QList< QStringList > getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes );
 
     // METHODS
     void upsert(const QString &object_id , const GWSEdge &edge );
@@ -43,10 +43,10 @@ protected:
     GWSEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
-    QMap< lemon::ListDigraph::Arc , QString >* arc_to_object_ids;
+    QMap< lemon::ListDigraph::Arc , std::string >* arc_to_object_ids;
 
     // To link nodes with its original GSSGraphNode
-    QMap< QString , lemon::ListDigraph::Node >* hash_to_node;
+    QMap< std::string , lemon::ListDigraph::Node >* hash_to_node;
 
     // Routes cache
     QMap< lemon::ListDigraph::Node , QMap< lemon::ListDigraph::Node , QStringList > > routes_cache; // QMAP< DEPARTURE , QMAP< DESTINATION , ROUTE > >

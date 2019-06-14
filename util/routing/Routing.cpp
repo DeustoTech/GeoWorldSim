@@ -1,8 +1,8 @@
 #include "Routing.h"
 
 GWSRouting::GWSRouting() : QObject(){
-    this->arc_to_object_ids = new QMap< lemon::ListDigraph::Arc , QString >();
-    this->hash_to_node = new QMap< QString , lemon::ListDigraph::Node >();
+    this->arc_to_object_ids = new QMap< lemon::ListDigraph::Arc , std::string >();
+    this->hash_to_node = new QMap< std::string , lemon::ListDigraph::Node >();
     this->routing_graph = new lemon::ListDigraph();
     this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
 }
@@ -18,12 +18,12 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-QStringList GWSRouting::getShortestPath( QString from_hash , QString to_hash ){
+QStringList GWSRouting::getShortestPath( const QString &from_hash , const QString &to_hash ){
     return this->getShortestPath( { from_hash , to_hash } ).at(0);
 }
 
 
-QList< QStringList > GWSRouting::getShortestPath( QStringList ordered_hashes ){
+QList< QStringList > GWSRouting::getShortestPath( const QStringList &ordered_hashes ){
     QList< QStringList > result_routes;
 
     lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
@@ -46,8 +46,8 @@ QList< QStringList > GWSRouting::getShortestPath( QStringList ordered_hashes ){
         }
 
         // Compute dijkstra shortest path
-        lemon::ListDigraph::Node start = this->hash_to_node->value( from_hash );
-        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
+        lemon::ListDigraph::Node start = this->hash_to_node->value( from_hash.toStdString() );
+        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash.toStdString() );
 
         if( start == end ){
             result_routes.append( route );
@@ -78,7 +78,7 @@ QList< QStringList > GWSRouting::getShortestPath( QStringList ordered_hashes ){
         lemon::Path<lemon::ListDigraph> shortest_path = dijkstra_algorithm.path( end );
         for(int i = 0 ; i < shortest_path.length() ; i++) {
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
-            route.append( this->arc_to_object_ids->value( arc ) );
+            route.append( QString::fromStdString( this->arc_to_object_ids->value( arc ) ) );
         }
 
         // Save in cache
@@ -90,7 +90,7 @@ QList< QStringList > GWSRouting::getShortestPath( QStringList ordered_hashes ){
 }
 
 
-QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStringList to_many_hashes ){
+QList< QStringList > GWSRouting::getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes ){
     QList< QStringList > result_routes;
 
     if( from_one_hash.isEmpty() ){
@@ -102,7 +102,7 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
     }
 
     // Compute dijkstra shortest path
-    lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash  );
+    lemon::ListDigraph::Node start = this->hash_to_node->value( from_one_hash.toStdString()  );
 
     if ( this->routing_graph->id( start ) < 0 ){
         qWarning() << QString("Start (%1) is not in graph").arg( from_one_hash );
@@ -123,7 +123,7 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
             continue;
         }
 
-        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash );
+        lemon::ListDigraph::Node end = this->hash_to_node->value( to_hash.toStdString() );
 
         // Check in cache
         this->mutex.lockForRead();
@@ -147,7 +147,7 @@ QList< QStringList > GWSRouting::getShortestPaths( QString from_one_hash , QStri
             lemon::ListDigraph::Arc arc = shortest_path.nth( i );
             this->mutex.lockForRead();
             if( this->arc_to_object_ids->keys().contains( arc ) ){
-                route.append( this->arc_to_object_ids->value( arc ) );
+                route.append( QString::fromStdString( this->arc_to_object_ids->value( arc ) ) );
             }
             this->mutex.unlock();
         }
@@ -172,29 +172,29 @@ void GWSRouting::upsert(const QString &object_id , const GWSEdge &edge){
 
         // Create or retrieve edge start node
         QString from_hash = edge.getFromNodeUID();
-        lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash ); // Start node
+        lemon::ListDigraph::Node s = this->hash_to_node->value( from_hash.toStdString() ); // Start node
 
         this->mutex.lockForWrite();
         if( this->routing_graph->id( s ) <= 0 ){
             s = this->routing_graph->addNode();
-            this->hash_to_node->insert( from_hash , s );
+            this->hash_to_node->insert( from_hash.toStdString() , s );
         }
         this->mutex.unlock();
 
         // Create or retrieve edge end node
         QString to_hash = edge.getToNodeUID();
-        lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash );
+        lemon::ListDigraph::Node e = this->hash_to_node->value( to_hash.toStdString() );
 
         this->mutex.lockForWrite();
         if( this->routing_graph->id( e ) <= 0 ){
             e = this->routing_graph->addNode();
-            this->hash_to_node->insert( to_hash , e );
+            this->hash_to_node->insert( to_hash.toStdString() , e );
         }
 
         // Create arc and link it to edge
 
-        lemon::ListDigraph::Arc arc = this->routing_graph->addArc(s , e);
-        this->arc_to_object_ids->insert( arc , object_id );
+        lemon::ListDigraph::Arc arc = this->routing_graph->addArc( s , e );
+        this->arc_to_object_ids->insert( arc , object_id.toStdString() );
         this->graph_edge_visitor->edges.insert( arc , edge );
         this->mutex.unlock();
 
@@ -203,7 +203,7 @@ void GWSRouting::upsert(const QString &object_id , const GWSEdge &edge){
 
 void GWSRouting::remove(const QString &object_id ){
 
-    lemon::ListDigraph::Arc arc = this->arc_to_object_ids->key( object_id );
+    lemon::ListDigraph::Arc arc = this->arc_to_object_ids->key( object_id.toStdString() );
     if( this->routing_graph->id( arc ) > 0 ){
         this->routing_graph->erase( arc );
         this->arc_to_object_ids->remove( arc );

@@ -76,7 +76,7 @@ QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
         foreach(void* id, ids) {
             GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
             if( !ptr ){ continue; }
-            objects_ids.append( ptr->object_id );
+            objects_ids.append( QString::fromStdString( ptr->object_id ) );
         }
 
         if( !objects_ids.isEmpty() ){
@@ -167,7 +167,7 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     foreach(void* id, ids) {
         GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
         if( !ptr ){ continue; }
-        objects_ids.append( ptr->object_id );
+        objects_ids.append( QString::fromStdString( ptr->object_id ) );
     }
 
     return objects_ids;
@@ -181,9 +181,8 @@ QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( coor ) ) {
 
-        QByteArray ba = object_id.toUtf8();
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
+        GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id.toStdString() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
@@ -209,9 +208,8 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( geom ) ) {
 
-        QByteArray ba = object_id.toUtf8();
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
+        GWSQuadtreeElement* elm = this->quadtree_elements.value( object_id.toStdString() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
@@ -246,14 +244,13 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
     this->max_x = qMax( centroid.getX() , max_x );
     this->min_y = qMin( centroid.getY() , min_y );
     this->max_y = qMax( centroid.getY() , max_y );
-    QByteArray ba = object_id.toUtf8();
 
     // Create helper element
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
+    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
-    GWSQuadtreeElement* elm = new GWSQuadtreeElement( ba.data() , geom );
+    GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id.toStdString() , geom );
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
@@ -314,8 +311,9 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                 this->mutex.lockForWrite();
                 this->quadtree_layers.value( l )->value( xhash )->value( yhash )->insert( &env , elm );
                 this->quadtree_elements.insert( elm->object_id , elm );
-                if( !this->ids_contained.contains( elm->object_id ) ){
-                    this->ids_contained.append( elm->object_id );
+                QString qstring = QString::fromStdString( elm->object_id );
+                if( !this->ids_contained.contains( qstring ) ){
+                    this->ids_contained.append( qstring );
                 }
                 this->mutex.unlock();
             }
@@ -332,9 +330,8 @@ void GWSQuadtree::remove( const QString &object_id ){
         return;
     }
 
-    QByteArray ba = object_id.toUtf8();
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( ba.data() , Q_NULLPTR );
+    GWSQuadtreeElement* previous_elm = this->quadtree_elements.value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( !previous_elm ){ return; }
@@ -366,8 +363,9 @@ void GWSQuadtree::remove( const QString &object_id ){
                 }
             }
 
+            QString qstring = QString::fromStdString( previous_elm->object_id );
             this->mutex.lockForWrite();
-            this->ids_contained.removeAll( previous_elm->object_id );
+            this->ids_contained.removeAll( qstring );
             this->mutex.unlock();
 
         });

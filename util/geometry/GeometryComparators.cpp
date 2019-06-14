@@ -17,7 +17,7 @@ bool GWSGeometryComparators::GWSGeometryComparators::contains(const GWSGeometry 
 }
 
 bool GWSGeometryComparators::GWSGeometryComparators::intersects( const GWSGeometry &geometry , const GWSGeometry &other ){
-    if( other.isValid() ){
+    if( geometry.isValid() && other.isValid() ){
         return geometry.inner_geometry ? geometry.inner_geometry->intersects( other.inner_geometry ) : false;
     }
     return false;

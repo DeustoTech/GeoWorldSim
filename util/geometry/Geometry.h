@@ -22,7 +22,7 @@ public:
     GWSGeometry(){}
     GWSGeometry( const QJsonObject &geojson );
     GWSGeometry( const GWSCoordinate &coor );
-    GWSGeometry( const GWSGeometry &other ) : GWSGeometry(other.geojson){}
+    GWSGeometry( const GWSGeometry &other );
     ~GWSGeometry();
 
     // GETTERS

@@ -11,8 +11,9 @@ GWSObjectStorage::GWSObjectStorage() : QObject(){
 **********************************************************************/
 
 bool GWSObjectStorage::isEmpty() const{
-    if( this->objects.keys().contains( QObject::staticMetaObject.className() ) ){
-        return this->objects.value( QObject::staticMetaObject.className() )->isEmpty();
+    QString minimum_level = QObject::staticMetaObject.className();
+    if( this->objects.keys().contains( minimum_level.toStdString() ) ){
+        return false;
     }
     return true;
 }
@@ -41,16 +42,16 @@ QList< QSharedPointer<T> > GWSObjectStorage::getAll() const{
     return list;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByClassAndUID( QString class_name , QString uid ) const{
+QSharedPointer<QObject> GWSObjectStorage::getByClassAndUID( const QString &class_name , const QString &uid ) const{
     if ( this->classes_stored.contains( class_name ) ){
-        return this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
+        return this->object_uids.value( class_name.toStdString() )->value( uid.toStdString() , Q_NULLPTR );
     }
     return Q_NULLPTR;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByUID( QString uid ){
+QSharedPointer<QObject> GWSObjectStorage::getByUID( const QString &uid ){
     foreach( QString class_name , this->classes_stored ) {
-        QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid , Q_NULLPTR );
+        QSharedPointer<QObject> obj = this->object_uids.value( class_name.toStdString() )->value( uid.toStdString() , Q_NULLPTR );
         if( !obj.isNull() ){
             return obj;
         }
@@ -58,9 +59,9 @@ QSharedPointer<QObject> GWSObjectStorage::getByUID( QString uid ){
     return Q_NULLPTR;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( QString class_name , QString name ) const{
+QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( const QString &class_name , const QString &name ) const{
     if ( this->classes_stored.contains( class_name ) ){
-        QSharedPointer<QObject> obj = this->object_names.value( class_name )->value( name , Q_NULLPTR );
+        QSharedPointer<QObject> obj = this->object_names.value( class_name.toStdString() )->value( name.toStdString() , Q_NULLPTR );
         if( !obj.isNull() ){
             return obj;
         }
@@ -68,11 +69,11 @@ QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( QString class_name 
     return Q_NULLPTR;
 }
 
-QList< QSharedPointer<QObject> > GWSObjectStorage::getByClass( QString class_name ) const{
+QList< QSharedPointer<QObject> > GWSObjectStorage::getByClass( const QString &class_name ) const{
     QList< QSharedPointer<QObject> > list;
     if( this->classes_stored.contains( class_name ) ){
         this->mutex.lock();
-        foreach (QSharedPointer<QObject> o, *this->objects.value( class_name ) ) {
+        foreach (QSharedPointer<QObject> o, *this->objects.value( class_name.toStdString() ) ) {
             list.append( o );
         }
         this->mutex.unlock();
@@ -80,9 +81,9 @@ QList< QSharedPointer<QObject> > GWSObjectStorage::getByClass( QString class_nam
     return list;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByName( QString name ) const{
+QSharedPointer<QObject> GWSObjectStorage::getByName(const QString &name ) const{
     foreach( QString class_name , this->classes_stored){
-        QSharedPointer<QObject> obj = this->object_names.value( class_name )->value( name , Q_NULLPTR );
+        QSharedPointer<QObject> obj = this->object_names.value( class_name.toStdString() )->value( name.toStdString() , Q_NULLPTR );
         if( !obj.isNull() ){
             return obj;
         }
@@ -124,13 +125,13 @@ void GWSObjectStorage::add( QSharedPointer<QObject> object ){
         if( !this->classes_stored.contains( c ) ){
 
             QList< QSharedPointer<QObject> >* list = new QList< QSharedPointer<QObject> >();
-            this->objects.insert( c , list );
+            this->objects.insert( c.toStdString() , list );
 
-            QHash<QString , QSharedPointer<QObject> >* map = new QHash<QString , QSharedPointer<QObject> >();
-            this->object_names.insert( c , map );
+            QMap< std::string , QSharedPointer<QObject> >* map = new QMap< std::string , QSharedPointer<QObject> >();
+            this->object_names.insert( c.toStdString() , map );
 
-            QHash<QString , QSharedPointer<QObject> >* map2 = new QHash<QString , QSharedPointer<QObject> >();
-            this->object_uids.insert( c , map2 );
+            QMap< std::string , QSharedPointer<QObject> >* map2 = new QMap< std::string , QSharedPointer<QObject> >();
+            this->object_uids.insert( c.toStdString() , map2 );
 
             this->classes_stored.append( c );
         }
@@ -144,9 +145,9 @@ void GWSObjectStorage::add( QSharedPointer<QObject> object ){
 
         this->mutex.lock();
 
-        this->objects[ c ]->append( object );
-        this->object_names[ c ]->insert( object->objectName() , object );
-        this->object_uids[ c ]->insert( uid , object );
+        this->objects[ c.toStdString() ]->append( object );
+        this->object_names[ c.toStdString() ]->insert( object->objectName().toStdString() , object );
+        this->object_uids[ c.toStdString() ]->insert( uid.toStdString() , object );
 
         this->mutex.unlock();
     }
@@ -172,11 +173,11 @@ void GWSObjectStorage::remove( QSharedPointer<QObject> object ){
         if( this->classes_stored.contains( c ) ){
             this->mutex.lock();
 
-            this->objects.value( c )->removeAll( object );
-            this->object_names.value( c )->remove( object->objectName() );
-            this->object_uids.value( c )->remove( uid );
+            this->objects.value( c.toStdString() )->removeAll( object );
+            this->object_names.value( c.toStdString() )->remove( object->objectName().toStdString() );
+            this->object_uids.value( c.toStdString() )->remove( uid.toStdString() );
 
-            if( this->objects.value( c )->isEmpty() ){
+            if( this->objects.value( c.toStdString() )->isEmpty() ){
                 this->classes_stored.removeAll( c );
             }
             this->mutex.unlock();

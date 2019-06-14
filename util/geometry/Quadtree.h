@@ -46,15 +46,15 @@ private:
     // HELPER CLASS
     class GWSQuadtreeElement {
     public:
-        GWSQuadtreeElement( const char* object_id , GWSGeometry geometry ) : object_id( object_id ) , geometry( geometry ) {}
-        const char* object_id;
+        GWSQuadtreeElement( std::string object_id , GWSGeometry geometry ) : object_id( object_id ) , geometry( geometry ) {}
+        std::string object_id;
         GWSGeometry geometry;
     };
 
     mutable QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< const char* , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
+    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
     QMap< unsigned int , QMap< int , QMap< int , geos::index::quadtree::Quadtree* >* >* > quadtree_layers;
     unsigned int layer_depth_amount = 5;
 

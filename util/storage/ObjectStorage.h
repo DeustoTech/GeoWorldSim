@@ -27,32 +27,32 @@ public:
     QList< QSharedPointer<QObject> > getAll() const;
 
     template <class T>
-    QSharedPointer<T> getByClassAndUID( QString class_name , QString uid ) const{
+    QSharedPointer<T> getByClassAndUID( const QString &class_name , const QString &uid ) const{
         return this->getByClassAndUID( class_name , uid ).dynamicCast<T>();
     }
-    QSharedPointer<QObject> getByClassAndUID( QString class_name , QString uid ) const;
-    QSharedPointer<QObject> getByUID( QString uid );
+    QSharedPointer<QObject> getByClassAndUID( const QString &class_name , const QString &uid ) const;
+    QSharedPointer<QObject> getByUID( const QString &uid );
 
     template <class T>
-    QSharedPointer<T> getByClassAndName( QString class_name , QString name ) const {
+    QSharedPointer<T> getByClassAndName( const QString &class_name , const QString &name ) const {
         return this->getByClassAndName( class_name , name ).dynamicCast<T>();
     }
-    QSharedPointer<QObject> getByClassAndName( QString class_name , QString name ) const;
+    QSharedPointer<QObject> getByClassAndName( const QString &class_name , const QString &name ) const;
 
-    template <class T> QList< QSharedPointer<T> > getByClass( QString class_name ) const{
+    template <class T> QList< QSharedPointer<T> > getByClass( const QString &class_name ) const{
         QList< QSharedPointer<T> > objs;
         foreach( QSharedPointer<QObject> o , this->getByClass( class_name ) ){
             objs.append( o.dynamicCast<T>() );
         }
         return objs;
     }
-    QList< QSharedPointer<QObject> > getByClass( QString class_name ) const;
+    QList< QSharedPointer<QObject> > getByClass( const QString &class_name ) const;
 
     template <class T>
-    QSharedPointer<T> getByName( QString name ) const {
+    QSharedPointer<T> getByName( const QString &name ) const {
         return this->getByName( name ).dynamicCast<T>();
     }
-    QSharedPointer<QObject> getByName( QString name ) const;
+    QSharedPointer<QObject> getByName( const QString &name ) const;
 
     bool contains( QString class_name ) const;
     bool contains( QSharedPointer<QObject> object ) const;
@@ -68,9 +68,9 @@ protected:
      * STORAGE
     **/
     QStringList classes_stored;
-    QHash<QString, QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
-    QHash<QString, QHash< QString , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
-    QHash<QString, QHash< QString , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
+    QMap< std::string , QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
+    QMap< std::string , QHash< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
+    QMap< std::string , QHash< std::string , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
 
     mutable QMutex mutex;
 };
