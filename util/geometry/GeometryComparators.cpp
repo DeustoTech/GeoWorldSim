@@ -30,12 +30,15 @@ bool GWSGeometryComparators::GWSGeometryComparators::intersects( const GWSGeomet
 }
 
 bool GWSGeometryComparators::GWSGeometryComparators::equals( const GWSGeometry &geometry , const GWSGeometry &other ){
-    return geometry.inner_geometry ? geometry.inner_geometry->equals( other.inner_geometry ) : false;
+    if( geometry.isValid() && other.isValid() ){
+        return geometry.inner_geometry->equals( other.inner_geometry );
+    }
+    return false;
 }
 
 GWSLengthUnit GWSGeometryComparators::GWSGeometryComparators::getDistance( const GWSGeometry &geometry , const GWSGeometry &other ){
     if( geometry.isValid() && other.isValid() ){
         return GWSLengthUnit( geometry.inner_geometry->distance( other.inner_geometry ) * 110574 );
     }
-    return -1;
+    return 0;
 }

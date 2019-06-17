@@ -8,13 +8,13 @@
 class GWSGeometryGetters {
 
 public:
-    static GWSAreaUnit getArea( GWSGeometry geometry );
-    static double getGeometryMaxX( GWSGeometry geometry );
-    static double getGeometryMinX( GWSGeometry geometry );
-    static double getGeometryMaxY( GWSGeometry geometry );
-    static double getGeometryMinY( GWSGeometry geometry );
-    static GWSCoordinate getCentroid( GWSGeometry geometry );
-    static QList<GWSCoordinate> getCoordinates( GWSGeometry geometry );
+    static GWSAreaUnit getArea( const GWSGeometry &geometry );
+    static double getGeometryMaxX( const GWSGeometry &geometry );
+    static double getGeometryMinX( const GWSGeometry &geometry );
+    static double getGeometryMaxY( const GWSGeometry &geometry );
+    static double getGeometryMinY( const GWSGeometry &geometry );
+    static GWSCoordinate getCentroid( const GWSGeometry &geometry );
+    static QList<GWSCoordinate> getCoordinates( const GWSGeometry &geometry );
 
 };
 

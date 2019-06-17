@@ -27,13 +27,13 @@ public:
     // GETTERS
     //GWSNetworkEdge getEdge( QSharedPointer< GWSAgent > agent ) const;
     //QSharedPointer< GWSAgent > getAgent( GWSNetworkEdge edge ) const;
-    QString getEdge( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
-    QString getNearestAgent( GWSCoordinate coor , QString class_name ) const;
+    QString getEdge( const GWSCoordinate &from , const GWSCoordinate &to , QString class_name ) const;
+    QString getNearestAgent( const GWSCoordinate &coor , QString class_name ) const;
 
-    QStringList getShortestPath( GWSCoordinate from , GWSCoordinate to , QString class_name ) const;
+    QStringList getShortestPath( const GWSCoordinate &from , const GWSCoordinate &to , QString class_name ) const;
     QList< QStringList > getShortestPath( QList< GWSCoordinate > ordered_coors , QString class_name ) const;
-    QList< QStringList > getShortestPaths( GWSCoordinate from_one, QList< GWSCoordinate > to_many , QString class_name ) const;
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > getNearestNodeAndPath( GWSCoordinate coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
+    QList< QStringList > getShortestPaths( const GWSCoordinate &from_one, QList< GWSCoordinate > to_many , QString class_name ) const;
+    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > getNearestNodeAndPath( const GWSCoordinate &coor , QList< GWSCoordinate > get_nearest , QString class_name ) const;
 
     // METHODS
     virtual void registerEntity( QSharedPointer<GWSEntity> agent );
@@ -41,7 +41,7 @@ public:
 
 protected:
 
-    void upsertAgentToIndex( QSharedPointer<GWSEntity> agent , GWSNetworkEdge edge );
+    void upsertAgentToIndex( QSharedPointer<GWSEntity> agent , const GWSNetworkEdge &edge );
 
 protected slots:
 

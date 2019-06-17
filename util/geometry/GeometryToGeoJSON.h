@@ -8,7 +8,7 @@ class GWSGeometryToGeoJSON
 {
 public:
 
-    static geos::geom::Geometry* GeometryFromGeoJSON( const QJsonObject &geojson );
+    static geos::geom::Geometry* GeometryFromGeoJSON( QJsonObject geojson );
     static QJsonObject GeometryToGeoJSON( geos::geom::Geometry* geometry );
 
 };

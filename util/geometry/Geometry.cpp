@@ -7,7 +7,7 @@
 #include "GeometryComparators.h"
 
 GWSGeometry::GWSGeometry( const QJsonObject &geojson ) {
-    this->geojson = geojson;
+    this->geojson = QJsonObject( geojson );
     if( this->inner_geometry ){
         delete this->inner_geometry;
         this->inner_geometry = Q_NULLPTR;
@@ -53,7 +53,13 @@ bool GWSGeometry::isValid() const{
 }
 
 GWSCoordinate GWSGeometry::getCentroid() const{
-    return GWSGeometryGetters::getCentroid( *this );
+    if( this->isValid() ){
+        geos::geom::Coordinate centroid;
+        this->inner_geometry->getCentroid( centroid );
+        return GWSCoordinate( centroid.x , centroid.y , centroid.z );
+    }
+    qDebug() << 1;
+    return GWSCoordinate();
 }
 
 GWSLengthUnit GWSGeometry::getDistance(const GWSGeometry &other) const{

@@ -28,8 +28,8 @@ struct GWSCoordinate {
     double getX() const;
     double getY() const;
     double getZ() const;
-    GWSLengthUnit getDistance( GWSCoordinate other ) const;
-    double getLatLngDistance( GWSCoordinate other ) const;
+    GWSLengthUnit getDistance(const GWSCoordinate &other ) const;
+    double getLatLngDistance( const GWSCoordinate &other ) const;
     bool isInBounds( double minX , double maxX , double minY , double maxY ) const;
     QString toString() const;
 

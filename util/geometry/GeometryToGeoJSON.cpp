@@ -12,7 +12,7 @@
 #include "geos/geom/LinearRing.h"
 #include "geos/geom/Polygon.h"
 
-geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( const QJsonObject &geojson ){
+geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( QJsonObject geojson ){
 
     QString geom_type = geojson.value("type").toString();
     if( geom_type.isEmpty() ){
@@ -84,7 +84,6 @@ geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( const QJsonObje
     }
 
     return geom;
-
 }
 
 QJsonObject GWSGeometryToGeoJSON::GeometryToGeoJSON(geos::geom::Geometry *geometry){

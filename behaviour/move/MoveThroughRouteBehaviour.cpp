@@ -84,7 +84,11 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
 
     // Pending time to reach next route point can be higher than the duration requested.
     GWSGeometry next_route_point = movethroughroute_skill->getCurrentMovingTowards();
-    if( !next_route_point.isValid() ){ next_route_point = route_destination; }
+
+    if( !next_route_point.isValid() ){
+        next_route_point = GWSGeometry( route_destination );
+    }
+
     GWSLengthUnit pending_distance = entity_geom.getDistance( next_route_point );
     GWSTimeUnit pending_time = pending_distance.number() / current_speed.number(); // Time needed to reach route_destination at current speed
     duration_of_movement = qMin( pending_time , duration_of_movement );

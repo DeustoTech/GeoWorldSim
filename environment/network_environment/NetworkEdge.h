@@ -21,7 +21,7 @@ public:
     // CONSTRUCTORS
     GWSNetworkEdge() : GWSEdge() {}
     GWSNetworkEdge( QJsonObject json ) : GWSNetworkEdge( GWSCoordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() , json.value( EDGE_FROM_Z_PROP ).toDouble() ) , GWSCoordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() , json.value( EDGE_TO_Z_PROP ).toDouble() ) ) {}
-    GWSNetworkEdge( GWSCoordinate from, GWSCoordinate to ) : GWSEdge( from.getDistance(to).number() , "Network" , from.toString() , to.toString() ) , from(from) , to(to) {}
+    GWSNetworkEdge( const GWSCoordinate &from , const GWSCoordinate &to ) : GWSEdge( from.getDistance(to).number() , "Network" , from.toString() , to.toString() ) , from(from) , to(to) {}
     GWSNetworkEdge(const GWSNetworkEdge &other) : GWSNetworkEdge(other.from , other.to){}
     ~GWSNetworkEdge(){}
 

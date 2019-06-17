@@ -29,9 +29,9 @@ public:
     const GWSGeometry getGeometry( QSharedPointer<GWSEntity> agent ) const;
     const GWSGeometry getGeometry( const QString &agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
-    QStringList getAgentsIntersecting( const GWSGeometry geometry, QString class_name ) const;
-    QString getNearestAgent( GWSCoordinate coor, QString class_name ) const;
-    QSharedPointer<GWSEntity> getNearestAgent( GWSCoordinate coor, QList< QSharedPointer<GWSEntity> > agents ) const;
+    QStringList getAgentsIntersecting( const GWSGeometry &geometry, QString class_name ) const;
+    QString getNearestAgent( const GWSCoordinate &coor, QString class_name ) const;
+    QSharedPointer<GWSEntity> getNearestAgent( const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // METHODS
@@ -39,7 +39,7 @@ public:
     virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 protected:
-    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , GWSGeometry geom );
+    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , const GWSGeometry &geom );
 
 protected slots:
     void entityPropertyChanged( QString property_name );

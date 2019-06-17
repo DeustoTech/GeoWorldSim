@@ -62,7 +62,7 @@ QStringList GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double ma
 }
 
 
-QStringList GWSPhysicalEnvironment::getAgentsIntersecting( const GWSGeometry geometry , QString class_name) const{
+QStringList GWSPhysicalEnvironment::getAgentsIntersecting( const GWSGeometry &geometry , QString class_name) const{
     QStringList agents;
     if( this->environment_entity_indexes.keys().contains(class_name) ){
         return this->environment_entity_indexes.value( class_name )->getElements( geometry );
@@ -94,14 +94,14 @@ QStringList GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors,
  * @param class_name ClassName of the agents in the environment from which to get the nearest for geometry
  * @return
  */
-QString GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QString class_name) const{
+QString GWSPhysicalEnvironment::getNearestAgent(const GWSCoordinate &coor, QString class_name) const{
     if( this->environment_entity_indexes.keys().contains(class_name) ){
         return this->environment_entity_indexes.value(class_name)->getNearestElement( coor );
     }
     return QString();
 }
 
-QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(GWSCoordinate coor, QList< QSharedPointer<GWSEntity> > agents ) const{
+QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const{
     QSharedPointer<GWSEntity> nearest = Q_NULLPTR;
     GWSLengthUnit nearest_distance = -1;
     foreach (QSharedPointer<GWSEntity> agent , agents) {
@@ -180,7 +180,7 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
  PROTECTED
 **********************************************************************/
 
-void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent, GWSGeometry geom){
+void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent, const GWSGeometry &geom){
 
     foreach (QJsonValue v , agent->getInheritanceFamily() ) {
 

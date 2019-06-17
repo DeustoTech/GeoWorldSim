@@ -256,7 +256,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
         QtConcurrent::run([this , l , elm , previous_elm] {
 
-            if( previous_elm ){
+            if( previous_elm && previous_elm->geometry.isValid() ){
 
                 // Get geohash
                 int xhash = this->createHash( previous_elm->geometry.getCentroid().getX() , l );
@@ -275,15 +275,16 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                 this->mutex.unlock();
 
                 if( l == 0 ){
-                    delete previous_elm;
+                    //delete previous_elm;
                 }
             }
 
             if( elm->geometry.isValid() ){
 
                 // Get geohash
-                int xhash = this->createHash( elm->geometry.getCentroid().getX() , l );
-                int yhash = this->createHash( elm->geometry.getCentroid().getY() , l );
+                GWSCoordinate centroid = elm->geometry.getCentroid();
+                int xhash = this->createHash( centroid.getX() , l );
+                int yhash = this->createHash( centroid.getY() , l );
 
                 this->mutex.lockForRead();
                 if ( !this->quadtree_layers.value( l )->keys().contains( xhash ) ){
