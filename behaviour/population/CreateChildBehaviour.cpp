@@ -1,6 +1,6 @@
 #include "CreateChildBehaviour.h"
 
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
@@ -19,16 +19,16 @@ CreateChildBehaviour::CreateChildBehaviour()
 *************************************************************************************************************************************/
 QPair< double , QJsonArray > CreateChildBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<GWSEntity> agent = this->getEntity();
     QString couple_id = agent->getProperty( "couple_id" ).toString();
-    QSharedPointer<GWSAgent> couple = GWSAgentEnvironment::globalInstance()->getByUID( couple_id );
+    QSharedPointer<GWSEntity> couple = GWSEntityEnvironment::globalInstance()->getByUID( couple_id );
 
 
     // Pass parent information as basic characteristics:
     QJsonObject new_born_json = agent->serialize();
     QDateTime next_year = QDateTime::fromMSecsSinceEpoch( agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toInt() ).addYears( 1 );
-    new_born_json.insert( GWSExecutionEnvironment::AGENT_BIRTH_PROP , next_year.toMSecsSinceEpoch() );
-    new_born_json.remove( GWSAgent::GWS_UID_PROP );
+    new_born_json.insert( GWSExecutionEnvironment::ENTITY_BIRTH_PROP , next_year.toMSecsSinceEpoch() );
+    new_born_json.remove( GWSEntity::GWS_UID_PROP );
 
     new_born_json.remove( "couple_id" );
     new_born_json.insert( "parent1", agent->getUID() );
@@ -46,20 +46,20 @@ QPair< double , QJsonArray > CreateChildBehaviour::behave(){
     }
 
     // Register through object factory:
-    QSharedPointer<GWSAgent> new_born = GWSObjectFactory::globalInstance()->fromJSON( new_born_json ).dynamicCast<GWSAgent>();
+    QSharedPointer<GWSEntity> new_born = GWSObjectFactory::globalInstance()->fromJSON( new_born_json ).dynamicCast<GWSEntity>();
 
     QJsonArray arr = new_born->getProperty( GWS_INHERITANCE_FAMILY_PROP ).toArray();
     arr.append( "CHILD" );
     new_born->setProperty( GWS_INHERITANCE_FAMILY_PROP , arr );
 
-    QList< QSharedPointer<GWSAgent> > children ;
+    QList< QSharedPointer<GWSEntity> > children ;
 
     if ( !agent->getProperty( "children" ).toArray().isEmpty() ){
-        children = GWSAgentEnvironment::globalInstance()->getByUIDS( agent->getProperty( "children"  ).toArray() );
+        children = GWSEntityEnvironment::globalInstance()->getByUIDS( agent->getProperty( "children"  ).toArray() );
     }
 
     QJsonArray children_ids;
-    foreach( QSharedPointer<GWSAgent> child , children ){
+    foreach( QSharedPointer<GWSEntity> child , children ){
         children_ids.append( child->getUID() );
     }
 

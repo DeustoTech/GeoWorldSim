@@ -52,7 +52,7 @@ protected:
     virtual bool checkBirth( int age );
     virtual bool checkMigration( int age );
     virtual void initialize();
-    int getAge( QSharedPointer<GWSAgent> agent );
+    int getAge( QSharedPointer<GWSEntity> entity );
     double generateRandom(int min, int max);
 };
 

@@ -44,11 +44,10 @@ SOURCES += \
        # functions.cpp \
         #utils.cpp \
         ../../app/App.cpp \
-        PopulationGeneratorAgent.cpp \
         ../../object/ObjectFactory.cpp \
         ../../object/Object.cpp \
         ../../util/storage/ObjectStorage.cpp \
-        ../../agent/Agent.cpp \
+        ../../entity/Entity.cpp \
         ../../behaviour/Behaviour.cpp \
         # SKILLS
         ../../skill/Skill.cpp \
@@ -66,26 +65,23 @@ SOURCES += \
         ../../util/geometry/Coordinate.cpp \
         ../../util/geometry/Geometry.cpp \
         ../../util/geometry/Quadtree.cpp \
+        ../../util/geometry/GeometryComparators.cpp \
         ../../util/geometry/GeometryTransformators.cpp \
         ../../util/geometry/GeometryGetters.cpp \
         ../../util/geometry/GeometryToGeoJSON.cpp \
         ../../util/graph/Edge.cpp \
         ../../util/datasource/DatasourceReader.cpp \
-        ../../util/datasource/AgentGeneratorDatasource.cpp \
+        ../../util/datasource/EntityGeneratorDatasource.cpp \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.cpp \
-        ../../behaviour/execution/StopAgentBehaviour.cpp \
+        ../../behaviour/execution/StopEntityBehaviour.cpp \
         ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
-        ../../behaviour/geometry/GenerateAgentGeometryBehaviour.cpp \
-        ../../behaviour/information/SendAgentSnapshotBehaviour.cpp \
+        ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
         ../../behaviour/population/CreateChildBehaviour.cpp \
-        ../../behaviour/move/MoveBehaviour.cpp \
-        ../../behaviour/execution/DeleteAgentBehaviour.cpp \
-        ../../behaviour/property/PropertyStatisticsBehaviour.cpp \
         # ENVIRONMENTS
         ../../environment/Environment.cpp \
         ../../environment/EnvironmentsGroup.cpp \
-        ../../environment/agent_environment/AgentEnvironment.cpp \
+        ../../environment/entity_environment/EntityEnvironment.cpp \
         ../../environment/physical_environment/PhysicalEnvironment.cpp \
         ../../environment/time_environment/TimeEnvironment.cpp \
         ../../environment/network_environment/NetworkEnvironment.cpp \
@@ -102,11 +98,10 @@ SOURCES += \
 HEADERS += \
         #header.h \
         ../../app/App.h \
-        PopulationGeneratorAgent.h \
         ../../object/ObjectFactory.h \
         ../../object/Object.h \
         ../../util/storage/ObjectStorage.h \
-        ../../agent/Agent.h \
+        ../../entity/Entity.h \
         ../../behaviour/Behaviour.h \
         # SKILLS
         ../../skill/Skill.h \
@@ -125,25 +120,23 @@ HEADERS += \
         ../../util/geometry/Coordinate.h \
         ../../util/geometry/Geometry.h \
         ../../util/geometry/GeometryGetters.h \
+        ../../util/geometry/GeometryComparators.h \
+        ../../util/geometry/GeometryTransformators.h \
         ../../util/geometry/GeometryToGeoJSON.h \
         ../../util/geometry/Quadtree.h \
         ../../util/graph/Edge.h \
         ../../util/datasource/DatasourceReader.h \
-        ../../util/datasource/AgentGeneratorDatasource.h \
+        ../../util/datasource/EntityGeneratorDatasource.h \
         # BEHAVIOURS
         ../../behaviour/population/GeneratePopulationBehaviour.h \
-        ../../behaviour/execution/StopAgentBehaviour.h \
+        ../../behaviour/execution/StopEntityBehaviour.h \
         ../../behaviour/time/WaitUntilTimeBehaviour.h \
-        ../../behaviour/geometry/GenerateAgentGeometryBehaviour.h \
-        ../../behaviour/information/SendAgentSnapshotBehaviour.h \
+        ../../behaviour/information/SendEntitySnapshotBehaviour.h \
         ../../behaviour/population/CreateChildBehaviour.h \
-        ../../behaviour/move/MoveBehaviour.h \
-        ../../behaviour/execution/DeleteAgentBehaviour.h \
-        ../../behaviour/property/PropertyStatisticsBehaviour.h \
         # ENVIRONMENTS
         ../../environment/Environment.h \
         ../../environment/EnvironmentsGroup.h \
-        ../../environment/agent_environment/AgentEnvironment.h \
+        ../../environment/entity_environment/EntityEnvironment.h \
         ../../environment/physical_environment/PhysicalEnvironment.h \
         ../../environment/time_environment/TimeEnvironment.h \
         ../../environment/network_environment/NetworkEnvironment.h \

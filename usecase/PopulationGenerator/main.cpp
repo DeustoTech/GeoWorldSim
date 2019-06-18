@@ -8,27 +8,22 @@
 // Include PopulationGenerator files:
 //#include "header.h"
 
-#include "PopulationGeneratorAgent.h"
-
 // Include GWS files:
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 #include "../../object/Object.h"
 #include "../../behaviour/Behaviour.h"
-#include "../../agent/Agent.h"
+#include "../../entity/Entity.h"
 
 // Skills:
 #include "../../skill/move/MoveSkill.h"
 
 // Behaviours:
 #include "../../behaviour/population/GeneratePopulationBehaviour.h"
-#include "../../behaviour/execution/StopAgentBehaviour.h"
+#include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/time/WaitUntilTimeBehaviour.h"
-#include "../../behaviour/geometry/GenerateAgentGeometryBehaviour.h"
-#include "../../behaviour/information/SendAgentSnapshotBehaviour.h"
+#include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
 #include "../../behaviour/population/CreateChildBehaviour.h"
-#include "../../behaviour/move/MoveBehaviour.h"
-#include "../../behaviour/property/PropertyStatisticsBehaviour.h"
 
 // Utils:
 #include "../../util/routing/EdgeVisitor.hpp"
@@ -37,12 +32,12 @@
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Quadtree.h"
 #include "../../util/datasource/DatasourceReader.h"
-#include "../../util/datasource/AgentGeneratorDatasource.h"
+#include "../../util/datasource/EntityGeneratorDatasource.h"
 
 // Environments:
 #include "../../environment/Environment.h"
 #include "../../environment/EnvironmentsGroup.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
@@ -68,7 +63,7 @@ int main( int argc, char* argv[] )
 
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
-    GWSAgentEnvironment::globalInstance();
+    GWSEntityEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
     GWSNetworkEnvironment::globalInstance();
@@ -77,16 +72,13 @@ int main( int argc, char* argv[] )
 
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( GeneratePopulationBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( StopAgentBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GenerateAgentGeometryBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SendAgentSnapshotBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( CreateChildBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( PropertyStatisticsBehaviour::staticMetaObject );
 
     // CREATE POPULATION
-    QList<GWSAgentGeneratorDatasource*> pending_datasources;
+    QList<GWSEntityGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
     QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
      foreach( QString key , json_population.keys() ) {
@@ -109,10 +101,10 @@ int main( int argc, char* argv[] )
                      qWarning() << "Asked to download from scenario without ID or entity_type";
                  }
 
-                 GWSAgentGeneratorDatasource* ds = new GWSAgentGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999  );
+                 GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999  );
                  pending_datasources.append( ds );
 
-                 ds->connect( ds , &GWSAgentGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                 ds->connect( ds , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
@@ -126,8 +118,8 @@ int main( int argc, char* argv[] )
 
          if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
              for ( int i = 0; i < population.value("amount").toInt() ; i++){
-                 // Use template to generate amount agents
-                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSAgent>();
+                 // Use template to generate amount Entitys
+                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();
              }
          }
         qDebug() << QString("Creating population %1").arg( key );
