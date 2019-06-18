@@ -1,5 +1,7 @@
 #include "ExternalPublisher.h"
 
+#include <QtConcurrent/QtConcurrent>
+
 #include "../../app/App.h"
 #include "../../object/Object.h"
 
@@ -11,10 +13,15 @@ GWSExternalPublisher::GWSExternalPublisher(const QString &socket_id) : GWSExtern
 
 void GWSExternalPublisher::sendMessage(const QString &signal , const QJsonValue &json){
 
-    // TO sockets.geoworldsim.com
-    QJsonObject socket_json;
-    socket_json.insert( "signal" , signal );
-    socket_json.insert( "scenario_id" , this->socket_id );
-    socket_json.insert( "body" , json );
-    this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
+    QTimer::singleShot( qrand() % 100 , GWSApp::globalInstance() , [signal , json , this](){
+
+        // TO sockets.geoworldsim.com
+        QJsonObject socket_json;
+        socket_json.insert( "signal" , signal );
+        socket_json.insert( "scenario_id" , this->socket_id );
+        socket_json.insert( "body" , json );
+        this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
+
+    });
+
 }

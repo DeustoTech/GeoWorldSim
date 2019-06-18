@@ -61,6 +61,7 @@ HEADERS += \
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Quadtree.h \
     ../../util/geometry/GeometryTransformators.h  \
+    ../../util/geometry/GeometryComparators.h  \
     ../../util/geometry/GeometryGetters.h  \
     ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/routing/Routing.h \
@@ -123,6 +124,7 @@ SOURCES += mainlauncher.cpp \
     ../../util/geometry/Geometry.cpp \
     ../../util/geometry/Quadtree.cpp \
     ../../util/geometry/GeometryTransformators.cpp  \
+    ../../util/geometry/GeometryComparators.cpp  \
     ../../util/geometry/GeometryGetters.cpp  \
     ../../util/geometry/GeometryToGeoJSON.cpp \
     ../../util/routing/Routing.cpp \

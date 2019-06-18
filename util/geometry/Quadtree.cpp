@@ -294,7 +294,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                 int yhash = this->createHash( centroid.getY() , l );
 
                 this->mutex.lockForRead();
-                if ( !this->quadtree_layers.value( l )->keys().contains( xhash ) ){
+                if ( !this->quadtree_layers[ l ]->keys().contains( xhash ) ){
                     this->mutex.unlock();
                     this->mutex.lockForWrite();
                     this->quadtree_layers.value( l )->insert( xhash , new QMap< int , geos::index::quadtree::Quadtree* >() );
@@ -324,6 +324,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                     this->ids_contained.append( qstring );
                 }
                 this->mutex.unlock();
+
             }
 
         });
@@ -365,19 +366,18 @@ void GWSQuadtree::remove( const QString &object_id ){
                 this->quadtree_layers.value( l )->value( xhash )->value( yhash )->remove( &env , previous_elm );
                 this->quadtree_elements.remove( previous_elm->object_id );
                 this->mutex.unlock();
-
-                if( l == 0 ){
-                    delete previous_elm;
-                }
             }
 
-            QString qstring = QString::fromStdString( previous_elm->object_id );
-            this->mutex.lockForWrite();
-            this->ids_contained.removeAll( qstring );
-            this->mutex.unlock();
+            if( l == 0 ){
+                delete previous_elm;
+            }
 
         });
 
+        QString qstring = QString::fromStdString( previous_elm->object_id );
+        this->mutex.lockForWrite();
+        this->ids_contained.removeAll( qstring );
+        this->mutex.unlock();
     }
 
 }

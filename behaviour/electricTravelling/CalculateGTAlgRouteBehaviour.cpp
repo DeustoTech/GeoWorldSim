@@ -53,6 +53,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
         }
 
         QJsonValue json_value = this->getProperty( DESTINATION_JSON );
+
         if( !json_value.isNull() ){
 
             GWSGeometry geom_json = GWSGeometry( json_value.toObject() );
@@ -60,7 +61,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
             dest_x = coor_json.getX();
             dest_y = coor_json.getY();
-
         }
 
         qint64 currentDateTime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
@@ -71,7 +71,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
         // url type to query:
         QString gtalg_host = this->getProperty( "gtalg_host" ).toString( "http://157.158.135.195:8081/gtalg/routers/default" );
 
-        QString gtUrl = QString(  gtalg_host + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
+        QString gtUrl = QString( gtalg_host + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
                 .arg( from_y ).arg( from_x )
                 .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
@@ -79,11 +79,23 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                 .arg( this->getProperty( TRANSPORT_MODE ).toString() )
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
+
+        // TEST NO GTALG
+
+        QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
+        if( !multiroute_skill ){
+            multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
+            agent->addSkill( multiroute_skill );
+        }
+
+        multiroute_skill->addDestination( GWSCoordinate (dest_x , dest_y) , QJsonObject({ { TRANSPORT_MODE , "CAR" } , { "color" , "blue" }}) );
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+
+
+
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        QTimer::singleShot( qrand() % 1000 , GWSApp::globalInstance() , [ agent , gtUrl , this ]{
-
-            GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
+        GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
 
                 if( !reply ){
                     agent->decrementBusy();
@@ -145,9 +157,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                 });
 
             });
-
-
-        });
 
     }
 

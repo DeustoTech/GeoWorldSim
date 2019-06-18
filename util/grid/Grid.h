@@ -29,14 +29,14 @@ public:
     double getLat( double y ) const;
     double getMaxValue() const;
     double getMinValue() const;
-    virtual QJsonValue getValue( GWSCoordinate coor ) const;
-    virtual QJsonValue getValue( GWSGeometry geom ) const;
+    virtual QJsonValue getValue( const GWSCoordinate &coor ) const;
+    virtual QJsonValue getValue( const GWSGeometry &geom ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
     // SETTERS
-    void addValue( GWSCoordinate coor , QJsonValue value );
-    void addValue( GWSGeometry geom , QJsonValue value );
-    void setBounds( GWSGeometry bounds );
+    void addValue( const GWSCoordinate &coor , const QJsonValue &value );
+    void addValue( const GWSGeometry &geom , const QJsonValue &value );
+    void setBounds( const GWSGeometry &bounds );
     //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);

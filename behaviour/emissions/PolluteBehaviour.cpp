@@ -39,6 +39,8 @@ void PolluteBehaviour::afterCreateHook(){
 
 QPair< double , QJsonArray >  PolluteBehaviour::behave(){
 
+    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+
     QSharedPointer<GWSEntity> agent = this->getEntity();
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     GWSCoordinate current_coor = agent_geom.getCentroid();

@@ -20,13 +20,12 @@ geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( QJsonObject geo
     }
 
     const geos::geom::GeometryFactory* factory = geos::geom::GeometryFactory::getDefaultInstance();
-    geos::geom::Geometry* geom = Q_NULLPTR;
     QJsonArray coors = geojson.value("coordinates").toArray();
 
     try {
 
         if( geom_type.toLower() == "point" ){
-            geom = factory->createPoint(
+            return factory->createPoint(
                         geos::geom::Coordinate(
                             coors.size() > 0 ? coors.at(0).toDouble() : 0 ,
                             coors.size() > 1 ? coors.at(1).toDouble() : 0 ,
@@ -44,7 +43,7 @@ geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( QJsonObject geo
                               coor.size() > 2 ? coor.at(2).toDouble() : 0 )
                           );
             }
-            geom = factory->createLineString( seq );
+            return factory->createLineString( seq );
         } else if ( geom_type.toLower() == "polygon" ){
 
             geos::geom::LinearRing* outer_ring = Q_NULLPTR;
@@ -72,7 +71,9 @@ geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( QJsonObject geo
             }
 
             if( outer_ring ){
-                geom = factory->createPolygon( outer_ring , holes );
+                return factory->createPolygon( outer_ring , holes );
+            } else {
+                delete holes;
             }
 
         } else {
@@ -83,7 +84,7 @@ geos::geom::Geometry* GWSGeometryToGeoJSON::GeometryFromGeoJSON( QJsonObject geo
         qWarning() << "Error creating geometry" << e.what();
     }
 
-    return geom;
+    return Q_NULLPTR;
 }
 
 QJsonObject GWSGeometryToGeoJSON::GeometryToGeoJSON(geos::geom::Geometry *geometry){

@@ -21,8 +21,9 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject json, QSt
     }
 
     GWSDatasourceReader* reader = new GWSDatasourceReader( scenario_id , entity_type , entity_filter , amount );
-    reader->connect( reader , &GWSDatasourceReader::dataReadingFinishedSignal , [this](){
+    reader->connect( reader , &GWSDatasourceReader::dataReadingFinishedSignal , [ reader , this ](){
         emit this->dataReadingFinishedSignal();
+        reader->deleteLater();
     });
     reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
 

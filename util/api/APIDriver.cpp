@@ -1,10 +1,14 @@
 #include "APIDriver.h"
+
 #include <QDebug>
 #include <QNetworkProxyFactory>
 #include <QNetworkProxy>
 #include <QJsonDocument>
 #include <QThreadPool>
 #include <QtConcurrent/QtConcurrent>
+
+#include "../../app/App.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 
 GWSAPIDriver* GWSAPIDriver::globalInstance(){
     static GWSAPIDriver instance;
@@ -146,16 +150,16 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     // Add callback
     pending_request.callback = callback;
 
-    this->mutex.lockForRead();
+    //this->mutex.lockForRead();
     if( this->current_requests_amount > 6 ){ // Magic number set by Qt : https://doc.qt.io/qt-5/qnetworkaccessmanager.html
-        this->mutex.unlock();
+        //this->mutex.unlock();
 
-        this->mutex.lockForWrite();
+        //this->mutex.lockForWrite();
         this->pending_requests.append( pending_request );
-        this->mutex.unlock();
+        //this->mutex.unlock();
 
     } else {
-        this->mutex.unlock();
+        //this->mutex.unlock();
         this->executePendingOperation( pending_request );
     }
 
@@ -165,51 +169,55 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
 
     try {
 
-        QNetworkReply* ref_reply = Q_NULLPTR;
-        QBuffer data;
-        data.open( ( QBuffer::ReadWrite ) );
-        data.write( pending.data );
-        data.seek( 0 );
+        //this->mutex.lockForWrite();
+        this->current_requests_amount++;
+        //this->mutex.unlock();
 
-        if( pending.operation == QNetworkAccessManager::GetOperation ){ ref_reply = this->access_manager->get( pending.request ); }
-        if( pending.operation == QNetworkAccessManager::PostOperation ){ ref_reply = this->access_manager->post( pending.request , &data ); }
-        if( pending.operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending.request , &data ); }
-        if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
-        if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
+        QTimer::singleShot( qrand() % 100 , GWSApp::globalInstance() , [ pending , this ]{
 
-        // TEST
-        pending.callback( 0 );
+            QNetworkReply* ref_reply = Q_NULLPTR;
+            QBuffer data;
+            data.open( ( QBuffer::ReadWrite ) );
+            data.write( pending.data );
+            data.seek( 0 );
 
-        if( ref_reply ){
+            if( pending.operation == QNetworkAccessManager::GetOperation ){ ref_reply = this->access_manager->get( pending.request ); }
+            if( pending.operation == QNetworkAccessManager::PostOperation ){ ref_reply = this->access_manager->post( pending.request , &data ); }
+            if( pending.operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending.request , &data ); }
+            if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
+            if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
 
-            this->mutex.lockForWrite();
-            this->current_requests_amount++;
-            this->mutex.unlock();
 
-            ref_reply->connect( ref_reply , &QNetworkReply::finished , [ this ](){
+            if( ref_reply ){
 
-                this->mutex.lockForWrite();
+                ref_reply->connect( ref_reply , &QNetworkReply::finished , [ this ](){
+
+                    this->current_requests_amount--;
+
+                    //this->mutex.lockForRead();
+                    if( !this->pending_requests.isEmpty() ){
+                        //this->mutex.unlock();
+
+                        //this->mutex.lockForWrite();
+                        GWSAPIDriverElement next = this->pending_requests.at( 0 );
+                        this->pending_requests.removeAt( 0 );
+                        //this->mutex.unlock();
+
+                        this->executePendingOperation( next );
+
+                    } else {
+                        //this->mutex.unlock();
+                    }
+                });
+
+            } else {
+
                 this->current_requests_amount--;
-                this->mutex.unlock();
+            }
 
-                this->mutex.lockForRead();
-                if( !this->pending_requests.isEmpty() ){
-                    this->mutex.unlock();
+            pending.callback( ref_reply );
 
-                    this->mutex.lockForWrite();
-                    GWSAPIDriverElement next = this->pending_requests.at( 0 );
-                    this->pending_requests.removeAt( 0 );
-                    this->mutex.unlock();
-
-                    this->executePendingOperation( next );
-
-                } else {
-                    this->mutex.unlock();
-                }
-            });
-        }
-
-        pending.callback( ref_reply );
+        });
 
     } catch(...){
         qWarning() << QString("Crashed request %1 %2").arg( pending.operation ).arg( pending.request.url().toString() );

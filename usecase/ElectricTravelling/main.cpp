@@ -123,8 +123,11 @@ int main(int argc, char* argv[])
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
-                         qInfo() << QString("Entities data downloaded. Took %1 seconds").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) );
-                         GWSExecutionEnvironment::globalInstance()->run();
+
+                         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                                     QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+                         QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
                      }
                  });
 
@@ -140,7 +143,12 @@ int main(int argc, char* argv[])
         qInfo() << QString("Creating population %1").arg( key );
      }
      if( pending_datasources.isEmpty() ){
-         GWSExecutionEnvironment::globalInstance()->run();
+
+         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                     QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+
+         QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
      }
 
      // LISTEN TO EXTERNAL SIMULATIONS

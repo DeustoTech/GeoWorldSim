@@ -156,6 +156,7 @@ QJsonObject GWSSvm::run( const QMap<QString, QVariant> &inputs){
 
     // Predict SVM result on test input:
     double normResult = svm_predict( this->model , x );
+    delete[] x;
 
     double denormResult =  this->denormalizeIOMeanStdev( normResult , 0 );
 

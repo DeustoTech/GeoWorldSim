@@ -240,11 +240,14 @@ void GWSExecutionEnvironment::behave(){
         }
     }
 
-    QString message = QString("Ticked %1 , Entities %2 / %3 , Min tick %4" )
+    QString message = QString("Ticked %1 , Entities %2 / %3 , Entities to tick %4 ,  Min tick %5 , Active threads %6 / %7" )
             .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
             .arg( ticked_entities )
             .arg( currently_running_entities.size() )
-            .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" );
+            .arg( entities_to_tick ? "True" : "False" )
+            .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" )
+            .arg( QThreadPool::globalInstance()->activeThreadCount() )
+            .arg( QThreadPool::globalInstance()->maxThreadCount() );
 
     qInfo() << message;
 
