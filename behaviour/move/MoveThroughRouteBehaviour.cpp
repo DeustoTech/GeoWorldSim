@@ -86,7 +86,7 @@ QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
     GWSGeometry next_route_point = movethroughroute_skill->getCurrentMovingTowards();
 
     if( !next_route_point.isValid() ){
-        next_route_point = GWSGeometry( route_destination );
+        next_route_point = route_destination;
     }
 
     GWSLengthUnit pending_distance = entity_geom.getDistance( next_route_point );
