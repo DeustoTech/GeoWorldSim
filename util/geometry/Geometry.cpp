@@ -84,5 +84,6 @@ bool GWSGeometry::operator < (const GWSGeometry& other) const{
 
 GWSGeometry& GWSGeometry::operator = (const GWSGeometry& other){
     this->geojson = other.geojson;
+    this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
     return *this;
 }
