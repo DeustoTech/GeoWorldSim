@@ -29,8 +29,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
-
-
     // If legs are empty, calculate them through algorithm:
     if ( next_destinations.isEmpty() ){
 
@@ -87,6 +85,11 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
             GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
 
+                if( !reply ){
+                    agent->decrementBusy();
+                    return;
+                }
+
                 reply->connect( reply , &QNetworkReply::finished , [ agent , reply , this ] {
 
                     QJsonObject json = QJsonDocument::fromJson( reply->readAll() ).object();
@@ -140,7 +143,6 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
                     agent->decrementBusy();
 
                 });
-
 
             });
 

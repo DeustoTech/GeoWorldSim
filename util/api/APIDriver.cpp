@@ -177,6 +177,9 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
         if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
         if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
 
+        // TEST
+        pending.callback( 0 );
+
         if( ref_reply ){
 
             this->mutex.lockForWrite();
