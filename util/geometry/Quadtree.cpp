@@ -256,33 +256,40 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
         QtConcurrent::run([this , l , elm , previous_elm] {
 
-            if( previous_elm && previous_elm->geometry.isValid() ){
+            if( previous_elm ){
 
-                // Get geohash
-                int xhash = this->createHash( previous_elm->geometry.getCentroid().getX() , l );
-                int yhash = this->createHash( previous_elm->geometry.getCentroid().getY() , l );
+                GWSGeometry previous_elm_geom = previous_elm->geometry;
+                if( previous_elm_geom.isValid() ){
 
-                // Get envelope
-                geos::geom::Envelope env = geos::geom::Envelope(
-                            GWSGeometryGetters::getGeometryMinX( previous_elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMaxX( previous_elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMinY( previous_elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMaxY( previous_elm->geometry ) );
+                    // Get geohash
+                    int xhash = this->createHash( previous_elm_geom.getCentroid().getX() , l );
+                    int yhash = this->createHash( previous_elm_geom.getCentroid().getY() , l );
 
-                this->mutex.lockForWrite();
-                this->quadtree_layers.value( l )->value( xhash )->value( yhash )->remove( &env , previous_elm );
-                this->quadtree_elements.remove( elm->object_id );
-                this->mutex.unlock();
+                    // Get envelope
+                    geos::geom::Envelope env = geos::geom::Envelope(
+                                GWSGeometryGetters::getGeometryMinX( previous_elm_geom ) ,
+                                GWSGeometryGetters::getGeometryMaxX( previous_elm_geom ) ,
+                                GWSGeometryGetters::getGeometryMinY( previous_elm_geom ) ,
+                                GWSGeometryGetters::getGeometryMaxY( previous_elm_geom ) );
+
+                    this->mutex.lockForWrite();
+                    this->quadtree_layers.value( l )->value( xhash )->value( yhash )->remove( &env , previous_elm );
+                    this->quadtree_elements.remove( elm->object_id );
+                    this->mutex.unlock();
+
+                }
 
                 if( l == 0 ){
-                    //delete previous_elm;
+                    delete previous_elm;
                 }
             }
 
-            if( elm->geometry.isValid() ){
+            GWSGeometry elm_geom = elm->geometry;
+
+            if( elm_geom.isValid() ){
 
                 // Get geohash
-                GWSCoordinate centroid = elm->geometry.getCentroid();
+                GWSCoordinate centroid = elm_geom.getCentroid();
                 int xhash = this->createHash( centroid.getX() , l );
                 int yhash = this->createHash( centroid.getY() , l );
 
@@ -304,10 +311,10 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
                 // Get envelope
                 geos::geom::Envelope env = geos::geom::Envelope(
-                            GWSGeometryGetters::getGeometryMinX( elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMaxX( elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMinY( elm->geometry ) ,
-                            GWSGeometryGetters::getGeometryMaxY( elm->geometry ) );
+                            GWSGeometryGetters::getGeometryMinX( elm_geom ) ,
+                            GWSGeometryGetters::getGeometryMaxX( elm_geom ) ,
+                            GWSGeometryGetters::getGeometryMinY( elm_geom ) ,
+                            GWSGeometryGetters::getGeometryMaxY( elm_geom ) );
 
                 this->mutex.lockForWrite();
                 this->quadtree_layers.value( l )->value( xhash )->value( yhash )->insert( &env , elm );

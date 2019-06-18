@@ -97,7 +97,7 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
                 problem.x[i][j].index = position;
                 problem.x[i][j].value = value_double;
             } else {
-                qWarning() << QString("Input %1 not contained in training data").arg( hash );
+               // qWarning() << QString("Input %1 not contained in training data").arg( hash );
             }
         }
 
@@ -145,7 +145,7 @@ QJsonObject GWSSvm::run( const QMap<QString, QVariant> &inputs){
             x[ i ].index = position;
             x[ i ].value = value_double;
         } else {
-            qWarning() << QString("Input %1 not contained in training data").arg( hash );
+            //qWarning() << QString("Input %1 not contained in training data").arg( hash );
             result.insert( this->output_positions.keys().at(0) , 0 );
             return result;
         }

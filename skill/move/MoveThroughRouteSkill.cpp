@@ -64,13 +64,14 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
         return;
     }
 
-    // Extract destination coordinates
-    GWSCoordinate current_coor = agent_geom.getCentroid();
-    GWSCoordinate route_destination_coor = route_destination_geom.getCentroid();
-
     if( agent_geom == route_destination_geom ){
         return;
     }
+
+    // Extract destination coordinates
+    GWSCoordinate current_coor = agent_geom.getCentroid();
+    GWSCoordinate route_destination_coor = route_destination_geom.getCentroid();
+    GWSGeometry move_to = GWSGeometry( route_destination_geom );
 
     if( this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
 
@@ -116,7 +117,7 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
         // Pending time to reach destination can be higher than the duration requested.
         GWSLengthUnit pending_distance = current_coor.getDistance( route_destination_coor );
         GWSTimeUnit pending_time = pending_distance.number() / movement_speed.number(); // Time needed to reach route_destination at current speed
-        MoveSkill::move( qMin( pending_time , movement_duration ), movement_speed , route_destination_geom );
+        MoveSkill::move( qMin( pending_time , movement_duration ), movement_speed , move_to );
         return;
     }
 
@@ -129,13 +130,11 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
 
-        GWSGeometry move_to = GWSGeometry( this->pending_edge_coordinates.at( 0 ) );
+        move_to = GWSGeometry( this->pending_edge_coordinates.at( 0 ) );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
         if( agent_geom.getDistance( move_to ) < GWSLengthUnit( 0.5 ) ){
             this->pending_edge_coordinates.removeAt( 0 );
-        } else {
-            route_destination_geom = move_to;
         }
 
         if( this->pending_edge_coordinates.isEmpty() ){
@@ -154,13 +153,14 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
 
         // Set destination to next coordinate
         if ( !this->pending_edge_coordinates.isEmpty() ){
-            if( route_destination_coor == this->pending_edge_coordinates.at( 0 ) ){
+
+            if( current_coor == this->pending_edge_coordinates.at( 0 ) ){
                 this->pending_edge_coordinates.removeAt( 0 );
             }
-            route_destination_coor = this->pending_edge_coordinates.at( 0 );
-        }
 
+            move_to = GWSGeometry( this->pending_edge_coordinates.at( 0 ) );
+        }
     }
 
-    MoveSkill::move( movement_duration , movement_speed , route_destination_geom );
+    MoveSkill::move( movement_duration , movement_speed , move_to );
 }

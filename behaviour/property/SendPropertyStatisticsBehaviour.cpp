@@ -14,7 +14,7 @@ QString SendPropertyStatisticsBehaviour::GRID_TYPE = "grid_type";
 QString SendPropertyStatisticsBehaviour::STORE_AS = "store_as";
 QString SendPropertyStatisticsBehaviour::SOCKET_ID = "socket_id";
 QString SendPropertyStatisticsBehaviour::NEXTS_IF_STILL_ALIVE = "nexts_if_still_alive_entities";
-QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_entites_dead";
+QString SendPropertyStatisticsBehaviour::NEXTS_IF_ALL_DEAD = "nexts_if_all_entities_dead";
 
 SendPropertyStatisticsBehaviour::SendPropertyStatisticsBehaviour() : GWSBehaviour(){
 }

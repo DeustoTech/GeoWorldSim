@@ -46,7 +46,7 @@ private:
     // HELPER CLASS
     class GWSQuadtreeElement {
     public:
-        GWSQuadtreeElement( std::string object_id , GWSGeometry geometry ) : object_id( object_id ) , geometry( geometry ) {}
+        GWSQuadtreeElement( std::string object_id , const GWSGeometry &geometry ) : object_id( object_id ) , geometry( geometry ) {}
         std::string object_id;
         GWSGeometry geometry;
     };

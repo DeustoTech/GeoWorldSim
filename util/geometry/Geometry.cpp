@@ -27,7 +27,7 @@ GWSGeometry::GWSGeometry( const GWSCoordinate &coor ){
     this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
 }
 
-GWSGeometry::GWSGeometry(const GWSGeometry &other ) : GWSGeometry( other.geojson ){}
+GWSGeometry::GWSGeometry( const GWSGeometry &other ) : GWSGeometry( other.geojson ){}
 
 GWSGeometry::~GWSGeometry(){
     if( this->inner_geometry ){

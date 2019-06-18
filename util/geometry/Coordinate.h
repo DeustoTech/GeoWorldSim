@@ -16,10 +16,10 @@ struct GWSCoordinate {
 
     // CONSTRUCTORS
     GWSCoordinate() : x( std::nan("0") ) , y( std::nan("0") ) , z( std::nan("0") ){}
-    GWSCoordinate(double x, double y, double z = 0.0) : x(x) , y(y) , z(z){
+    GWSCoordinate(double x , double y , double z = 0.0) : x(x) , y(y) , z(z){
         if(this->z != this->z ){ this->z = 0; }
     }
-    GWSCoordinate(const GWSCoordinate &other) : GWSCoordinate(other.x , other.y, other.z){}
+    GWSCoordinate( const GWSCoordinate &other ) : GWSCoordinate( other.x , other.y , other.z){}
     ~GWSCoordinate(){}
 
     // GETTERS
@@ -28,7 +28,7 @@ struct GWSCoordinate {
     double getX() const;
     double getY() const;
     double getZ() const;
-    GWSLengthUnit getDistance(const GWSCoordinate &other ) const;
+    GWSLengthUnit getDistance( const GWSCoordinate &other ) const;
     double getLatLngDistance( const GWSCoordinate &other ) const;
     bool isInBounds( double minX , double maxX , double minY , double maxY ) const;
     QString toString() const;

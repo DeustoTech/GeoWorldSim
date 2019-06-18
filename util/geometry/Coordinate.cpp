@@ -30,7 +30,9 @@ double GWSCoordinate::getZ() const{
 }
 
 GWSLengthUnit GWSCoordinate::getDistance(const GWSCoordinate &other) const {
-    return GWSLengthUnit( this->getLatLngDistance( other) * 110574 );
+    return GWSLengthUnit(
+                geos::geom::Coordinate( this->x , this->y , this->z )
+                .distance( geos::geom::Coordinate( other.x , other.y , other.z ) ) * 110574 );
 }
 
 double GWSCoordinate::getLatLngDistance( const GWSCoordinate &other ) const{
