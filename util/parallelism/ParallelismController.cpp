@@ -51,8 +51,8 @@ int GWSParallelismController::getThreadsCount() const{
  METHODS
 **********************************************************************/
 
-QThread* GWSParallelismController::getThread(int agent_id){
-    return this->available_threads.at( agent_id % this->available_threads.size() );
+QThread* GWSParallelismController::getThread(){
+    return this->available_threads.at( qrand() % this->available_threads.size() );
 }
 
 QThread* GWSParallelismController::liberateThread(QThread *thread){

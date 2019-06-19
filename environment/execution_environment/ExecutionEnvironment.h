@@ -8,8 +8,6 @@
 #include "../../util/storage/ObjectStorage.h"
 #include "../../environment/Environment.h"
 
-using namespace QtConcurrent;
-
 class GWSExecutionEnvironment : public GWSEnvironment
 {
     Q_OBJECT

@@ -1,4 +1,7 @@
 #include "GridEnvironment.h"
+
+#include <QtConcurrent/QtConcurrent>
+
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryTransformators.h"

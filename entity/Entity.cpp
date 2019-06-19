@@ -7,6 +7,7 @@
 #include <QThread>
 
 #include "../../app/App.h"
+#include "../../util/parallelism/ParallelismController.h"
 #include "../../object/ObjectFactory.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
@@ -27,6 +28,7 @@ QString GWSEntity::STYLE_ICON_URL_PROP = "icon_url";
 QString GWSEntity::STYLE_ZOOM_LEVEL_PROP = "zoom_level";
 
 GWSEntity::GWSEntity() : GWSObject() , busy_counter(0) {
+    this->moveToThread( GWSParallelismController::globalInstance()->getThread() );
 }
 
 GWSEntity::~GWSEntity() {

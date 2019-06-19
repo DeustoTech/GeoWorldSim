@@ -68,10 +68,11 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
         return;
     }
 
+    GWSGeometry move_to = GWSGeometry( route_destination_geom );
+
     // Extract destination coordinates
     GWSCoordinate current_coor = agent_geom.getCentroid();
     GWSCoordinate route_destination_coor = route_destination_geom.getCentroid();
-    GWSGeometry move_to = GWSGeometry( route_destination_geom );
 
     if( this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
 

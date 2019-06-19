@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QJsonDocument>
+#include <QtConcurrent/QtConcurrent>
 
 #include "../../app/App.h"
 #include "../../environment/EnvironmentsGroup.h"
@@ -29,11 +30,13 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() :
     tick_time_window( GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 999 ) ,
     max_entity_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value("tick_entity_amount").toDouble( 500 ) ) ,
     GWSEnvironment() {
+
     qInfo() << "ExecutionEnvironment created";
     this->running_entities = new GWSObjectStorage();
     this->setProperty( ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) );
     this->setProperty( ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( INFINITY ) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+
 }
 
 GWSExecutionEnvironment::~GWSExecutionEnvironment(){
@@ -154,7 +157,7 @@ void GWSExecutionEnvironment::run(){
                    reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
     });
 
-    // Start ticking
+    // Start ticking (USE QTCONCURRENT FOR IT TO WAIT FOR REMAINING QTCONCURRENTS)
     QtConcurrent::run([ this ] { this->tick(); });
 }
 
@@ -184,9 +187,9 @@ void GWSExecutionEnvironment::behave(){
     // Wait for entities that are delayed (if WAIT_FOR_ME).
     // Get min tick time and add some threshold to execute the entities that are more delayed.
     qint64 min_tick = -1;
-    QSharedPointer<GWSEntity> who_is_min_tick;
+    QString who_is_min_tick;
     bool entities_to_tick = false;
-    int ticked_entities = 0;
+    uint ticked_entities = 0;
 
     foreach( QSharedPointer<GWSEntity> entity , currently_running_entities ){
         if( ( entity.isNull() || entity->isBusy() ) && !entity->getProperty( WAIT_FOR_ME_PROP ).toBool( false ) ) {
@@ -197,7 +200,7 @@ void GWSExecutionEnvironment::behave(){
 
         if( entity_time > 0 && min_tick <= 0 ){ min_tick = entity_time; }
         if( entity_time > 0 && min_tick > 0 ){ min_tick = qMin( min_tick , entity_time ); }
-        if( min_tick == entity_time ){ who_is_min_tick = entity; }
+        if( min_tick == entity_time ){ who_is_min_tick = entity->getUID(); }
         entities_to_tick = true;
     }
 
@@ -230,11 +233,10 @@ void GWSExecutionEnvironment::behave(){
                 // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
                 entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
-                //entity->tick();
-                QtConcurrent::run( entity.data() , &GWSEntity::tick );
+                QTimer::singleShot( 0 , entity.data() , &GWSEntity::tick );
 
                 if( ++ticked_entities >= this->max_entity_amount_per_tick ){
-                    who_is_min_tick = entity;
+                    who_is_min_tick = entity->getUID();
                     break;
                 }
             }
@@ -246,7 +248,7 @@ void GWSExecutionEnvironment::behave(){
             .arg( ticked_entities )
             .arg( currently_running_entities.size() )
             .arg( entities_to_tick ? "True" : "False" )
-            .arg( who_is_min_tick ? who_is_min_tick->getUID() : "" )
+            .arg( who_is_min_tick )
             .arg( QThreadPool::globalInstance()->activeThreadCount() )
             .arg( QThreadPool::globalInstance()->maxThreadCount() );
 

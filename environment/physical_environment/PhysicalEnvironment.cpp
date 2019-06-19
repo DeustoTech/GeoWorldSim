@@ -1,4 +1,7 @@
 #include "PhysicalEnvironment.h"
+
+#include <QtConcurrent/QtConcurrent>
+
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../object/ObjectFactory.h"
 #include "../../util/geometry/GeometryTransformators.h"

@@ -1,10 +1,9 @@
 #include "ExternalPublisher.h"
 
-#include <QtConcurrent/QtConcurrent>
-
 #include "../../app/App.h"
 #include "../../object/Object.h"
 
+#include <QTimer>
 #include <QJsonDocument>
 
 GWSExternalPublisher::GWSExternalPublisher(const QString &socket_id) : GWSExternalCommunicator( socket_id){

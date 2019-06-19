@@ -57,7 +57,7 @@ private:
     virtual void operation( QNetworkAccessManager::Operation operation , QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers = QMap<QString, QString>() , QByteArray data = QByteArray() , QByteArray custom_operation = QByteArray() );
     virtual void executePendingOperation( GWSAPIDriverElement& request );
 
-    QNetworkAccessManager* access_manager;
+    QNetworkAccessManager* access_manager = Q_NULLPTR;
     QList< GWSAPIDriverElement > pending_requests;
     int current_requests_amount = 0;
     QReadWriteLock mutex;

@@ -1,4 +1,7 @@
 #include "NetworkEnvironment.h"
+
+#include <QtConcurrent/QtConcurrent>
+
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../object/ObjectFactory.h"

@@ -109,7 +109,9 @@ int main(int argc, char* argv[])
                     pending_datasources.removeAll( ds );
                     ds->deleteLater();
                     if( pending_datasources.isEmpty() ){
-                        qDebug() << "Elapsed time" << QDateTime::currentDateTime().secsTo( datasource_download_time );
+                        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
                         GWSExecutionEnvironment::globalInstance()->run();
                     }
                 });
@@ -126,6 +128,11 @@ int main(int argc, char* argv[])
        qDebug() << QString("Creating population %1").arg( key );
     }
     if( pending_datasources.isEmpty() ){
+
+        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+
         GWSExecutionEnvironment::globalInstance()->run();
     }
 

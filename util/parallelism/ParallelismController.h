@@ -16,7 +16,7 @@ public:
     int getThreadsCount() const;
 
     // METHODS
-    QThread* getThread( int agent_id );
+    QThread* getThread();
     QThread* liberateThread( QThread* thread );
 
 signals:
