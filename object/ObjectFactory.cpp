@@ -103,14 +103,14 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyName( QString &property_name,
 
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
     if( property_name.startsWith("<") && property_name.endsWith(">") ){
-        if( !parent ){ return QJsonValue(); }
+        if( !parent ){ return QJsonValue::Undefined; }
         property_name.remove( 0 , 1 );
         property_name.remove( property_name.length() - 1 , 1 );
         return parent->getProperty( property_name );
     }
 
     // IS SIMPLE STRING
-    if( !object ){ return QJsonValue(); }
+    if( !object ){ return QJsonValue::Undefined; }
     return GWSObjectFactory::simpleOrParentPropertyValue( object->GWSObject::getProperty( property_name ) , object , parent );
 
 }

@@ -41,7 +41,7 @@ const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry 
     if( this->environment_entity_grids.keys().contains( class_name ) ){
         return this->environment_entity_grids.value( class_name )->getValue( geom );
     }
-    return QJsonValue();
+    return QJsonValue::Undefined;
 }
 
 const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
@@ -49,7 +49,7 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity 
         GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         return this->environment_entity_grids.value( entity->metaObject()->className() )->getValue( geom );
     }
-    return QJsonValue();
+    return QJsonValue::Undefined;
 }
 
 /**********************************************************************

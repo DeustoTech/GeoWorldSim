@@ -19,7 +19,7 @@ GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size , 
         this->grid->insert( i , new QMap<unsigned int , QJsonValue>() );
 
         for(unsigned int j = 0 ; j < y_size ; j++){
-            this->grid->value( i )->insert( j , QJsonValue() );
+            this->grid->value( i )->insert( j , QJsonValue::Undefined );
         }
     }
 
@@ -114,9 +114,9 @@ QJsonValue GWSGrid::getValue( const GWSCoordinate &coor ) const{
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , y_size );
 
     if( this->grid->value( x ) ){
-        return this->grid->value( x )->value( y , QJsonValue() );
+        return this->grid->value( x )->value( y , QJsonValue::Undefined );
     }
-    return QJsonValue();
+    return QJsonValue::Undefined;
 }
 
 QJsonValue GWSGrid::getValue( const GWSGeometry &geom ) const{
@@ -161,7 +161,7 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
         return;
     }
 
-    QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue() );
+    QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue::Undefined );
 
     // How we add the value depends on the type of grid:
 
