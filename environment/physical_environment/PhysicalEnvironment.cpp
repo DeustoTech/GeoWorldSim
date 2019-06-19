@@ -128,7 +128,7 @@ QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(const GWSCoord
 
 void GWSPhysicalEnvironment::registerEntity(QSharedPointer<GWSEntity> agent ){
 
-    if( agent.isNull() || agent->getProperty( GEOMETRY_PROP ).isNull() ){
+    if( agent.isNull() || agent->getProperty( GEOMETRY_PROP ).isUndefined() ){
         return;
     }
 

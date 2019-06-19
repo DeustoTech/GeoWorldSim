@@ -24,8 +24,8 @@ public:
 
     // STATICS
     static QJsonValue simpleOrParentPropertyName( QString &property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
-    static QJsonValue simpleOrParentPropertyValue( QJsonValue property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
-    static QJsonValue incrementValue( QJsonValue existing_value , QJsonValue increment);
+    static QJsonValue simpleOrParentPropertyValue( const QJsonValue &property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
+    static QJsonValue incrementValue( const QJsonValue &existing_value , const QJsonValue &increment);
 
 protected:
     GWSObjectFactory();

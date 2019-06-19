@@ -99,7 +99,7 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
     GWSEnvironment::registerEntity( agent );
 
     // INTERNAL TIME
-    if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
+    if( !agent->getProperty( INTERNAL_TIME_PROP ).isUndefined() ){
 
         qint64 init_internal_time = this->getCurrentDateTime();
         QJsonValue internal_time = agent->getProperty( INTERNAL_TIME_PROP );

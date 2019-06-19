@@ -45,7 +45,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
         double dest_y;
         double dest_x;
 
-        if( !to_x.isNull() && !to_y.isNull() ){
+        if( !to_x.isUndefined() && !to_y.isUndefined() ){
 
             dest_x = to_x.toDouble();
             dest_y = to_y.toDouble();

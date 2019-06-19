@@ -21,7 +21,7 @@ public:
     static QString START_BEHAVIOUR_PROP;
 
     // IMPORTERS
-    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> behaving_entity );
+    virtual void deserialize( const QJsonObject &json , QSharedPointer<GWSObject> behaving_entity );
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

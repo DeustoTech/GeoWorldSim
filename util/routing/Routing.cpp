@@ -215,8 +215,19 @@ void GWSRouting::remove(const QString &object_id ){
 **********************************************************************/
 
 void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QStringList route ){
+
+    this->mutex.lockForRead();
     if( !this->routes_cache.keys().contains( start ) ){
+    this->mutex.unlock();
+
+        this->mutex.lockForWrite();
         this->routes_cache.insert( start , QMap< lemon::ListDigraph::Node , QStringList >() );
+        this->mutex.unlock();
+    } else {
+        this->mutex.unlock();
     }
+
+    this->mutex.lockForWrite();
     this->routes_cache[ start ].insert( end , route );
+    this->mutex.unlock();
 }

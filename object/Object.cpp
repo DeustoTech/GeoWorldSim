@@ -50,8 +50,7 @@ QJsonObject GWSObject::serializeMini() const{
  */
 QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
-    for (int i = 0; i < this->dynamicPropertyNames().size(); ++i) {
-        QString property_name = this->dynamicPropertyNames().at( i );
+    foreach(QString property_name , this->properties.keys() ) {
         if ( property_name.startsWith( "@" ) ){ continue; }
         json.insert( property_name , GWSObject::getProperty( property_name ) );
     }
@@ -62,13 +61,13 @@ QJsonObject GWSObject::serialize() const{
  IMPORTERS
 **********************************************************************/
 
-void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
+void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> parent){
     Q_UNUSED( parent );
 
     // Required properties
-    QStringList parsed_properties;
-    if( json.keys().contains( GWS_UID_PROP ) ){      parsed_properties.append( GWS_UID_PROP ); this->setProperty( GWS_UID_PROP , json.value( GWS_UID_PROP ).toString() ); }
-    if( json.keys().contains( GWS_CLASS_PROP ) ){   parsed_properties.append( GWS_CLASS_PROP ); this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
+    /*QStringList parsed_properties;
+    if( json.keys().contains( GWS_UID_PROP ) ){         parsed_properties.append( GWS_UID_PROP ); this->setProperty( GWS_UID_PROP , json.value( GWS_UID_PROP ).toString() ); }
+    if( json.keys().contains( GWS_CLASS_PROP ) ){       parsed_properties.append( GWS_CLASS_PROP ); this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
         parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP);
         QJsonArray arr;
@@ -78,14 +77,14 @@ void GWSObject::deserialize(QJsonObject json, QSharedPointer<GWSObject> parent){
     if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isArray() ){
         parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP );
         this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
-    }
+    }*/
 
     // Remaining properties
     foreach( QString property_name , json.keys() ){
 
-        if( parsed_properties.contains( property_name ) ){
+        /*if( parsed_properties.contains( property_name ) ){
             continue; // Do not overwrite just parsed properties
-        }
+        }*/
 
         // Get the value to be inserted
         QJsonValue propert_value = json.value( property_name );
@@ -132,27 +131,30 @@ QJsonArray GWSObject::getInheritanceFamily() const{
     return inheritance_family;
 }
 
-bool GWSObject::hasProperty( QString name) const{
-    return !QObject::property( name.toUtf8() ).isNull();
+bool GWSObject::hasProperty( const QString &name ) const{
+    //return !QObject::property( name.toUtf8() ).isNull();
+    return this->properties.keys().contains( name );
 }
 
-const QJsonValue GWSObject::getProperty( QString name ) const{
+const QJsonValue GWSObject::getProperty( const QString &name ) const{
 
     // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
-        QString property_name = name.remove( 0 , 1 );
+        QString property_name = name;
+        property_name = property_name.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
-        name = this->GWSObject::getProperty( property_name ).toString();
+        property_name = this->GWSObject::getProperty( property_name ).toString();
+        return this->properties.value( property_name );
     }
 
-    this->mutex.lock();
-    const QVariant variant = QObject::property( name.toUtf8() );
-    QJsonValue value = QJsonValue::fromVariant( variant );
-    this->mutex.unlock();
-    return value;
+    //this->mutex.lockForRead();
+    //const QVariant variant = QObject::property( name.toUtf8() );
+    //this->mutex.unlock();
+    //QJsonValue value = QJsonValue::fromVariant( variant );
+    return this->properties.value( name );
 }
 
-const QJsonValue GWSObject::operator []( QString name ) const{
+const QJsonValue GWSObject::operator []( const QString &name ) const{
     return this->getProperty( name );
 }
 
@@ -165,10 +167,13 @@ bool GWSObject::setProperty( const QString &name, const GWSUnit &value){
 }
 
 bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
-    this->mutex.lock();
-    bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
-    this->mutex.unlock();
-    return ok;
+    //this->mutex.lockForWrite();
+    //bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
+    //this->mutex.unlock();
+    //return ok;
+    this->properties.insert( name , value );
+    emit propertyChangedSignal( name );
+    return true;
 }
 
 void GWSObject::copyProperties( GWSObject &other){

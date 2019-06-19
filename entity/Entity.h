@@ -8,7 +8,6 @@
 #include <QJsonArray>
 #include <QSqlRecord>
 #include <QStringList>
-#include <QMutex>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QFuture>
@@ -51,7 +50,7 @@ public:
     static QString STYLE_ZOOM_LEVEL_PROP;
 
     // IMPORTERS
-    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    virtual void deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // EXPORTERS
     virtual QJsonObject serialize() const; // Called when asked for more info about this entity. Can be overwritten if want to add extra variables to the exporters
@@ -112,11 +111,6 @@ protected:
      */
     GWSObjectStorage* behaviours = Q_NULLPTR;
     QList< QSharedPointer<GWSBehaviour> > to_be_executed_behaviours;
-
-    /**
-      * Mutex for paralelism
-      */
-    mutable QMutex mutex;
 
 private:
 

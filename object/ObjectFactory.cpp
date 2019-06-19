@@ -115,12 +115,12 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyName( QString &property_name,
 
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_value ,  QSharedPointer<GWSObject> object , QSharedPointer<GWSObject> parent){
+QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &property_value ,  QSharedPointer<GWSObject> object , QSharedPointer<GWSObject> parent){
 
     // IS NULL
 
-    if( property_value.isNull() ){
-        return QJsonValue();
+    if( property_value.isUndefined() ){
+        return QJsonValue::Undefined;
     }
 
     // IS STRING AND <>
@@ -170,13 +170,13 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( QJsonValue property_va
     return property_value;
 }
 
-QJsonValue GWSObjectFactory::incrementValue( QJsonValue existing_value , QJsonValue increment){
+QJsonValue GWSObjectFactory::incrementValue( const QJsonValue &existing_value , const QJsonValue &increment){
 
-    if( existing_value.isNull() ){
+    if( existing_value.isUndefined() ){
         return increment;
     }
 
-    if( increment.isNull() ){
+    if( increment.isUndefined() ){
         return existing_value;
     }
 

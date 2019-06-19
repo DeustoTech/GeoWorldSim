@@ -82,7 +82,7 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
 
     // If already registered
-    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isNull() ){
+    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isUndefined() ){
         return;
     }
 
@@ -169,7 +169,7 @@ void GWSExecutionEnvironment::behave(){
     }
 
     // Shuffle list
-    std::random_shuffle( currently_running_entities.begin() , currently_running_entities.end() );
+    //std::random_shuffle( currently_running_entities.begin() , currently_running_entities.end() );
 
     // Get current datetime in simulation
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
@@ -218,7 +218,7 @@ void GWSExecutionEnvironment::behave(){
 
             qint64 entity_next_tick = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
-            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
+            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isUndefined() && min_tick >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
                 this->unregisterEntity( entity );
                 continue;
             }
@@ -230,6 +230,7 @@ void GWSExecutionEnvironment::behave(){
                 // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
                 entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
+                //entity->tick();
                 QtConcurrent::run( entity.data() , &GWSEntity::tick );
 
                 if( ++ticked_entities >= this->max_entity_amount_per_tick ){

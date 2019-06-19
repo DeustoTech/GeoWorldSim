@@ -69,7 +69,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
     foreach( QSharedPointer<GWSEntity> a , valid_entities ) {
 
         QJsonValue val = a->getProperty( this->getProperty( ENTITY_PROPERTY_NAME ).toString() );
-        if( val.isNull() ){ continue; }
+        if( val.isUndefined() ){ continue; }
 
         qint64 agent_time = a->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( grid_time );
         if( agent_time > grid_time ){ continue; }
@@ -117,10 +117,10 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             QJsonValue accumulated_value = this->accumulated_grid->getValue( coor );
             QString coor_id = QString("%1-%2").arg( i ).arg( j );
 
-            if( instant_value.isNull() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){
+            if( instant_value.isUndefined() && !this->previous_sent_coordinates_ids.contains( coor_id ) ){
                 continue;
             }
-            if( !instant_value.isNull() ){
+            if( !instant_value.isUndefined() ){
                 now_sent_coordinates_ids.append( coor_id );
             }
 

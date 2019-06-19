@@ -15,7 +15,7 @@ public:
     Q_INVOKABLE explicit GWSSkill();
 
     // IMPORTERS
-    virtual void deserialize(QJsonObject json, QSharedPointer<GWSObject> skilled_entity);
+    virtual void deserialize( const QJsonObject &json, QSharedPointer<GWSObject> skilled_entity);
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

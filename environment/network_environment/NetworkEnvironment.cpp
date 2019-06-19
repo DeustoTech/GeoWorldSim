@@ -149,7 +149,7 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinat
 void GWSNetworkEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
 
     // If already registered
-    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isNull() ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isUndefined() ){
         return;
     }
 

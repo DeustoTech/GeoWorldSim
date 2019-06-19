@@ -18,7 +18,7 @@ GWSBehaviour::GWSBehaviour() : GWSObject(){
  IMPORTERS
 **********************************************************************/
 
-void GWSBehaviour::deserialize(QJsonObject json, QSharedPointer<GWSObject> behaving_agent){
+void GWSBehaviour::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> behaving_agent){
     this->behaving_entity = behaving_agent.dynamicCast<GWSEntity>();
     GWSObject::deserialize( json , behaving_agent );
 

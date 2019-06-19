@@ -9,7 +9,7 @@ GWSSkill::GWSSkill() : GWSObject(){
  IMPORTERS
 **********************************************************************/
 
-void GWSSkill::deserialize(QJsonObject json, QSharedPointer<GWSObject> skilled_entity){
+void GWSSkill::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> skilled_entity){
     this->skilled_entity = skilled_entity.dynamicCast<GWSEntity>();
     GWSObject::deserialize( json , skilled_entity );
 }

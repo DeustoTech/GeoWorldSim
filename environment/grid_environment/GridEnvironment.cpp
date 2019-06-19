@@ -58,7 +58,7 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity 
 
 void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
-    if( entity.isNull() || entity->getProperty( GRID_PROP ).isNull() ){
+    if( entity.isNull() || entity->getProperty( GRID_PROP ).isUndefined() ){
         return;
     }
 
@@ -74,7 +74,7 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
     // Listen to entity property changes
     this->connect( entity.data() , &GWSEntity::propertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 
-    if( value.isNull() ){
+    if( value.isUndefined() ){
         return;
     }
 

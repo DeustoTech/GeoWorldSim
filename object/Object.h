@@ -2,7 +2,7 @@
 #define GWSOBJECT_H
 
 #include <QObject>
-#include <QMutex>
+#include <QReadWriteLock>
 #include <QSharedPointer>
 #include <QMetaProperty>
 #include <QJsonObject>
@@ -32,16 +32,16 @@ public:
     virtual QJsonObject serialize() const;
 
     // IMPORTERS
-    virtual void deserialize( QJsonObject json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    virtual void deserialize( const QJsonObject& json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // GETTERS
     QString getUID() const;
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;
-    virtual const QJsonValue getProperty( QString name ) const;
-    bool hasProperty( QString name ) const;
-    const QJsonValue operator[]( QString name ) const;
+    virtual const QJsonValue getProperty( const QString &name ) const;
+    bool hasProperty( const QString &name ) const;
+    const QJsonValue operator[]( const QString &name ) const;
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
@@ -70,10 +70,12 @@ private:
     QSharedPointer<GWSObject> self_shared_pointer;
 
     // MUTEX
-    mutable QMutex mutex;
+    mutable QReadWriteLock mutex;
 
     // AUTOINCREMENTAL FOR IDS
     static quint64 counter;
+
+    QJsonObject properties;
 
 };
 

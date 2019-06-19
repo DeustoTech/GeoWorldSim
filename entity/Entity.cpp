@@ -45,7 +45,7 @@ GWSEntity::~GWSEntity() {
  IMPORTERS
 **********************************************************************/
 
-void GWSEntity::deserialize(QJsonObject json , QSharedPointer<GWSObject> parent ){
+void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
     GWSObject::deserialize( json , parent );
 
     // SKILLS
@@ -149,7 +149,7 @@ bool GWSEntity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
             valid = false;
         }
 
-        if( v.isNull() && nulls_allowed ){
+        if( v.isUndefined() && nulls_allowed ){
             valid = true;
         }
 
