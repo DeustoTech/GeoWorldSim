@@ -30,6 +30,7 @@
 #include "../../environment/grid_environment/GridEnvironment.h"
 
 // Utils
+#include "../../util/parallelism/ParallelismController.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Envelope.h"
 #include "../../util/distributed/ExternalListener.h"
@@ -71,6 +72,7 @@ int main(int argc, char* argv[])
 
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
+    GWSParallelismController::globalInstance();
     GWSEntityEnvironment::globalInstance();
     GWSExecutionEnvironment::globalInstance();
     GWSPhysicalEnvironment::globalInstance();
@@ -96,7 +98,7 @@ int main(int argc, char* argv[])
     QList<GWSEntityGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
     QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
-     foreach( QString key , json_population.keys() ) {
+    foreach( QString key , json_population.keys() ) {
 
          // Population type:
          QJsonObject population = json_population[ key ].toObject();
@@ -127,7 +129,7 @@ int main(int argc, char* argv[])
                          emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
                                      QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
-                         QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
+                         GWSExecutionEnvironment::globalInstance()->run();
                      }
                  });
 
@@ -148,7 +150,7 @@ int main(int argc, char* argv[])
                      QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
 
-         QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
+         GWSExecutionEnvironment::globalInstance()->run();
      }
 
      // LISTEN TO EXTERNAL SIMULATIONS

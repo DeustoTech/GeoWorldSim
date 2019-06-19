@@ -1,5 +1,8 @@
 #include "PolluteSkill.h"
 
+#include <QDir>
+#include <QJsonDocument>
+
 #include "../../skill/move/MoveThroughRouteSkill.h"
 #include "../../skill/move/MoveSkill.h"
 #include "../../util/storage/GlobalObjectStorage.h"

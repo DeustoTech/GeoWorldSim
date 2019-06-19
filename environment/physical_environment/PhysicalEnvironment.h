@@ -2,15 +2,11 @@
 #define GWSPHYSICALENVIRONMENT_H
 
 #include <QMutex>
-#include <QFuture>
-#include <QtConcurrent/QtConcurrent>
 
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Quadtree.h"
 
 #include "../../environment/Environment.h"
-
-using namespace QtConcurrent;
 
 class GWSPhysicalEnvironment : public GWSEnvironment
 {

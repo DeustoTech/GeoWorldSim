@@ -1,11 +1,12 @@
 #include "APIDriver.h"
 
 #include <QDebug>
+#include <QTimer>
+#include <QNetworkAccessManager>
 #include <QNetworkProxyFactory>
 #include <QNetworkProxy>
 #include <QJsonDocument>
 #include <QThreadPool>
-#include <QtConcurrent/QtConcurrent>
 
 #include "../../app/App.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
@@ -16,16 +17,6 @@ GWSAPIDriver* GWSAPIDriver::globalInstance(){
 }
 
 GWSAPIDriver::GWSAPIDriver() : QObject(){
-
-    QNetworkProxyQuery npq( QUrl( "https://www.google.com" ) );
-    QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
-
-    if( proxies_list.isEmpty() ){
-        qWarning() << Q_FUNC_INFO << "No proxy found.";
-    }
-
-    this->access_manager = new QNetworkAccessManager();
-    this->access_manager->setProxy( proxies_list.at(0) );
 }
 
 GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
@@ -33,7 +24,6 @@ GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
 }
 
 GWSAPIDriver::~GWSAPIDriver(){
-    this->access_manager->deleteLater();
 }
 
 /**********************************************************************
@@ -173,7 +163,20 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
         this->current_requests_amount++;
         //this->mutex.unlock();
 
-        QTimer::singleShot( qrand() % 100 , GWSApp::globalInstance() , [ pending , this ]{
+        QTimer::singleShot( 0 , GWSApp::globalInstance() , [ pending , this ]{
+
+            if( !this->access_manager ){
+                QNetworkProxyQuery npq( QUrl( "https://google.com" ) );
+                QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
+
+                if( proxies_list.isEmpty() ){
+                    qWarning() << Q_FUNC_INFO << "No proxy found.";
+                }
+
+                // Must be created in main thread for it to work
+                this->access_manager = new QNetworkAccessManager();
+                this->access_manager->setProxy( proxies_list.at(0) );
+            }
 
             QNetworkReply* ref_reply = Q_NULLPTR;
             QBuffer data;
@@ -186,7 +189,6 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
             if( pending.operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending.request , &data ); }
             if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
             if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
-
 
             if( ref_reply ){
 

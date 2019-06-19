@@ -1,5 +1,7 @@
 #include "CalculateGTAlgRouteBehaviour.h"
 
+#include <QJsonDocument>
+
 QString CalculateGTAlgRouteBehaviour::GTALG_HOST = "gtalg_host";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_X = "destination_x";
 QString CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
@@ -82,7 +84,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         // TEST NO GTALG
 
-        QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
+        /*QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
         if( !multiroute_skill ){
             multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
             agent->addSkill( multiroute_skill );
@@ -90,8 +92,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
 
         multiroute_skill->addDestination( GWSCoordinate (dest_x , dest_y) , QJsonObject({ { TRANSPORT_MODE , "CAR" } , { "color" , "blue" }}) );
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-
-
+        */
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 

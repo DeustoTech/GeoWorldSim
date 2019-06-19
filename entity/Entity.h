@@ -9,7 +9,6 @@
 #include <QSqlRecord>
 #include <QStringList>
 #include <QDebug>
-#include <QtConcurrent/QtConcurrent>
 #include <QFuture>
 
 #include "./../object/Object.h"
@@ -25,8 +24,6 @@ QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
 
 // Declare Coordinate to be used as QMETAPROPERTY
 // Q_DECLARE_METATYPE(GWSGeometry)
-
-using namespace QtConcurrent;
 
 class GWSEntity : public GWSObject
 {
