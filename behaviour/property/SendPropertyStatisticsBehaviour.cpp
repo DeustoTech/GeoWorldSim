@@ -138,7 +138,7 @@ QPair< double , QJsonArray > SendPropertyStatisticsBehaviour::behave(){
             grid_cell.insert( "instant_value" , instant_value );
             grid_cell.insert( "accumulated_value" , accumulated_value );
             double normalized = ( instant_value.toDouble(0) - instant_grid_min_value) / (instant_grid_max_value - instant_grid_min_value);
-            grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( ( 1-normalized * 255 ) ) );
+            grid_cell.insert( "color" , QString("rgb(%1,92,%2)").arg( normalized * 255 ).arg( (1-normalized) * 255 ) );
             emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( grid_cell , socket_id );
         }
     }
