@@ -15,6 +15,8 @@ QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@gwsgroups";
 quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
 
 GWSObject::GWSObject() : QObject() , deleted(false) {
+    this->properties = new QJsonObject();
+
     QString generated_id = QString("Entity::%1").arg( ++GWSObject::counter );
     this->setProperty( GWSObject::GWS_UID_PROP ,  generated_id );
 }
@@ -25,6 +27,7 @@ GWSObject::GWSObject(const GWSObject &other) : QObject(){
 GWSObject::~GWSObject(){
     this->beforeDestroyHook();
     this->deleted = true;
+    delete this->properties;
 }
 
 /**********************************************************************
@@ -50,7 +53,7 @@ QJsonObject GWSObject::serializeMini() const{
  */
 QJsonObject GWSObject::serialize() const{
     QJsonObject json = this->serializeMini();
-    foreach(QString property_name , this->properties.keys() ) {
+    foreach(QString property_name , this->properties->keys() ) {
         if ( property_name.startsWith( "@" ) ){ continue; }
         json.insert( property_name , GWSObject::getProperty( property_name ) );
     }
@@ -133,10 +136,10 @@ QJsonArray GWSObject::getInheritanceFamily() const{
 
 bool GWSObject::hasProperty( const QString &name ) const{
     //return !QObject::property( name.toUtf8() ).isNull();
-    return this->properties.keys().contains( name );
+    return this->properties->keys().contains( name );
 }
 
-const QJsonValue GWSObject::getProperty( const QString &name ) const{
+QJsonValue GWSObject::getProperty( const QString &name ) const{
 
     // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
@@ -144,17 +147,17 @@ const QJsonValue GWSObject::getProperty( const QString &name ) const{
         property_name = property_name.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         property_name = this->GWSObject::getProperty( property_name ).toString();
-        return this->properties.value( property_name );
+        return this->properties->value( property_name );
     }
 
     //this->mutex.lockForRead();
     //const QVariant variant = QObject::property( name.toUtf8() );
     //this->mutex.unlock();
     //QJsonValue value = QJsonValue::fromVariant( variant );
-    return this->properties.value( name );
+    return this->properties->value( name );
 }
 
-const QJsonValue GWSObject::operator []( const QString &name ) const{
+QJsonValue GWSObject::operator []( const QString &name ) const{
     return this->getProperty( name );
 }
 
@@ -171,7 +174,7 @@ bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
     //bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
     //this->mutex.unlock();
     //return ok;
-    this->properties.insert( name , value );
+    this->properties->insert( name , value );
     emit propertyChangedSignal( name );
     return true;
 }

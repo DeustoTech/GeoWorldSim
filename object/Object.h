@@ -39,9 +39,9 @@ public:
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;
-    virtual const QJsonValue getProperty( const QString &name ) const;
+    virtual QJsonValue getProperty( const QString &name ) const;
     bool hasProperty( const QString &name ) const;
-    const QJsonValue operator[]( const QString &name ) const;
+    QJsonValue operator[]( const QString &name ) const;
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
@@ -75,7 +75,7 @@ private:
     // AUTOINCREMENTAL FOR IDS
     static quint64 counter;
 
-    QJsonObject properties;
+    QJsonObject* properties;
 
 };
 

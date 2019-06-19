@@ -105,6 +105,8 @@ int GWSApp::exec(){
     try {
         QCoreApplication::exec(); // Real exec()
     } catch(std::exception &e){
+        GWSExecutionEnvironment::globalInstance()->stop();
+        GWSExecutionEnvironment::globalInstance()->run();
         this->exec();
     }
 
