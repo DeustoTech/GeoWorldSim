@@ -33,9 +33,6 @@ QJsonObject GWSNetworkEnvironment::serialize() const{
     return json;
 }
 
-void GWSNetworkEnvironment::deserialize(QJsonObject json){
-}
-
 /**********************************************************************
  GETTERS
 **********************************************************************/
@@ -152,7 +149,7 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinat
 void GWSNetworkEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
 
     // If already registered
-    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isUndefined() ){
+    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isNull() ){
         return;
     }
 
@@ -163,7 +160,7 @@ void GWSNetworkEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
     }
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSNetworkEnvironment::agentPropertyChanged );
+    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
 
     // GRAPH EDGE (comes as a QJSONOBJECT, need to extract it and build the GWSEDGE)
     GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
@@ -181,7 +178,7 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
 
         GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
 
-        this->disconnect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSNetworkEnvironment::agentPropertyChanged );
+        this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
 
         foreach(QJsonValue v , classes){
 
@@ -230,7 +227,7 @@ void GWSNetworkEnvironment::upsertAgentToIndex(QSharedPointer<GWSEntity> agent, 
     }
 }
 
-void GWSNetworkEnvironment::agentPropertyChanged( QString property_name ){
+void GWSNetworkEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == EDGE_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }

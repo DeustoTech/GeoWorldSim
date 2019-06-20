@@ -52,7 +52,7 @@ QJsonObject GWSObject::serializeMini() const{
  * @return
  */
 QJsonObject GWSObject::serialize() const{
-    QJsonObject json = this->serializeMini();
+    QJsonObject json( this->serializeMini() );
     foreach(QString property_name , this->properties->keys() ) {
         if ( property_name.startsWith( "@" ) ){ continue; }
         json.insert( property_name , GWSObject::getProperty( property_name ) );
@@ -141,20 +141,28 @@ bool GWSObject::hasProperty( const QString &name ) const{
 
 QJsonValue GWSObject::getProperty( const QString &name ) const{
 
+    QJsonValue value;
+
     // If it comes between '<>', it is not the property name, but a key where to get the property name from
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
         QString property_name = name;
         property_name = property_name.remove( 0 , 1 );
         property_name = property_name.remove( property_name.length() - 1 , 1 );
         property_name = this->GWSObject::getProperty( property_name ).toString();
-        return this->properties->value( property_name );
+
+        this->mutex.lockForRead();
+        value = this->properties->value( property_name );
+        this->mutex.unlock();
+
+    }
+    else
+    {
+        this->mutex.lockForRead();
+        value = this->properties->value( name );
+        this->mutex.unlock();
     }
 
-    //this->mutex.lockForRead();
-    //const QVariant variant = QObject::property( name.toUtf8() );
-    //this->mutex.unlock();
-    //QJsonValue value = QJsonValue::fromVariant( variant );
-    return this->properties->value( name );
+    return value.isUndefined() ? QJsonValue::Null : value;
 }
 
 QJsonValue GWSObject::operator []( const QString &name ) const{
@@ -174,8 +182,18 @@ bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
     //bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
     //this->mutex.unlock();
     //return ok;
+    this->mutex.lockForWrite();
     this->properties->insert( name , value );
-    emit propertyChangedSignal( name );
+    this->mutex.unlock();
+    emit entityPropertyChangedSignal( name );
+    return true;
+}
+
+bool GWSObject::removeProperty( const QString &name ){
+    this->mutex.lockForWrite();
+    this->properties->insert( name , QJsonValue::Null );
+    this->mutex.unlock();
+    emit entityPropertyChangedSignal( name );
     return true;
 }
 
@@ -197,7 +215,7 @@ bool GWSObject::incrementProperty( QString &name, const QJsonValue &value){
  EVENTS
 **********************************************************************/
 
-bool GWSObject::event(QEvent *event){
+/*bool GWSObject::event(QEvent *event){
 
     if( event->type() == QEvent::DynamicPropertyChange ){
         QDynamicPropertyChangeEvent* const ev = static_cast<QDynamicPropertyChangeEvent*>( event );
@@ -211,4 +229,4 @@ bool GWSObject::event(QEvent *event){
     }
 
     return QObject::event( event );
-}
+}*/

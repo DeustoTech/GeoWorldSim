@@ -55,10 +55,10 @@ private:
 
     // Returns in parameter an Unfinished reply, receiver will need to connect to finished signal
     virtual void operation( QNetworkAccessManager::Operation operation , QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers = QMap<QString, QString>() , QByteArray data = QByteArray() , QByteArray custom_operation = QByteArray() );
-    virtual void executePendingOperation( GWSAPIDriverElement& request );
+    virtual void executePendingOperation( GWSAPIDriverElement* request );
 
     QNetworkAccessManager* access_manager = Q_NULLPTR;
-    QList< GWSAPIDriverElement > pending_requests;
+    QList< GWSAPIDriverElement* >* pending_requests;
     int current_requests_amount = 0;
     QReadWriteLock mutex;
 

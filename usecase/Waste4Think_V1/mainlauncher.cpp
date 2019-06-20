@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
                         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
                                     QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
-                        QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
+                        GWSExecutionEnvironment::globalInstance()->run();
                     }
                 });
 
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
                     QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
 
-        QtConcurrent::run( GWSExecutionEnvironment::globalInstance() , &GWSExecutionEnvironment::run );
+        GWSExecutionEnvironment::globalInstance()->run();
     }
 
     // LISTEN TO EXTERNAL SIMULATIONS

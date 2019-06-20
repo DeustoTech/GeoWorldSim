@@ -12,7 +12,7 @@ GWSExternalPublisher::GWSExternalPublisher(const QString &socket_id) : GWSExtern
 
 void GWSExternalPublisher::sendMessage(const QString &signal , const QJsonValue &json){
 
-    QTimer::singleShot( qrand() % 100 , GWSApp::globalInstance() , [signal , json , this](){
+    QTimer::singleShot( 10 , GWSApp::globalInstance() , [signal , json , this](){
 
         // TO sockets.geoworldsim.com
         QJsonObject socket_json;

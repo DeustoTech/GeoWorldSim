@@ -41,7 +41,7 @@ void MoveThroughRouteBehaviour::afterCreateHook(){
  METHODS
 **********************************************************************/
 
-QPair< double , QJsonArray > MoveThroughRouteBehaviour::behave(){
+QPair<double, QJsonArray> MoveThroughRouteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
     GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );

@@ -11,7 +11,7 @@ SetEntityPropertyBehaviour::SetEntityPropertyBehaviour() : GWSBehaviour(){
 }
 
 
-QPair< double , QJsonArray > SetEntityPropertyBehaviour::behave(){
+QPair<double, QJsonArray> SetEntityPropertyBehaviour::behave(){
 
     QString entity_id = this->getProperty( ENTITY_ID ).toString();
     QSharedPointer<GWSEntity> entity = GWSEntityEnvironment::globalInstance()->getByUID( entity_id );

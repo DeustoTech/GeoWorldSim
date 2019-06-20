@@ -13,7 +13,7 @@ SetNextRouteDestinationBehaviour::SetNextRouteDestinationBehaviour() : GWSBehavi
 }
 
 
-QPair< double , QJsonArray > SetNextRouteDestinationBehaviour::behave(){
+QPair<double, QJsonArray> SetNextRouteDestinationBehaviour::behave(){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toArray();

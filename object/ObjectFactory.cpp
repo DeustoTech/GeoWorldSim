@@ -103,14 +103,14 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyName( QString &property_name,
 
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
     if( property_name.startsWith("<") && property_name.endsWith(">") ){
-        if( !parent ){ return QJsonValue::Undefined; }
+        if( !parent ){ return QJsonValue::Null; }
         property_name.remove( 0 , 1 );
         property_name.remove( property_name.length() - 1 , 1 );
         return parent->getProperty( property_name );
     }
 
     // IS SIMPLE STRING
-    if( !object ){ return QJsonValue::Undefined; }
+    if( !object ){ return QJsonValue::Null; }
     return GWSObjectFactory::simpleOrParentPropertyValue( object->GWSObject::getProperty( property_name ) , object , parent );
 
 }
@@ -119,8 +119,8 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
 
     // IS NULL
 
-    if( property_value.isUndefined() ){
-        return QJsonValue::Undefined;
+    if( property_value.isNull() ){
+        return property_value;
     }
 
     // IS STRING AND <>
@@ -172,11 +172,11 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
 
 QJsonValue GWSObjectFactory::incrementValue( const QJsonValue &existing_value , const QJsonValue &increment){
 
-    if( existing_value.isUndefined() ){
+    if( existing_value.isNull() ){
         return increment;
     }
 
-    if( increment.isUndefined() ){
+    if( increment.isNull() ){
         return existing_value;
     }
 

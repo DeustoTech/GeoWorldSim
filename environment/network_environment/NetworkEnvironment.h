@@ -22,7 +22,6 @@ public:
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
-    void deserialize(QJsonObject json);
 
     // GETTERS
     //GWSNetworkEdge getEdge( QSharedPointer< GWSAgent > agent ) const;
@@ -45,7 +44,7 @@ protected:
 
 protected slots:
 
-    void agentPropertyChanged( QString property_name );
+    void entityPropertyChanged( QString property_name );
 
 private :
 

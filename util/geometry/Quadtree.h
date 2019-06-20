@@ -39,7 +39,7 @@ public:
 
 protected:
 
-    int createHash( double value , int decimal_amount ) const;
+    std::string createHash( double value , int decimal_amount ) const;
 
 private:
 
@@ -54,8 +54,8 @@ private:
     mutable QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* > quadtree_elements;
-    QMap< unsigned int , QMap< int , QMap< int , geos::index::quadtree::Quadtree* >* >* > quadtree_layers;
+    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements;
+    QMap< std::string , geos::index::quadtree::Quadtree* >* quadtree_layers; // QMAP< (XHASH + YHASH) , QuadTree >
     unsigned int layer_depth_amount = 5;
 
     // BOUNDS

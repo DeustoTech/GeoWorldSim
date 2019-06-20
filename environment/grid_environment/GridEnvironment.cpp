@@ -44,7 +44,7 @@ const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry 
     if( this->environment_entity_grids.keys().contains( class_name ) ){
         return this->environment_entity_grids.value( class_name )->getValue( geom );
     }
-    return QJsonValue::Undefined;
+    return QJsonValue::Null;
 }
 
 const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
@@ -52,7 +52,7 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity 
         GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         return this->environment_entity_grids.value( entity->metaObject()->className() )->getValue( geom );
     }
-    return QJsonValue::Undefined;
+    return QJsonValue::Null;
 }
 
 /**********************************************************************
@@ -61,7 +61,7 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity 
 
 void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
-    if( entity.isNull() || entity->getProperty( GRID_PROP ).isUndefined() ){
+    if( entity.isNull() || entity->getProperty( GRID_PROP ).isNull() ){
         return;
     }
 
@@ -75,9 +75,9 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
     QJsonValue value = entity->getProperty( GRID_PROP );
 
     // Listen to entity property changes
-    this->connect( entity.data() , &GWSEntity::propertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
+    this->connect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 
-    if( value.isUndefined() ){
+    if( value.isNull() ){
         return;
     }
 
@@ -85,7 +85,7 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 }
 
 void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
-
+    this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 }
 
 
@@ -93,7 +93,7 @@ void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
  PROTECTED
 **********************************************************************/
 
-void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , QJsonValue value ){
+void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , const QJsonValue& value ){
 
     GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     if( !entity_geom.isValid() ){ return; }

@@ -16,7 +16,7 @@ SendEntitySnapshotBehaviour::SendEntitySnapshotBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QPair< double , QJsonArray > SendEntitySnapshotBehaviour::behave(){
+QPair<double, QJsonArray> SendEntitySnapshotBehaviour::behave(){
 
     // Agent to fetch UID (by default this behaviours agent)
     QString entity_to_send_id = this->getProperty( ENTITY_TO_SEND_ID ).toString( this->getEntity()->getUID() );

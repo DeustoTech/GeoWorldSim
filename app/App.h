@@ -22,7 +22,7 @@ public:
     // GETTERS
     QString getAppId();
     QString getUserId();
-    QJsonObject getConfiguration();
+    const QJsonObject& getConfiguration();
 
 public slots:
 

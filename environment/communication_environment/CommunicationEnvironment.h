@@ -18,7 +18,7 @@ public:
     virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
-    void listenSocket( QString socket_id );
+    void listenSocketSignal( QString socket_id );
     void sendAgentSignal( const QJsonObject &agent_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void sendMessageSignal( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void dataReceivedSignal( const QJsonObject &message_json , const QString &socket_id );

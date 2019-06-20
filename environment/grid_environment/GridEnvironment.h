@@ -25,7 +25,7 @@ public:
     virtual void unregisterEntity( QSharedPointer<GWSEntity> entity);
 
 protected:
-    void upsertValueToGrid( QSharedPointer<GWSEntity> entity , QJsonValue value );
+    void upsertValueToGrid( QSharedPointer<GWSEntity> entity , const QJsonValue& value );
 
 protected slots:
     void entityPropertyChanged( QString property_name );

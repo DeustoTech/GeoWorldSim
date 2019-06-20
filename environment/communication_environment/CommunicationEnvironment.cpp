@@ -17,7 +17,7 @@ GWSCommunicationEnvironment::GWSCommunicationEnvironment() : GWSEnvironment(){
     this->publishers.insert( socket_id , new GWSExternalPublisher( socket_id ) );
 
     // Connect signals and slots
-    this->connect( this , &GWSCommunicationEnvironment::listenSocket , this , &GWSCommunicationEnvironment::connectExternalSocket );
+    this->connect( this , &GWSCommunicationEnvironment::listenSocketSignal , this , &GWSCommunicationEnvironment::connectExternalSocket );
     this->connect( this , &GWSCommunicationEnvironment::sendAgentSignal , this , &GWSCommunicationEnvironment::sendAgent );
     this->connect( this , &GWSCommunicationEnvironment::sendMessageSignal , this , &GWSCommunicationEnvironment::sendMessage );
 

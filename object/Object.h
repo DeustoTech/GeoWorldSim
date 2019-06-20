@@ -47,17 +47,18 @@ public:
     //void setParent( QSharedPointer<GWSObject> parent );
     bool setProperty( const QString &name, const GWSUnit &value);
     bool setProperty( const QString &name, const QJsonValue &value);
+    bool removeProperty( const QString &name );
     bool incrementProperty( QString &name , const QJsonValue &value);
     void copyProperties( GWSObject &other);
 
     // EVENTS
-    bool event(QEvent *event);
+    // OLD METAPROPERTY SYSTEM bool event(QEvent *event);
 
     // PUBLIC DELETED ATTRIBUTE
     bool deleted = true; // IMPORTANT
 
 signals:
-    void propertyChangedSignal( const QString &name );
+    void entityPropertyChangedSignal( QString name );
 
 protected:
 

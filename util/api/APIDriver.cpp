@@ -17,6 +17,7 @@ GWSAPIDriver* GWSAPIDriver::globalInstance(){
 }
 
 GWSAPIDriver::GWSAPIDriver() : QObject(){
+    this->pending_requests = new QList< GWSAPIDriverElement* >();
 }
 
 GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
@@ -24,6 +25,10 @@ GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
 }
 
 GWSAPIDriver::~GWSAPIDriver(){
+    for(int i = 0 ; i < this->pending_requests->size() ; i++) {
+        delete this->pending_requests->at( i );
+    }
+    delete this->pending_requests;
 }
 
 /**********************************************************************
@@ -118,34 +123,34 @@ void GWSAPIDriver::DELETE( QUrl url , std::function<void(QNetworkReply*)> callba
 
 void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl url, std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data , QByteArray custom_operation ){
 
-    GWSAPIDriverElement pending_request;
+    GWSAPIDriverElement* pending_request = new GWSAPIDriverElement();
 
     // Request
-    pending_request.request = QNetworkRequest(url);
+    pending_request->request = QNetworkRequest(url);
     QSslConfiguration sslConfiguration( QSslConfiguration::defaultConfiguration() );
     sslConfiguration.setProtocol( QSsl::TlsV1_2 );
-    pending_request.request.setSslConfiguration( sslConfiguration );
+    pending_request->request.setSslConfiguration( sslConfiguration );
 
     // Operation
-    pending_request.operation = operation;
+    pending_request->operation = operation;
 
     // Add request headers
     foreach ( const QString header, headers.keys() ){
-        pending_request.request.setRawHeader( header.toStdString().c_str(), headers.value( header ).toStdString().c_str() );
+        pending_request->request.setRawHeader( header.toStdString().c_str(), headers.value( header ).toStdString().c_str() );
     }
 
     // Add data
-    pending_request.data = data;
+    pending_request->data = data;
 
     // Add callback
-    pending_request.callback = callback;
+    pending_request->callback = callback;
 
     //this->mutex.lockForRead();
     if( this->current_requests_amount > 6 ){ // Magic number set by Qt : https://doc.qt.io/qt-5/qnetworkaccessmanager.html
         //this->mutex.unlock();
 
         //this->mutex.lockForWrite();
-        this->pending_requests.append( pending_request );
+        this->pending_requests->append( pending_request );
         //this->mutex.unlock();
 
     } else {
@@ -155,7 +160,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
 
 }
 
-void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
+void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement* pending ){
 
     try {
 
@@ -163,7 +168,7 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
         this->current_requests_amount++;
         //this->mutex.unlock();
 
-        QTimer::singleShot( 0 , GWSApp::globalInstance() , [ pending , this ]{
+        QTimer::singleShot( 10 , GWSApp::globalInstance() , [ pending , this ]{
 
             if( !this->access_manager ){
                 QNetworkProxyQuery npq( QUrl( "https://google.com" ) );
@@ -181,14 +186,14 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
             QNetworkReply* ref_reply = Q_NULLPTR;
             QBuffer data;
             data.open( ( QBuffer::ReadWrite ) );
-            data.write( pending.data );
+            data.write( pending->data );
             data.seek( 0 );
 
-            if( pending.operation == QNetworkAccessManager::GetOperation ){ ref_reply = this->access_manager->get( pending.request ); }
-            if( pending.operation == QNetworkAccessManager::PostOperation ){ ref_reply = this->access_manager->post( pending.request , &data ); }
-            if( pending.operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending.request , &data ); }
-            if( pending.operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending.request ); }
-            if( pending.operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending.request , "" , &data ); }
+            if( pending->operation == QNetworkAccessManager::GetOperation ){ ref_reply = this->access_manager->get( pending->request ); }
+            if( pending->operation == QNetworkAccessManager::PostOperation ){ ref_reply = this->access_manager->post( pending->request , &data ); }
+            if( pending->operation == QNetworkAccessManager::PutOperation ){ ref_reply = this->access_manager->put( pending->request , &data ); }
+            if( pending->operation == QNetworkAccessManager::DeleteOperation ){ ref_reply = this->access_manager->deleteResource( pending->request ); }
+            if( pending->operation == QNetworkAccessManager::CustomOperation ){ ref_reply = this->access_manager->sendCustomRequest( pending->request , "" , &data ); }
 
             if( ref_reply ){
 
@@ -197,12 +202,12 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
                     this->current_requests_amount--;
 
                     //this->mutex.lockForRead();
-                    if( !this->pending_requests.isEmpty() ){
+                    if( !this->pending_requests->isEmpty() ){
                         //this->mutex.unlock();
 
                         //this->mutex.lockForWrite();
-                        GWSAPIDriverElement next = this->pending_requests.at( 0 );
-                        this->pending_requests.removeAt( 0 );
+                        GWSAPIDriverElement* next = this->pending_requests->at( 0 );
+                        this->pending_requests->removeAt( 0 );
                         //this->mutex.unlock();
 
                         this->executePendingOperation( next );
@@ -217,12 +222,13 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement& pending ){
                 this->current_requests_amount--;
             }
 
-            pending.callback( ref_reply );
+            pending->callback( ref_reply );
+            delete pending;
 
         });
 
     } catch(...){
-        qWarning() << QString("Crashed request %1 %2").arg( pending.operation ).arg( pending.request.url().toString() );
+        qWarning() << QString("Crashed request %1 %2").arg( pending->operation ).arg( pending->request.url().toString() );
     }
 
 }

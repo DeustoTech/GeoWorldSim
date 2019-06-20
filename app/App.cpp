@@ -91,7 +91,7 @@ QString GWSApp::getUserId(){
     return this->json_configuration.value( "user_id" ).toString();
 }
 
-QJsonObject GWSApp::getConfiguration(){
+const QJsonObject& GWSApp::getConfiguration(){
     return this->json_configuration;
 }
 

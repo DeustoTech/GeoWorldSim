@@ -48,7 +48,7 @@ public:
     virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
 
 protected slots:
-    void agentPropertyChanged( QString property_name );
+    void entityPropertyChanged( QString property_name );
 
 private:
     GWSTimeEnvironment();

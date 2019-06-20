@@ -22,7 +22,7 @@ public:
 
     // GETTERS
     QSharedPointer<GWSEntity> getEntity() const;
-    virtual const QJsonValue getProperty( QString name ) const;
+    virtual QJsonValue getProperty( QString name ) const;
 
 private:
     QSharedPointer<GWSEntity> skilled_entity;
