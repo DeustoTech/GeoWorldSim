@@ -45,7 +45,7 @@ QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
-        std::string combined_hash = this->createHash( coor.getX() , l ) + this->createHash( coor.getY() , l );
+        std::string combined_hash = this->createHash( coor.getX() , l ) + ":" + this->createHash( coor.getY() , l );
 
         this->mutex.lockForRead();
         if( !this->quadtree_layers->value( combined_hash , Q_NULLPTR ) ){
@@ -54,10 +54,10 @@ QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
         }
         this->mutex.unlock();
 
-        const geos::geom::Envelope env = geos::geom::Envelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
         std::vector<void*> ids;
 
         this->mutex.lockForWrite();
+        const geos::geom::Envelope env = geos::geom::Envelope( coor.getX() , coor.getX() , coor.getY() , coor.getY() );
         this->quadtree_layers->value( combined_hash )->query( &env , ids );
         this->mutex.unlock();
 
@@ -125,7 +125,7 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
         }
     }
 
-    std::string combined_hash = this->createHash( ( minX + maxX ) / 2.0  , qMin( x_decimal_count , y_decimal_count ) ) + this->createHash( ( minY + maxY ) / 2.0 , qMin( x_decimal_count , y_decimal_count ) );
+    std::string combined_hash = this->createHash( ( minX + maxX ) / 2.0  , qMin( x_decimal_count , y_decimal_count ) ) + ":" + this->createHash( ( minY + maxY ) / 2.0 , qMin( x_decimal_count , y_decimal_count ) );
 
     this->mutex.lockForRead();
     if( !this->quadtree_layers->value( combined_hash , Q_NULLPTR ) ){
@@ -152,7 +152,10 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
 
 QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
 
-    if( !coor.isValid() ){ return QString(); }
+    if( !coor.isValid() ){
+        qDebug() << "Invalid coordinates" << coor.toString();
+        return QString();
+    }
 
     GWSLengthUnit shortest_distance = GWSLengthUnit(999999999999999);
     QString nearest_object_id;
@@ -163,10 +166,10 @@ QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
         this->mutex.unlock();
 
         if( !elm ){ continue; }
-        const GWSGeometry g = elm->geometry;
+        const GWSGeometry& g = elm->geometry;
 
         if( g.isValid() ){
-            GWSLengthUnit l = g.getCentroid().getDistance( coor );
+            const GWSLengthUnit& l = g.getCentroid().getDistance( coor );
             if( l < shortest_distance ){
                 shortest_distance = l;
                 nearest_object_id = object_id;
@@ -239,7 +242,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                 if( previous_elm_geom.isValid() ){
 
                     // Get geohash
-                    std::string total_hash = this->createHash( previous_elm_geom.getCentroid().getX() , l ) + this->createHash( previous_elm_geom.getCentroid().getY() , l );
+                    std::string total_hash = this->createHash( previous_elm_geom.getCentroid().getX() , l ) + ":" + this->createHash( previous_elm_geom.getCentroid().getY() , l );
 
                     // Get envelope
                     geos::geom::Envelope env = geos::geom::Envelope(
@@ -266,7 +269,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
                 // Get geohash
                 GWSCoordinate centroid = elm_geom.getCentroid();
-                std::string combined_hash = this->createHash( centroid.getX() , l ) + this->createHash( centroid.getY() , l );
+                std::string combined_hash = this->createHash( centroid.getX() , l ) + ":" + this->createHash( centroid.getY() , l );
 
                 this->mutex.lockForRead();
                 geos::index::quadtree::Quadtree* tree = this->quadtree_layers->value( combined_hash , Q_NULLPTR );
@@ -327,7 +330,7 @@ void GWSQuadtree::remove( const QString &object_id ){
             if( previous_elm ){
 
                 // Get geohash
-                std::string combined_hash = this->createHash( previous_elm->geometry.getCentroid().getX() , l ) + this->createHash( previous_elm->geometry.getCentroid().getY() , l );
+                std::string combined_hash = this->createHash( previous_elm->geometry.getCentroid().getX() , l ) + ":" + this->createHash( previous_elm->geometry.getCentroid().getY() , l );
 
                 this->mutex.lockForWrite();
                 // Get envelope
@@ -360,7 +363,8 @@ void GWSQuadtree::remove( const QString &object_id ){
 std::string GWSQuadtree::createHash(double value, int decimal_amount) const{
     try {
         double multiplier = qPow( 10 , decimal_amount );
-        return QString::number( value * multiplier , 'f' , this->layer_depth_amount ).toStdString();
+        int trimmed = value * multiplier;
+        return QString::number( trimmed ).toStdString();
     } catch (std::exception e ){
     }
     return "";

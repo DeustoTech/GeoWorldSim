@@ -56,7 +56,7 @@ private:
     QStringList ids_contained;
     QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements;
     QMap< std::string , geos::index::quadtree::Quadtree* >* quadtree_layers; // QMAP< (XHASH + YHASH) , QuadTree >
-    unsigned int layer_depth_amount = 5;
+    const unsigned int layer_depth_amount = 5;
 
     // BOUNDS
     double min_x = 180;

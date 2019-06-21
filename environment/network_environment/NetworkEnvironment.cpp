@@ -37,7 +37,7 @@ QJsonObject GWSNetworkEnvironment::serialize() const{
  GETTERS
 **********************************************************************/
 
-QString GWSNetworkEnvironment::getEdge( const GWSCoordinate &from , const GWSCoordinate &to , QString class_name) const{
+QString GWSNetworkEnvironment::getEdge( const GWSCoordinate &from , const GWSCoordinate &to , const QString &class_name) const{
     if( this->network_edges.keys().contains( class_name ) ){
         QString agent_id = this->network_edges.value( class_name )->getNearestElement( from );
         QSharedPointer< GWSEntity > agent = GWSEntityEnvironment::globalInstance()->getByUID( agent_id );
@@ -49,14 +49,14 @@ QString GWSNetworkEnvironment::getEdge( const GWSCoordinate &from , const GWSCoo
     return QString();
 }
 
-QString GWSNetworkEnvironment::getNearestAgent( const GWSCoordinate &coor , QString class_name ) const{
+QString GWSNetworkEnvironment::getNearestAgent( const GWSCoordinate &coor , const QString &class_name ) const{
     if( this->network_edges.keys().contains( class_name ) ){
         return this->network_edges.value( class_name )->getNearestElement( coor );
     }
     return QString();
 }
 
-QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > GWSNetworkEnvironment::getNearestNodeAndPath(const GWSCoordinate &coor, QList<GWSCoordinate> get_nearest, QString class_name) const {
+QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > GWSNetworkEnvironment::getNearestNodeAndPath(const GWSCoordinate &coor, QList<GWSCoordinate> get_nearest, const QString &class_name) const {
     QList< QStringList > routes_to_all = this->getShortestPaths( coor , get_nearest , class_name );
 
     Q_ASSERT( routes_to_all.size() == get_nearest.size() );
@@ -84,7 +84,7 @@ QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > GWSNetworkEnvironmen
     return nearest_node_and_route;
 }
 
-QStringList GWSNetworkEnvironment::getShortestPath( const GWSCoordinate &from, const GWSCoordinate &to , QString class_name ) const{
+QStringList GWSNetworkEnvironment::getShortestPath( const GWSCoordinate &from, const GWSCoordinate &to , const QString &class_name ) const{
 
     if( this->network_routings.keys().contains( class_name ) ){
         // Move given coordinates to real graph nodes
@@ -97,7 +97,7 @@ QStringList GWSNetworkEnvironment::getShortestPath( const GWSCoordinate &from, c
     return QStringList();
 }
 
-QList< QStringList > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinate > ordered_coors , QString class_name ) const{
+QList< QStringList > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinate > ordered_coors , const QString &class_name ) const{
     if( this->network_routings.keys().contains( class_name ) ){
         QStringList snapped_ordered;
         foreach (GWSCoordinate c, ordered_coors) {
@@ -110,7 +110,7 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinat
     return QList< QStringList >();
 }
 
-QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinate &from_one, QList< GWSCoordinate > to_many , QString class_name ) const{
+QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinate &from_one, QList< GWSCoordinate > to_many , const QString &class_name ) const{
     QList< QStringList > paths;
 
     if( this->network_routings.keys().contains( class_name ) ){
@@ -241,7 +241,7 @@ void GWSNetworkEnvironment::entityPropertyChanged( QString property_name ){
  PRIVATE
 **********************************************************************/
 
-QString GWSNetworkEnvironment::getNearestNodeUID( GWSCoordinate coor , QString class_name ) const{
+QString GWSNetworkEnvironment::getNearestNodeUID( const GWSCoordinate& coor , const QString& class_name ) const{
 
     if( this->network_edges.keys().contains( class_name ) ){
         QString agent_id = this->getNearestAgent( coor , class_name );
