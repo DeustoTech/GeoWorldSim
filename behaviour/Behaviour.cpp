@@ -75,7 +75,7 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
     return this->sub_behaviours;
 }
 
-const QJsonValue GWSBehaviour::getProperty( QString name ) const{
+QJsonValue GWSBehaviour::getProperty( QString name ) const{
    return GWSObjectFactory::simpleOrParentPropertyName( name , this->getSharedPointer() , this->getEntity() );
 }
 
@@ -136,7 +136,7 @@ QPair< double , QJsonArray > GWSBehaviour::tick( qint64 behaviour_ticked_time ){
     return nexts;
 }
 
-QPair< double , QJsonArray > GWSBehaviour::behave(){
+QPair<double, QJsonArray> GWSBehaviour::behave(){
 
     QJsonArray nexts;
     double max_duration = 0;

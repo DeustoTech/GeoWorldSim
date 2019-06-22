@@ -70,6 +70,7 @@ int GWSExecutionEnvironment::getRunningAmount() const{
 QList< QSharedPointer< GWSEntity > > GWSExecutionEnvironment::getRunning() const {
     return this->running_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
 }
+
 bool GWSExecutionEnvironment::isRunning() const{
     return this->getProperty( ENTITY_RUNNING_PROP ).toBool( false );
 }
@@ -85,7 +86,7 @@ int GWSExecutionEnvironment::getTicksAmount() const{
 void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
 
     // If already registered
-    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isUndefined() ){
+    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isNull() ){
         return;
     }
 
@@ -188,6 +189,7 @@ void GWSExecutionEnvironment::behave(){
     // Get min tick time and add some threshold to execute the entities that are more delayed.
     qint64 min_tick = -1;
     QString who_is_min_tick;
+    QStringList what_is_min_tick_executing;
     bool entities_to_tick = false;
     uint ticked_entities = 0;
 
@@ -200,7 +202,10 @@ void GWSExecutionEnvironment::behave(){
 
         if( entity_time > 0 && min_tick <= 0 ){ min_tick = entity_time; }
         if( entity_time > 0 && min_tick > 0 ){ min_tick = qMin( min_tick , entity_time ); }
-        if( min_tick == entity_time ){ who_is_min_tick = entity->getUID(); }
+        if( min_tick == entity_time ){
+            who_is_min_tick = entity->getUID();
+            what_is_min_tick_executing = entity->getCurrentlyExecutingBehaviourUIDS();
+        }
         entities_to_tick = true;
     }
 
@@ -221,7 +226,7 @@ void GWSExecutionEnvironment::behave(){
 
             qint64 entity_next_tick = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
-            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isUndefined() && min_tick >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
+            if ( !entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= entity->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
                 this->unregisterEntity( entity );
                 continue;
             }
@@ -233,24 +238,24 @@ void GWSExecutionEnvironment::behave(){
                 // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
                 entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
-                QTimer::singleShot( 0 , entity.data() , &GWSEntity::tick );
+                QTimer::singleShot( 10 , entity.data() , &GWSEntity::tick );
 
                 if( ++ticked_entities >= this->max_entity_amount_per_tick ){
                     who_is_min_tick = entity->getUID();
+                    what_is_min_tick_executing = entity->getCurrentlyExecutingBehaviourUIDS();
                     break;
                 }
             }
         }
     }
 
-    QString message = QString("Ticked %1 , Entities %2 / %3 , Entities to tick %4 ,  Min tick %5 , Active threads %6 / %7" )
+    QString message = QString("Ticked %1 , Entities %2 / %3 , Entities to tick %4 , Min tick %5 : %6" )
             .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
             .arg( ticked_entities )
             .arg( currently_running_entities.size() )
             .arg( entities_to_tick ? "True" : "False" )
             .arg( who_is_min_tick )
-            .arg( QThreadPool::globalInstance()->activeThreadCount() )
-            .arg( QThreadPool::globalInstance()->maxThreadCount() );
+            .arg( what_is_min_tick_executing.join('+') );
 
     qInfo() << message;
 
@@ -269,7 +274,7 @@ void GWSExecutionEnvironment::behave(){
 
         // WAIT SOME MORE
         if( ticked_entities <= 0 ){
-            next_tick_in = next_tick_in*2;
+            next_tick_in = 1000;
         }
 
         // DO NOT ADVANCE IN TIME

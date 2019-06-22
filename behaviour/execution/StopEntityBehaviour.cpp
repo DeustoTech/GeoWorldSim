@@ -13,7 +13,7 @@ StopEntityBehaviour::StopEntityBehaviour() : GWSBehaviour(){
  SLOTS
 **********************************************************************/
 
-QPair< double , QJsonArray > StopEntityBehaviour::behave(){
+QPair<double, QJsonArray> StopEntityBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
     GWSExecutionEnvironment* env = GWSExecutionEnvironment::globalInstance();

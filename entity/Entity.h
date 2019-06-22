@@ -68,6 +68,7 @@ public:
 
     // BEHAVIOURS
     QList< QSharedPointer<GWSBehaviour> > getCurrentlyExecutingBehaviours() const;
+    QStringList getCurrentlyExecutingBehaviourUIDS() const;
     QSharedPointer<GWSBehaviour> getBehaviour( QString behaviour_id ) const;
     QList< QSharedPointer<GWSBehaviour> > getBehaviours( QString class_name ) const;
 

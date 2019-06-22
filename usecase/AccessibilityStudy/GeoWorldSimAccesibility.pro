@@ -75,6 +75,7 @@ HEADERS += \
     ../../util/distributed/ExternalListener.h \
     ../../util/distributed/ExternalCommunicator.h \
     ../../util/distributed/ExternalPublisher.h \
+    ../../util/parallelism/ParallelismController.h \
     ../../util/ai/Intelligence.h \
     ../../util/svm/Svm.h \
         # ENVIRONMENT
@@ -138,6 +139,7 @@ SOURCES += mainAccesibility.cpp \
     ../../util/distributed/ExternalListener.cpp \
     ../../util/distributed/ExternalCommunicator.cpp \
     ../../util/distributed/ExternalPublisher.cpp \
+    ../../util/parallelism/ParallelismController.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
         # ENVIRONMENT

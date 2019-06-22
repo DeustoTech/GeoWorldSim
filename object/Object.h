@@ -39,25 +39,26 @@ public:
     //QSharedPointer<GWSObject> getParent() const;
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;
-    virtual const QJsonValue getProperty( const QString &name ) const;
+    virtual QJsonValue getProperty( const QString &name ) const;
     bool hasProperty( const QString &name ) const;
-    const QJsonValue operator[]( const QString &name ) const;
+    QJsonValue operator[]( const QString &name ) const;
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
     bool setProperty( const QString &name, const GWSUnit &value);
     bool setProperty( const QString &name, const QJsonValue &value);
+    bool removeProperty( const QString &name );
     bool incrementProperty( QString &name , const QJsonValue &value);
     void copyProperties( GWSObject &other);
 
     // EVENTS
-    bool event(QEvent *event);
+    // OLD METAPROPERTY SYSTEM bool event(QEvent *event);
 
     // PUBLIC DELETED ATTRIBUTE
     bool deleted = true; // IMPORTANT
 
 signals:
-    void propertyChangedSignal( const QString &name );
+    void entityPropertyChangedSignal( QString name );
 
 protected:
 
@@ -75,7 +76,7 @@ private:
     // AUTOINCREMENTAL FOR IDS
     static quint64 counter;
 
-    QJsonObject properties;
+    QJsonObject* properties;
 
 };
 

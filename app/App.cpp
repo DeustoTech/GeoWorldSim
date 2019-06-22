@@ -91,7 +91,7 @@ QString GWSApp::getUserId(){
     return this->json_configuration.value( "user_id" ).toString();
 }
 
-QJsonObject GWSApp::getConfiguration(){
+const QJsonObject& GWSApp::getConfiguration(){
     return this->json_configuration;
 }
 
@@ -105,6 +105,8 @@ int GWSApp::exec(){
     try {
         QCoreApplication::exec(); // Real exec()
     } catch(std::exception &e){
+        GWSExecutionEnvironment::globalInstance()->stop();
+        GWSExecutionEnvironment::globalInstance()->run();
         this->exec();
     }
 

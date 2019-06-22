@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
          // Population type:
          QJsonObject population = json_population[ key ].toObject();
 
-         if ( !population.value( "template" ).isUndefined() && !population.value( "datasources" ).isUndefined() ){
+         if ( !population.value( "template" ).isNull() && !population.value( "datasources" ).isNull() ){
 
              QJsonArray datasources = population.value( "datasources" ).toArray();
 
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
              }
          }
 
-         if ( !population.value("template").isUndefined() && !population.value("amount").isUndefined() ){
+         if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
              for ( int i = 0; i < population.value("amount").toInt() ; i++){
                  // Use template to generate amount entities
                  GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();

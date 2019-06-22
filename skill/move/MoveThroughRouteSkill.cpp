@@ -54,10 +54,10 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
     GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     // Reset travelling road
-    agent->setProperty( CURRENT_ROAD_ID , QJsonValue::Undefined );
-    agent->setProperty( CURRENT_ROAD_TYPE , QJsonValue::Undefined );
-    agent->setProperty( CURRENT_ROAD_MAXSPEED , QJsonValue::Undefined );
-    agent->setProperty( STORE_ROUTE_AS , QJsonValue::Undefined );
+    agent->setProperty( CURRENT_ROAD_ID , QJsonValue::Null );
+    agent->setProperty( CURRENT_ROAD_TYPE , QJsonValue::Null );
+    agent->setProperty( CURRENT_ROAD_MAXSPEED , QJsonValue::Null );
+    agent->setProperty( STORE_ROUTE_AS , QJsonValue::Null );
 
     if( !agent_geom.isValid() ){
         qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );

@@ -26,7 +26,7 @@ CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : GWSBehaviour(){
 
 }
 
-QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
+QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
@@ -35,7 +35,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
     if ( next_destinations.isEmpty() ){
 
         GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        GWSCoordinate agent_coor = agent_geom.getCentroid();
+        const GWSCoordinate& agent_coor = agent_geom.getCentroid();
 
         double from_x = agent_coor.getX();
         double from_y = agent_coor.getY();
@@ -47,7 +47,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
         double dest_y;
         double dest_x;
 
-        if( !to_x.isUndefined() && !to_y.isUndefined() ){
+        if( !to_x.isNull() && !to_y.isNull() ){
 
             dest_x = to_x.toDouble();
             dest_y = to_y.toDouble();
@@ -59,7 +59,7 @@ QPair< double , QJsonArray > CalculateGTAlgRouteBehaviour::behave(){
         if( !json_value.isNull() ){
 
             GWSGeometry geom_json = GWSGeometry( json_value.toObject() );
-            GWSCoordinate coor_json = geom_json.getCentroid();
+            const GWSCoordinate& coor_json = geom_json.getCentroid();
 
             dest_x = coor_json.getX();
             dest_y = coor_json.getY();

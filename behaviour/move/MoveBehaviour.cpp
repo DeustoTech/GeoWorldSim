@@ -17,7 +17,7 @@ MoveBehaviour::MoveBehaviour() : GWSBehaviour(){
  METHODS
 **********************************************************************/
 
-QPair< double , QJsonArray > MoveBehaviour::behave(){
+QPair<double, QJsonArray> MoveBehaviour::behave(){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
 

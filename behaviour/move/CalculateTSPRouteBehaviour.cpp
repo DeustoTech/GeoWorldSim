@@ -2,7 +2,7 @@
 
 #include "../../skill/move/StoreMultiRouteSkill.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../util/routing/TSPRouting.h"
 
 QString GWSCalculateTSPRouteBehaviour::TSP_AGENT_TYPE = "tsp_agent_type"; // e.g. BUSSTOP

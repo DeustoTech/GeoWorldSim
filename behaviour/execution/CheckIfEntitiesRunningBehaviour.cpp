@@ -15,7 +15,7 @@ CheckIfEntitiesRunningBehaviour::CheckIfEntitiesRunningBehaviour() : GWSBehaviou
  SLOTS
 **********************************************************************/
 
-QPair< double , QJsonArray > CheckIfEntitiesRunningBehaviour::behave(){
+QPair<double, QJsonArray> CheckIfEntitiesRunningBehaviour::behave(){
 
     QString entity_type = this->getProperty( ENTITY_TYPE ).toString();
     QJsonObject entity_filter = this->getProperty( ENTITY_FILTER ).toObject();

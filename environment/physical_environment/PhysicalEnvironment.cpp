@@ -112,7 +112,7 @@ QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(const GWSCoord
         if( !geom.isValid() ){
             continue;
         }
-        GWSCoordinate centroid = geom.getCentroid();
+        const GWSCoordinate& centroid = geom.getCentroid();
         if( nearest_distance < GWSLengthUnit( 0 ) || nearest.isNull() ){
             nearest = agent;
             nearest_distance = centroid.getDistance( coor );
@@ -131,7 +131,7 @@ QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(const GWSCoord
 
 void GWSPhysicalEnvironment::registerEntity(QSharedPointer<GWSEntity> agent ){
 
-    if( agent.isNull() || agent->getProperty( GEOMETRY_PROP ).isUndefined() ){
+    if( agent.isNull() || agent->getProperty( GEOMETRY_PROP ).isNull() ){
         return;
     }
 
@@ -146,7 +146,7 @@ void GWSPhysicalEnvironment::registerEntity(QSharedPointer<GWSEntity> agent ){
     GWSGeometry geom = GWSGeometry( geom_json );
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
+    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
 
     if( !geom.isValid() ){
         return;
@@ -166,7 +166,7 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
     QString agent_id = agent->getUID();
     GWSEnvironment::unregisterEntity( agent );
 
-    this->disconnect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
+    this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
 
     foreach (QJsonValue v , agent->getInheritanceFamily()) {
 
@@ -185,9 +185,12 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
 
 void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent, const GWSGeometry &geom){
 
+    if( !agent ){ return; }
+
+    QString uuid = agent->getUID();
+
     foreach (QJsonValue v , agent->getInheritanceFamily() ) {
 
-        QString uuid = agent->getUID();
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
@@ -213,7 +216,7 @@ void GWSPhysicalEnvironment::entityPropertyChanged( QString property_name ){
         if( !object ){ return; }
         GWSEntity* agent = dynamic_cast<GWSEntity*>( object );
         if( !agent ){ return; }
-        this->upsertEntityToIndex( agent->getSharedPointer() , GWSGeometry( agent->getProperty( GEOMETRY_PROP ).toObject() ) );
+        this->upsertEntityToIndex( agent->getSharedPointer() , agent->getProperty( GEOMETRY_PROP ).toObject() );
     }
 }
 

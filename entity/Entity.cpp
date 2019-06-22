@@ -151,7 +151,7 @@ bool GWSEntity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
             valid = false;
         }
 
-        if( v.isUndefined() && nulls_allowed ){
+        if( v.isNull() && nulls_allowed ){
             valid = true;
         }
 
@@ -207,6 +207,14 @@ QList< QSharedPointer<GWSSkill> > GWSEntity::getSkills( QString class_name ) con
 
 QList< QSharedPointer<GWSBehaviour> > GWSEntity::getCurrentlyExecutingBehaviours() const{
     return this->to_be_executed_behaviours;
+}
+
+QStringList GWSEntity::getCurrentlyExecutingBehaviourUIDS() const{
+    QStringList uids;
+    foreach (QSharedPointer<GWSBehaviour> b , this->to_be_executed_behaviours ) {
+        uids.append( b->getUID() );
+    }
+    return uids;
 }
 
 QSharedPointer<GWSBehaviour> GWSEntity::getBehaviour( QString id ) const {

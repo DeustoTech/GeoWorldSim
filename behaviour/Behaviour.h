@@ -29,7 +29,7 @@ public:
     // GETTERS
     QSharedPointer<GWSEntity> getEntity() const;
     QList< QSharedPointer<GWSBehaviour> > getSubs() const;
-    virtual const QJsonValue getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
+    virtual QJsonValue getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
     virtual void setProperty( QString name , const QJsonValue &value );
 
     // SETTERS

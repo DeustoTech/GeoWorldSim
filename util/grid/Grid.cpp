@@ -19,7 +19,7 @@ GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size , 
         this->grid->insert( i , new QMap<unsigned int , QJsonValue>() );
 
         for(unsigned int j = 0 ; j < y_size ; j++){
-            this->grid->value( i )->insert( j , QJsonValue::Undefined );
+            this->grid->value( i )->insert( j , QJsonValue::Null );
         }
     }
 
@@ -114,13 +114,13 @@ QJsonValue GWSGrid::getValue( const GWSCoordinate &coor ) const{
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , y_size );
 
     if( this->grid->value( x ) ){
-        return this->grid->value( x )->value( y , QJsonValue::Undefined );
+        return this->grid->value( x )->value( y , QJsonValue::Null );
     }
-    return QJsonValue::Undefined;
+    return QJsonValue::Null;
 }
 
 QJsonValue GWSGrid::getValue( const GWSGeometry &geom ) const{
-    GWSCoordinate centroid = geom.getCentroid();
+    const GWSCoordinate& centroid = geom.getCentroid();
     return this->getValue( centroid );
 }
 
@@ -152,7 +152,7 @@ QJsonValue GWSGrid::getValue( const GWSGeometry &geom ) const{
 
 void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
 
-    if( value.isUndefined() ){ return; }
+    if( value.isNull() ){ return; }
 
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , this->x_size );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , this->y_size );
@@ -161,7 +161,7 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
         return;
     }
 
-    QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue::Undefined );
+    QJsonValue existing_value = this->grid->value( x )->value( y , QJsonValue::Null );
 
     // How we add the value depends on the type of grid:
 
@@ -199,8 +199,8 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
 }
 
 void GWSGrid::addValue( const GWSGeometry &geom , const QJsonValue &value ){
-    if( geom.isValid() && !value.isUndefined() ){
-        GWSCoordinate centroid = geom.getCentroid();
+    if( geom.isValid() && !value.isNull() ){
+        const GWSCoordinate& centroid = geom.getCentroid();
         this->addValue( centroid , value );
     }
 }
@@ -222,7 +222,7 @@ void GWSGrid::setBounds( const GWSGeometry &bounds ){
                 if( !val.isNull() ){
                     old_values.insert( coor , val );
                 }
-                this->grid->value( i )->insert( j , QJsonValue::Undefined );
+                this->grid->value( i )->insert( j , QJsonValue::Null );
             }
 
         }

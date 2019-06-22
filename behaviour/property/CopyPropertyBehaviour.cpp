@@ -1,7 +1,7 @@
 #include "CopyPropertyBehaviour.h"
 
 #include "../../app/App.h"
-#include "../../environment/agent_environment/AgentEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 
 QString CopyPropertyBehaviour::AGENT_ID_TO_COPY_FROM = "agent_id_to_copy_from";
 QString CopyPropertyBehaviour::PROPERTY_NAME_TO_COPY = "property_name";

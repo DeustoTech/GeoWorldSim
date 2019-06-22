@@ -19,9 +19,12 @@ public:
 
 
     // METHODS
-    void addDestination( const QString &agent_id , QJsonObject extra_properties = QJsonObject() );
-    void addDestination( const GWSCoordinate &coor , QJsonObject extra_properties = QJsonObject() );
-    void addDestination( const GWSGeometry &geom , QJsonObject extra_properties = QJsonObject() );
+    void addDestination( const QString& agent_id , const QJsonObject& extra_properties = QJsonObject() );
+    void addDestination( const GWSCoordinate& coor , const QJsonObject& extra_properties = QJsonObject() );
+    void addDestination( const GWSGeometry& geom , const QJsonObject& extra_properties = QJsonObject() );
+
+private:
+    void addDestination( const QJsonObject& geojson , const QJsonObject& extra_properties = QJsonObject() );
 
 };
 

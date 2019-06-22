@@ -37,7 +37,7 @@ void PolluteBehaviour::afterCreateHook(){
 }
 
 
-QPair< double , QJsonArray >  PolluteBehaviour::behave(){
+QPair<double, QJsonArray> PolluteBehaviour::behave(){
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 

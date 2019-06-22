@@ -99,7 +99,7 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
     GWSEnvironment::registerEntity( agent );
 
     // INTERNAL TIME
-    if( !agent->getProperty( INTERNAL_TIME_PROP ).isUndefined() ){
+    if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
 
         qint64 init_internal_time = this->getCurrentDateTime();
         QJsonValue internal_time = agent->getProperty( INTERNAL_TIME_PROP );
@@ -118,20 +118,20 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
     }
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
+    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
 }
 
 void GWSTimeEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent){
     GWSEnvironment::unregisterEntity( agent );
 
-    this->disconnect( agent.data() , &GWSEntity::propertyChangedSignal , this , &GWSTimeEnvironment::agentPropertyChanged );
+    this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
 }
 
 /**********************************************************************
  PROTECTED
 **********************************************************************/
 
-void GWSTimeEnvironment::agentPropertyChanged( QString property_name ){
+void GWSTimeEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == INTERNAL_TIME_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }

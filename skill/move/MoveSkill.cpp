@@ -73,8 +73,8 @@ void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &m
     }
 
     // Get coors from geometries:
-    GWSCoordinate current_coor = agent_geom.getCentroid();
-    GWSCoordinate movement_towards_coor = movement_towards_geom.getCentroid();
+    const GWSCoordinate& current_coor = agent_geom.getCentroid();
+    const GWSCoordinate& movement_towards_coor = movement_towards_geom.getCentroid();
 
     // Distance
     double meter_distance = current_coor.getDistance( movement_towards_coor ).number();

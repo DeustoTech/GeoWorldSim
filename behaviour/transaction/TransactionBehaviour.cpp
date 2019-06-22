@@ -71,10 +71,10 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     }
 
     // Increment emitter transaction_count
-    emitter->setProperty("emitted_transaction_count", emitter->getProperty( "transaction_count" ).toInt( 0 ) + 1 );
+    emitter->setProperty("emitted_transaction_count", emitter->getProperty( "emitted_transaction_count" ).toInt( 0 ) + 1 );
 
     // Increment receiver transaction_count
-    receiver->setProperty("received_transaction_count", receiver->getProperty( "transaction_count" ).toInt( 0 ) + 1 );
+    receiver->setProperty("received_transaction_count", receiver->getProperty( "received_transaction_count" ).toInt( 0 ) + 1 );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

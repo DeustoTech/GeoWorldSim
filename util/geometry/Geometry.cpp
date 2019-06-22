@@ -58,7 +58,6 @@ GWSCoordinate GWSGeometry::getCentroid() const{
         this->inner_geometry->getCentroid( centroid );
         return GWSCoordinate( centroid.x , centroid.y , centroid.z );
     }
-    qDebug() << 1;
     return GWSCoordinate();
 }
 
