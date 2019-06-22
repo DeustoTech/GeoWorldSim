@@ -149,7 +149,7 @@ void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWS
     if( !this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
         GWSGeometry current_edge_agent_geometry = GWSGeometry( current_edge_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        current_edge_agent_geometry = GWSGeometryTransformators::transformSimplify( current_edge_agent_geometry , 0.001 );
+        current_edge_agent_geometry = GWSGeometryTransformators::transformSimplify( current_edge_agent_geometry , 0.0001 );
         this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
 
         // Set destination to next coordinate
