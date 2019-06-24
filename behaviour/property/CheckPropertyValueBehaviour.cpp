@@ -17,9 +17,10 @@ QPair< double , QJsonArray > CheckPropertyValueBehaviour::behave(){
     // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
     QJsonObject property_to_compare = this->getProperty( PROPERTY_TO_COMPARE ).toObject();
 
-
     if( entity->fulfillsFilter( property_to_compare , false ) ){
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE ).toArray() );
+
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE).toArray() );
+
     }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_FALSE ).toArray() );
