@@ -53,9 +53,14 @@ QJsonObject GWSObject::serializeMini() const{
  */
 QJsonObject GWSObject::serialize() const{
     QJsonObject json( this->serializeMini() );
-    foreach(QString property_name , this->properties->keys() ) {
+
+    this->mutex.lockForRead();
+    QStringList keys = this->properties->keys();
+    this->mutex.unlock();
+
+    foreach(QString property_name , keys ) {
         if ( property_name.startsWith( "@" ) ){ continue; }
-        json.insert( property_name , GWSObject::getProperty( property_name ) );
+        json.insert( property_name , GWSObject::getProperty( property_name ) ); 
     }
     return json;
 }
@@ -136,7 +141,10 @@ QJsonArray GWSObject::getInheritanceFamily() const{
 
 bool GWSObject::hasProperty( const QString &name ) const{
     //return !QObject::property( name.toUtf8() ).isNull();
-    return this->properties->keys().contains( name );
+    this->mutex.lockForRead();
+    bool contains = this->properties->keys().contains( name );
+    this->mutex.unlock();
+    return contains;
 }
 
 QJsonValue GWSObject::getProperty( const QString &name ) const{

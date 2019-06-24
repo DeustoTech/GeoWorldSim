@@ -162,6 +162,9 @@ bool GWSEntity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
     return valid;
 }
 
+
+
+
 QSharedPointer<GWSEntity> GWSEntity::getSharedPointer() const{
     QSharedPointer<GWSObject> obj = GWSObject::getSharedPointer();
     return obj.dynamicCast<GWSEntity>();
