@@ -131,6 +131,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
     sslConfiguration.setProtocol( QSsl::TlsV1_2 );
     pending_request->request.setSslConfiguration( sslConfiguration );
 
+
     // Operation
     pending_request->operation = operation;
 
