@@ -11,6 +11,7 @@ public:
 
     // PROPERTIES
     static QString SKIP_INDEXING;
+    static QString SKIP_SUBSCRIBING;
 
     // EXPORTERS
     virtual QJsonObject serialize() const;

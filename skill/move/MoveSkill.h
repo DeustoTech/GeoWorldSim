@@ -31,10 +31,6 @@ public:
     virtual GWSSpeedUnit calculateNewSpeed( const GWSSpeedUnit &current_speed , const GWSSpeedUnit &max_speed , double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
     virtual void move( const GWSTimeUnit &movement_duration , const GWSSpeedUnit &movement_speed , const GWSGeometry &movement_towards_geom );
 
-signals:
-    void speedChangedSignal( GWSSpeedUnit current_speed );
-    void movedSignal();
-
 private:
 
 

@@ -6,6 +6,7 @@
 #include "../../util/parallelism/ParallelismController.h"
 
 QString GWSEnvironment::SKIP_INDEXING = "skip_indexing";
+QString GWSEnvironment::SKIP_SUBSCRIBING = "skip_subscribing";
 
 GWSEnvironment::GWSEnvironment() : GWSEntity(){
     emit this->environmentCreatedSignal();

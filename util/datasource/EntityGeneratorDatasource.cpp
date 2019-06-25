@@ -27,6 +27,11 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject json, QSt
     });
     reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , [this , json]( QJsonObject data ){
 
+        // FIXME
+        if( data.value( "location" ).isObject() ){
+            data.insert( "geometry" , data.value( "location" ).toObject() );
+        }
+
         QJsonObject template_to_be_constructed = this->joinJSON( json , data );
         if ( template_to_be_constructed.isEmpty() ){
             return;

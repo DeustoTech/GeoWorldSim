@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QEvent>
 #include <QJsonArray>
+#include <QtConcurrent/QtConcurrent>
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
@@ -148,29 +149,35 @@ bool GWSObject::hasProperty( const QString &name ) const{
 }
 
 QJsonValue GWSObject::getProperty( const QString &name ) const{
+    return this->getProperties( QStringList({ name }) ).value( name );
+}
 
-    QJsonValue value;
+QJsonObject GWSObject::getProperties(const QStringList &names) const{
+    QJsonObject props;
 
-    // If it comes between '<>', it is not the property name, but a key where to get the property name from
-    if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
-        QString property_name = name;
-        property_name = property_name.remove( 0 , 1 );
-        property_name = property_name.remove( property_name.length() - 1 , 1 );
-        property_name = this->GWSObject::getProperty( property_name ).toString();
+    this->mutex.lockForRead();
+    foreach (QString name , names) {
 
-        this->mutex.lockForRead();
-        value = this->properties->value( property_name );
-        this->mutex.unlock();
+        // If it comes between '<>', it is not the property name, but a key where to get the property name from
+        if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
+            QString property_name = name;
+            property_name = property_name.remove( 0 , 1 );
+            property_name = property_name.remove( property_name.length() - 1 , 1 );
+            property_name = this->properties->value( property_name ).toString();
+
+            QJsonValue v = this->properties->value( property_name );
+            props.insert( property_name , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
+        }
+        else
+        {
+            QJsonValue v = this->properties->value( name );
+            props.insert( name , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
+        }
 
     }
-    else
-    {
-        this->mutex.lockForRead();
-        value = this->properties->value( name );
-        this->mutex.unlock();
-    }
+    this->mutex.unlock();
 
-    return value.isUndefined() ? QJsonValue::Null : value;
+    return props;
 }
 
 QJsonValue GWSObject::operator []( const QString &name ) const{
@@ -182,26 +189,52 @@ QJsonValue GWSObject::operator []( const QString &name ) const{
 **********************************************************************/
 
 bool GWSObject::setProperty( const QString &name, const GWSUnit &value){
-    return this->setProperty( name , value.number() );
+    return this->setProperties( QJsonObject({ { name , value.number() } }) );
 }
 
 bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
-    //this->mutex.lockForWrite();
-    //bool ok = QObject::setProperty( name.toLatin1() , value.toVariant() );
-    //this->mutex.unlock();
-    //return ok;
+    return this->setProperties( QJsonObject({ { name , value } }) );
+}
+
+bool GWSObject::setProperties(const QJsonObject &obj){
+
     this->mutex.lockForWrite();
-    this->properties->insert( name , value );
+    foreach( QString name , obj.keys()) {
+        this->properties->insert( name , obj.value( name ) );
+    }
     this->mutex.unlock();
-    emit entityPropertyChangedSignal( name );
+
+    foreach( QString name , obj.keys() ) {
+        foreach(std::function<void( QSharedPointer<GWSObject> , QString )> callback , this->subscriptions.value( name ) ){
+            QtConcurrent::run([ callback , this , &name ]{
+                callback( this->getSharedPointer() , name );
+            });
+        }
+    }
+
     return true;
 }
 
 bool GWSObject::removeProperty( const QString &name ){
+    return this->removeProperties( QStringList({ name }) );
+}
+
+bool GWSObject::removeProperties(const QStringList &names){
+
     this->mutex.lockForWrite();
-    this->properties->insert( name , QJsonValue::Null );
+    foreach( QString name , names) {
+        this->properties->remove( name );
+    }
     this->mutex.unlock();
-    emit entityPropertyChangedSignal( name );
+
+    foreach( QString name , names ) {
+        foreach(std::function<void( QSharedPointer<GWSObject> , QString )> callback , this->subscriptions.value( name ) ){
+            QtConcurrent::run([ callback , this , &name ]{
+                callback( this->getSharedPointer() , name );
+            });
+        }
+    }
+
     return true;
 }
 
@@ -217,6 +250,10 @@ bool GWSObject::incrementProperty( QString &name, const QJsonValue &value){
     QJsonValue existing_value = this->getProperty( name );
     QJsonValue values_sum = GWSObjectFactory::incrementValue( existing_value , value );
     return this->setProperty( name , values_sum );
+}
+
+void GWSObject::addSubscription(const QString &property_name, std::function<void (QSharedPointer<GWSObject>, QString)> callback){
+
 }
 
 /**********************************************************************

@@ -84,10 +84,13 @@ QPair<double, QJsonArray> PolluteBehaviour::behave(){
          if ( !emission.isValid() ){
              emission = 0;
          }
-         // Store noise
+
+         // Store value
          double existing_value = agent->getProperty("accumulated_" + pollutant.toString() ).toDouble();
-         agent->setProperty( this->getProperty( OUTPUT_POLLUTANTS ).toString("instant_" + pollutant.toString() ) , emission.number() );
-         agent->setProperty( "accumulated_" +  pollutant.toString() , GWSObjectFactory::incrementValue( existing_value , emission.number() ));
+         agent->setProperties( QJsonObject({
+            { this->getProperty( OUTPUT_POLLUTANTS ).toString("instant_" + pollutant.toString() ) , emission.number() },
+            { "accumulated_" +  pollutant.toString() , GWSObjectFactory::incrementValue( existing_value , emission.number() ) }
+            }) );
 
     }
 

@@ -18,7 +18,7 @@ GWSParallelismController::GWSParallelismController() : QObject(){
     // lsof | grep QtCreator
 
     // Remove one to be left for main thread
-    int thread_limit = qMax( QThreadPool::globalInstance()->maxThreadCount()-1 , QThread::idealThreadCount()-1 );
+    int thread_limit = QThreadPool::globalInstance()->maxThreadCount();
     thread_limit = qMax( 1 , thread_limit );
 
     for(int i = 0; i < thread_limit; i++){

@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
     GWSAPIDriver::globalInstance();
 
     // AVAILABLE BEHAVIOURS
+    GWSObjectFactory::globalInstance()->registerType( MoveBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( SendPropertyStatisticsBehaviour::staticMetaObject );

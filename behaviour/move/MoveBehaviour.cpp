@@ -41,7 +41,7 @@ QPair<double, QJsonArray> MoveBehaviour::behave(){
 
     // Calculate speed
     GWSSpeedUnit current_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble() );
-    GWSSpeedUnit max_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::MAX_SPEED ).toDouble() );
+    GWSSpeedUnit max_speed = GWSSpeedUnit( agent->getProperty( MoveSkill::MAX_SPEED ).toDouble( 1.4 ) );
 
     if( current_speed == 0 ){
         current_speed = move_skill->calculateNewSpeed( current_speed , max_speed , 1.4 );

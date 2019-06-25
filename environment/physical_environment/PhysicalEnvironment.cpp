@@ -137,28 +137,28 @@ void GWSPhysicalEnvironment::registerEntity(QSharedPointer<GWSEntity> agent ){
 
     GWSEnvironment::registerEntity( agent );
 
-    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+    QJsonObject json = agent->getProperty( GEOMETRY_PROP ).toObject();
+
+    if( json.value( SKIP_INDEXING ).toBool() ){
         return;
     }
 
-    // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
-    QJsonObject geom_json = agent->getProperty( GEOMETRY_PROP ).toObject();
-    GWSGeometry geom = GWSGeometry( geom_json );
-
-    // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
-
+    GWSGeometry geom = GWSGeometry( json );
     if( !geom.isValid() ){
         return;
     }
 
-    QString agent_uid = agent->getUID();
+    this->upsertEntityToIndex( agent , geom );
 
-    if ( agent_uid.isEmpty() ){
+    if( json.value( SKIP_SUBSCRIBING ).toBool() ){
         return;
     }
 
-    this->upsertEntityToIndex( agent , geom );
+    // Listen to agent property changes
+    agent->addSubscription( GEOMETRY_PROP , [this](QSharedPointer<GWSObject> entity , QString property_name ){
+        this->upsertEntityToIndex( entity.dynamicCast<GWSEntity>() , GWSGeometry( entity->getProperty( property_name ).toObject() ) );
+    });
+
 }
 
 void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
@@ -166,7 +166,7 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
     QString agent_id = agent->getUID();
     GWSEnvironment::unregisterEntity( agent );
 
-    this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
+    //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
 
     foreach (QJsonValue v , agent->getInheritanceFamily()) {
 

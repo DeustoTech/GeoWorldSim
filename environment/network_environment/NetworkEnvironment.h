@@ -40,7 +40,7 @@ public:
 
 protected:
 
-    void upsertAgentToIndex( QSharedPointer<GWSEntity> agent , const GWSNetworkEdge &edge );
+    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , const GWSNetworkEdge &edge );
 
 protected slots:
 

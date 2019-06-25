@@ -67,25 +67,32 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
     GWSEnvironment::registerEntity( entity );
 
-    if( entity->getProperty( SKIP_INDEXING ).toBool() ){
+    QJsonObject json = entity->getProperty( GRID_PROP ).toObject();
+
+    if( json.value( SKIP_INDEXING ).toBool() ){
         return;
     }
 
-    // GEOMETRY (comes as a QJSONOBJECT, need to extract it and build a GWSGEOMETRY )
-    QJsonValue value = entity->getProperty( GRID_PROP );
-
-    // Listen to entity property changes
-    this->connect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
-
-    if( value.isNull() ){
+    /*GWSGrid grid = GWSGrid( json );
+    if( !grid.isValid() ){
         return;
     }
 
-    this->upsertValueToGrid( entity , value );
+    this->upsertEntityToIndex( agent , edge );
+
+    if( json.value( SKIP_SUBSCRIBING ).toBool() ){
+        return;
+    }
+
+    // Listen to agent property changes
+    agent->subscribe( EDGE_PROP , [this](QSharedPointer<GWSObject> entity , QString property_name ){
+        this->upsertEntityToIndex( entity.dynamicCast<GWSEntity>() , GWSGeometry( entity->getProperty( property_name ).toObject() ) );
+    });*/
+
 }
 
 void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
-    this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
+    //this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 }
 
 

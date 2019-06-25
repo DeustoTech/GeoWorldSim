@@ -46,16 +46,16 @@ GWSSpeedUnit MoveSkill::calculateNewSpeed(const GWSSpeedUnit &current_speed, con
     GWSSpeedUnit variation = max_speed * normalized_force;
     GWSSpeedUnit new_speed = current_speed + variation;
     new_speed = qMax( GWSSpeedUnit( 0 ) , new_speed );
-    if( max_speed < new_speed ){ new_speed = max_speed; }
+    if( max_speed > GWSSpeedUnit( 0 ) && max_speed < new_speed ){ new_speed = max_speed; }
 
-    emit this->speedChangedSignal( new_speed );
     return new_speed;
 }
 
 void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, const GWSGeometry &movement_towards_geom){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
-    agent->setProperty( CURRENT_SPEED , movement_speed );
+    agent->setProperties( QJsonObject( {
+        { CURRENT_SPEED , movement_speed } ,
     agent->setProperty( MOVING_TOWARDS , movement_towards_geom.getGeoJSON() );
 
     if( movement_duration == 0 ){

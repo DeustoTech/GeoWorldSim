@@ -33,8 +33,10 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() :
 
     qInfo() << "ExecutionEnvironment created";
     this->running_entities = new GWSObjectStorage();
-    this->setProperty( ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) );
-    this->setProperty( ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( INFINITY ) );
+    this->setProperties( QJsonObject( {
+        { ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
+        { ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( INFINITY ) }
+    }) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 
 }
@@ -139,9 +141,11 @@ void GWSExecutionEnvironment::run(){
         return;
     }
 
-    this->setProperty( ENTITY_RUNNING_PROP , true );
-    this->setProperty( STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
-    this->setProperty( STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
+    this->setProperties( QJsonObject( {
+        { ENTITY_RUNNING_PROP , true } ,
+        { STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+        { STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
+        } ));
 
     emit this->runningExecutionSignal();
 
@@ -149,13 +153,6 @@ void GWSExecutionEnvironment::run(){
     int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 5 );
     QTimer::singleShot( timeout * 1000 , []{
         GWSApp::globalInstance()->exit( -1 );
-    });
-
-    // Make Scenario to listen
-    GWSAPIDriver::globalInstance()->GET(
-                QString("https://history.geoworldsim.com/api/scenario/%1/socket").arg( GWSApp::globalInstance()->getAppId() ) ,
-                []( QNetworkReply* reply ){
-                   reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
     });
 
     // Start ticking (USE QTCONCURRENT FOR IT TO WAIT FOR REMAINING QTCONCURRENTS)
@@ -167,13 +164,21 @@ void GWSExecutionEnvironment::behave(){
     QList< QSharedPointer<GWSEntity> > currently_running_entities = this->getRunning();
 
     if( currently_running_entities.isEmpty() ){
+
+        QString message = QString("Execution has no more running entities" );
+
+        qInfo() << message;
+
+        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
         GWSApp::globalInstance()->exit( 0 );
         this->stop();
         return;
     }
 
     // Shuffle list
-    //std::random_shuffle( currently_running_entities.begin() , currently_running_entities.end() );
+    std::random_shuffle( currently_running_entities.begin() , currently_running_entities.end() );
 
     // Get current datetime in simulation
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
@@ -291,9 +296,11 @@ void GWSExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
-    this->setProperty( ENTITY_RUNNING_PROP , false );
-    this->setProperty( ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
-    this->setProperty( ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() );
+    this->setProperties( QJsonObject( {
+        { ENTITY_RUNNING_PROP , false } ,
+        { ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+        { ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
+    }) );
 
     emit this->stoppingExecutionSignal();
 }

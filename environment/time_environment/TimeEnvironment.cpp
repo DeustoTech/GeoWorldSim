@@ -96,6 +96,7 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
 **********************************************************************/
 
 void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
+
     GWSEnvironment::registerEntity( agent );
 
     // INTERNAL TIME
@@ -118,13 +119,13 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
     }
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
+    //this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
 }
 
 void GWSTimeEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent){
     GWSEnvironment::unregisterEntity( agent );
 
-    this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
+    //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
 }
 
 /**********************************************************************

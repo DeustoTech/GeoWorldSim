@@ -40,25 +40,23 @@ public:
     QSharedPointer<GWSObject> getSharedPointer() const;
     QJsonArray getInheritanceFamily() const;
     virtual QJsonValue getProperty( const QString &name ) const;
+    virtual QJsonObject getProperties( const QStringList& names ) const;
     bool hasProperty( const QString &name ) const;
     QJsonValue operator[]( const QString &name ) const;
 
     // SETTERS
     //void setParent( QSharedPointer<GWSObject> parent );
-    bool setProperty( const QString &name, const GWSUnit &value);
-    bool setProperty( const QString &name, const QJsonValue &value);
+    bool setProperty( const QString &name, const GWSUnit &value );
+    bool setProperty( const QString &name, const QJsonValue &value );
+    bool setProperties( const QJsonObject& obj );
     bool removeProperty( const QString &name );
-    bool incrementProperty( QString &name , const QJsonValue &value);
+    bool removeProperties( const QStringList& names );
+    bool incrementProperty( QString &name , const QJsonValue &value );
     void copyProperties( GWSObject &other);
-
-    // EVENTS
-    // OLD METAPROPERTY SYSTEM bool event(QEvent *event);
+    void addSubscription( const QString &property_name , std::function<void( QSharedPointer<GWSObject> , QString )> callback );
 
     // PUBLIC DELETED ATTRIBUTE
     bool deleted = true; // IMPORTANT
-
-signals:
-    void entityPropertyChangedSignal( QString name );
 
 protected:
 
@@ -77,6 +75,7 @@ private:
     static quint64 counter;
 
     QJsonObject* properties;
+    QMap< QString , QList< std::function<void( QSharedPointer<GWSObject> , QString )> > > subscriptions;
 
 };
 

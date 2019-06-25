@@ -32,12 +32,14 @@ QPair<double, QJsonArray> SetNextRouteDestinationBehaviour::behave(){
     if( next_destination.type() == QJsonValue::String ){
 
         QString next_destination_agent_id = next_destination.toString();
-        agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id );
 
         QSharedPointer<GWSEntity> destination_agent = GWSEntityEnvironment::globalInstance()->getByUID( next_destination_agent_id );
         GWSGeometry next_destination_agent_geom= GWSGeometry( destination_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
-        agent->setProperty( this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ) , next_destination_agent_geom.getGeoJSON() );
+        agent->setProperties( QJsonObject({
+            { this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id },
+            { this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ) , next_destination_agent_geom.getGeoJSON() }
+        }) );
 
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray() );
 

@@ -49,6 +49,7 @@ private:
         GWSQuadtreeElement( std::string object_id , const GWSGeometry &geometry ) : object_id( object_id ) , geometry( geometry ) {}
         std::string object_id;
         GWSGeometry geometry;
+        geos::geom::Envelope envelope;
     };
 
     mutable QReadWriteLock mutex;

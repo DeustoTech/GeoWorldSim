@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <QTimer>
 
+#include "../../app/App.h"
+#include "../api/APIDriver.h"
+
 GWSExternalCommunicator::GWSExternalCommunicator( const QString &socket_id ) : QObject (){
     this->socket_id = socket_id;
     this->startSocket();
@@ -34,5 +37,11 @@ void GWSExternalCommunicator::startSocket(){
 
 void GWSExternalCommunicator::reconnectSocket(){
     this->websocket.open( QUrl( "wss://sockets.geoworldsim.com/?scenario_id=" + this->socket_id ) );
+    // Make Scenario to listen
+    GWSAPIDriver::globalInstance()->GET(
+                QString("https://history.geoworldsim.com/api/scenario/%1/socket").arg( GWSApp::globalInstance()->getAppId() ) ,
+                []( QNetworkReply* reply ){
+                   reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
+    });
     QTimer::singleShot( 30000 , [this](){ this->websocket.ping(); });
 }

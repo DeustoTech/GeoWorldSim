@@ -93,10 +93,13 @@ QPair<double, QJsonArray> SendPropertyStatisticsBehaviour::behave(){
     // GLOBAL ACCUMULATOR
     this->accumulated_total = GWSObjectFactory::incrementValue( this->accumulated_total , acc_value );
 
-    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_accumulated" , this->accumulated_total );
-    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_agent_count" , agent_count );
-    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_current" , acc_value );
-    entity->setProperty( this->getProperty( STORE_AS ).toString( "statistics" ) + "_average", average );
+    QString rename_as = this->getProperty( STORE_AS ).toString( "statistics" );
+    entity->setProperties( QJsonObject( {
+        { rename_as + "_accumulated" , this->accumulated_total } ,
+        { rename_as + "_agent_count" , agent_count } ,
+        { rename_as + "_current" , acc_value } ,
+        { rename_as + "_average", average }
+    }));
 
     // Socket id to send through (by default the main from the Simulation)
     QString socket_id = this->getProperty( SOCKET_ID ).toString( GWSApp::globalInstance()->getAppId() );

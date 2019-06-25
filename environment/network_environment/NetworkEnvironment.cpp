@@ -155,18 +155,28 @@ void GWSNetworkEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
 
     GWSEnvironment::registerEntity( agent );
 
-    if( agent->getProperty( SKIP_INDEXING ).toBool() ){
+    QJsonObject json = agent->getProperty( EDGE_PROP ).toObject();
+
+    if( json.value( SKIP_INDEXING ).toBool() ){
+        return;
+    }
+
+    GWSNetworkEdge edge = GWSNetworkEdge( json );
+    if( !edge.isValid() ){
+        return;
+    }
+
+    this->upsertEntityToIndex( agent , edge );
+
+    if( json.value( SKIP_SUBSCRIBING ).toBool() ){
         return;
     }
 
     // Listen to agent property changes
-    this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
+    agent->addSubscription( EDGE_PROP , [this](QSharedPointer<GWSObject> entity , QString property_name ){
+        this->upsertEntityToIndex( entity.dynamicCast<GWSEntity>() , GWSNetworkEdge( entity->getProperty( property_name ).toObject() ) );
+    });
 
-    // GRAPH EDGE (comes as a QJSONOBJECT, need to extract it and build the GWSEDGE)
-    GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
-    if( edge.isValid() ){
-        this->upsertAgentToIndex( agent , edge );
-    }
 }
 
 void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
@@ -178,7 +188,7 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
 
         GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
 
-        this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
+        //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
 
         foreach(QJsonValue v , classes){
 
@@ -201,7 +211,7 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
  PROTECTED
 **********************************************************************/
 
-void GWSNetworkEnvironment::upsertAgentToIndex(QSharedPointer<GWSEntity> agent, const GWSNetworkEdge &edge ){
+void GWSNetworkEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent, const GWSNetworkEdge &edge ){
     foreach( QJsonValue v , agent->getInheritanceFamily() ) {
 
         QString uuid = agent->getUID();
@@ -233,7 +243,7 @@ void GWSNetworkEnvironment::entityPropertyChanged( QString property_name ){
         if( !object ){ return; }
         GWSEntity* agent = dynamic_cast<GWSEntity*>( object );
         if( !agent ){ return; }
-        this->upsertAgentToIndex( agent->getSharedPointer() , GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() ) );
+        this->upsertEntityToIndex( agent->getSharedPointer() , GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() ) );
     }
 }
 
