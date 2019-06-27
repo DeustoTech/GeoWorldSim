@@ -34,8 +34,12 @@ public:
     bool containsEntity( QSharedPointer<GWSEntity> entity ) const;
     int getRunningAmount() const;
     QList< QSharedPointer<GWSEntity> > getRunning() const;
-    template <class T> QList< QSharedPointer<T> > getRunningByClass( QString class_name ) const{
-        return this->running_entities->getByClass<T>( class_name );
+    template <class T> QList< QSharedPointer<T> > getRunning( QString class_name ) const{
+        QList< QSharedPointer< T > > l;
+        foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions ) {
+            l.append( p->running_storage->getByClass<T>( class_name ) );
+        }
+        return l;
     }
     bool isRunning() const;
     int getTicksAmount() const;
@@ -61,19 +65,40 @@ private:
     GWSExecutionEnvironment(GWSExecutionEnvironment const&);
     ~GWSExecutionEnvironment();
 
-    // RUNNING ENTITIES
-    GWSObjectStorage* running_entities;
+    // HELPER CLASS
+    class GWSExecutionEnvironmentElement : public QObject {
+        public:
+            GWSExecutionEnvironmentElement( QThread* thread , quint64 tick_time_window , uint max_entity_amount_per_tick = -1 ) : QObject() , tick_time_window(tick_time_window) , max_entity_amount_per_tick(max_entity_amount_per_tick) {
+                this->moveToThread( thread );
+                this->running_storage = new GWSObjectStorage();
+            }
+            ~GWSExecutionEnvironmentElement(){
+                this->running_storage->deleteLater();
+            }
+
+            // RUNNING ENTITIES
+            bool is_running = false;
+            GWSObjectStorage* running_storage;
+            qint64 min_tick = -1;
+            int ticked_entities = 0;
+            int ready_entities = 0;
+            int total_entities = 0;
+
+            // Threshold from current_time IN MILLISECONDS
+            // Otherwise only minest_tick entity is executed (1 per cycle)
+            const quint64 tick_time_window;
+            const uint max_entity_amount_per_tick = -1;
+
+            void behave();
+    };
 
     // Cycle amount
     quint64 executed_ticks_amount = 0;
+    const uint max_entity_amount_per_tick = -1;
 
-    // Threshold from current_time IN MILLISECONDS
-    // Otherwise only minest_tick entity is executed (1 per cycle)
-    const quint64 tick_time_window;
-    const uint max_entity_amount_per_tick;
+    // Parallel execution chunks
+    QMap< QThread* , GWSExecutionEnvironmentElement* > parallel_executions;
 
-    // Avoid more than one execution at a time
-    mutable QMutex mutex;
 };
 
 #endif // GWSEXECUTIONENVIRONMENT_H

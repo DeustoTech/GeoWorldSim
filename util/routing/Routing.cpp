@@ -5,6 +5,9 @@ GWSRouting::GWSRouting() : QObject(){
     this->hash_to_node = new QMap< std::string , lemon::ListDigraph::Node >();
     this->routing_graph = new lemon::ListDigraph();
     this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
+
+    this->connect( this , &GWSRouting::upsertEdgeSignal , this , &GWSRouting::upsertEdge );
+    this->connect( this , &GWSRouting::removeEdgeSignal , this , &GWSRouting::removeEdge );
 }
 
 GWSRouting::~GWSRouting(){
@@ -166,7 +169,7 @@ QList< QStringList > GWSRouting::getShortestPaths( const QString &from_one_hash 
  METHODS
 **********************************************************************/
 
-void GWSRouting::upsert(const QString &object_id , const GWSEdge &edge){
+void GWSRouting::upsertEdge(const QString &object_id , const GWSEdge &edge){
 
     try {
 
@@ -201,7 +204,7 @@ void GWSRouting::upsert(const QString &object_id , const GWSEdge &edge){
     } catch(...){}
 }
 
-void GWSRouting::remove(const QString &object_id ){
+void GWSRouting::removeEdge(const QString &object_id ){
 
     lemon::ListDigraph::Arc arc = this->arc_to_object_ids->key( object_id.toStdString() );
     if( this->routing_graph->id( arc ) > 0 ){

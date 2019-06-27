@@ -32,9 +32,18 @@ public:
     QString getNearestElement( const GWSCoordinate &coor );
     QString getNearestElement( const GWSGeometry &geometry );
 
+
+signals:
+
+    void upsertGeometrySignal( const QString &object_id , const GWSCoordinate &coor );
+    void upsertCoordinateSignal( const QString &object_id , const GWSCoordinate &coor );
+    void removeSignal( const QString &object_id );
+
+public slots:
+
     // SETTERS
-    void upsert( const QString &object_id , const GWSCoordinate &coor );
-    void upsert( const QString &object_id , const GWSGeometry &geom );
+    void upsertCoordinate( const QString &object_id , const GWSCoordinate &coor );
+    void upsertGeometry( const QString &object_id , const GWSGeometry &geom );
     void remove( const QString &object_id );
 
 protected:

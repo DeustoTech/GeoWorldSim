@@ -1,6 +1,6 @@
 #include "PhysicalEnvironment.h"
 
-#include <QtConcurrent/QtConcurrent>
+#include <QTimer>
 
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../object/ObjectFactory.h"
@@ -168,13 +168,19 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
 
     //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSPhysicalEnvironment::entityPropertyChanged );
 
+    QString uuid = agent->getUID();
+
     foreach (QJsonValue v , agent->getInheritanceFamily()) {
 
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
         if( this->environment_entity_indexes.value( family , Q_NULLPTR ) ){
-            this->environment_entity_indexes.value( family )->remove( agent_id );
+
+            QTimer::singleShot( 10 , [this , uuid , family] {
+                this->environment_entity_indexes.value( family )->remove( uuid );
+            });
+
         }
     }
 }
@@ -194,19 +200,14 @@ void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        this->mutex.lockForRead();
-        if( !this->environment_entity_index_types.contains( family ) ){
-            this->mutex.unlock();
-
-            this->mutex.lockForWrite();
+        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family , Q_NULLPTR );
+        if( !tree ){
             this->environment_entity_index_types.append( family );
-            this->environment_entity_indexes.insert( family , QSharedPointer<GWSQuadtree>( new GWSQuadtree() ) );
+            tree = QSharedPointer<GWSQuadtree>( new GWSQuadtree() );
+            this->environment_entity_indexes.insert( family , tree );
         }
-        this->mutex.unlock();
 
-        QtConcurrent::run([this , uuid , geom , family] {
-            this->environment_entity_indexes.value( family )->upsert( uuid , geom );
-        });
+        emit tree->upsertGeometry( uuid , geom );
     }
 }
 

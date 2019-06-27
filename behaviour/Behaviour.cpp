@@ -75,17 +75,18 @@ QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
     return this->sub_behaviours;
 }
 
-QJsonValue GWSBehaviour::getProperty( QString name ) const{
+QJsonValue GWSBehaviour::getProperty( const QString& name ) const{
    return GWSObjectFactory::simpleOrParentPropertyName( name , this->getSharedPointer() , this->getEntity() );
 }
 
-void GWSBehaviour::setProperty( QString name , const QJsonValue &value ){
+void GWSBehaviour::setProperty( const QString& name , const QJsonValue &value ){
 
     if( name.startsWith("<") && name.endsWith(">") ){
         QSharedPointer<GWSEntity> agent = this->getEntity();
-        name = name.remove( 0 , 1 );
-        name = name.remove( name.length() - 1 , 1 );
-        agent->setProperty( name , value );
+        QString str = name;
+        str = str.remove( 0 , 1 );
+        str = str.remove( str.length() - 1 , 1 );
+        agent->setProperty( str , value );
     } else {
         GWSObject::setProperty( name , value );
     }

@@ -15,9 +15,8 @@
 #include "../../environment/Environment.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
-#include "../../environment/network_environment/NetworkEnvironment.h"
-#include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
+
 
 QString GWSEntity::STYLE_COLOR_PROP = "color";
 QString GWSEntity::STYLE_OPACITY_PROP = "opacity";
@@ -39,8 +38,8 @@ GWSEntity::~GWSEntity() {
     }
 
     qDebug() << QString("%1 deleted").arg( this->getUID() );
-    if( this->skills ){ this->skills->deleteAll(); this->skills->deleteLater(); }
-    if( this->behaviours ){ this->behaviours->deleteAll(); this->behaviours->deleteLater(); }
+    if( this->skills ){ this->skills->deleteAllObjects(); this->skills->deleteLater(); }
+    if( this->behaviours ){ this->behaviours->deleteAllObjects(); this->behaviours->deleteLater(); }
 }
 
 /**********************************************************************
@@ -50,37 +49,41 @@ GWSEntity::~GWSEntity() {
 void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
     GWSObject::deserialize( json , parent );
 
-    // SKILLS
-    if( json.keys().contains( "@skills" ) ){
-        if( this->skills ){
-            this->skills->deleteAll();
-            this->skills->deleteLater();
-        }
-        QJsonArray jskills = json.value("@skills").toArray();
-        foreach( QJsonValue js , jskills ){
-            QSharedPointer<GWSSkill> skill = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSSkill>();
-            if( skill.isNull() ){ continue; }
-            this->addSkill( skill );
-        }
-    }
+    QTimer::singleShot( 10 , this , [this , json]{
 
-    // BEHAVIOURS
-    if( json.keys().contains( "@behaviours" ) ){
-        if( this->behaviours ){
-            this->behaviours->deleteAll();
-            this->behaviours->deleteLater();
+        // SKILLS
+        if( json.keys().contains( "@skills" ) ){
+            if( this->skills ){
+                this->skills->deleteAllObjects();
+                this->skills->deleteLater();
+            }
+            QJsonArray jskills = json.value("@skills").toArray();
+            foreach( QJsonValue js , jskills ){
+                QSharedPointer<GWSSkill> skill = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSSkill>();
+                if( skill.isNull() ){ continue; }
+                this->addSkill( skill );
+            }
         }
-        QJsonArray jsbehaviours = json.value("@behaviours").toArray();
-        for( int i = jsbehaviours.size()-1 ; i >= 0 ; i-- ){ // Iterate backwards to have @nexts already created
-            QJsonValue js = jsbehaviours.at( i );
-            QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
-            if( behaviour.isNull() ){ continue; }
-            this->addBehaviour( behaviour );
-        }
-    }
 
-    // ADD to MAIN environments !WARNING, DO NOT RE-REGISTER THEM AGAIN
-    GWSEnvironmentsGroup::globalInstance()->registerEntity( this->getSharedPointer() );
+        // BEHAVIOURS
+        if( json.keys().contains( "@behaviours" ) ){
+            if( this->behaviours ){
+                this->behaviours->deleteAllObjects();
+                this->behaviours->deleteLater();
+            }
+            QJsonArray jsbehaviours = json.value("@behaviours").toArray();
+            for( int i = jsbehaviours.size()-1 ; i >= 0 ; i-- ){ // Iterate backwards to have @nexts already created
+                QJsonValue js = jsbehaviours.at( i );
+                QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
+                if( behaviour.isNull() ){ continue; }
+                this->addBehaviour( behaviour );
+            }
+        }
+
+        // ADD to MAIN environments !WARNING, DO NOT RE-REGISTER THEM AGAIN
+        GWSEnvironmentsGroup::globalInstance()->registerEntity( this->getSharedPointer() );
+    });
+
 }
 
 /**********************************************************************
@@ -175,7 +178,7 @@ bool GWSEntity::hasSkill( QString class_name ) const{
 }
 
 QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent ) const{
-      if( !this->skills ){ return Q_NULLPTR; }
+    if( !this->skills ){ return Q_NULLPTR; }
     const QList< QSharedPointer<GWSSkill> > skills = this->skills->getByClass<GWSSkill>( class_name );
     if( skills.isEmpty() ){
         if( !silent ){ qDebug() << QString("%1:%2 has no skill %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name ); }
@@ -246,11 +249,11 @@ void GWSEntity::addSkill( QSharedPointer<GWSSkill> skill ){
         this->skills = new GWSObjectStorage();
     }
     skill->skilled_entity = this->getSharedPointer();
-    this->skills->add( skill );
+    emit this->skills->addObjectSignal( skill );
 }
 
 void GWSEntity::removeSkill(QSharedPointer<GWSSkill> skill){
-    this->skills->remove( skill );
+    emit this->skills->removeObjectSignal( skill );
 }
 
 void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
@@ -258,7 +261,7 @@ void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
         this->behaviours = new GWSObjectStorage();
     }
     behaviour->behaving_entity = this->getSharedPointer();
-    this->behaviours->add( behaviour );
+    emit this->behaviours->addObjectSignal( behaviour );
 }
 
 void GWSEntity::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> behaviour){

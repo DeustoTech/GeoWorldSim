@@ -1,16 +1,29 @@
 #include "Quadtree.h"
 
+#include <QJsonArray>
+
 #include "GeometryGetters.h"
 #include "GeometryTransformators.h"
-#include <QJsonArray>
-#include <QtConcurrent/QtConcurrent>
+#include "../parallelism/ParallelismController.h"
 
 GWSQuadtree::GWSQuadtree() : QObject(){
     this->quadtree_elements = new QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >();
     this->quadtree_layers = new QMap< std::string , geos::index::quadtree::Quadtree* >();
+
+    this->connect( this , &GWSQuadtree::upsertGeometrySignal , this , &GWSQuadtree::upsertGeometry );
+    this->connect( this , &GWSQuadtree::upsertCoordinateSignal , this , &GWSQuadtree::upsertGeometry );
+    this->connect( this , &GWSQuadtree::removeSignal , this , &GWSQuadtree::remove );
 }
 
 GWSQuadtree::~GWSQuadtree(){
+    foreach( std::string l , this->quadtree_layers->keys() ){
+        delete this->quadtree_layers->value( l );
+    }
+    delete this->quadtree_layers;
+    foreach( std::string l , this->quadtree_elements->keys() ) {
+        delete this->quadtree_elements->value( l );
+    }
+    delete this->quadtree_elements;
 }
 
 QStringList GWSQuadtree::getElements() const {
@@ -207,12 +220,12 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
     return nearest_object_id;
 }
 
-void GWSQuadtree::upsert( const QString &object_id , const GWSCoordinate &coor ){
+void GWSQuadtree::upsertCoordinate( const QString &object_id , const GWSCoordinate &coor ){
     const GWSGeometry& geom( coor );
-    this->upsert( object_id , geom );
+    this->upsertGeometry( object_id , geom );
 }
 
-void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
+void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &geom ){
 
     if( object_id.isEmpty() ){
         return;
@@ -233,8 +246,6 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
     GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id.toStdString() , geom );
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
-
-        QtConcurrent::run([this , l , elm , previous_elm] {
 
             if( previous_elm ){
 
@@ -269,6 +280,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
 
                 if ( !tree ){
                     this->mutex.unlock();
+
                     this->mutex.lockForWrite();
                     tree = new geos::index::quadtree::Quadtree();
                     this->quadtree_layers->insert( combined_hash , tree );
@@ -295,10 +307,7 @@ void GWSQuadtree::upsert( const QString &object_id , const GWSGeometry &geom ){
                     this->ids_contained.append( qstring );
                 }
                 this->mutex.unlock();
-
             }
-
-        });
 
     }
 
@@ -318,8 +327,6 @@ void GWSQuadtree::remove( const QString &object_id ){
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
-        QtConcurrent::run([this , l , previous_elm] {
-
             if( previous_elm ){
 
                 // Get geohash
@@ -336,13 +343,12 @@ void GWSQuadtree::remove( const QString &object_id ){
                 delete previous_elm;
             }
 
-        });
-
-        QString qstring = QString::fromStdString( previous_elm->object_id );
-        this->mutex.lockForWrite();
-        this->ids_contained.removeAll( qstring );
-        this->mutex.unlock();
     }
+
+    QString qstring = QString::fromStdString( previous_elm->object_id );
+    this->mutex.lockForWrite();
+    this->ids_contained.removeAll( qstring );
+    this->mutex.unlock();
 
 }
 

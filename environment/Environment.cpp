@@ -9,16 +9,19 @@ QString GWSEnvironment::SKIP_INDEXING = "skip_indexing";
 QString GWSEnvironment::SKIP_SUBSCRIBING = "skip_subscribing";
 
 GWSEnvironment::GWSEnvironment() : GWSEntity(){
-    emit this->environmentCreatedSignal();
 }
 
 GWSEnvironment::~GWSEnvironment(){
-    emit this->environmentDeletedSignal();
 }
 
 /**********************************************************************
  AGENTS METHODS
 **********************************************************************/
+
+void GWSEnvironment::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> parent){
+    // Avoid GWSEntity deserialisation
+    GWSObject::deserialize( json , parent );
+}
 
 QJsonObject GWSEnvironment::serialize() const{
     return GWSObject::serialize(); // Jump all agent serialisation

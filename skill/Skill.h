@@ -22,10 +22,12 @@ public:
 
     // GETTERS
     QSharedPointer<GWSEntity> getEntity() const;
-    virtual QJsonValue getProperty( QString name ) const;
+    virtual QJsonValue getProperty( const QString& name ) const;
 
 private:
     QSharedPointer<GWSEntity> skilled_entity;
 };
+
+Q_DECLARE_METATYPE( QSharedPointer<GWSSkill> ) // REQUIRED TO BE USED IN SIGNAL AND SLOTS
 
 #endif // GWSSKILL_H

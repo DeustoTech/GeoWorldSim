@@ -1,6 +1,6 @@
 #include "NetworkEnvironment.h"
 
-#include <QtConcurrent/QtConcurrent>
+#include <QTimer>
 
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
@@ -187,6 +187,7 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
         QJsonArray classes = agent->getInheritanceFamily();
 
         GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
+        QString uuid = agent->getUID();
 
         //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
 
@@ -195,11 +196,13 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
             QString family = v.toString();
             if( family.isEmpty() ){ continue; }
 
-            // Remove from spatial graph
-            if( edge.isValid() ){
-                this->network_edges.value( family )->remove( agent->getUID() );
-                this->network_routings.value( family )->remove( agent->getUID() );
-            }
+            QTimer::singleShot( 10 , [this , uuid , family] {
+
+                // Remove from spatial graph
+                this->network_edges.value( family )->remove( uuid );
+                this->network_routings.value( family )->removeEdge( uuid );
+
+            });
         }
 
     } catch (std::exception &e){
@@ -219,21 +222,23 @@ void GWSNetworkEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent,
         if( family.isEmpty() ){ continue; }
 
         this->mutex.lockForRead();
-        if( !this->environment_entity_index_types.contains( family ) ){
+        QSharedPointer< GWSQuadtree > tree = this->network_edges.value( family , Q_NULLPTR );
+        QSharedPointer< GWSRouting > routing = this->network_routings.value( family , Q_NULLPTR );
+
+        if( !tree ){
             this->mutex.unlock();
 
             this->mutex.lockForWrite();
             this->environment_entity_index_types.append( family );
-            this->network_edges.insert( family , QSharedPointer< GWSQuadtree >( new GWSQuadtree() ) );
-            this->network_routings.insert( family , QSharedPointer< GWSRouting >( new GWSRouting() ) );
+            tree = QSharedPointer< GWSQuadtree >( new GWSQuadtree() );
+            this->network_edges.insert( family , tree );
+            routing = QSharedPointer< GWSRouting >( new GWSRouting() );
+            this->network_routings.insert( family , routing );
         }
         this->mutex.unlock();
 
-        QtConcurrent::run([this , uuid , edge , family] {
-            // Add to spatial graph
-            this->network_edges.value( family )->upsert( uuid , edge.getFromCoordinate() );
-            this->network_routings.value( family )->upsert( uuid , edge );
-        });
+        emit tree->upsertCoordinateSignal( uuid , edge.getFromCoordinate() );
+        emit routing->upsertEdgeSignal( uuid , edge );
     }
 }
 

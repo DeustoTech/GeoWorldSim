@@ -17,6 +17,7 @@ public:
 
     // METHODS
     QThread* getThread();
+    QThread* getMainThread();
     QThread* liberateThread( QThread* thread );
 
 signals:

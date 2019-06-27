@@ -14,17 +14,17 @@ public:
     static GWSGlobalObjectStorage* globalInstance();
 
     // GETTERS
-    QSharedPointer<QObject> getByClassAndId( QMetaObject metaobject , QString internal_id) const;
-    template <class T> QSharedPointer<T> getByClassAndId( QMetaObject metaobject , QString internal_id ) const;
+    QSharedPointer<QObject> getByClassAndUID( const QMetaObject& metaobject , const QString& uid ) const;
+    template <class T> QSharedPointer<T> getByClassAndUID( const QMetaObject& metaobject , const QString& uid ) const;
 
-    QSharedPointer<QObject>  getByClassAndName( QMetaObject metaobject , QString name ) const;
-    template <class T> QSharedPointer<T> getByClassAndName( QMetaObject metaobject , QString name ) const;
+    QSharedPointer<QObject> getByClassAndName( const QMetaObject& metaobject , const QString& name ) const;
+    template <class T> QSharedPointer<T> getByClassAndName( const QMetaObject& metaobject , const QString& name ) const;
 
-    QList< QSharedPointer<QObject>  > getByClass( QMetaObject metaobject ) const;
-    template <class T> QList<QSharedPointer<T>> getByClass( QMetaObject metaobject ) const;
+    const QList< QSharedPointer<QObject> >* getByClass( const QMetaObject& metaobject ) const;
+    template <class T> QList<QSharedPointer<T>> getByClass( const QMetaObject& metaobject ) const;
 
-    QSharedPointer<QObject>  getByName( QString name ) const;
-    template <class T> QSharedPointer<T> getByName( QString name ) const {
+    QSharedPointer<QObject> getByName( const QString& name ) const;
+    template <class T> QSharedPointer<T> getByName( const QString& name ) const {
         return this->storage->getByName<T>( name );
     }
 

@@ -20,7 +20,7 @@ QPair<double, QJsonArray> CheckIfEntitiesRunningBehaviour::behave(){
     QString entity_type = this->getProperty( ENTITY_TYPE ).toString();
     QJsonObject entity_filter = this->getProperty( ENTITY_FILTER ).toObject();
 
-    QList< QSharedPointer<GWSEntity> > entities = GWSExecutionEnvironment::globalInstance()->getRunningByClass<GWSEntity>( entity_type );
+    QList< QSharedPointer<GWSEntity> > entities = GWSExecutionEnvironment::globalInstance()->getRunning<GWSEntity>( entity_type );
 
     foreach( QSharedPointer<GWSEntity> a , entities ) {
         if( !a->fulfillsFilter( entity_filter ) ){

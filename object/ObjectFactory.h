@@ -23,7 +23,7 @@ public:
     QSharedPointer<GWSObject> fromJSON( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
 
     // STATICS
-    static QJsonValue simpleOrParentPropertyName( QString &property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
+    static QJsonValue simpleOrParentPropertyName(const QString &property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
     static QJsonValue simpleOrParentPropertyValue( const QJsonValue &property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
     static QJsonValue incrementValue( const QJsonValue &existing_value , const QJsonValue &increment);
 

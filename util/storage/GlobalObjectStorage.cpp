@@ -17,28 +17,29 @@ GWSGlobalObjectStorage::~GWSGlobalObjectStorage(){
  GETTERS
 **********************************************************************/
 
-QSharedPointer<QObject> GWSGlobalObjectStorage::getByClassAndId( QMetaObject metaobject , QString id) const{
-    return this->storage->getByClassAndUID( metaobject.className() , id );
+QSharedPointer<QObject> GWSGlobalObjectStorage::getByClassAndUID( const QMetaObject& metaobject , const QString& uid ) const{
+    return this->storage->getByClassAndUID( metaobject.className() , uid );
 }
-template <class T> QSharedPointer<T> GWSGlobalObjectStorage::getByClassAndId( QMetaObject metaobject , QString id ) const{
-    return this->storage->getByClassAndUID<T>( metaobject , id );
+template <class T> QSharedPointer<T> GWSGlobalObjectStorage::getByClassAndUID( const QMetaObject& metaobject , const QString& uid  ) const{
+    return this->storage->getByClassAndUID<T>( metaobject , uid );
 }
 
-QSharedPointer<QObject> GWSGlobalObjectStorage::getByClassAndName( QMetaObject metaobject , QString name ) const{
+QSharedPointer<QObject> GWSGlobalObjectStorage::getByClassAndName( const QMetaObject& metaobject , const QString& name ) const{
     return this->storage->getByClassAndName( metaobject.className() , name );
 }
-template <class T> QSharedPointer<T>GWSGlobalObjectStorage::getByClassAndName( QMetaObject metaobject , QString name ) const{
+template <class T> QSharedPointer<T>GWSGlobalObjectStorage::getByClassAndName(const QMetaObject &metaobject , const QString &name ) const{
     return this->storage->getByClassAndName<T>( metaobject , name );
 }
 
-QList< QSharedPointer<QObject> > GWSGlobalObjectStorage::getByClass( QMetaObject metaobject ) const{
+const QList< QSharedPointer<QObject> >* GWSGlobalObjectStorage::getByClass( const QMetaObject& metaobject ) const{
     return this->storage->getByClass( metaobject.className() );
 }
-template <class T> QList<QSharedPointer<T>> GWSGlobalObjectStorage::getByClass( QMetaObject metaobject ) const{
+
+template <class T> QList<QSharedPointer<T>> GWSGlobalObjectStorage::getByClass( const QMetaObject& metaobject ) const{
     return this->storage->getByClass<T>( metaobject );
 }
 
-QSharedPointer<QObject> GWSGlobalObjectStorage::getByName( QString name ) const{
+QSharedPointer<QObject> GWSGlobalObjectStorage::getByName( const QString& name ) const{
     return this->storage->getByName( name );
 }
 
@@ -47,7 +48,7 @@ QSharedPointer<QObject> GWSGlobalObjectStorage::getByName( QString name ) const{
 **********************************************************************/
 
 void GWSGlobalObjectStorage::add( QSharedPointer<QObject> object ){
-    this->storage->add( object );
+    this->storage->addObject( object );
 }
 
 

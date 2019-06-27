@@ -18,9 +18,23 @@ GWSObjectFactory* GWSObjectFactory::globalInstance(){
 GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
+    // qRegisterMetaType is necessary to be used in SIGNAL/SLOTS
+    this->registerType( QObject::staticMetaObject );
+    qRegisterMetaType< QSharedPointer<QObject> >( "QSharedPointer<QObject>" );
+
+    this->registerType( GWSObject::staticMetaObject );
+    qRegisterMetaType< GWSObject >( GWSObject::staticMetaObject.className() );
+    qRegisterMetaType< QSharedPointer<GWSObject> >( "QSharedPointer<GWSObject>" );
+
     this->registerType( GWSEntity::staticMetaObject );
+    qRegisterMetaType< GWSEntity >( GWSEntity::staticMetaObject.className() );
+    qRegisterMetaType< QSharedPointer<GWSEntity> >( "QSharedPointer<GWSEntity>" );
+
     this->registerType( GWSSkill::staticMetaObject );
+    qRegisterMetaType< GWSSkill >( GWSSkill::staticMetaObject.className() );
+
     this->registerType( GWSBehaviour::staticMetaObject );
+    qRegisterMetaType< GWSBehaviour >( GWSBehaviour::staticMetaObject.className() );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
@@ -98,16 +112,17 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( const QJsonObject &json , 
     return obj;
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyName( QString &property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
+QJsonValue GWSObjectFactory::simpleOrParentPropertyName( const QString &property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
 
     // IS STRING AND <>
 
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
     if( property_name.startsWith("<") && property_name.endsWith(">") ){
         if( !parent ){ return QJsonValue::Null; }
-        property_name.remove( 0 , 1 );
-        property_name.remove( property_name.length() - 1 , 1 );
-        return parent->getProperty( property_name );
+        QString str = property_name;
+        str = str.remove( 0 , 1 );
+        str.remove( str.length() - 1 , 1 );
+        return parent->getProperty( str );
     }
 
     // IS SIMPLE STRING

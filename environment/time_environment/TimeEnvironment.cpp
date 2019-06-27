@@ -76,6 +76,18 @@ void GWSTimeEnvironment::setDatetime(quint64 datetime){
     }
 }
 
+void GWSTimeEnvironment::goBackToDatetime(quint64 datetime){
+    if( datetime >= 0 ){
+        this->simulation_datetime_msecs = qMin( this->simulation_datetime_msecs , datetime );
+        this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
+    }
+}
+
+void GWSTimeEnvironment::goBackMsecs(quint64 msecs){
+    this->simulation_datetime_msecs -= msecs;
+    this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
+}
+
 void GWSTimeEnvironment::setTimeSpeed(double time_speed){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }

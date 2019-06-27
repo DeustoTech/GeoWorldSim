@@ -169,6 +169,7 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement* pending ){
         this->current_requests_amount++;
         //this->mutex.unlock();
 
+        // Must be executed in GWSApp thread
         QTimer::singleShot( 10 , GWSApp::globalInstance() , [ pending , this ]{
 
             if( !this->access_manager ){

@@ -5,6 +5,7 @@
 #include <QMetaObject>
 #include <QHash>
 #include <QMutex>
+#include <QReadWriteLock>
 #include <QStringList>
 #include <QSharedPointer>
 
@@ -16,15 +17,14 @@ class GWSObjectStorage : public QObject
 
 public:
     explicit GWSObjectStorage();
+    ~GWSObjectStorage();
 
     // GETTERS
     bool isEmpty() const;
     quint64 getAmount() const;
     const QStringList getClasses() const;
 
-    template <class T>
-    QList< QSharedPointer<T> > getAll() const;
-    QList< QSharedPointer<QObject> > getAll() const;
+    const QList< QSharedPointer<QObject> >* getAll() const; // FAST METHOD, AS IT ONLY RETURNS A POINTER
 
     template <class T>
     QSharedPointer<T> getByClassAndUID( const QString &class_name , const QString &uid ) const{
@@ -39,14 +39,17 @@ public:
     }
     QSharedPointer<QObject> getByClassAndName( const QString &class_name , const QString &name ) const;
 
-    template <class T> QList< QSharedPointer<T> > getByClass( const QString &class_name ) const{
+    template <class T>
+    QList< QSharedPointer<T> > getByClass( const QString &class_name ) const{
         QList< QSharedPointer<T> > objs;
-        foreach( QSharedPointer<QObject> o , this->getByClass( class_name ) ){
-            objs.append( o.dynamicCast<T>() );
+        const QList< QSharedPointer<QObject> >* l = this->getByClass( class_name );
+        for( int i = 0 ; i < l->size() ; i++ ){
+            objs.append( l->at( i ).dynamicCast<T>() );
         }
         return objs;
     }
-    QList< QSharedPointer<QObject> > getByClass( const QString &class_name ) const;
+    const QList< QSharedPointer<QObject> > *getByClass( const QString &class_name ) const; // FAST METHOD, AS IT ONLY RETURNS A POINTER
+    const QList< QSharedPointer<QObject> >* getByClass( const QMetaObject& metaobject ) const; // FAST METHOD, AS IT ONLY RETURNS A POINTER
 
     template <class T>
     QSharedPointer<T> getByName( const QString &name ) const {
@@ -57,22 +60,27 @@ public:
     bool contains( QString class_name ) const;
     bool contains( QSharedPointer<QObject> object ) const;
 
-    // SETTERS
-    virtual void add( QSharedPointer<QObject> object );
-    virtual void remove( QSharedPointer<QObject> object );
-    virtual void deleteAll();
+public slots:
+    virtual void addObject( QSharedPointer<QObject> object );
+    virtual void removeObject( QSharedPointer<QObject> object );
+    virtual void deleteAllObjects();
+
+signals:
+
+    void addObjectSignal( QSharedPointer<QObject> object );
+    void removeObjectSignal( QSharedPointer<QObject> object );
+    void deleteAllObjectsSignal();
 
 protected:
 
     /**
      * STORAGE
     **/
-    QStringList classes_stored;
     QMap< std::string , QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
-    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< QMAP< UID , OBJECT>>
-    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_names;  // QHash<ClassName, QHash<NAME, OBJECT>>
+    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< ClassName , QMAP< UID , OBJECT>>
+    QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_names;  // QMAP<ClassName , QMAP<NAME, OBJECT>>
 
-    mutable QMutex mutex;
+    mutable QReadWriteLock mutex;
 };
 
 #endif // GWSOBJECTSTORAGE_H

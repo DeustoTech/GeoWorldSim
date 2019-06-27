@@ -54,9 +54,10 @@ GWSSpeedUnit MoveSkill::calculateNewSpeed(const GWSSpeedUnit &current_speed, con
 void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, const GWSGeometry &movement_towards_geom){
 
     QSharedPointer<GWSEntity> agent = this->getEntity();
-    agent->setProperties( QJsonObject( {
-        { CURRENT_SPEED , movement_speed } ,
-    agent->setProperty( MOVING_TOWARDS , movement_towards_geom.getGeoJSON() );
+    agent->setProperties( QJsonObject({
+         { CURRENT_SPEED , movement_speed.number() } ,
+         { MOVING_TOWARDS , movement_towards_geom.getGeoJSON() }
+                                      }) );
 
     if( movement_duration == 0 ){
         // Not move operation

@@ -29,8 +29,8 @@ public:
     // GETTERS
     QSharedPointer<GWSEntity> getEntity() const;
     QList< QSharedPointer<GWSBehaviour> > getSubs() const;
-    virtual QJsonValue getProperty( QString name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
-    virtual void setProperty( QString name , const QJsonValue &value );
+    virtual QJsonValue getProperty(const QString &name ) const; // GETS the behaviours property value or if enlosed in '<>' goes to fetch it from the agent
+    virtual void setProperty( const QString& name , const QJsonValue& value );
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
@@ -53,5 +53,7 @@ private:
 
     QSharedPointer<GWSEntity> behaving_entity;
 };
+
+Q_DECLARE_METATYPE( QSharedPointer<GWSBehaviour> ) // REQUIRED TO BE USED IN SIGNAL AND SLOTS
 
 #endif // GWSBEHAVIOUR_H

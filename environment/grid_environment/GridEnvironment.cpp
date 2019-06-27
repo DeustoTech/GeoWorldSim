@@ -92,6 +92,7 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 }
 
 void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
+    GWSEnvironment::unregisterEntity( entity );
     //this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
 }
 

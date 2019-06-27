@@ -56,13 +56,12 @@ QJsonObject GWSObject::serialize() const{
     QJsonObject json( this->serializeMini() );
 
     this->mutex.lockForRead();
-    QStringList keys = this->properties->keys();
+    foreach( QString key , this->properties->keys() ){
+        QJsonValue v = this->properties->value( key );
+        json.insert( key , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
+    }
     this->mutex.unlock();
 
-    foreach(QString property_name , keys ) {
-        if ( property_name.startsWith( "@" ) ){ continue; }
-        json.insert( property_name , GWSObject::getProperty( property_name ) ); 
-    }
     return json;
 }
 
@@ -73,27 +72,24 @@ QJsonObject GWSObject::serialize() const{
 void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> parent){
     Q_UNUSED( parent );
 
+    QJsonObject properties;
+
     // Required properties
-    /*QStringList parsed_properties;
-    if( json.keys().contains( GWS_UID_PROP ) ){         parsed_properties.append( GWS_UID_PROP ); this->setProperty( GWS_UID_PROP , json.value( GWS_UID_PROP ).toString() ); }
-    if( json.keys().contains( GWS_CLASS_PROP ) ){       parsed_properties.append( GWS_CLASS_PROP ); this->setProperty( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() ); }
-    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
-        parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP);
-        QJsonArray arr;
-        arr.append( json.value( GWS_INHERITANCE_FAMILY_PROP ).toString() );
-        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , arr );
+    properties.insert( GWS_UID_PROP , json.value( GWS_UID_PROP ).toString() );
+    properties.insert( GWS_CLASS_PROP , json.value( GWS_CLASS_PROP ).toString() );
+    if( json.value( GWS_INHERITANCE_FAMILY_PROP ).isString() ){
+        properties.insert( GWS_INHERITANCE_FAMILY_PROP , { json.value( GWS_INHERITANCE_FAMILY_PROP ).toString() } );
     }
-    if( json.keys().contains( GWS_INHERITANCE_FAMILY_PROP ) && json.value( GWS_INHERITANCE_FAMILY_PROP ).isArray() ){
-        parsed_properties.append( GWS_INHERITANCE_FAMILY_PROP );
-        this->setProperty( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
-    }*/
+    if( json.value( GWS_INHERITANCE_FAMILY_PROP ).isArray() ){
+        properties.insert( GWS_INHERITANCE_FAMILY_PROP , json.value( GWS_INHERITANCE_FAMILY_PROP ).toArray() );
+    }
 
     // Remaining properties
     foreach( QString property_name , json.keys() ){
 
-        /*if( parsed_properties.contains( property_name ) ){
+        if( properties.contains( property_name ) ){
             continue; // Do not overwrite just parsed properties
-        }*/
+        }
 
         // Get the value to be inserted
         QJsonValue propert_value = json.value( property_name );
@@ -104,8 +100,10 @@ void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> p
         }
 
         // Set Property
-        this->setProperty( property_name , propert_value );
+        properties.insert( property_name , propert_value );
     }
+
+    this->setProperties( properties );
 }
 
 /**********************************************************************
@@ -113,7 +111,7 @@ void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> p
 **********************************************************************/
 
 QString GWSObject::getUID() const{
-    return this->getProperty( GWSObject::GWS_UID_PROP ).toString();
+    return this->getProperties( { GWSObject::GWS_UID_PROP } ).value( GWSObject::GWS_UID_PROP ).toString();
 }
 
 QSharedPointer<GWSObject> GWSObject::getSharedPointer() const{
@@ -141,41 +139,52 @@ QJsonArray GWSObject::getInheritanceFamily() const{
 }
 
 bool GWSObject::hasProperty( const QString &name ) const{
-    //return !QObject::property( name.toUtf8() ).isNull();
-    this->mutex.lockForRead();
-    bool contains = this->properties->keys().contains( name );
-    this->mutex.unlock();
-    return contains;
+    return this->properties->contains( name );
 }
 
 QJsonValue GWSObject::getProperty( const QString &name ) const{
-    return this->getProperties( QStringList({ name }) ).value( name );
+    if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
+        QString str = name;
+        str = str.remove( 0 , 1 );
+        str = str.remove( str.length() - 1 , 1 );
+        str = this->properties->value( str ).toString();
+
+        QJsonValue v = this->properties->value( str );
+        return ( v.isUndefined() || v.isNull() ) ? QJsonValue::Null : v;
+    }
+    else
+    {
+        QJsonValue v = this->properties->value( name );
+        return ( v.isUndefined() || v.isNull() ) ? QJsonValue::Null : v;
+    }
 }
 
 QJsonObject GWSObject::getProperties(const QStringList &names) const{
     QJsonObject props;
 
-    this->mutex.lockForRead();
-    foreach (QString name , names) {
+    foreach( QString name , names ){
 
         // If it comes between '<>', it is not the property name, but a key where to get the property name from
         if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
-            QString property_name = name;
-            property_name = property_name.remove( 0 , 1 );
-            property_name = property_name.remove( property_name.length() - 1 , 1 );
-            property_name = this->properties->value( property_name ).toString();
+            QString str = name;
+            str = str.remove( 0 , 1 );
+            str = str.remove( str.length() - 1 , 1 );
+            this->mutex.lockForRead();
+            str = this->properties->value( str ).toString();
 
-            QJsonValue v = this->properties->value( property_name );
-            props.insert( property_name , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
+            QJsonValue v = this->properties->value( str );
+            this->mutex.unlock();
+            props.insert( str , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
         }
         else
         {
+            this->mutex.lockForRead();
             QJsonValue v = this->properties->value( name );
+            this->mutex.unlock();
             props.insert( name , v.isUndefined() || v.isNull() ? QJsonValue::Null : v );
         }
 
     }
-    this->mutex.unlock();
 
     return props;
 }
@@ -189,11 +198,11 @@ QJsonValue GWSObject::operator []( const QString &name ) const{
 **********************************************************************/
 
 bool GWSObject::setProperty( const QString &name, const GWSUnit &value){
-    return this->setProperties( QJsonObject({ { name , value.number() } }) );
+    return this->setProperties( { { name , value.number() } } );
 }
 
 bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
-    return this->setProperties( QJsonObject({ { name , value } }) );
+    return this->setProperties( { { name , value } } );
 }
 
 bool GWSObject::setProperties(const QJsonObject &obj){

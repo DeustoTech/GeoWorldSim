@@ -65,8 +65,6 @@
 int main(int argc, char* argv[])
 {
 
-    QDateTime start = QDateTime::currentDateTime();
-
     // CREATE QAPPLICATION
     GWSApp* app = GWSApp::globalInstance( argc , argv );
 

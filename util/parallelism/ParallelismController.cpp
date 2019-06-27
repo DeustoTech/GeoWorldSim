@@ -4,6 +4,8 @@
 #include <QtMath>
 #include <QDebug>
 
+#include "../../app/App.h"
+
 GWSParallelismController* GWSParallelismController::globalInstance(){
     static GWSParallelismController instance;
     return &instance;
@@ -18,13 +20,14 @@ GWSParallelismController::GWSParallelismController() : QObject(){
     // lsof | grep QtCreator
 
     // Remove one to be left for main thread
-    int thread_limit = QThreadPool::globalInstance()->maxThreadCount();
+    int thread_limit = GWSApp::globalInstance()->getConfiguration().value( "max_threads" ).toInt( QThreadPool::globalInstance()->maxThreadCount() );
     thread_limit = qMax( 1 , thread_limit );
 
     for(int i = 0; i < thread_limit; i++){
 
         // Create thread
         QThread* thread = new QThread();
+        thread->setObjectName( QString("GWS allocated %1").arg( this->available_threads.size() ) );
         this->available_threads.append( thread );
         thread->start();
     }
@@ -52,6 +55,10 @@ int GWSParallelismController::getThreadsCount() const{
 
 QThread* GWSParallelismController::getThread(){
     return this->available_threads.at( qrand() % this->available_threads.size() );
+}
+
+QThread* GWSParallelismController::getMainThread(){
+    return this->main_thread;
 }
 
 QThread* GWSParallelismController::liberateThread(QThread *thread){

@@ -87,11 +87,11 @@ void GWSEntityEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
         return;
     }
 
-    this->environment_entities->add( entity );
+    emit this->environment_entities->addObjectSignal( entity );
 }
 
 void GWSEntityEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity){
     GWSEnvironment::unregisterEntity( entity );
-    this->environment_entities->remove( entity );
+    emit this->environment_entities->removeObjectSignal( entity );
 }
 

@@ -26,9 +26,13 @@ public:
     QList< QStringList > getShortestPath( const QStringList &ordered_hashes );
     QList< QStringList > getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes );
 
-    // METHODS
-    void upsert(const QString &object_id , const GWSEdge &edge );
-    void remove( const QString &object_id );
+public slots:
+    void upsertEdge(const QString &object_id , const GWSEdge &edge );
+    void removeEdge( const QString &object_id );
+
+signals:
+    void upsertEdgeSignal(const QString &object_id , const GWSEdge &edge );
+    void removeEdgeSignal( const QString &object_id );
 
 protected:
 
