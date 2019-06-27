@@ -12,6 +12,14 @@ class GWSExternalCommunicator : public QObject
 public:
     GWSExternalCommunicator( const QString &socket_id );
 
+    enum CommunicatorStatus {
+        NOT_STARTED = 0,
+        DISCONNECTED = 1,
+        CONNECTED = 2,
+        SCHEDULED_PING = 3,
+        PING_RECEIVED = 4
+    };
+
 public slots:
 
     void startSocket();
@@ -20,7 +28,7 @@ public slots:
 protected:
     QString socket_id;
     QWebSocket websocket; // WS to sockets.geoworldsim.com
-    QString last_status;
+    CommunicatorStatus status;
 };
 
 #endif // GWSEXTERNALCOMMUNICATOR_H

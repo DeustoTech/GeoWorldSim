@@ -35,7 +35,7 @@ public:
 
 signals:
 
-    void upsertGeometrySignal( const QString &object_id , const GWSCoordinate &coor );
+    void upsertGeometrySignal( const QString &object_id , const GWSGeometry &coor );
     void upsertCoordinateSignal( const QString &object_id , const GWSCoordinate &coor );
     void removeSignal( const QString &object_id );
 
@@ -67,6 +67,7 @@ private:
     QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements;
     QMap< std::string , geos::index::quadtree::Quadtree* >* quadtree_layers; // QMAP< (XHASH + YHASH) , QuadTree >
     const unsigned int layer_depth_amount = 5;
+    int stored_amount = 0;
 
     // BOUNDS
     double min_x = 180;

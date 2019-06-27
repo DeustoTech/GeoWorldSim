@@ -4,6 +4,8 @@
 
 #include "GeometryGetters.h"
 #include "GeometryTransformators.h"
+
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../parallelism/ParallelismController.h"
 
 GWSQuadtree::GWSQuadtree() : QObject(){
@@ -243,6 +245,13 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
     GWSQuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
+    this->stored_amount++;
+    if( stored_amount % 1000 == 0 ){
+        QString message = QString("Quadtree indexing %1 entities" ).arg( stored_amount );
+        qInfo() << message;
+        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal( QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+    }
+
     GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id.toStdString() , geom );
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
@@ -308,7 +317,6 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
                 }
                 this->mutex.unlock();
             }
-
     }
 
 }

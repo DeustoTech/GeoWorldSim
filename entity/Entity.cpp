@@ -47,9 +47,10 @@ GWSEntity::~GWSEntity() {
 **********************************************************************/
 
 void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
-    GWSObject::deserialize( json , parent );
 
-    QTimer::singleShot( 10 , this , [this , json]{
+    QTimer::singleShot( 10 , this , [this , json , parent]{
+
+        GWSObject::deserialize( json , parent );
 
         // SKILLS
         if( json.keys().contains( "@skills" ) ){

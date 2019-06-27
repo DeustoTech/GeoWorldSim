@@ -76,12 +76,18 @@ private:
                 this->running_storage->deleteLater();
             }
 
-            // RUNNING ENTITIES
+            // FLAGS
+            QReadWriteLock mutext;
             bool is_running = false;
+            bool is_busy = false;
+
+            // RUNNING ENTITIES
             GWSObjectStorage* running_storage;
             qint64 min_tick = -1;
             int ticked_entities = 0;
             int ready_entities = 0;
+            int busy_entities = 0;
+            int future_entities = 0;
             int total_entities = 0;
 
             // Threshold from current_time IN MILLISECONDS

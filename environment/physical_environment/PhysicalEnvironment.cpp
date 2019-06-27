@@ -175,12 +175,9 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        if( this->environment_entity_indexes.value( family , Q_NULLPTR ) ){
-
-            QTimer::singleShot( 10 , [this , uuid , family] {
-                this->environment_entity_indexes.value( family )->remove( uuid );
-            });
-
+        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family , Q_NULLPTR );
+        if( tree ){
+            emit tree->removeSignal( uuid );
         }
     }
 }
@@ -207,7 +204,7 @@ void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent
             this->environment_entity_indexes.insert( family , tree );
         }
 
-        emit tree->upsertGeometry( uuid , geom );
+        emit tree->upsertGeometrySignal( uuid , geom );
     }
 }
 

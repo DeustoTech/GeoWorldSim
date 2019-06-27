@@ -79,6 +79,7 @@ protected:
     QMap< std::string , QList< QSharedPointer<QObject> >* > objects;  // QMAP<ClassName, QList<OBJECT>>
     QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_uids;  // QMAP< ClassName , QMAP< UID , OBJECT>>
     QMap< std::string , QMap< std::string , QSharedPointer<QObject> >* > object_names;  // QMAP<ClassName , QMAP<NAME, OBJECT>>
+    int stored_amount = 0;
 
     mutable QReadWriteLock mutex;
 };

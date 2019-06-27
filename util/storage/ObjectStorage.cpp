@@ -3,6 +3,7 @@
 #include <QJsonArray>
 
 #include "../parallelism/ParallelismController.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 
 GWSObjectStorage::GWSObjectStorage() : QObject(){
     this->connect( this , &GWSObjectStorage::addObjectSignal , this , &GWSObjectStorage::addObject );
@@ -120,7 +121,7 @@ bool GWSObjectStorage::contains( QSharedPointer<QObject> object ) const{
 void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
 
     // Prepare for QObject which have no UIDs
-    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() });
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , GWSObject::staticMetaObject.className() });
     QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
 
     // If GWSObject, we have UID
@@ -128,6 +129,14 @@ void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
     if( gws_object ){
         classes = gws_object->getInheritanceFamily();
         uid = gws_object->getUID();
+    }
+
+    this->stored_amount++;
+    if( stored_amount % 1000 == 0 ){
+        QString message = QString("Storage for %1 , indexing %2 entities" ).arg( object->metaObject()->className() ).arg( stored_amount );
+        qInfo() << message;
+        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
     }
 
     // Add to storages
@@ -169,7 +178,7 @@ void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
 void GWSObjectStorage::removeObject( QSharedPointer<QObject> object ){
 
     // Prepare for QObject which have no UIDs
-    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() });
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , GWSObject::staticMetaObject.className() });
     QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
 
     // If GWSObject, we have UID
@@ -178,6 +187,8 @@ void GWSObjectStorage::removeObject( QSharedPointer<QObject> object ){
         classes = gws_object->getInheritanceFamily();
         uid = gws_object->getUID();
     }
+
+    this->stored_amount--;
 
     // Remove from storages
     foreach( QJsonValue v , classes ){

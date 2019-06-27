@@ -19,7 +19,14 @@ void GWSExternalPublisher::sendMessage(const QString &signal , const QJsonValue 
         socket_json.insert( "signal" , signal );
         socket_json.insert( "scenario_id" , this->socket_id );
         socket_json.insert( "body" , json );
-        this->websocket.sendTextMessage( QJsonDocument( socket_json ).toJson() );
+
+        try {
+            QByteArray arr = QJsonDocument( socket_json ).toJson( QJsonDocument::Compact );
+            if( this->websocket.state() == QAbstractSocket::ConnectedState && this->status >= CONNECTED ){
+                this->websocket.sendBinaryMessage( arr );
+            }
+        } catch(...){}
+
 
     });
 

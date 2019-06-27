@@ -195,6 +195,8 @@ void GWSExecutionEnvironment::behave(){
     bool parallel_runnings = false;
     int total_entities = 0;
     int ready_entities = 0;
+    int busy_entities = 0;
+    int future_entities = 0;
     int ticked_entities = 0;
     qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
     qint64 min_tick = current_datetime;
@@ -203,25 +205,25 @@ void GWSExecutionEnvironment::behave(){
 
         if( p->is_running ){
             parallel_runnings = true;
+            if( p->is_busy ){ continue; }
             total_entities += p->total_entities;
             ready_entities += p->ready_entities;
+            busy_entities += p->busy_entities;
+            future_entities += p->future_entities;
             ticked_entities += p->ticked_entities;
-            min_tick = qMin( min_tick , p->min_tick );
+            //min_tick = (min_tick + p->min_tick) / 2;
             QTimer::singleShot( 0 , p , &GWSExecutionEnvironmentElement::behave );
         }
     }
 
-    // Store min tick
-    if( min_tick > 0 && min_tick < current_datetime ){
-        GWSTimeEnvironment::globalInstance()->goBackToDatetime( min_tick );
-        current_datetime = min_tick;
-    }
 
-    QString message = QString("Tick %1 , Entities %2 Ticked / %3 Ready / %4 Total" )
+    QString message = QString("Tick %1 , Entities : Ticked %2 | Ready %3 | Busy %4 | Future %5 | Total %6" )
                 .arg( QDateTime::fromMSecsSinceEpoch( current_datetime ).toString("yyyy-MM-ddTHH:mm:ss") )
-                .arg( ticked_entities )
-                .arg( ready_entities )
-                .arg( total_entities );
+                .arg( ticked_entities , -8 )
+                .arg( ready_entities , -8 )
+                .arg( busy_entities , -8 )
+                .arg( future_entities ,  -8 )
+                .arg( total_entities , -8 );
 
         qInfo() << message;
 
@@ -235,6 +237,12 @@ void GWSExecutionEnvironment::behave(){
         // OTHERWISE IT WAITS FOR ALL PENDING ENTITIES TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
         // DIRECTLY USE QTIMER::SINGLESHOT
         qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
+
+        // Store min tick
+        if( min_tick < current_datetime && ticked_entities > 0 && min_tick > 0 ){
+            GWSTimeEnvironment::globalInstance()->goBackToDatetime( min_tick );
+            current_datetime = min_tick;
+        }
 
         // WAIT SOME MORE
         if( min_tick <= 0 ){
@@ -270,6 +278,17 @@ void GWSExecutionEnvironment::stop(){
 
 void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
+    this->mutext.lockForRead();
+    if( this->is_busy ){
+        this->mutext.unlock();
+        return;
+    }
+    this->mutext.unlock();
+
+    this->mutext.lockForWrite();
+    this->is_busy = true;
+    this->mutext.unlock();
+
     const QList< QSharedPointer<QObject> >* currently_running_entities = this->running_storage->getAll();
     QList< int > entities_to_be_ticked_positions; // List of indexes of the currently_running_entities list
     this->ready_entities = 0;
@@ -296,7 +315,9 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
     QString who_is_min_tick;
     QStringList what_is_min_tick_executing;
     this->ticked_entities = 0;
+    this->busy_entities = 0;
     this->total_entities = 0;
+    this->future_entities = 0;
 
     for( int i = 0 ; i < currently_running_entities->size() ; i++ ){
 
@@ -334,6 +355,16 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
             QSharedPointer<GWSEntity> entity = currently_running_entities->at( i ).dynamicCast<GWSEntity>();
 
+            if( !entity || entity->deleted ){
+                this->running_storage->removeObject( entity );
+                continue;
+            }
+
+            if( entity->isBusy() ){
+                this->busy_entities++;
+                continue;
+            }
+
             QJsonObject properties_copy = entity->getProperties({ GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSExecutionEnvironment::ENTITY_DEATH_PROP });
 
             qint64 entity_next_tick = properties_copy.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
@@ -343,34 +374,25 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
                 continue;
             }
 
-            if( entity && !entity->deleted && !entity->isBusy() && entity_next_tick <= limit ){
+            if( entity_next_tick > limit ){
+                this->future_entities++;
+                continue;
+            }
 
-                if( entity_next_tick <= 0 ){ entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , min_tick ); }
+            if( entity_next_tick <= 0 ){ entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , min_tick ); }
 
-                // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
-                entity->incrementBusy(); // Increment here, Decrement after entity Tick()
+            // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
+            entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
-                QTimer::singleShot( 0 , entity.data() , &GWSEntity::tick );
+            QTimer::singleShot( 0 , entity.data() , &GWSEntity::tick );
 
-                if( this->max_entity_amount_per_tick > 0 && ++this->ticked_entities >= this->max_entity_amount_per_tick ){
-                    break;
-                }
+            if( this->max_entity_amount_per_tick > 0 && ++this->ticked_entities >= this->max_entity_amount_per_tick ){
+                break;
             }
         }
     }
 
-    /*QString message = QString("Parallel Execution %1 , Tick %2 , Entities %3 Ticked / %4 Ready / %5 Total , Min tick %6 : %7" )
-            .arg( this->thread()->objectName() )
-            .arg( min_tick <= 0 ? "Waiting" : QDateTime::fromMSecsSinceEpoch( min_tick ).toString("yyyy-MM-ddTHH:mm:ss") )
-            .arg( ticked_entities )
-            .arg( entities_to_be_ticked_positions_size )
-            .arg( currently_running_entities->size() )
-            .arg( who_is_min_tick )
-            .arg( what_is_min_tick_executing.join('+') );
-
-    qInfo() << message;
-
-    emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                QJsonObject({ { "message" , message } , { GWSTimeEnvironment::INTERNAL_TIME_PROP , min_tick } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
-    */
+    this->mutext.lockForWrite();
+    this->is_busy = false;
+    this->mutext.unlock();
 }
