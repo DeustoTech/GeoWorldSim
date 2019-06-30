@@ -34,23 +34,26 @@ const GWSGeometry GWSGridEnvironment::getBounds() const{
 }
 
 const GWSGeometry GWSGridEnvironment::getBounds( QString class_name ) const {
-    if( this->environment_entity_grids.keys().contains( class_name ) ){
-        return this->environment_entity_grids.value( class_name )->getBounds();
+    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
+    if( grid ){
+        return grid->getBounds();
     }
     return GWSGeometry();
 }
 
 const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry geom ) const {
-    if( this->environment_entity_grids.keys().contains( class_name ) ){
-        return this->environment_entity_grids.value( class_name )->getValue( geom );
+    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
+    if( grid ){
+        return grid->getValue( geom );
     }
     return QJsonValue::Null;
 }
 
 const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
-    if( this->environment_entity_grids.keys().contains( entity->metaObject()->className() ) ){
+    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( entity->metaObject()->className() , Q_NULLPTR );
+    if( grid ){
         GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        return this->environment_entity_grids.value( entity->metaObject()->className() )->getValue( geom );
+        return grid->getValue( geom );
     }
     return QJsonValue::Null;
 }
@@ -73,21 +76,9 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
         return;
     }
 
-    /*GWSGrid grid = GWSGrid( json );
-    if( !grid.isValid() ){
-        return;
-    }
-
-    this->upsertEntityToIndex( agent , edge );
-
     if( json.value( SKIP_SUBSCRIBING ).toBool() ){
         return;
     }
-
-    // Listen to agent property changes
-    agent->subscribe( EDGE_PROP , [this](QSharedPointer<GWSObject> entity , QString property_name ){
-        this->upsertEntityToIndex( entity.dynamicCast<GWSEntity>() , GWSGeometry( entity->getProperty( property_name ).toObject() ) );
-    });*/
 
 }
 
@@ -114,17 +105,19 @@ void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , c
         if( family.isEmpty() ){ continue; }
 
         this->mutex.lockForRead();
-        if( !this->environment_entity_grid_types.contains( family ) ){
+        QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( family.toStdString() , Q_NULLPTR );
+
+        if( !grid ){
             this->mutex.unlock();
 
             this->mutex.lockForWrite();
-            this->environment_entity_grid_types.append( family );
-            this->environment_entity_grids.insert( family , QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) ) );
+            grid = QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) );
+            this->environment_entity_grids.insert( family.toStdString() , grid );
         }
         this->mutex.unlock();
 
-        QtConcurrent::run([this , entity_geom , value , family] {
-            this->environment_entity_grids.value( family )->addValue( entity_geom , value );
+        QtConcurrent::run([this , entity_geom , value , grid] {
+            grid->addValue( entity_geom , value );
         });
     }
 }
