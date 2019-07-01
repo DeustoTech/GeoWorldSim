@@ -36,8 +36,7 @@ private:
     ~GWSGridEnvironment();
 
     // SPATIAL INDEX
-    QStringList environment_entity_grid_types;
-    QMap< QString , QSharedPointer<GWSGrid> > environment_entity_grids; // Spatial indexes
+    QMap< std::string , QSharedPointer<GWSGrid> > environment_entity_grids; // Spatial indexes
 
     // Mutex, for avoiding concurrency
     QReadWriteLock mutex;

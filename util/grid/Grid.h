@@ -16,7 +16,7 @@ class GWSGrid : public QObject {
     //[00 , 10 , 20 , 30]
 
 public:
-    GWSGrid( GWSGeometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type);
+    GWSGrid( GWSGeometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type );
     ~GWSGrid();
 
     // GETTERS

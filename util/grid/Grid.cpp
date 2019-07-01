@@ -165,14 +165,6 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
 
     // How we add the value depends on the type of grid:
 
-    // The grid cells represent the total value of the cell:
-    if ( this->grid_type == "total" ){
-        QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
-        this->grid->value( x )->insert( y , sum );
-        this->max_value = qMax( this->max_value , sum.toDouble() );
-        this->min_value = qMin( this->min_value , sum.toDouble() );
-    }
-
     // The grid cells represent the latest value of the cell:
     if ( this->grid_type == "latest" ){
         this->grid->value( x )->insert( y , value );
@@ -194,6 +186,14 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
         this->grid->value( x )->insert( y , min );
         this->max_value = qMax( this->max_value , min.toDouble() );
         this->min_value = qMin( this->min_value , min.toDouble() );
+    }
+
+    // The grid cells represent the total value of the cell:
+    if ( this->grid_type == "total" || this->grid_type.isEmpty() ){
+        QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
+        this->grid->value( x )->insert( y , sum );
+        this->max_value = qMax( this->max_value , sum.toDouble() );
+        this->min_value = qMin( this->min_value , sum.toDouble() );
     }
 
 }
