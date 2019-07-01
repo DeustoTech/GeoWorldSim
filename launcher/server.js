@@ -108,7 +108,8 @@ app.post('/' , async (req, res) => {
                 fs.unlinkSync( filename );
             }
             if( timeout ){ 
-                status = 'timeout'
+                status = 'timeout';
+                fs.unlinkSync( filename );
             }
             
             console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
