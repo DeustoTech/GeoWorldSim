@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QDateTime>
 #include <QTimer>
+#include <QThread>
 
 #include "../../util/storage/ObjectStorage.h"
 #include "../../environment/Environment.h"
@@ -34,12 +35,9 @@ public:
     bool containsEntity( QSharedPointer<GWSEntity> entity ) const;
     int getRunningAmount() const;
     QList< QSharedPointer<GWSEntity> > getRunning() const;
-    template <class T> QList< QSharedPointer<T> > getRunning( QString class_name ) const{
-        QList< QSharedPointer< T > > l;
-        foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions ) {
-            l.append( p->running_storage->getByClass<T>( class_name ) );
-        }
-        return l;
+    template <class T>
+    QList< QSharedPointer<T> > getRunning( QString class_name ) const{
+        return this->environment_entities->getByClass<T>( class_name );
     }
     bool isRunning() const;
     int getTicksAmount() const;
@@ -70,19 +68,17 @@ private:
         public:
             GWSExecutionEnvironmentElement( QThread* thread , quint64 tick_time_window , uint max_entity_amount_per_tick = -1 ) : QObject() , tick_time_window(tick_time_window) , max_entity_amount_per_tick(max_entity_amount_per_tick) {
                 this->moveToThread( thread );
-                this->running_storage = new GWSObjectStorage();
             }
             ~GWSExecutionEnvironmentElement(){
-                this->running_storage->deleteLater();
             }
 
             // FLAGS
-            QReadWriteLock mutext;
+            mutable QReadWriteLock mutext;
             bool is_running = false;
             bool is_busy = false;
 
             // RUNNING ENTITIES
-            GWSObjectStorage* running_storage;
+            QList< QSharedPointer<GWSEntity> > running_storage;
             qint64 min_tick = -1;
             int ticked_entities = 0;
             int ready_entities = 0;
@@ -96,6 +92,7 @@ private:
             const uint max_entity_amount_per_tick = -1;
 
             void behave();
+            bool isBusy() const;
     };
 
     // Cycle amount
@@ -104,6 +101,9 @@ private:
 
     // Parallel execution chunks
     QMap< QThread* , GWSExecutionEnvironmentElement* > parallel_executions;
+
+    // ENVIRONMENT MEMORY
+    GWSObjectStorage* environment_entities = Q_NULLPTR;
 
 };
 

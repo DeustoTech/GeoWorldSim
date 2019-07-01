@@ -4,6 +4,7 @@
 #include <QWebSocket>
 #include <QObject>
 #include <QString>
+#include <QReadWriteLock>
 
 class GWSExternalCommunicator : public QObject
 {
@@ -16,8 +17,8 @@ public:
         NOT_STARTED = 0,
         DISCONNECTED = 1,
         CONNECTED = 2,
-        SCHEDULED_PING = 3,
-        PING_RECEIVED = 4
+        PING_SCHEDULED = 3,
+        PING_SENT = 4
     };
 
 public slots:
@@ -28,7 +29,9 @@ public slots:
 protected:
     QString socket_id;
     QWebSocket websocket; // WS to sockets.geoworldsim.com
-    CommunicatorStatus status;
+    CommunicatorStatus communicator_status;
+
+    mutable QReadWriteLock mutext;
 };
 
 #endif // GWSEXTERNALCOMMUNICATOR_H

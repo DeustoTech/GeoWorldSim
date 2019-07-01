@@ -20,7 +20,7 @@ QPair<double, QJsonArray> StopEntityBehaviour::behave(){
     env->unregisterEntity( entity );
 
     QJsonObject json = entity->serialize();
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( json );
+    emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( json );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , QJsonArray({ this->getUID() }) );
 }

@@ -35,8 +35,9 @@ const GWSGeometry GWSPhysicalEnvironment::getBounds() const{
 }
 
 const GWSGeometry GWSPhysicalEnvironment::getBounds(QString &class_name ) const {
-    if( this->environment_entity_indexes.keys().contains( class_name ) ){
-        return this->environment_entity_indexes.value( class_name )->getBounds();
+    QSharedPointer< GWSQuadtree > tree = this->environment_entity_indexes.value( class_name.toStdString() , Q_NULLPTR );
+    if( tree ){
+        return tree->getBounds();
     }
     return GWSGeometry();
 }
@@ -58,8 +59,9 @@ const GWSGeometry GWSPhysicalEnvironment::getGeometry(const QString &agent_id ) 
 
 QStringList GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double maxX, double minY, double maxY, QString class_name) const{
     QStringList agents;
-    if( this->environment_entity_indexes.keys().contains(class_name) ){
-        return this->environment_entity_indexes.value( class_name )->getElements( minX , maxX , minY , maxY );
+    QSharedPointer< GWSQuadtree > tree = this->environment_entity_indexes.value( class_name.toStdString() , Q_NULLPTR );
+    if( tree ){
+        return tree->getElements( minX , maxX , minY , maxY );
     }
     return agents;
 }
@@ -67,8 +69,9 @@ QStringList GWSPhysicalEnvironment::getAgentsInsideBounds(double minX, double ma
 
 QStringList GWSPhysicalEnvironment::getAgentsIntersecting( const GWSGeometry &geometry , QString class_name) const{
     QStringList agents;
-    if( this->environment_entity_indexes.keys().contains(class_name) ){
-        return this->environment_entity_indexes.value( class_name )->getElements( geometry );
+    QSharedPointer< GWSQuadtree > tree = this->environment_entity_indexes.value( class_name.toStdString() , Q_NULLPTR );
+    if( tree ){
+        return tree->getElements( geometry );
     }
     return agents;
 }
@@ -84,7 +87,7 @@ QStringList GWSPhysicalEnvironment::getAgentsIntersecting( const GWSGeometry &ge
 QStringList GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors, QString class_name) const{
     QStringList founds;
     foreach(GWSCoordinate coor , coors){
-        founds.append( this->getNearestAgent( coor , class_name ) );
+        founds.append( this->getNearestEntity( coor , class_name ) );
     }
     return founds;
 }
@@ -97,14 +100,15 @@ QStringList GWSPhysicalEnvironment::getNearestAgents(QList<GWSCoordinate> coors,
  * @param class_name ClassName of the agents in the environment from which to get the nearest for geometry
  * @return
  */
-QString GWSPhysicalEnvironment::getNearestAgent(const GWSCoordinate &coor, QString class_name) const{
-    if( this->environment_entity_indexes.keys().contains(class_name) ){
-        return this->environment_entity_indexes.value(class_name)->getNearestElement( coor );
+QString GWSPhysicalEnvironment::getNearestEntity(const GWSCoordinate &coor, QString class_name) const{
+    QSharedPointer< GWSQuadtree > tree = this->environment_entity_indexes.value( class_name.toStdString() , Q_NULLPTR );
+    if( tree ){
+        return tree->getNearestElement( coor );
     }
     return QString();
 }
 
-QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestAgent(const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const{
+QSharedPointer<GWSEntity> GWSPhysicalEnvironment::getNearestEntity(const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const{
     QSharedPointer<GWSEntity> nearest = Q_NULLPTR;
     GWSLengthUnit nearest_distance = -1;
     foreach (QSharedPointer<GWSEntity> agent , agents) {
@@ -175,7 +179,7 @@ void GWSPhysicalEnvironment::unregisterEntity(QSharedPointer<GWSEntity> agent){
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family , Q_NULLPTR );
+        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family.toStdString() , Q_NULLPTR );
         if( tree ){
             emit tree->removeSignal( uuid );
         }
@@ -197,11 +201,12 @@ void GWSPhysicalEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
-        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family , Q_NULLPTR );
+        QSharedPointer<GWSQuadtree> tree = this->environment_entity_indexes.value( family.toStdString() , Q_NULLPTR );
         if( !tree ){
             this->environment_entity_index_types.append( family );
             tree = QSharedPointer<GWSQuadtree>( new GWSQuadtree() );
-            this->environment_entity_indexes.insert( family , tree );
+            tree.data()->setObjectName( QString("%1 %2").arg( this->metaObject()->className() ).arg( family ) );
+            this->environment_entity_indexes.insert( family.toStdString() , tree );
         }
 
         emit tree->upsertGeometrySignal( uuid , geom );

@@ -231,6 +231,7 @@ void GWSNetworkEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent,
             this->mutex.lockForWrite();
             this->environment_entity_index_types.append( family );
             tree = QSharedPointer< GWSQuadtree >( new GWSQuadtree() );
+            tree.data()->setObjectName( QString("%1 %2").arg( this->metaObject()->className() ).arg( family ) );
             this->network_edges.insert( family , tree );
             routing = QSharedPointer< GWSRouting >( new GWSRouting() );
             this->network_routings.insert( family , routing );

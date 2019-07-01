@@ -32,7 +32,7 @@ QPair<double, QJsonArray> SendEntitySnapshotBehaviour::behave(){
 
     // Send the agent
     if( entity ){
-        emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( entity->serialize() , socket_id );
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() , socket_id );
     }
 
     QJsonObject return_data = this->getProperties( QStringList({ BEHAVIOUR_DURATION , NEXTS }) );

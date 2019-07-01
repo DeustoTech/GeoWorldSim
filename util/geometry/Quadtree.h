@@ -64,7 +64,7 @@ private:
     mutable QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements;
+    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements; // QMAP< (XHASH + YHASH) , QuadTreeElement >
     QMap< std::string , geos::index::quadtree::Quadtree* >* quadtree_layers; // QMAP< (XHASH + YHASH) , QuadTree >
     const unsigned int layer_depth_amount = 5;
     int stored_amount = 0;

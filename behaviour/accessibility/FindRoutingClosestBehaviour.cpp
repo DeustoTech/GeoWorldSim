@@ -11,9 +11,9 @@ QString FindRoutingClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ID_AS = "store_routing_closest_id_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ROUTE_AS = "store_routing_closest_route_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_DISTANCE_AS = "store_routing_distance_as";
-QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_X_AS = "store_routing_closest_agent_x_as";
-QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_Y_AS = "store_routing_closest_agent_y_as";
-QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_GEOM_AS = "store_routing_closest_agent_geom_as";
+QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_X_AS = "store_routing_closest_x_as";
+QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_Y_AS = "store_routing_closest_y_as";
+QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_GEOM_AS = "store_routing_closest_geom_as";
 QString FindRoutingClosestBehaviour::NEXTS = "nexts";
 QString FindRoutingClosestBehaviour::NEXTS_IF_NO_ROUTING_CLOSEST_FOUND = "nexts_if_no_routing_closest_found";
 
@@ -84,11 +84,11 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
     GWSGeometry closest_agent_geom = closest_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
 
     // Save results back to agent
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_agent_id" ) , closest_agent->getUID() );
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_agent_x" ) , closest_agent_geom.getCentroid().getX() );
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_agent_y" ) , closest_agent_geom.getCentroid().getY() );
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_GEOM_AS ).toString( "routing_closest_agent_geom" ) , closest_agent_geom.getGeoJSON() );
-    agent->setProperty( this->getProperty( STORE_ROUTING_DISTANCE_AS ).toString("routing_closest_agent_distance") , closest_route_distance.number() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_entity_id" ) , closest_agent->getUID() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_X_AS ).toString( "routing_closest_entity_x" ) , closest_agent_geom.getCentroid().getX() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_Y_AS ).toString( "routing_closest_entity_y" ) , closest_agent_geom.getCentroid().getY() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_GEOM_AS ).toString( "routing_closest_entity_geom" ) , closest_agent_geom.getGeoJSON() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_DISTANCE_AS ).toString("routing_closest_entity_distance") , closest_route_distance.number() );
 
     QJsonObject geojson;
     geojson.insert( "type" , "LineString" );

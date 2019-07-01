@@ -3,15 +3,17 @@
 #include <QJsonValue>
 
 #include "../../object/ObjectFactory.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
 QString GWSBehaviour::BEHAVIOUR_DURATION = "duration";
+QString GWSBehaviour::SNAPSHOT_EVERY_TICKS = "snapshot_every";
 QString GWSBehaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString GWSBehaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString GWSBehaviour::START_BEHAVIOUR_PROP = "start";
 
 GWSBehaviour::GWSBehaviour() : GWSObject(){
-    this->setProperty( BEHAVIOUR_DURATION , 10 ); // 10 seconds
+    this->setProperty( BEHAVIOUR_DURATION , 10 ); // 10 seconds by default
 }
 
 /**********************************************************************
@@ -100,10 +102,6 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
     this->sub_behaviours.append( sub_behaviour );
 }
 
-/*void GWSBehaviour::addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour){
-    this->next_behaviour_ids.append( next_behaviour->getId() );
-}*/
-
 /**********************************************************************
  SLOTS
 **********************************************************************/
@@ -113,27 +111,23 @@ void GWSBehaviour::addSubbehaviour(QSharedPointer<GWSBehaviour> sub_behaviour){
  **/
 QPair< double , QJsonArray > GWSBehaviour::tick( qint64 behaviour_ticked_time ){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<GWSEntity> entity = this->getEntity();
     //qDebug() << QString("Agent %1 %2 executing behaviour %3 %4").arg( this->getAgent()->metaObject()->className() ).arg( this->getAgent()->getId() ).arg( this->metaObject()->className() ).arg( this->getId() );
 
     QPair< double , QJsonArray > nexts;
     this->behaving_time = behaviour_ticked_time;
+    this->ticked_amount++;
 
-    agent->incrementBusy();
+    entity->incrementBusy();
     nexts = this->behave();
-    agent->decrementBusy();
+    entity->decrementBusy();
 
-    // Calculate how much to increment agent internal time
-    qint64 increment_time = qMax( 100.0 , this->getProperty( BEHAVIOUR_DURATION ).toDouble() * 1000 ); // At least 0.1 seconds
-    qint64 agent_current_time = agent->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
-
-    if( agent_current_time < 0 ){
-        agent_current_time = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    // Check if need to send snapshot
+    quint64 snapshots = this->getProperty( SNAPSHOT_EVERY_TICKS ).toDouble( 0 );
+    if( snapshots > 0 && this->ticked_amount % snapshots == 0 ){
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() );
     }
 
-    // Compare how much has been spent or if some other behaviour incremented the time
-    qint64 max_time = qMax( (qint64)(behaviour_ticked_time + increment_time) , agent_current_time );
-    agent->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , max_time );
     return nexts;
 }
 

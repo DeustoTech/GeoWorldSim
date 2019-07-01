@@ -59,7 +59,7 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
 
-    emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( transaction );
+    emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( transaction );
 
     // Perform the transaction
     QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();

@@ -19,7 +19,7 @@ public:
 
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
     void listenSocketSignal( QString socket_id );
-    void sendAgentSignal( const QJsonObject &agent_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendEntitySignal( const QJsonObject &entity_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void sendMessageSignal( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void dataReceivedSignal( const QJsonObject &message_json , const QString &socket_id );
 
@@ -31,7 +31,7 @@ private slots:
     void disconnectExternalSocket( const QString &socket_id );
 
     // SOCKET DATA
-    void sendAgent( const QJsonObject &agent_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendEntity( const QJsonObject &entity_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void sendMessage( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
     void sendData( const QString &signal , const QJsonObject &data , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
 

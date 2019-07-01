@@ -18,7 +18,7 @@ GWSCommunicationEnvironment::GWSCommunicationEnvironment() : GWSEnvironment(){
 
     // Connect signals and slots
     this->connect( this , &GWSCommunicationEnvironment::listenSocketSignal , this , &GWSCommunicationEnvironment::connectExternalSocket );
-    this->connect( this , &GWSCommunicationEnvironment::sendAgentSignal , this , &GWSCommunicationEnvironment::sendAgent );
+    this->connect( this , &GWSCommunicationEnvironment::sendEntitySignal , this , &GWSCommunicationEnvironment::sendEntity );
     this->connect( this , &GWSCommunicationEnvironment::sendMessageSignal , this , &GWSCommunicationEnvironment::sendMessage );
 
 }
@@ -101,8 +101,8 @@ void GWSCommunicationEnvironment::disconnectExternalSocket(const QString &socket
  DATA
 **********************************************************************/
 
-void GWSCommunicationEnvironment::sendAgent(const QJsonObject &agent_json, const QString &socket_id){
-    this->sendData( "entity" , agent_json , socket_id );
+void GWSCommunicationEnvironment::sendEntity(const QJsonObject &entity_json, const QString &socket_id){
+    this->sendData( "entity" , entity_json , socket_id );
 }
 
 void GWSCommunicationEnvironment::sendMessage(const QJsonObject &message_json, const QString &socket_id){
@@ -116,6 +116,7 @@ void GWSCommunicationEnvironment::sendData(const QString &signal , const QJsonOb
     if( !publisher ){
         qDebug() << QString("Creating external publisher %1").arg( socket_id );
         publisher = new GWSExternalPublisher( socket_id );
+        publisher->setObjectName( QString("%1 %2").arg( this->metaObject()->className() ).arg( socket_id ) );
         this->publishers.insert( socket_id , publisher );
     }
     publisher->sendMessage( signal , data );

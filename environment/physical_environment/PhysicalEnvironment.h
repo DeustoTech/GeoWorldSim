@@ -26,8 +26,8 @@ public:
     const GWSGeometry getGeometry( const QString &agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
     QStringList getAgentsIntersecting( const GWSGeometry &geometry, QString class_name ) const;
-    QString getNearestAgent( const GWSCoordinate &coor, QString class_name ) const;
-    QSharedPointer<GWSEntity> getNearestAgent( const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const;
+    QString getNearestEntity( const GWSCoordinate &coor, QString class_name ) const;
+    QSharedPointer<GWSEntity> getNearestEntity( const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const;
     QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
 
     // METHODS
@@ -47,7 +47,7 @@ private:
 
     // SPATIAL INDEX
     QStringList environment_entity_index_types;
-    QMap< QString , QSharedPointer< GWSQuadtree > > environment_entity_indexes; // Spatial indexes
+    QMap< std::string , QSharedPointer< GWSQuadtree > > environment_entity_indexes; // Spatial indexes
 
     // Agent geometries
     QStringList entity_ids;

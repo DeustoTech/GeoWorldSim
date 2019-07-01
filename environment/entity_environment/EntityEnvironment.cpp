@@ -9,6 +9,7 @@ GWSEntityEnvironment* GWSEntityEnvironment::globalInstance(){
 
 GWSEntityEnvironment::GWSEntityEnvironment() : GWSEnvironment(){
     this->environment_entities = new GWSObjectStorage();
+    this->environment_entities->setObjectName( QString("%1").arg( this->metaObject()->className() ) );
     qInfo() << "Agent environment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }

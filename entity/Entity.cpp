@@ -248,6 +248,7 @@ void GWSEntity::decrementBusy(){
 void GWSEntity::addSkill( QSharedPointer<GWSSkill> skill ){
     if( !this->skills ){
         this->skills = new GWSObjectStorage();
+        this->skills->setObjectName( QString("%1 Skills").arg( this->getUID() ) );
     }
     skill->skilled_entity = this->getSharedPointer();
     emit this->skills->addObjectSignal( skill );
@@ -260,6 +261,7 @@ void GWSEntity::removeSkill(QSharedPointer<GWSSkill> skill){
 void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
     if( !this->behaviours ){
         this->behaviours = new GWSObjectStorage();
+        this->behaviours->setObjectName( QString("%1 Behaviours").arg( this->getUID() ) );
     }
     behaviour->behaving_entity = this->getSharedPointer();
     emit this->behaviours->addObjectSignal( behaviour );

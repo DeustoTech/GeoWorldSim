@@ -245,9 +245,11 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
     GWSQuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
-    this->stored_amount++;
+    if( !previous_elm ){
+        this->stored_amount++;
+    }
     if( stored_amount % 1000 == 0 ){
-        QString message = QString("Quadtree indexing %1 entities" ).arg( stored_amount );
+        QString message = QString("Quadtree %1 indexing %2 entities" ).arg( this->objectName() ).arg( stored_amount );
         qInfo() << message;
         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal( QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
     }
@@ -271,9 +273,7 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
 
                 }
 
-                if( l == 0 ){
-                    delete previous_elm;
-                }
+                delete previous_elm;
             }
 
             const GWSGeometry& elm_geom = elm->geometry;
@@ -346,17 +346,13 @@ void GWSQuadtree::remove( const QString &object_id ){
                 this->quadtree_elements->remove( previous_elm->object_id );
                 this->mutex.unlock();
             }
-
-            if( l == 0 ){
-                delete previous_elm;
-            }
-
     }
 
     QString qstring = QString::fromStdString( previous_elm->object_id );
     this->mutex.lockForWrite();
     this->ids_contained.removeAll( qstring );
     this->mutex.unlock();
+    delete previous_elm;
 
 }
 

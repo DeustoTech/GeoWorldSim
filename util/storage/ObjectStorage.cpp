@@ -133,7 +133,7 @@ void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
 
     this->stored_amount++;
     if( stored_amount % 1000 == 0 ){
-        QString message = QString("Storage for %1 , indexing %2 entities" ).arg( object->metaObject()->className() ).arg( stored_amount );
+        QString message = QString("Storage %1 , indexing %2 entities" ).arg( this->objectName() ).arg( stored_amount );
         qInfo() << message;
         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
                     QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );

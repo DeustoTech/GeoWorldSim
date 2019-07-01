@@ -29,6 +29,9 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() :
     GWSEnvironment() ,
     max_entity_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value( "tick_entity_amount" ).toDouble( -1 ) ) {
 
+    this->environment_entities = new GWSObjectStorage();
+    this->environment_entities->setObjectName( QString("%1").arg( this->metaObject()->className() ) );
+
     qInfo() << "ExecutionEnvironment created";
     this->setProperties( QJsonObject( {
         { ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
@@ -61,28 +64,15 @@ QJsonObject GWSExecutionEnvironment::serialize() const{
 **********************************************************************/
 
 bool GWSExecutionEnvironment::containsEntity( QSharedPointer<GWSEntity> entity) const{
-    foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions ) {
-        if( p->running_storage->contains( entity ) ){
-            return true;
-        }
-    }
-    return false;
+    return this->environment_entities->contains( entity );
 }
 
 int GWSExecutionEnvironment::getRunningAmount() const{
-    int a = 0;
-    foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions ) {
-        a += p->running_storage->getAmount();
-    }
-    return a;
+    return this->environment_entities->getAmount();
 }
 
 QList< QSharedPointer< GWSEntity > > GWSExecutionEnvironment::getRunning() const {
-    QList< QSharedPointer< GWSEntity > > l;
-    foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions ) {
-        l.append( p->running_storage->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() ) );
-    }
-    return l;
+   return this->environment_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
@@ -97,7 +87,7 @@ int GWSExecutionEnvironment::getTicksAmount() const{
  ENTITY METHODS
 **********************************************************************/
 
-void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
+void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
     // If already registered
     if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isNull() ){
@@ -126,9 +116,10 @@ void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
                     GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 999 ,
                     this->max_entity_amount_per_tick > 0 ? this->max_entity_amount_per_tick / GWSParallelismController::globalInstance()->getThreadsCount() : -1 );
         this->parallel_executions.insert( thread , parallel);
+        parallel->is_running = this->isRunning();
     }
-    parallel->is_running = this->isRunning();
-    emit parallel->running_storage->addObjectSignal( entity );
+    parallel->running_storage.append( entity );
+    emit this->environment_entities->addObjectSignal( entity );
 
     entity->decrementBusy();
     emit entity->entityStartedSignal();
@@ -149,8 +140,9 @@ void GWSExecutionEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity
     QThread* thread = entity->thread();
     GWSExecutionEnvironmentElement* parallel = this->parallel_executions.value( thread , Q_NULLPTR );
     if( parallel ){
-        emit parallel->running_storage->removeObjectSignal( entity );
+        emit parallel->running_storage.removeAll( entity );
     }
+    emit this->environment_entities->removeObjectSignal( entity );
 
     entity->decrementBusy();
     emit entity->entityEndedSignal();
@@ -205,7 +197,7 @@ void GWSExecutionEnvironment::behave(){
 
         if( p->is_running ){
             parallel_runnings = true;
-            if( p->is_busy ){ continue; }
+            if( p->isBusy() ){ continue; }
             total_entities += p->total_entities;
             ready_entities += p->ready_entities;
             busy_entities += p->busy_entities;
@@ -276,6 +268,14 @@ void GWSExecutionEnvironment::stop(){
  HELPER CLASS
 **********************************************************************/
 
+bool GWSExecutionEnvironment::GWSExecutionEnvironmentElement::isBusy() const{
+    bool b;
+    this->mutext.lockForRead();
+    b = this->is_busy;
+    this->mutext.unlock();
+    return b;
+}
+
 void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
     this->mutext.lockForRead();
@@ -289,11 +289,10 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
     this->is_busy = true;
     this->mutext.unlock();
 
-    const QList< QSharedPointer<QObject> >* currently_running_entities = this->running_storage->getAll();
     QList< int > entities_to_be_ticked_positions; // List of indexes of the currently_running_entities list
     this->ready_entities = 0;
 
-    if( !currently_running_entities || currently_running_entities->isEmpty() ){
+    if( this->running_storage.isEmpty() ){
 
         QString message = QString("Execution has no more running entities" );
 
@@ -319,10 +318,14 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
     this->total_entities = 0;
     this->future_entities = 0;
 
-    for( int i = 0 ; i < currently_running_entities->size() ; i++ ){
+    for( int i = 0 ; i < this->running_storage.size() ; i++ ){
 
-        QSharedPointer<GWSEntity> entity = currently_running_entities->at( i ).dynamicCast<GWSEntity>();
-        if( entity.isNull() ){ continue; }
+        QSharedPointer<GWSEntity> entity = this->running_storage.at( i );
+
+        if( entity.isNull() ){
+            this->running_storage.removeAll( entity );
+            continue;
+        }
 
         this->total_entities++;
         QJsonObject properties_copy = entity->getProperties({ WAIT_FOR_ME_PROP , GWSTimeEnvironment::INTERNAL_TIME_PROP });
@@ -353,10 +356,10 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
         foreach( int i , entities_to_be_ticked_positions ){
 
-            QSharedPointer<GWSEntity> entity = currently_running_entities->at( i ).dynamicCast<GWSEntity>();
+            QSharedPointer<GWSEntity> entity = this->running_storage.at( i );
 
             if( !entity || entity->deleted ){
-                this->running_storage->removeObject( entity );
+                this->running_storage.removeAll( entity );
                 continue;
             }
 
@@ -370,7 +373,7 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
             qint64 entity_next_tick = properties_copy.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
             if ( !properties_copy.value( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= properties_copy.value( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
-                emit this->running_storage->removeObjectSignal( entity );
+                GWSExecutionEnvironment::globalInstance()->unregisterEntity( entity );
                 continue;
             }
 

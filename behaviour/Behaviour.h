@@ -16,6 +16,7 @@ public:
 
     // PROPERTIES
     static QString BEHAVIOUR_DURATION; // In seconds, IT WILL INCREMENT AGENTS INTERNAL DATETIME
+    static QString SNAPSHOT_EVERY_TICKS; // 0 = do not send agent snapshot | 1 = send snapshot at every tick of this behaviour | n = send snapshot at every n repetition
     static QString SUB_BEHAVIOURS_PROP;
     static QString FINISH_CONDITION_PROP;
     static QString START_BEHAVIOUR_PROP;
@@ -34,7 +35,6 @@ public:
 
     // SETTERS
     void addSubbehaviour( QSharedPointer<GWSBehaviour> sub_behaviour );
-    //void addNextBehaviour( QSharedPointer<GWSBehaviour> next_behaviour );
 
     // METHODS
     //virtual bool canContinueToNext(); // Behaviour finished check
@@ -50,7 +50,7 @@ private slots: // SLOTS, always invoke them by SLOT, it will make to be executed
 
 private:
     quint64 behaving_time = 0;
-
+    quint64 ticked_amount = 0;
     QSharedPointer<GWSEntity> behaving_entity;
 };
 

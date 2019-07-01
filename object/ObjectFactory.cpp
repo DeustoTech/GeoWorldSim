@@ -5,10 +5,11 @@
 #include <QJsonArray>
 
 #include "../../app/App.h"
+#include "../../util/parallelism/ParallelismController.h"
 #include "../../entity/Entity.h"
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
-#include "../../util/parallelism/ParallelismController.h"
+#include "../../util/geometry/Geometry.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
     static GWSObjectFactory instance;
@@ -35,6 +36,9 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
 
     this->registerType( GWSBehaviour::staticMetaObject );
     qRegisterMetaType< GWSBehaviour >( GWSBehaviour::staticMetaObject.className() );
+
+    qRegisterMetaType< GWSGeometry >( "GWSGeometry" );
+    qRegisterMetaType< GWSCoordinate >( "GWSGeometry" );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
