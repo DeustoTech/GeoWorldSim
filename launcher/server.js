@@ -103,21 +103,25 @@ app.post('/' , async (req, res) => {
         child.on('exit', (code , signal) => {
             
             let status = 'crashed';
-            if( code == 0 ){ status = 'finished' }
-            if( timeout ){ status = 'timeout' }
+            if( code == 0 ){ 
+                status = 'finished'
+                fs.unlinkSync( filename );
+            }
+            if( timeout ){ 
+                status = 'timeout'
+            }
             
             console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
 
             fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
             .then( () => {
                     clearTimeout( timer );
-                    fs.unlinkSync( filename );
             })
             .catch( err => {});
              
         });
         
-        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket` , { method : 'POST' , headers : { 'Content-Type': 'application/json' } });
+        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket` , { headers : { 'Content-Type': 'application/json' } });
         res.send( configuration );
         
     } catch( err ){
