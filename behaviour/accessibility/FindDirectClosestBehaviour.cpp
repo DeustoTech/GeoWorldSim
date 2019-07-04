@@ -10,8 +10,6 @@
 
 QString FindDirectClosestBehaviour::ENTITY_TO_ACCESS_TYPE = "facility_type";  // e.g. glass Containerentity
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_ID_AS = "store_direct_closest_id_as";
-QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_X_AS = "store_direct_closest_x_as";
-QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_Y_AS = "store_direct_closest_y_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_GEOM_AS = "store_direct_closest_geom_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_DISTANCE_AS = "store_direct_distance_as";
 QString FindDirectClosestBehaviour::NEXTS = "nexts";
@@ -49,9 +47,7 @@ QPair< double , QJsonArray > FindDirectClosestBehaviour::behave(){
 
     // Store in entity:
     entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_entity_id" ) , nearest_entity->getUID() );
-    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_X_AS ).toString( "direct_closest_entity_x" ) , nearest_entity_coor.getX() );
-    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_Y_AS ).toString( "direct_closest_entity_y" ) , nearest_entity_coor.getY() );
-    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_GEOM_AS ).toString( "direct_closest_entity_geom" ) , nearest_entity_geom.getGeoJSON() );
+    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_GEOM_AS ).toString( "direct_closest_entity_geometry" ) , nearest_entity_geom.getGeoJSON() );
     entity->setProperty( this->getProperty( STORE_DIRECT_DISTANCE_AS ).toString( "direct_closest_entity_distance") , distanceToNearestentity.number() );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

@@ -14,13 +14,10 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/time/WaitUntilTimeBehaviour.h"
-#include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/transaction/TransactionBehaviour.h"
-#include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
 #include "../../behaviour/property/CompareEntityPropertyBehaviour.h"
-#include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/random/GenerateRandomValueBehaviour.h"
-#include "../../behaviour/property/SetEntityPropertyBehaviour.h"
+#include "../../behaviour/property/AccumulatePropertyBehaviour.h"
 #include "../../behaviour/property/MathEntityPropertyBehaviour.h"
 
 //Environments
@@ -70,14 +67,11 @@ int main(int argc, char* argv[])
     GWSCommunicationEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( GenerateWasteZamudioModelBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( CompareEntityPropertyBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( AccumulatePropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MathEntityPropertyBehaviour::staticMetaObject );
 
 

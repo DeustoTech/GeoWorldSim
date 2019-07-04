@@ -14,8 +14,6 @@ public:
     // PARAMETERS:
     static QString ENTITY_TO_ACCESS_TYPE;
     static QString STORE_DIRECT_CLOSEST_ID_AS;
-    static QString STORE_DIRECT_CLOSEST_X_AS;
-    static QString STORE_DIRECT_CLOSEST_Y_AS;
     static QString STORE_DIRECT_CLOSEST_GEOM_AS;
     static QString STORE_DIRECT_DISTANCE_AS;
     static QString NEXTS;

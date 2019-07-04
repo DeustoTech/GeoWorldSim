@@ -28,14 +28,16 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     QSharedPointer< GWSEntity > receiver;
 
     // Get emitter
-    emitter = GWSEntityEnvironment::globalInstance()->getByClassAndUID( GWSEntity::staticMetaObject.className() , this->getProperty( EMITTING_ENTITY_ID ).toString() );
+    emitter = GWSEntityEnvironment::globalInstance()->getByUID( this->getProperty( EMITTING_ENTITY_ID ).toString() );
 
     // Get receiver
-    receiver = GWSEntityEnvironment::globalInstance()->getByClassAndUID( GWSEntity::staticMetaObject.className() , this->getProperty( RECEIVING_ENTITY_ID ).toString() );
+    receiver = GWSEntityEnvironment::globalInstance()->getByUID( this->getProperty( RECEIVING_ENTITY_ID ).toString() );
+    qDebug() << emitter << this->getProperty( RECEIVING_ENTITY_ID  );
 
     if( emitter.isNull() || receiver.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
+
 
     // Notify the transaction
     QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
@@ -56,10 +58,8 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     transaction.insert( "refReceiverType" , receiver->getProperty("type") );
     transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
-    transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    //transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
-
-    emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( transaction );
 
     // Perform the transaction
     QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();
@@ -75,6 +75,14 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     // Increment receiver transaction_count
     receiver->setProperty("received_transaction_count", receiver->getProperty( "received_transaction_count" ).toInt( 0 ) + 1 );
+
+    // Check if need to send snapshot
+    quint64 snapshots = this->getProperty( GWSBehaviour::SNAPSHOT_EVERY_TICKS ).toDouble( 0 );
+    if( snapshots > 0 && this->getTickedAmount() % snapshots == 0 ){
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( transaction );
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( emitter->serialize() );
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( receiver->serialize() );
+    }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

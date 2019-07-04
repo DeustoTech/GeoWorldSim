@@ -2,7 +2,7 @@
 
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString SetEntityPropertyBehaviour::ENTITY_ID = "entity_to_set_id";
+QString SetEntityPropertyBehaviour::ENTITY_ID = "entity_id";
 QString SetEntityPropertyBehaviour::PROPERTIES = "properties";
 QString SetEntityPropertyBehaviour::NEXTS = "nexts";
 

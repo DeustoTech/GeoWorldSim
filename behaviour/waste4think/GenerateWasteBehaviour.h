@@ -4,12 +4,12 @@
 #include <QJsonObject>
 #include "../../behaviour/Behaviour.h"
 
-class GenerateWasteZamudioModelBehaviour : public GWSBehaviour
+class GenerateWasteBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GenerateWasteZamudioModelBehaviour();
+    Q_INVOKABLE explicit GenerateWasteBehaviour();
 
     // PROPERTIES
 

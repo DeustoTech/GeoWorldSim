@@ -17,8 +17,6 @@ public:
     static QString STORE_ROUTING_CLOSEST_ID_AS;
     static QString STORE_ROUTING_CLOSEST_ROUTE_AS;
     static QString STORE_ROUTING_DISTANCE_AS;
-    static QString STORE_ROUTING_CLOSEST_X_AS;
-    static QString STORE_ROUTING_CLOSEST_Y_AS;
     static QString STORE_ROUTING_CLOSEST_GEOM_AS;
     static QString NEXTS;
     static QString NEXTS_IF_NO_ROUTING_CLOSEST_FOUND;

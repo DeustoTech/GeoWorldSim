@@ -73,6 +73,10 @@ QSharedPointer<GWSEntity> GWSBehaviour::getEntity() const{
     return this->behaving_entity;
 }
 
+int GWSBehaviour::getTickedAmount() const{
+    return this->ticked_amount;
+}
+
 QList< QSharedPointer<GWSBehaviour> > GWSBehaviour::getSubs() const{
     return this->sub_behaviours;
 }

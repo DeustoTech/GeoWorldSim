@@ -34,9 +34,9 @@ GWSExecutionEnvironment::GWSExecutionEnvironment() :
 
     qInfo() << "ExecutionEnvironment created";
     this->setProperties( QJsonObject( {
-        { ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
-        { ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( Q_INFINITY ) }
-    }) );
+                                          { ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
+                                          { ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( Q_INFINITY ) }
+                                      }) );
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 
 }
@@ -72,7 +72,7 @@ int GWSExecutionEnvironment::getRunningAmount() const{
 }
 
 QList< QSharedPointer< GWSEntity > > GWSExecutionEnvironment::getRunning() const {
-   return this->environment_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
+    return this->environment_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
 }
 
 bool GWSExecutionEnvironment::isRunning() const{
@@ -161,10 +161,10 @@ void GWSExecutionEnvironment::run(){
     }
 
     this->setProperties( QJsonObject( {
-        { ENTITY_RUNNING_PROP , true } ,
-        { STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
-        { STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
-        } ));
+                                          { ENTITY_RUNNING_PROP , true } ,
+                                          { STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+                                          { STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
+                                      } ));
 
     foreach( GWSExecutionEnvironmentElement* p , this->parallel_executions.values() ) {
         p->is_running = true;
@@ -210,17 +210,38 @@ void GWSExecutionEnvironment::behave(){
 
 
     QString message = QString("Tick %1 , Entities : Ticked %2 | Ready %3 | Busy %4 | Future %5 | Total %6" )
-                .arg( QDateTime::fromMSecsSinceEpoch( current_datetime ).toString("yyyy-MM-ddTHH:mm:ss") )
-                .arg( ticked_entities , -8 )
-                .arg( ready_entities , -8 )
-                .arg( busy_entities , -8 )
-                .arg( future_entities ,  -8 )
-                .arg( total_entities , -8 );
+            .arg( QDateTime::fromMSecsSinceEpoch( current_datetime ).toString("yyyy-MM-ddTHH:mm:ss") )
+            .arg( ticked_entities , -8 )
+            .arg( ready_entities , -8 )
+            .arg( busy_entities , -8 )
+            .arg( future_entities ,  -8 )
+            .arg( total_entities , -8 );
+
+    qInfo() << message;
+
+    emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                QJsonObject({ { "message" , message } , { GWSTimeEnvironment::INTERNAL_TIME_PROP , (double)current_datetime } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+
+    if( !parallel_runnings ){
+
+        this->stop();
+
+        QString message = QString("Execution has no more running entities" );
 
         qInfo() << message;
 
         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , message } , { GWSTimeEnvironment::INTERNAL_TIME_PROP , (double)current_datetime } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+        QTimer::singleShot( 10 * 1000 , []{
+            GWSApp::globalInstance()->exit( 0 );
+        });
+
+        return;
+    }
+
+
 
     // Call again this function
     if( this->isRunning() && parallel_runnings ) {
@@ -234,6 +255,23 @@ void GWSExecutionEnvironment::behave(){
         if( min_tick < current_datetime && ticked_entities > 0 && min_tick > 0 ){
             GWSTimeEnvironment::globalInstance()->goBackToDatetime( min_tick );
             current_datetime = min_tick;
+        }
+
+        QJsonValue death_time = this->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP );
+        if( !death_time.isNull() && current_datetime > death_time.toDouble() ){
+            this->stop();
+
+            QString message = QString("Execution end reached" );
+
+            qInfo() << message;
+
+            emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
+                        QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+
+            QTimer::singleShot( 10 * 1000 , []{
+                GWSApp::globalInstance()->exit( 0 );
+            });
+            return;
         }
 
         // WAIT SOME MORE
@@ -256,10 +294,10 @@ void GWSExecutionEnvironment::stop(){
     if( !this->isRunning() ){ return; }
 
     this->setProperties( QJsonObject( {
-        { ENTITY_RUNNING_PROP , false } ,
-        { ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
-        { ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
-    }) );
+                                          { ENTITY_RUNNING_PROP , false } ,
+                                          { ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+                                          { ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
+                                      }) );
 
     emit this->stoppingExecutionSignal();
 }
@@ -293,14 +331,6 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
     this->ready_entities = 0;
 
     if( this->running_storage.isEmpty() ){
-
-        QString message = QString("Execution has no more running entities" );
-
-        qInfo() << message;
-
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
-
         this->is_running = false;
         return;
     }

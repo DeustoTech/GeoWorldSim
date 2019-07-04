@@ -93,7 +93,8 @@ HEADERS += \
         # AGENTS
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
-    ../../behaviour/property/CheckPropertyValueBehaviour.h
+    ../../behaviour/property/CheckPropertyValueBehaviour.h \
+    ../../behaviour/property/AccumulatePropertyBehaviour.h
 
 
 
@@ -157,7 +158,8 @@ SOURCES += mainAccesibility.cpp \
         # AGENTS
     ../../behaviour/property/AddGWSGroupPropertyBehaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp\
-    ../../behaviour/property/CheckPropertyValueBehaviour.cpp
+    ../../behaviour/property/CheckPropertyValueBehaviour.cpp \
+    ../../behaviour/property/AccumulatePropertyBehaviour.cpp
 
 
 

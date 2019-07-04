@@ -42,15 +42,11 @@ HEADERS += \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
-    ../../util/datasource/EntityGeneratorDatasource.h \
-    ../../behaviour/information/SendEntitySnapshotBehaviour.h \
     ../../behaviour/property/CompareEntityPropertyBehaviour.h \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
-    ../../behaviour/execution/StopEntityBehaviour.h \
-    ../../behaviour/property/SetEntityPropertyBehaviour.h \\
-    ../../behaviour/property/MathEntityPropertyBehaviour.h \
+    ../../behaviour/property/AccumulatePropertyBehaviour.h \
     ../../behaviour/time/WaitUntilTimeBehaviour.h \
+    ../../behaviour/property/MathEntityPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -67,6 +63,7 @@ HEADERS += \
     ../../util/routing/Routing.h \
     ../../util/api/APIDriver.h \
     ../../util/datasource/DatasourceReader.h \
+    ../../util/datasource/EntityGeneratorDatasource.h \
     ../../util/routing/EdgeVisitor.hpp \
             ## GRID
             ## RANDOM
@@ -103,12 +100,9 @@ SOURCES += mainlauncher.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
-    ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
     ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
-    ../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.cpp \
     ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
-    ../../behaviour/execution/StopEntityBehaviour.cpp \
-    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/AccumulatePropertyBehaviour.cpp \
     ../../behaviour/property/MathEntityPropertyBehaviour.cpp \
     ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
         # UTILS

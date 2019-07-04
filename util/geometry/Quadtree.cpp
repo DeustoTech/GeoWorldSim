@@ -273,7 +273,6 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
 
                 }
 
-                delete previous_elm;
             }
 
             const GWSGeometry& elm_geom = elm->geometry;
@@ -316,6 +315,10 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
                     this->ids_contained.append( qstring );
                 }
                 this->mutex.unlock();
+            }
+
+            if( l == 0 && previous_elm ){ // Finished iterating layers
+                delete previous_elm;
             }
     }
 

@@ -1,16 +1,16 @@
-#include "GenerateWasteZamudioModelBehaviour.h"
+#include "GenerateWasteBehaviour.h"
 
 #include <QJsonDocument>
 
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
-QString GenerateWasteZamudioModelBehaviour::FAMILY_MEMBERS = "family_members";
-QString GenerateWasteZamudioModelBehaviour::DAILY_GENERATION_PER_WASTE_CATEGORY = "daily_generation_per_waste_category";
-QString GenerateWasteZamudioModelBehaviour::CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE = "characterization_per_waste_category_and_sorting_type";
-QString GenerateWasteZamudioModelBehaviour::NEXTS = "nexts";
+QString GenerateWasteBehaviour::FAMILY_MEMBERS = "family_members";
+QString GenerateWasteBehaviour::DAILY_GENERATION_PER_WASTE_CATEGORY = "daily_generation_per_waste_category";
+QString GenerateWasteBehaviour::CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE = "characterization_per_waste_category_and_sorting_type";
+QString GenerateWasteBehaviour::NEXTS = "nexts";
 
-GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBehaviour(){
+GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
 
     // Careful! These are the quantities obtained from a whole container.
     // Right now, the model assumes each household generates this HUGE amount of waste
@@ -89,8 +89,12 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
     this->setProperty( "daily_generation_kg_person" , dailyGenerationObject );
 
     // Zamudio characterization From W4T_M1_ZamudioEnero19.xlsx:
+    // Residual: ST2
+    // Organic: ST10
+    // Packaging: ST5
+    // Paper: ST7
     QString characterization = QString::fromUtf8("{"
-                               " \"residual\" : { "
+                               " \"SortingType:2\" : { "
                                        " \"food_waste\" : 0.0413 ,"
                                        " \"no_food_waste\" :  0.4153, "
                                        " \"gardening_waste\" :  0.00, "
@@ -125,7 +129,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                        " \"10_mm_sieved_fraction\" :  0.0293 , "
                                        " \"other_not_in_other_categories\" : 0.00 "
                                 "} ,"
-                                 " \"paper\" : { "
+                                 " \"SortingType:7\" : { "
                                      " \"food_waste\" : 0.0256 ,"
                                      " \"no_food_waste\" :    0.0222, "
                                      " \"gardening_waste\" :  0.0115 , "
@@ -160,7 +164,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                      " \"10_mm_sieved_fraction\" :     0.0018 , "
                                      " \"other_not_in_other_categories\" :   0.0010 "
                               "} ,"
-                                 " \"packaging\" : { "
+                                 " \"SortingType:5\" : { "
                                          " \"food_waste\" : 0.0014 ,"
                                          " \"no_food_waste\" :    0.0037, "
                                          " \"gardening_waste\" :  0.00 , "
@@ -195,7 +199,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
                                          " \"10_mm_sieved_fraction\" :  0.0170 , "
                                          " \"other_not_in_other_categories\" :    0.0017 "
                                   "} ,"
-                              " \"organic\" : { "
+                              " \"SortingType:10\" : { "
                                          " \"food_waste\" :  0.0557,"
                                          " \"no_food_waste\" :  0.8877, "
                                          " \"gardening_waste\" :  0.00 , "
@@ -250,7 +254,7 @@ GenerateWasteZamudioModelBehaviour::GenerateWasteZamudioModelBehaviour() : GWSBe
       urb   | 12.48 | 12.44 |*/
 
 
-double GenerateWasteZamudioModelBehaviour::partialModel( double rest, double uni, double tasParo , double urb){
+double GenerateWasteBehaviour::partialModel( double rest, double uni, double tasParo , double urb){
 
     // Fracción resto kg / habitante / año:
 
@@ -259,24 +263,23 @@ double GenerateWasteZamudioModelBehaviour::partialModel( double rest, double uni
 }
 
 
-QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
+QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
     int family_members = entity->getProperty( this->getProperty( FAMILY_MEMBERS ).toString() ).toInt( 1 );
 
     QJsonObject generationObject = this->getProperty( DAILY_GENERATION_PER_WASTE_CATEGORY ).toObject( this->getProperty("daily_generation_kg_person" ).toObject());
     QJsonObject characterizationObject = this->getProperty( CHARACTERIZATION_PER_WASTE_CATEGORY_AND_SORTING_TYPE ).toObject( this->getProperty( "characterization" ).toObject());
-    QJsonObject instant_generated = QJsonObject();
-    QJsonObject accumulated_generated = entity->getProperty( "accumulated_generated" ).toObject();
-
-    //qDebug() << characterizationObject.keys();
 
     // Check if the agent already has any waste stored:
 
     foreach( QString sorting_type , characterizationObject.keys() ){
 
-        foreach (QString waste_category , characterizationObject.value( sorting_type ).toObject().keys() ) {
+        GWSMassUnit generated_sorting_type = GWSMassUnit(0);
 
+        foreach (QString wc , characterizationObject.value( sorting_type ).toObject().keys() ) {
+
+            QString waste_category = wc.replace( ' ' , '_');
             double individual_waste_generated = generationObject.value( waste_category ).toDouble();
 
             QJsonValue charObj = characterizationObject.value( sorting_type ).toObject().value( waste_category );
@@ -287,34 +290,25 @@ QPair< double , QJsonArray > GenerateWasteZamudioModelBehaviour::behave(){
 
             double percentage_to_sorting_type = charObj.toDouble( 0 );
             GWSMassUnit generated_individual_waste_going_to_sorting_type = GWSMassUnit( individual_waste_generated * percentage_to_sorting_type * family_members);
+            generated_sorting_type = generated_sorting_type + generated_individual_waste_going_to_sorting_type;
 
-            // STORE INSTANT PER SORTING TYPE
+            // STORE WASTE CATEGORY PER SORTING TYPE
+            double existing_waste_value = entity->getProperty( "accumulated_" + sorting_type + "_" + waste_category ).toDouble();
+            entity->setProperties({
+                  { "instant_" + sorting_type + "_" + waste_category , generated_individual_waste_going_to_sorting_type.number() },
+                  { "accumulated_" + sorting_type + "_" + waste_category , GWSObjectFactory::incrementValue( existing_waste_value , generated_individual_waste_going_to_sorting_type.number() ) }
+            });
 
-            // STORE ACCUMULATED PER SORTING TYPE
-            double existing_value = entity->getProperty( "accumulated_" + sorting_type ).toDouble();
-            entity->setProperty( "instant_" + sorting_type , generated_individual_waste_going_to_sorting_type.number() );
-            entity->setProperty( "accumulated_" +  sorting_type , GWSObjectFactory::incrementValue( existing_value , generated_individual_waste_going_to_sorting_type.number() ) );
-
-            // STORE INSTANT
-            {
-                QJsonObject copy = instant_generated[ sorting_type ].toObject();
-                copy[ waste_category ] = generated_individual_waste_going_to_sorting_type.number();
-                instant_generated[ sorting_type ] = copy;
-            }
-
-            // STORE ACCUMULATED
-            {
-                QJsonObject copy = accumulated_generated[ sorting_type ].toObject();
-                copy[ waste_category ] = copy[ waste_category ].toDouble() +  generated_individual_waste_going_to_sorting_type.number();
-                accumulated_generated[ sorting_type ] = copy;
-            }
         }
 
+        // STORE TOTAL SORTING TYPE
+        double existing_sorting_type_value = entity->getProperty( "accumulated_" + sorting_type ).toDouble();
 
+        entity->setProperties({
+              { "instant_" + sorting_type , generated_sorting_type.number() },
+              { "accumulated_" +  sorting_type , GWSObjectFactory::incrementValue( existing_sorting_type_value , generated_sorting_type.number() ) },
+          });
     }
-
-    entity->setProperty( "instant_generated" , instant_generated );
-    entity->setProperty( "accumulated_generated" , accumulated_generated );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 

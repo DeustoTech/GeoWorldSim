@@ -10,6 +10,7 @@
 #include "../../skill/Skill.h"
 #include "../../behaviour/Behaviour.h"
 #include "../../util/geometry/Geometry.h"
+#include "../../util/graph/Edge.h"
 
 GWSObjectFactory* GWSObjectFactory::globalInstance(){
     static GWSObjectFactory instance;
@@ -38,7 +39,8 @@ GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
     qRegisterMetaType< GWSBehaviour >( GWSBehaviour::staticMetaObject.className() );
 
     qRegisterMetaType< GWSGeometry >( "GWSGeometry" );
-    qRegisterMetaType< GWSCoordinate >( "GWSGeometry" );
+    qRegisterMetaType< GWSCoordinate >( "GWSCoordinate" );
+    qRegisterMetaType< GWSEdge >( "GWSEdge" );
 }
 
 GWSObjectFactory::~GWSObjectFactory(){
