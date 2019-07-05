@@ -38,7 +38,6 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
     }
 
-
     // Notify the transaction
     QJsonObject transaction = this->getProperty( TRANSACTION_DATA ).toObject();
 
@@ -50,13 +49,13 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
-    transaction.insert( "refEmitter" , emitter->getUID() );
-    transaction.insert( "refEmitterType" , emitter->getProperty("type") );
-    transaction.insert( "refEmitterGeom" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
+    transaction.insert( "emitter_uid" , emitter->getUID() );
+    transaction.insert( "emitter_type" , emitter->getProperty("type") );
+    transaction.insert( "emitter_geometry" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
-    transaction.insert( "refReceiver" , receiver->getUID() );
-    transaction.insert( "refReceiverType" , receiver->getProperty("type") );
-    transaction.insert( "refReceiverGeom" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
+    transaction.insert( "receiver_uid" , receiver->getUID() );
+    transaction.insert( "receiver_type" , receiver->getProperty("type") );
+    transaction.insert( "receiver_geometry" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
     //transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );

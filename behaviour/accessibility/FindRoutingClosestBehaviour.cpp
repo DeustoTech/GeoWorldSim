@@ -84,7 +84,7 @@ QPair< double , QJsonArray > FindRoutingClosestBehaviour::behave(){
     GWSGeometry closest_agent_geom = closest_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject();
 
     // Save results back to agent
-    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_entity_id" ) , closest_agent->getUID() );
+    agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_ID_AS ).toString( "routing_closest_entity_uid" ) , closest_agent->getUID() );
     agent->setProperty( this->getProperty( STORE_ROUTING_CLOSEST_GEOM_AS ).toString( "routing_closest_entity_geometry" ) , closest_agent_geom.getGeoJSON() );
     agent->setProperty( this->getProperty( STORE_ROUTING_DISTANCE_AS ).toString("routing_closest_entity_distance") , closest_route_distance.number() );
 

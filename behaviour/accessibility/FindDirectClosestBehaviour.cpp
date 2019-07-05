@@ -46,7 +46,7 @@ QPair< double , QJsonArray > FindDirectClosestBehaviour::behave(){
     GWSLengthUnit distanceToNearestentity = entity_coor.getDistance( nearest_entity_coor );
 
     // Store in entity:
-    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_entity_id" ) , nearest_entity->getUID() );
+    entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_ID_AS ).toString( "direct_closest_entity_uid" ) , nearest_entity->getUID() );
     entity->setProperty( this->getProperty( STORE_DIRECT_CLOSEST_GEOM_AS ).toString( "direct_closest_entity_geometry" ) , nearest_entity_geom.getGeoJSON() );
     entity->setProperty( this->getProperty( STORE_DIRECT_DISTANCE_AS ).toString( "direct_closest_entity_distance") , distanceToNearestentity.number() );
 
