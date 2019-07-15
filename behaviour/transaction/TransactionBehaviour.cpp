@@ -32,7 +32,6 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
 
     // Get receiver
     receiver = GWSEntityEnvironment::globalInstance()->getByUID( this->getProperty( RECEIVING_ENTITY_ID ).toString() );
-    qDebug() << emitter << this->getProperty( RECEIVING_ENTITY_ID  );
 
     if( emitter.isNull() || receiver.isNull() ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

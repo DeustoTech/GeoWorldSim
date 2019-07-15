@@ -95,6 +95,7 @@ int main(int argc, char* argv[])
 
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString scenario_id = datasource.value("scenario_id").toString();
+                QString user_id = GWSApp::globalInstance()->getConfiguration().value("user_id").toString();
                 int limit = datasource.value("limit").toInt(-1);
                 QString entity_type = datasource.value("entity_type").toString();
                 QString entity_filter = datasource.value("entity_filter").toString();
@@ -102,7 +103,7 @@ int main(int argc, char* argv[])
                     qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 
-                GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999 );
+                GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , user_id , scenario_id , entity_type , entity_filter ,  limit > 0 ? limit : 999999999999999 );
                 pending_datasources.append( ds );
 
                 ds->connect( ds , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){

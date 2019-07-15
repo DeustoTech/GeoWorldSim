@@ -9,8 +9,9 @@
 
 #include "../../util/api/APIDriver.h"
 
-GWSDatasourceReader::GWSDatasourceReader(QString scenario_id , QString entities_type, QString entities_filter, int limit ) : QObject(){
+GWSDatasourceReader::GWSDatasourceReader(QString user_id , QString scenario_id , QString entities_type, QString entities_filter, int limit ) : QObject(){
     this->scenario_id = scenario_id;
+    this->user_id = user_id;
     this->entities_type = entities_type;
     this->entities_filter = entities_filter;
     this->download_limit = limit;
@@ -32,7 +33,7 @@ bool GWSDatasourceReader::downloadedFinished(){
 }
 
 void GWSDatasourceReader::requestPaginated(int page){
-    QString paginated_url = QString("https://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4&attributes=*&%5").arg( this->scenario_id ).arg( this->entities_type ).arg( page * this->page_size ).arg( this->page_size ).arg( this->entities_filter );
+    QString paginated_url = QString("https://history.geoworldsim.com/api/scenario/%1/entities/%2?offset=%3&limit=%4&user_id=%5&attributes=*&%6").arg( this->scenario_id ).arg( this->entities_type ).arg( page * this->page_size ).arg( this->page_size ).arg( this->user_id ).arg( this->entities_filter );
 
     QString message = QString("Requesting %1 from datasource %2, %3 / %4").arg( this->entities_type ).arg( this->scenario_id ).arg( page * this->page_size ).arg( (page+1) * this->page_size );
 

@@ -9,7 +9,7 @@ class GWSEntityGeneratorDatasource : public QObject
     Q_OBJECT
 
 public:
-    GWSEntityGeneratorDatasource( QJsonObject json , QString scenario_id , QString entity_type , QString entity_filter , int amount = 9999999 );
+    GWSEntityGeneratorDatasource( QJsonObject json , QString user_id , QString scenario_id , QString entity_type , QString entity_filter , int amount = 9999999 );
 
 signals:
     void dataReadingFinishedSignal();
