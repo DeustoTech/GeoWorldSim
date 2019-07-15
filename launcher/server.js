@@ -116,13 +116,13 @@ app.post('/' , async (req, res) => {
 
             fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status?user_id=${configuration.user_id}` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
             .then( () => {
-                    clearTimeout( timer );
+                clearTimeout( timer );
             })
-            .catch( err => {});
+            .catch( err => console.log('Error updating scenario status' , err) );
              
         });
         
-        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket?user_id=${configuration.user_id}` });
+        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket?user_id=${configuration.user_id}` );
         res.send( configuration );
         
     } catch( err ){
