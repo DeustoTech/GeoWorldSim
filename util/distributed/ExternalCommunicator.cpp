@@ -22,7 +22,7 @@ void GWSExternalCommunicator::startSocket(){
 
         // Make Scenario to listen
         GWSAPIDriver::globalInstance()->GET(
-                    QString("https://history.geoworldsim.com/api/scenario/%1/socket").arg( GWSApp::globalInstance()->getAppId() ) ,
+                    QString("https://history.geoworldsim.com/api/scenario/%1/socket?user_id=%2").arg( GWSApp::globalInstance()->getAppId() ).arg( GWSApp::globalInstance()->getConfiguration().value("user_id").toString() ) ,
                     []( QNetworkReply* reply ){
                        reply->connect( reply , &QNetworkReply::finished , reply , &QNetworkReply::deleteLater );
         });

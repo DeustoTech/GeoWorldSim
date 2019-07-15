@@ -103,7 +103,7 @@ app.post('/' , async (req, res) => {
         child.on('exit', (code , signal) => {
             
             let status = 'crashed';
-            if( code == 0 ){ 
+            if( code == 0 ){
                 status = 'finished'
                 fs.unlinkSync( filename );
             }
@@ -114,7 +114,7 @@ app.post('/' , async (req, res) => {
             
             console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
 
-            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
+            fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/status?user_id=${configuration.user_id}` , { method : 'PUT' , headers : { 'Content-Type': 'application/json' } , body : JSON.stringify({ status : status }) })
             .then( () => {
                     clearTimeout( timer );
             })
@@ -122,7 +122,7 @@ app.post('/' , async (req, res) => {
              
         });
         
-        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket` , { headers : { 'Content-Type': 'application/json' } });
+        var data = await fetch( `https://history.geoworldsim.com/api/scenario/${configuration.id}/socket?user_id=${configuration.user_id}` });
         res.send( configuration );
         
     } catch( err ){
