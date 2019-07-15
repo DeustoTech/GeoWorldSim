@@ -12,7 +12,7 @@ public:
     ~FindDirectClosestBehaviour();
 
     // PARAMETERS:
-    static QString ENTITY_TO_ACCESS_TYPE;
+    static QString ENTITY_TYPE_TO_FIND;
     static QString STORE_DIRECT_CLOSEST_ID_AS;
     static QString STORE_DIRECT_CLOSEST_GEOM_AS;
     static QString STORE_DIRECT_DISTANCE_AS;

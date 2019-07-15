@@ -8,9 +8,9 @@
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
 
-QString FindDirectClosestBehaviour::ENTITY_TO_ACCESS_TYPE = "facility_type";  // e.g. glass Containerentity
+QString FindDirectClosestBehaviour::ENTITY_TYPE_TO_FIND = "entity_type_to_find";  // e.g. glass Containerentity
 QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_ID_AS = "store_direct_closest_id_as";
-QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_GEOM_AS = "store_direct_closest_geom_as";
+QString FindDirectClosestBehaviour::STORE_DIRECT_CLOSEST_GEOM_AS = "store_direct_closest_geometry_as";
 QString FindDirectClosestBehaviour::STORE_DIRECT_DISTANCE_AS = "store_direct_distance_as";
 QString FindDirectClosestBehaviour::NEXTS = "nexts";
 QString FindDirectClosestBehaviour::NEXTS_IF_NO_DIRECT_CLOSEST_FOUND = "nexts_if_no_direct_closest_found";
@@ -30,9 +30,10 @@ FindDirectClosestBehaviour::~FindDirectClosestBehaviour(){
 QPair< double , QJsonArray > FindDirectClosestBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
-    GWSCoordinate entity_coor = GWSPhysicalEnvironment::globalInstance()->getGeometry( entity ).getCentroid();
+     GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    GWSCoordinate entity_coor = entity_geom.getCentroid();
 
-    QString facility_to_access = this->getProperty( ENTITY_TO_ACCESS_TYPE ).toString();
+    QString facility_to_access = this->getProperty( ENTITY_TYPE_TO_FIND ).toString();
     QList<QSharedPointer<GWSEntity> > entitys_to_access = GWSEntityEnvironment::globalInstance()->getByClass( facility_to_access );
 
     // Obtain direct closest entity parameters:
