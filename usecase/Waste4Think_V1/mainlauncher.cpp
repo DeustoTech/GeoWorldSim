@@ -74,65 +74,17 @@ int main(int argc, char* argv[])
     GWSObjectFactory::globalInstance()->registerType( AccumulatePropertyBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( MathEntityPropertyBehaviour::staticMetaObject );
 
-
     // CREATE POPULATION
-    QList<GWSEntityGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
-    QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
-    foreach( QString key , json_population.keys() ) {
-
-        // Population type:
-        QJsonObject population = json_population[ key ].toObject();
-
-        if ( !population.value( "template" ).isUndefined() && !population.value( "datasources" ).isUndefined() ){
-
-            QJsonArray datasources = population.value( "datasources" ).toArray();
-
-            for ( int i = 0; i <  datasources.size() ; ++i ){
-
-                QJsonObject datasource = datasources.at( i ).toObject();
-                QString scenario_id = datasource.value("scenario_id").toString();
-                int limit = datasource.value("limit").toInt(-1);
-                QString entity_type = datasource.value("entity_type").toString();
-                QString entity_filter = datasource.value("entity_filter").toString();
-                if( scenario_id.isEmpty() || entity_type.isEmpty() ){
-                    qWarning() << "Asked to download from scenario without ID or entity_type";
-                }
-
-                GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
-                pending_datasources.append( ds );
-
-                ds->connect( ds , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
-                    pending_datasources.removeAll( ds );
-                    ds->deleteLater();
-                    if( pending_datasources.isEmpty() ){
-
-                        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
-
-                        GWSExecutionEnvironment::globalInstance()->run();
-                    }
-                });
-
-            }
-        }
-
-        if ( !population.value("template").isUndefined() && !population.value("amount").isUndefined() ){
-            for ( int i = 0; i < population.value("amount").toInt() ; i++){
-                // Use template to generate amount entities
-                GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();
-            }
-        }
-       qInfo() << QString("Creating population %1").arg( key );
-    }
-    if( pending_datasources.isEmpty() ){
+    GWSEntityGeneratorDatasource* reader = new GWSEntityGeneratorDatasource( app->getConfiguration() );
+    reader->connect( reader , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ reader , datasource_download_time ](){
 
         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
-
+                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
 
         GWSExecutionEnvironment::globalInstance()->run();
-    }
+
+    });
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:

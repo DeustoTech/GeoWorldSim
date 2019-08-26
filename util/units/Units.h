@@ -72,6 +72,15 @@ struct GWSUnit {
     GWSUnit operator +(const double v) const{
         return GWSUnit( this->value + v , this->unit );
     }
+    GWSUnit operator +=(const GWSUnit other){
+        Q_ASSERT( this->unit == other.unit );
+        this->value += this->value + other.value;
+        return GWSUnit( this->value , this->unit );
+    }
+    GWSUnit operator +=(const double v){
+        this->value += v;
+        return GWSUnit( this->value , this->unit );
+    }
 
     GWSUnit operator -(const GWSUnit other) const{
         Q_ASSERT( this->unit == other.unit );

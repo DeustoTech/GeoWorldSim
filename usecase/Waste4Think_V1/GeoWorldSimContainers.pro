@@ -23,7 +23,7 @@ QMAKE_CFLAGS += -march=native -O2 -pipe
 # FORCE C++11
 QMAKE_CXXFLAGS += -std=c++14
 
-TARGET      = gwswastesimulation
+TARGET      = gws_wastesimulation
 CONFIG      += console
 CONFIG      -= app_bundle
 
@@ -46,6 +46,7 @@ HEADERS += \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
     ../../behaviour/property/AccumulatePropertyBehaviour.h \
     ../../behaviour/time/WaitUntilTimeBehaviour.h \
+    ../../behaviour/waste/GenerateWasteBehaviour.h \
     ../../behaviour/property/MathEntityPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
@@ -105,6 +106,7 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/property/AccumulatePropertyBehaviour.cpp \
     ../../behaviour/property/MathEntityPropertyBehaviour.cpp \
     ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
+    ../../behaviour/waste/GenerateWasteBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \

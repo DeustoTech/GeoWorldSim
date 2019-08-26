@@ -45,7 +45,6 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
                 QStringList columns = line.split(';');
                 foreach( QString c , columns ){
                     // Remove surrounding quotes
-                    //c.replace( "\"" , "" );
                     headers.insert( c.replace( "\"" , "" ) , columns.indexOf( c ) );
                 }
 

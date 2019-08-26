@@ -32,7 +32,7 @@ double GWSCoordinate::getZ() const{
 GWSLengthUnit GWSCoordinate::getDistance(const GWSCoordinate &other) const {
     return GWSLengthUnit(
                 geos::geom::Coordinate( this->x , this->y , this->z )
-                .distance( geos::geom::Coordinate( other.x , other.y , other.z ) ) * 110574 );
+                .distance( geos::geom::Coordinate( other.x , other.y , other.z ) ) * 110574 ); // MAGIC NUMBER
 }
 
 double GWSCoordinate::getLatLngDistance( const GWSCoordinate &other ) const{
