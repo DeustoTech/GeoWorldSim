@@ -9,7 +9,7 @@
 #include "../../util/geometry/GeometryGetters.h"
 
 QString FindRoutingClosestBehaviour::ENTITY_TYPE_TO_FIND = "entity_type_to_find";  // e.g. glass ContainerAgent
-QString FindRoutingClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";  //
+QString FindRoutingClosestBehaviour::TRANSPORT_NETWORK_TYPE = "transport_network_type";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ID_AS = "store_routing_closest_id_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_CLOSEST_ROUTE_AS = "store_routing_closest_route_as";
 QString FindRoutingClosestBehaviour::STORE_ROUTING_DISTANCE_AS = "store_routing_distance_as";

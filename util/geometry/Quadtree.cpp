@@ -8,16 +8,16 @@
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../parallelism/ParallelismController.h"
 
-GWSQuadtree::GWSQuadtree() : QObject(){
-    this->quadtree_elements = new QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >();
+geoworldsim::geometry::Quadtree::Quadtree() : QObject(){
+    this->quadtree_elements = new QMap< std::string , QuadtreeElement* >();
     this->quadtree_layers = new QMap< std::string , geos::index::quadtree::Quadtree* >();
 
-    this->connect( this , &GWSQuadtree::upsertGeometrySignal , this , &GWSQuadtree::upsertGeometry );
-    this->connect( this , &GWSQuadtree::upsertCoordinateSignal , this , &GWSQuadtree::upsertGeometry );
-    this->connect( this , &GWSQuadtree::removeSignal , this , &GWSQuadtree::remove );
+    this->connect( this , &geoworldsim::geometry::Quadtree::upsertGeometrySignal , this , &geoworldsim::geometry::Quadtree::upsertGeometry );
+    this->connect( this , &geoworldsim::geometry::Quadtree::upsertCoordinateSignal , this , &geoworldsim::geometry::Quadtree::upsertGeometry );
+    this->connect( this , &geoworldsim::geometry::Quadtree::removeSignal , this , &geoworldsim::geometry::Quadtree::remove );
 }
 
-GWSQuadtree::~GWSQuadtree(){
+geoworldsim::geometry::Quadtree::~Quadtree(){
     foreach( std::string l , this->quadtree_layers->keys() ){
         delete this->quadtree_layers->value( l );
     }
@@ -28,11 +28,11 @@ GWSQuadtree::~GWSQuadtree(){
     delete this->quadtree_elements;
 }
 
-QStringList GWSQuadtree::getElements() const {
+QStringList geoworldsim::geometry::Quadtree::getElements() const {
     return this->ids_contained;
 }
 
-const GWSGeometry GWSQuadtree::getBounds() const {
+const geoworldsim::geometry::Geometry geoworldsim::geometry::Quadtree::getBounds() const {
     QJsonObject geom;
     geom.insert( "type" , "Polygon" );
     QJsonArray coors;
@@ -43,19 +43,19 @@ const GWSGeometry GWSQuadtree::getBounds() const {
     coors.append( QJsonArray({ min_x , min_y }) );
     QJsonArray rings = { coors };
     geom.insert( "coordinates" , rings );
-    return GWSGeometry( geom );
+    return Geometry( geom );
 }
 
-const GWSGeometry GWSQuadtree::getGeometry(const QString &object_id ) const {
+const geoworldsim::geometry::Geometry geoworldsim::geometry::Quadtree::getGeometry(const QString &object_id ) const {
     this->mutex.lockForWrite();
-    GWSQuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
+    QuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( elm ){ return elm->geometry; }
-    return GWSGeometry();
+    return Geometry();
 }
 
-QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
+QStringList geoworldsim::geometry::Quadtree::getElements( const geoworldsim::geometry::Coordinate &coor ){
     QStringList objects_ids;
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
@@ -77,7 +77,7 @@ QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
         this->mutex.unlock();
 
         foreach(void* id, ids) {
-            GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
+            QuadtreeElement* ptr = (QuadtreeElement *)( id );
             if( !ptr ){ continue; }
             objects_ids.append( QString::fromStdString( ptr->object_id ) );
         }
@@ -91,15 +91,15 @@ QStringList GWSQuadtree::getElements( const GWSCoordinate &coor ){
     return objects_ids;
 }
 
-QStringList GWSQuadtree::getElements( const GWSGeometry &geom ){
+QStringList geoworldsim::geometry::Quadtree::getElements( const geoworldsim::geometry::Geometry &geom ){
     return this->getElements(
-                GWSGeometryGetters::getGeometryMinX( geom ) ,
-                GWSGeometryGetters::getGeometryMaxX( geom ) ,
-                GWSGeometryGetters::getGeometryMinY( geom ) ,
-                GWSGeometryGetters::getGeometryMaxY( geom ) );
+                GeometryGetters::getGeometryMinX( geom ) ,
+                GeometryGetters::getGeometryMaxX( geom ) ,
+                GeometryGetters::getGeometryMinY( geom ) ,
+                GeometryGetters::getGeometryMaxY( geom ) );
 }
 
-QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, double maxY) {
+QStringList geoworldsim::geometry::Quadtree::getElements(double minX, double maxX, double minY, double maxY) {
     QStringList objects_ids;
 
     // See the decimal value where min and max diverge
@@ -157,7 +157,7 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     this->mutex.unlock();
 
     foreach(void* id, ids) {
-        GWSQuadtreeElement* ptr = (GWSQuadtreeElement *)( id );
+        QuadtreeElement* ptr = (QuadtreeElement *)( id );
         if( !ptr ){ continue; }
         objects_ids.append( QString::fromStdString( ptr->object_id ) );
     }
@@ -165,26 +165,26 @@ QStringList GWSQuadtree::getElements(double minX, double maxX, double minY, doub
     return objects_ids;
 }
 
-QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
+QString geoworldsim::geometry::Quadtree::getNearestElement( const geoworldsim::geometry::Coordinate &coor ) {
 
     if( !coor.isValid() ){
         qDebug() << "Invalid coordinates" << coor.toString();
         return QString();
     }
 
-    GWSLengthUnit shortest_distance = GWSLengthUnit(999999999999999);
+    unit::LengthUnit shortest_distance = unit::LengthUnit(999999999999999);
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( coor ) ) {
 
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
+        QuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
-        const GWSGeometry& g = elm->geometry;
+        const Geometry& g = elm->geometry;
 
         if( g.isValid() ){
-            const GWSLengthUnit& l = g.getCentroid().getDistance( coor );
+            const unit::LengthUnit& l = g.getCentroid().getDistance( coor );
             if( l < shortest_distance ){
                 shortest_distance = l;
                 nearest_object_id = object_id;
@@ -195,23 +195,23 @@ QString GWSQuadtree::getNearestElement( const GWSCoordinate &coor ) {
     return nearest_object_id;
 }
 
-QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
+QString geoworldsim::geometry::Quadtree::getNearestElement( const geoworldsim::geometry::Geometry &geom ) {
 
     if( !geom.isValid() ){ return QString(); }
 
-    GWSLengthUnit shortest_distance = 999999999999999;
+    unit::LengthUnit shortest_distance = 999999999999999;
     QString nearest_object_id;
     foreach (QString object_id , this->getElements( geom ) ) {
 
         this->mutex.lockForRead();
-        GWSQuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
+        QuadtreeElement* elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
         this->mutex.unlock();
 
         if( !elm ){ continue; }
-        const GWSGeometry& g = elm->geometry;
+        const Geometry& g = elm->geometry;
 
         if( g.isValid() ){
-            const GWSLengthUnit& l = g.getCentroid().getDistance( geom.getCentroid() );
+            const unit::LengthUnit& l = g.getCentroid().getDistance( geom.getCentroid() );
             if( l < shortest_distance ){
                 shortest_distance = l;
                 nearest_object_id = object_id;
@@ -222,19 +222,19 @@ QString GWSQuadtree::getNearestElement( const GWSGeometry &geom ) {
     return nearest_object_id;
 }
 
-void GWSQuadtree::upsertCoordinate( const QString &object_id , const GWSCoordinate &coor ){
-    const GWSGeometry& geom( coor );
+void geoworldsim::geometry::Quadtree::upsertCoordinate( const QString &object_id , const geoworldsim::geometry::Coordinate &coor ){
+    const Geometry& geom( coor );
     this->upsertGeometry( object_id , geom );
 }
 
-void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &geom ){
+void geoworldsim::geometry::Quadtree::upsertGeometry( const QString &object_id , const Geometry &geom ){
 
     if( object_id.isEmpty() ){
         return;
     }
 
     // Extend the bounds of the index
-    const GWSCoordinate& centroid = geom.getCentroid();
+    const geoworldsim::geometry::Coordinate& centroid = geom.getCentroid();
     this->min_x = qMin( centroid.getX() , min_x );
     this->max_x = qMax( centroid.getX() , max_x );
     this->min_y = qMin( centroid.getY() , min_y );
@@ -242,7 +242,7 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
 
     // Create helper element
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
+    QuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( !previous_elm ){
@@ -251,16 +251,16 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
     if( stored_amount % 1000 == 0 ){
         QString message = QString("Quadtree %1 indexing %2 entities" ).arg( this->objectName() ).arg( stored_amount );
         qInfo() << message;
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal( QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+        emit environment::CommunicationEnvironment::globalInstance()->sendMessageSignal( QJsonObject({ { "message" , message } }) , App::globalInstance()->getAppId() + "-LOG" );
     }
 
-    GWSQuadtreeElement* elm = new GWSQuadtreeElement( object_id.toStdString() , geom );
+    QuadtreeElement* elm = new QuadtreeElement( object_id.toStdString() , geom );
 
     for( int l = this->layer_depth_amount ; l > 0 ; l-- ){
 
             if( previous_elm ){
 
-                const GWSGeometry& previous_elm_geom = previous_elm->geometry;
+                const Geometry& previous_elm_geom = previous_elm->geometry;
                 if( previous_elm_geom.isValid() ){
 
                     // Get geohash
@@ -275,12 +275,12 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
 
             }
 
-            const GWSGeometry& elm_geom = elm->geometry;
+            const Geometry& elm_geom = elm->geometry;
 
             if( elm_geom.isValid() ){
 
                 // Get geohash
-                GWSCoordinate centroid = elm_geom.getCentroid();
+                Coordinate centroid = elm_geom.getCentroid();
                 std::string combined_hash = this->createHash( centroid.getX() , l ) + ":" + this->createHash( centroid.getY() , l );
 
                 this->mutex.lockForRead();
@@ -301,10 +301,10 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
                 try {
                     // Get envelope
                     elm->envelope = geos::geom::Envelope(
-                                GWSGeometryGetters::getGeometryMinX( elm_geom ) ,
-                                GWSGeometryGetters::getGeometryMaxX( elm_geom ) ,
-                                GWSGeometryGetters::getGeometryMinY( elm_geom ) ,
-                                GWSGeometryGetters::getGeometryMaxY( elm_geom ) );
+                                GeometryGetters::getGeometryMinX( elm_geom ) ,
+                                GeometryGetters::getGeometryMaxX( elm_geom ) ,
+                                GeometryGetters::getGeometryMinY( elm_geom ) ,
+                                GeometryGetters::getGeometryMaxY( elm_geom ) );
 
                     tree->insert( &elm->envelope , elm );
                 } catch( ... ){}
@@ -324,14 +324,14 @@ void GWSQuadtree::upsertGeometry( const QString &object_id , const GWSGeometry &
 
 }
 
-void GWSQuadtree::remove( const QString &object_id ){
+void geoworldsim::geometry::Quadtree::remove( const QString &object_id ){
 
     if( object_id.isEmpty() ){
         return;
     }
 
     this->mutex.lockForRead();
-    GWSQuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
+    QuadtreeElement* previous_elm = this->quadtree_elements->value( object_id.toStdString() , Q_NULLPTR );
     this->mutex.unlock();
 
     if( !previous_elm ){ return; }
@@ -360,7 +360,7 @@ void GWSQuadtree::remove( const QString &object_id ){
 }
 
 
-std::string GWSQuadtree::createHash(double value, int decimal_amount) const{
+std::string geoworldsim::geometry::Quadtree::createHash(double value, int decimal_amount) const{
     try {
         double multiplier = qPow( 10 , decimal_amount );
         int trimmed = value * multiplier;

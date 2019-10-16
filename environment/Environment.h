@@ -1,9 +1,13 @@
-#ifndef GWSENVIRONMENT_H
-#define GWSENVIRONMENT_H
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
 
 #include "../../entity/Entity.h"
 
-class GWSEnvironment : public GWSEntity
+namespace geoworldsim {
+namespace environment {
+
+
+class Environment : public geoworldsim::Entity
 {
     Q_OBJECT
 
@@ -14,20 +18,23 @@ public:
     static QString SKIP_SUBSCRIBING;
 
     // IMPORTERS
-    virtual void deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    virtual void deserialize( const QJsonObject &json , QSharedPointer<Object> parent = QSharedPointer<Object>() );
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
 
     // METHODS
-    virtual void registerEntity( QSharedPointer<GWSEntity> entity );
-    virtual void unregisterEntity( QSharedPointer<GWSEntity> entity );
+    virtual void registerEntity( QSharedPointer<Entity> entity );
+    virtual void unregisterEntity( QSharedPointer<Entity> entity );
 
 protected:
-    GWSEnvironment();
-    GWSEnvironment(GWSEnvironment const&);
-    ~GWSEnvironment();
+    Environment();
+    Environment(Environment const&);
+    ~Environment();
 
 };
 
-#endif // GWSENVIRONMENT_H
+}
+}
+
+#endif // ENVIRONMENT_H

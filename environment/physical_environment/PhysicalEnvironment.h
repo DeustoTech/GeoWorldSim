@@ -1,5 +1,5 @@
-#ifndef GWSPHYSICALENVIRONMENT_H
-#define GWSPHYSICALENVIRONMENT_H
+#ifndef PHYSICALENVIRONMENT_H
+#define PHYSICALENVIRONMENT_H
 
 #include <QMutex>
 
@@ -8,46 +8,50 @@
 
 #include "../../environment/Environment.h"
 
-class GWSPhysicalEnvironment : public GWSEnvironment
+namespace geoworldsim {
+namespace environment {
+
+
+class PhysicalEnvironment : public Environment
 {
     Q_OBJECT
 
 public:
-    static GWSPhysicalEnvironment* globalInstance();
+    static PhysicalEnvironment* globalInstance();
 
     // PROPERTIES
     static QString GEOMETRY_PROP;
 
     // SPATIAL GETTERS
-    const GWSGeometry getBounds() const;
-    const GWSGeometry getBounds( QString &class_name ) const;
-    GWSCoordinate getRandomCoordinate() const;
-    const GWSGeometry getGeometry( QSharedPointer<GWSEntity> agent ) const;
-    const GWSGeometry getGeometry( const QString &agent_id ) const;
+    const geometry::Geometry getBounds() const;
+    const geometry::Geometry getBounds( QString &class_name ) const;
+    geometry::Coordinate getRandomCoordinate() const;
+    const geometry::Geometry getGeometry( QSharedPointer<Entity> agent ) const;
+    const geometry::Geometry getGeometry( const QString &agent_id ) const;
     QStringList getAgentsInsideBounds( double minX , double maxX , double minY , double maxY , QString class_name ) const;
-    QStringList getAgentsIntersecting( const GWSGeometry &geometry, QString class_name ) const;
-    QString getNearestEntity( const GWSCoordinate &coor, QString class_name ) const;
-    QSharedPointer<GWSEntity> getNearestEntity( const GWSCoordinate &coor, QList< QSharedPointer<GWSEntity> > agents ) const;
-    QStringList getNearestAgents( QList<GWSCoordinate> coors, QString class_name ) const;
+    QStringList getAgentsIntersecting( const geometry::Geometry &geometry, QString class_name ) const;
+    QString getNearestEntity( const geometry::Coordinate &coor, QString class_name ) const;
+    QSharedPointer<Entity> getNearestEntity( const geometry::Coordinate &coor, QList< QSharedPointer<Entity> > agents ) const;
+    QStringList getNearestAgents( QList<geometry::Coordinate> coors, QString class_name ) const;
 
     // METHODS
-    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
-    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
+    virtual void registerEntity( QSharedPointer<Entity> agent );
+    virtual void unregisterEntity( QSharedPointer<Entity> agent );
 
 protected:
-    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , const GWSGeometry &geom );
+    void upsertEntityToIndex( QSharedPointer<Entity> agent , const geometry::Geometry &geom );
 
 protected slots:
     void entityPropertyChanged( QString property_name );
 
 private:
-    GWSPhysicalEnvironment();
-    GWSPhysicalEnvironment(GWSPhysicalEnvironment const&);
-    ~GWSPhysicalEnvironment();
+    PhysicalEnvironment();
+    PhysicalEnvironment(PhysicalEnvironment const&);
+    ~PhysicalEnvironment();
 
     // SPATIAL INDEX
     QStringList environment_entity_index_types;
-    QMap< std::string , QSharedPointer< GWSQuadtree > > environment_entity_indexes; // Spatial indexes
+    QMap< std::string , QSharedPointer< geometry::Quadtree > > environment_entity_indexes; // Spatial indexes
 
     // Agent geometries
     QStringList entity_ids;
@@ -57,4 +61,7 @@ private:
 
 };
 
-#endif // GWSPHYSICALENVIRONMENT_H
+}
+}
+
+#endif // PHYSICALENVIRONMENT_H

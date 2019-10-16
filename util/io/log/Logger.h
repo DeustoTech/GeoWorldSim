@@ -1,9 +1,13 @@
-#ifndef GWSLOGGER_H
-#define GWSLOGGER_H
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #include <QObject>
 #include <QString>
 #include <QStringList>
+
+namespace geoworldsim {
+namespace io {
+
 
 class GWSLogger : public QObject
 {
@@ -27,5 +31,9 @@ private:
     static QString log_name;
 };
 
-#endif // GWSLOGGER_H
+
+}
+}
+
+#endif // LOGGER_H
 

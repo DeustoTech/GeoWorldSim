@@ -1,16 +1,16 @@
-#ifndef GWSMOVETHROUGHROUTEBEHAVIOUR_H
-#define GWSMOVETHROUGHROUTEBEHAVIOUR_H
+#ifndef MOVETHROUGHNETWORKBEHAVIOUR_H
+#define MOVETHROUGHNETWORKBEHAVIOUR_H
 
 #include "../../behaviour/move/MoveBehaviour.h"
 
-class MoveThroughRouteBehaviour : public MoveBehaviour
+class MoveThroughNetworkBehaviour : public MoveBehaviour
 {
     Q_OBJECT
 
 public:
 
-    Q_INVOKABLE explicit MoveThroughRouteBehaviour();
-    ~MoveThroughRouteBehaviour();
+    Q_INVOKABLE explicit MoveThroughNetworkBehaviour();
+    ~MoveThroughNetworkBehaviour();
 
     // PROPERTIES
     static QString INPUT_ROUTE_DESTINATION;
@@ -26,5 +26,5 @@ protected:
 
 };
 
-#endif // GWSMOVETHROUGHROUTEBEHAVIOUR_H
+#endif // MOVETHROUGHNETWORKBEHAVIOUR_H
 

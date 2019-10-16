@@ -8,41 +8,41 @@
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
-#include "../../util/api/APIDriver.h"
+#include "../../util/network/HttpDriver.h"
 
-QString GWSExecutionEnvironment::ENTITY_BIRTH_PROP = "birth";
-QString GWSExecutionEnvironment::ENTITY_DEATH_PROP = "death";
-QString GWSExecutionEnvironment::ENTITY_RUNNING_PROP = "running";
-QString GWSExecutionEnvironment::STARTED_SIMULATION_TIME = "started_simulation_time";
-QString GWSExecutionEnvironment::STARTED_REAL_TIME = "started_real_time";
-QString GWSExecutionEnvironment::ENDED_SIMULATION_TIME = "ended_simulation_time";
-QString GWSExecutionEnvironment::ENDED_REAL_TIME = "ended_real_time";
-QString GWSExecutionEnvironment::CURRENT_TICK_TIME = "current_tick_time";
-QString GWSExecutionEnvironment::WAIT_FOR_ME_PROP = "wait_for_me";
+QString geoworldsim::environment::ExecutionEnvironment::ENTITY_BIRTH_PROP = "birth";
+QString geoworldsim::environment::ExecutionEnvironment::ENTITY_DEATH_PROP = "death";
+QString geoworldsim::environment::ExecutionEnvironment::ENTITY_RUNNING_PROP = "running";
+QString geoworldsim::environment::ExecutionEnvironment::STARTED_SIMULATION_TIME = "started_simulation_time";
+QString geoworldsim::environment::ExecutionEnvironment::STARTED_REAL_TIME = "started_real_time";
+QString geoworldsim::environment::ExecutionEnvironment::ENDED_SIMULATION_TIME = "ended_simulation_time";
+QString geoworldsim::environment::ExecutionEnvironment::ENDED_REAL_TIME = "ended_real_time";
+QString geoworldsim::environment::ExecutionEnvironment::CURRENT_TICK_TIME = "current_tick_time";
+QString geoworldsim::environment::ExecutionEnvironment::WAIT_FOR_ME_PROP = "wait_for_me";
 
-GWSExecutionEnvironment* GWSExecutionEnvironment::globalInstance(){
-    static GWSExecutionEnvironment instance;
+geoworldsim::environment::ExecutionEnvironment* geoworldsim::environment::ExecutionEnvironment::globalInstance(){
+    static geoworldsim::environment::ExecutionEnvironment instance;
     return &instance;
 }
 
-GWSExecutionEnvironment::GWSExecutionEnvironment() :
-    GWSEnvironment() ,
-    max_entity_amount_per_tick( GWSApp::globalInstance()->getConfiguration().value( "tick_entity_amount" ).toDouble( -1 ) ) {
+geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironment() :
+    Environment() ,
+    max_entity_amount_per_tick( geoworldsim::App::globalInstance()->getConfiguration().value( "tick_entity_amount" ).toDouble( -1 ) ) {
 
-    this->environment_entities = new GWSObjectStorage();
+    this->environment_entities = new geoworldsim::storage::ObjectStorage();
     this->environment_entities->setObjectName( QString("%1").arg( this->metaObject()->className() ) );
 
     qInfo() << "ExecutionEnvironment created";
     this->setProperties( QJsonObject( {
-                                          { ENTITY_BIRTH_PROP , GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
-                                          { ENTITY_DEATH_PROP , GWSApp::globalInstance()->getConfiguration().value( "end" ).toDouble( Q_INFINITY ) }
+                                          { ENTITY_BIRTH_PROP , geoworldsim::App::globalInstance()->getConfiguration().value( "start" ).toDouble( -1 ) } ,
+                                          { ENTITY_DEATH_PROP , geoworldsim::App::globalInstance()->getConfiguration().value( "end" ).toDouble( Q_INFINITY ) }
                                       }) );
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    EnvironmentsGroup::globalInstance()->addEnvironment( this );
 
 }
 
-GWSExecutionEnvironment::~GWSExecutionEnvironment(){
-    foreach (GWSExecutionEnvironmentElement* p , this->parallel_executions.values()){
+geoworldsim::environment::ExecutionEnvironment::~ExecutionEnvironment(){
+    foreach (ExecutionEnvironmentElement* p , this->parallel_executions.values()){
         p->deleteLater();
     }
 }
@@ -51,11 +51,11 @@ GWSExecutionEnvironment::~GWSExecutionEnvironment(){
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSExecutionEnvironment::serialize() const{
-    QJsonObject json = GWSEnvironment::serialize();
+QJsonObject geoworldsim::environment::ExecutionEnvironment::serialize() const{
+    QJsonObject json = Environment::serialize();
     json.insert( "running_amount" , this->getRunningAmount() );
     json.insert( "ticks_amount" , this->getTicksAmount() );
-    json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , (qint64)GWSTimeEnvironment::globalInstance()->getCurrentDateTime() );
+    json.insert( TimeEnvironment::INTERNAL_TIME_PROP , (qint64)TimeEnvironment::globalInstance()->getCurrentDateTime() );
     return json;
 }
 
@@ -63,23 +63,23 @@ QJsonObject GWSExecutionEnvironment::serialize() const{
  GETTERS
 **********************************************************************/
 
-bool GWSExecutionEnvironment::containsEntity( QSharedPointer<GWSEntity> entity) const{
+bool geoworldsim::environment::ExecutionEnvironment::containsEntity( QSharedPointer< Entity > entity) const{
     return this->environment_entities->contains( entity );
 }
 
-int GWSExecutionEnvironment::getRunningAmount() const{
+int geoworldsim::environment::ExecutionEnvironment::getRunningAmount() const{
     return this->environment_entities->getAmount();
 }
 
-QList< QSharedPointer< GWSEntity > > GWSExecutionEnvironment::getRunning() const {
-    return this->environment_entities->getByClass<GWSEntity>( GWSEntity::staticMetaObject.className() );
+QList< QSharedPointer< geoworldsim::Entity > > geoworldsim::environment::ExecutionEnvironment::getRunning() const {
+    return this->environment_entities->getByClass< Entity >( Entity::staticMetaObject.className() );
 }
 
-bool GWSExecutionEnvironment::isRunning() const{
+bool geoworldsim::environment::ExecutionEnvironment::isRunning() const{
     return this->getProperty( ENTITY_RUNNING_PROP ).toBool( false );
 }
 
-int GWSExecutionEnvironment::getTicksAmount() const{
+int geoworldsim::environment::ExecutionEnvironment::getTicksAmount() const{
     return this->executed_ticks_amount;
 }
 
@@ -87,38 +87,38 @@ int GWSExecutionEnvironment::getTicksAmount() const{
  ENTITY METHODS
 **********************************************************************/
 
-void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
+void geoworldsim::environment::ExecutionEnvironment::registerEntity( QSharedPointer< Entity > entity ){
 
     // If already registered
-    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).isNull() ){
+    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( geoworldsim::environment::ExecutionEnvironment::ENTITY_BIRTH_PROP ).isNull() ){
         return;
     }
 
     // Whichever its BIRTH_DATE is, register the entity in this environment,
     // It needs to be executed in the future, so set its INTERNAL_TIME to that future
-    qint64 entity_time = entity->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
+    qint64 entity_time = entity->getProperty( TimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
     if( entity_time <= 0 ){
-        entity_time = entity->getProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP ).toDouble( -1 );
-        entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , entity_time );
+        entity_time = entity->getProperty( geoworldsim::environment::ExecutionEnvironment::ENTITY_BIRTH_PROP ).toDouble( -1 );
+        entity->setProperty( TimeEnvironment::INTERNAL_TIME_PROP , entity_time );
     }
 
     entity->setProperty( ENTITY_RUNNING_PROP , true );
     entity->incrementBusy();
 
     // Store as running
-    GWSEnvironment::registerEntity( entity );
+    Environment::registerEntity( entity );
 
     QThread* thread = entity->thread();
-    GWSExecutionEnvironmentElement* parallel = this->parallel_executions.value( thread , Q_NULLPTR );
-    if( !parallel ){
-        parallel = new GWSExecutionEnvironmentElement(
+    ExecutionEnvironmentElement* p = this->parallel_executions.value( thread , Q_NULLPTR );
+    if( !p ){
+        p = new ExecutionEnvironmentElement(
                     thread ,
-                    GWSApp::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 999 ,
-                    this->max_entity_amount_per_tick > 0 ? this->max_entity_amount_per_tick / GWSParallelismController::globalInstance()->getThreadsCount() : -1 );
-        this->parallel_executions.insert( thread , parallel);
-        parallel->is_running = this->isRunning();
+                    App::globalInstance()->getConfiguration().value("tick_time_window").toDouble( 4 ) * 999 ,
+                    this->max_entity_amount_per_tick > 0 ? this->max_entity_amount_per_tick / parallel::ParallelismController::globalInstance()->getThreadsCount() : -1 );
+        this->parallel_executions.insert( thread , p);
+        p->is_running = this->isRunning();
     }
-    parallel->running_storage.append( entity );
+    p->running_storage.append( entity );
     emit this->environment_entities->addObjectSignal( entity );
 
     entity->decrementBusy();
@@ -126,7 +126,7 @@ void GWSExecutionEnvironment::registerEntity( QSharedPointer<GWSEntity> entity )
 
 }
 
-void GWSExecutionEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
+void geoworldsim::environment::ExecutionEnvironment::unregisterEntity( QSharedPointer< Entity > entity ){
 
     if( entity.isNull() || !entity->getEnvironments().contains( this ) ){
         return;
@@ -136,9 +136,9 @@ void GWSExecutionEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity
     entity->incrementBusy();
 
     // Remove from running lists
-    GWSEnvironment::unregisterEntity( entity );
+    Environment::unregisterEntity( entity );
     QThread* thread = entity->thread();
-    GWSExecutionEnvironmentElement* parallel = this->parallel_executions.value( thread , Q_NULLPTR );
+    ExecutionEnvironmentElement* parallel = this->parallel_executions.value( thread , Q_NULLPTR );
     if( parallel ){
         emit parallel->running_storage.removeAll( entity );
     }
@@ -153,7 +153,7 @@ void GWSExecutionEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity
  PRIVATE
 **********************************************************************/
 
-void GWSExecutionEnvironment::run(){
+void geoworldsim::environment::ExecutionEnvironment::run(){
 
     if( this->isRunning() ){
         qDebug() << QString("%1 is already running").arg( this->metaObject()->className() );
@@ -162,27 +162,27 @@ void GWSExecutionEnvironment::run(){
 
     this->setProperties( QJsonObject( {
                                           { ENTITY_RUNNING_PROP , true } ,
-                                          { STARTED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+                                          { STARTED_SIMULATION_TIME , TimeEnvironment::globalInstance()->getCurrentDateTime() } ,
                                           { STARTED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
                                       } ));
 
-    foreach( GWSExecutionEnvironmentElement* p , this->parallel_executions.values() ) {
+    foreach( ExecutionEnvironmentElement* p , this->parallel_executions.values() ) {
         p->is_running = true;
     }
 
     emit this->runningExecutionSignal();
 
-    // Set timeout not to have infinite simulations
-    int timeout = GWSApp::globalInstance()->getConfiguration().value( "timeout" ).toInt( 5 );
+    // Set timeout not to have infinite lasting simulations
+    int timeout = App::globalInstance()->getConfiguration().value( "timeout" ).toInt( 5 );
     QTimer::singleShot( timeout * 1000 , []{
-        GWSApp::globalInstance()->exit( -1 );
+        App::globalInstance()->exit( -1 );
     });
 
     // Start ticking
-    QTimer::singleShot( 1000 , this , &GWSExecutionEnvironment::tick );
+    QTimer::singleShot( 1000 , this , &geoworldsim::environment::ExecutionEnvironment::tick );
 }
 
-void GWSExecutionEnvironment::behave(){
+void geoworldsim::environment::ExecutionEnvironment::behave(){
 
     bool parallel_runnings = false;
     int total_entities = 0;
@@ -190,10 +190,10 @@ void GWSExecutionEnvironment::behave(){
     int busy_entities = 0;
     int future_entities = 0;
     int ticked_entities = 0;
-    qint64 current_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 current_datetime = TimeEnvironment::globalInstance()->getCurrentDateTime();
     qint64 min_tick = current_datetime;
 
-    foreach( GWSExecutionEnvironmentElement* p , this->parallel_executions.values() ) {
+    foreach( ExecutionEnvironmentElement* p , this->parallel_executions.values() ) {
 
         if( p->is_running ){
             parallel_runnings = true;
@@ -204,7 +204,7 @@ void GWSExecutionEnvironment::behave(){
             future_entities += p->future_entities;
             ticked_entities += p->ticked_entities;
             //min_tick = (min_tick + p->min_tick) / 2;
-            QTimer::singleShot( 0 , p , &GWSExecutionEnvironmentElement::behave );
+            QTimer::singleShot( 0 , p , &ExecutionEnvironmentElement::behave );
         }
     }
 
@@ -219,8 +219,8 @@ void GWSExecutionEnvironment::behave(){
 
     qInfo() << message;
 
-    emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                QJsonObject({ { "message" , message } , { GWSTimeEnvironment::INTERNAL_TIME_PROP , (double)current_datetime } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+    emit CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                QJsonObject({ { "message" , message } , { TimeEnvironment::INTERNAL_TIME_PROP , (double)current_datetime } }) , App::globalInstance()->getAppId() + "-LOG" );
 
 
     if( !parallel_runnings ){
@@ -231,33 +231,32 @@ void GWSExecutionEnvironment::behave(){
 
         qInfo() << message;
 
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+        emit CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , message } }) , App::globalInstance()->getAppId() + "-LOG" );
 
         QTimer::singleShot( 10 * 1000 , []{
-            GWSApp::globalInstance()->exit( 0 );
+            App::globalInstance()->exit( 0 );
         });
 
         return;
     }
 
 
-
     // Call again this function
     if( this->isRunning() && parallel_runnings ) {
 
-        // DO NOT USE QTCONCURRENT FOR ANYTHING. IS SLOW AS HELL.
-        // OTHERWISE IT WAITS FOR ALL PENDING ENTITIES TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
+        // DO NOT USE QTCONCURRENT FOR ANYTHING HERE. IS SLOW AS HELL.
+        // AND IT WAITS FOR ALL PENDING ENTITIES TO TICK, GETS SLOW AND QUITE SYNCRHONOUS
         // DIRECTLY USE QTIMER::SINGLESHOT
-        qint64 next_tick_in = qMax( 10.0 , 1000 / GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
+        qint64 next_tick_in = qMax( 10.0 , 1000 / TimeEnvironment::globalInstance()->getTimeSpeed() );
 
         // Store min tick
         if( min_tick < current_datetime && ticked_entities > 0 && min_tick > 0 ){
-            GWSTimeEnvironment::globalInstance()->goBackToDatetime( min_tick );
+            TimeEnvironment::globalInstance()->goBackToDatetime( min_tick );
             current_datetime = min_tick;
         }
 
-        QJsonValue death_time = this->getProperty( GWSExecutionEnvironment::ENTITY_DEATH_PROP );
+        QJsonValue death_time = this->getProperty( geoworldsim::environment::ExecutionEnvironment::ENTITY_DEATH_PROP );
         if( !death_time.isNull() && current_datetime > death_time.toDouble() ){
             this->stop();
 
@@ -265,11 +264,11 @@ void GWSExecutionEnvironment::behave(){
 
             qInfo() << message;
 
-            emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                        QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+            emit CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                        QJsonObject({ { "message" , message } }) , App::globalInstance()->getAppId() + "-LOG" );
 
             QTimer::singleShot( 10 * 1000 , []{
-                GWSApp::globalInstance()->exit( 0 );
+                App::globalInstance()->exit( 0 );
             });
             return;
         }
@@ -281,21 +280,21 @@ void GWSExecutionEnvironment::behave(){
 
         // DO NOT ADVANCE IN TIME
         if( ready_entities <= 0 ){
-            GWSTimeEnvironment::globalInstance()->goBackMsecs( next_tick_in * GWSTimeEnvironment::globalInstance()->getTimeSpeed() );
+            TimeEnvironment::globalInstance()->goBackMsecs( next_tick_in * TimeEnvironment::globalInstance()->getTimeSpeed() );
         }
 
-        QTimer::singleShot( next_tick_in , this , &GWSExecutionEnvironment::tick );
+        QTimer::singleShot( next_tick_in , this , &geoworldsim::environment::ExecutionEnvironment::tick );
     }
 
 }
 
-void GWSExecutionEnvironment::stop(){
+void geoworldsim::environment::ExecutionEnvironment::stop(){
 
     if( !this->isRunning() ){ return; }
 
     this->setProperties( QJsonObject( {
                                           { ENTITY_RUNNING_PROP , false } ,
-                                          { ENDED_SIMULATION_TIME , GWSTimeEnvironment::globalInstance()->getCurrentDateTime() } ,
+                                          { ENDED_SIMULATION_TIME , TimeEnvironment::globalInstance()->getCurrentDateTime() } ,
                                           { ENDED_REAL_TIME , QDateTime::currentMSecsSinceEpoch() }
                                       }) );
 
@@ -306,7 +305,7 @@ void GWSExecutionEnvironment::stop(){
  HELPER CLASS
 **********************************************************************/
 
-bool GWSExecutionEnvironment::GWSExecutionEnvironmentElement::isBusy() const{
+bool geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironmentElement::isBusy() const{
     bool b;
     this->mutext.lockForRead();
     b = this->is_busy;
@@ -314,7 +313,7 @@ bool GWSExecutionEnvironment::GWSExecutionEnvironmentElement::isBusy() const{
     return b;
 }
 
-void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
+void geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironmentElement::behave(){
 
     this->mutext.lockForRead();
     if( this->is_busy ){
@@ -336,7 +335,7 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
     }
 
     // Get current datetime in simulation
-    qint64 executing_datetime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+    qint64 executing_datetime = TimeEnvironment::globalInstance()->getCurrentDateTime();
 
     // Wait for entities that are delayed (if WAIT_FOR_ME).
     // Get min tick time and add some threshold to execute the entities that are more delayed.
@@ -350,7 +349,7 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
     for( int i = 0 ; i < this->running_storage.size() ; i++ ){
 
-        QSharedPointer<GWSEntity> entity = this->running_storage.at( i );
+        QSharedPointer< Entity > entity = this->running_storage.at( i );
 
         if( entity.isNull() ){
             this->running_storage.removeAll( entity );
@@ -358,13 +357,13 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
         }
 
         this->total_entities++;
-        QJsonObject properties_copy = entity->getProperties({ WAIT_FOR_ME_PROP , GWSTimeEnvironment::INTERNAL_TIME_PROP });
+        QJsonObject properties_copy = entity->getProperties({ WAIT_FOR_ME_PROP , TimeEnvironment::INTERNAL_TIME_PROP });
 
         if( entity->isBusy() && !properties_copy.value( WAIT_FOR_ME_PROP ).toBool( false ) ) {
             continue;
         }
 
-        qint64 entity_time = properties_copy.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( executing_datetime );
+        qint64 entity_time = properties_copy.value( TimeEnvironment::INTERNAL_TIME_PROP ).toDouble( executing_datetime );
 
         if( entity_time > 0 && min_tick <= 0 ){ min_tick = entity_time; }
         if( entity_time > 0 && min_tick > 0 ){ min_tick = qMin( min_tick , entity_time ); }
@@ -386,7 +385,7 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
 
         foreach( int i , entities_to_be_ticked_positions ){
 
-            QSharedPointer<GWSEntity> entity = this->running_storage.at( i );
+            QSharedPointer< Entity > entity = this->running_storage.at( i );
 
             if( !entity || entity->deleted ){
                 this->running_storage.removeAll( entity );
@@ -398,12 +397,12 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
                 continue;
             }
 
-            QJsonObject properties_copy = entity->getProperties({ GWSTimeEnvironment::INTERNAL_TIME_PROP , GWSExecutionEnvironment::ENTITY_DEATH_PROP });
+            QJsonObject properties_copy = entity->getProperties({ TimeEnvironment::INTERNAL_TIME_PROP , geoworldsim::environment::ExecutionEnvironment::ENTITY_DEATH_PROP });
 
-            qint64 entity_next_tick = properties_copy.value( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
+            qint64 entity_next_tick = properties_copy.value( TimeEnvironment::INTERNAL_TIME_PROP ).toDouble( -1 );
 
-            if ( !properties_copy.value( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= properties_copy.value( GWSExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
-                GWSExecutionEnvironment::globalInstance()->unregisterEntity( entity );
+            if ( !properties_copy.value( geoworldsim::environment::ExecutionEnvironment::ENTITY_DEATH_PROP ).isNull() && min_tick >= properties_copy.value( geoworldsim::environment::ExecutionEnvironment::ENTITY_DEATH_PROP ).toDouble() ){
+                geoworldsim::environment::ExecutionEnvironment::globalInstance()->unregisterEntity( entity );
                 continue;
             }
 
@@ -412,12 +411,12 @@ void GWSExecutionEnvironment::GWSExecutionEnvironmentElement::behave(){
                 continue;
             }
 
-            if( entity_next_tick <= 0 ){ entity->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , min_tick ); }
+            if( entity_next_tick <= 0 ){ entity->setProperty( TimeEnvironment::INTERNAL_TIME_PROP , min_tick ); }
 
             // Call behave through tick for it to be executed in the entity's thread (important to avoid msec < 100)
             entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
-            QTimer::singleShot( 0 , entity.data() , &GWSEntity::tick );
+            QTimer::singleShot( 0 , entity.data() , &Entity::tick );
 
             if( this->max_entity_amount_per_tick > 0 && ++this->ticked_entities >= this->max_entity_amount_per_tick ){
                 break;

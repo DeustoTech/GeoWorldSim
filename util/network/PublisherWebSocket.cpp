@@ -1,4 +1,4 @@
-#include "ExternalPublisher.h"
+#include "PublisherWebSocket.h"
 
 #include "../../app/App.h"
 #include "../../object/Object.h"
@@ -7,24 +7,24 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QJsonDocument>
 
-GWSExternalPublisher::GWSExternalPublisher(const QString &socket_id) : GWSExternalCommunicator( socket_id){
+geoworldsim::network::PublisherWebSocket::PublisherWebSocket(const QString &socket_id) : WebSocketDriver( socket_id){
 
 }
 
-void GWSExternalPublisher::sendMessage(const QString &signal , const QJsonValue &json){
+void geoworldsim::network::PublisherWebSocket::sendMessage(const QString &signal , const QJsonValue &json){
 
     QJsonObject socket_json;
     socket_json.insert( "signal" , signal );
     socket_json.insert( "scenario_id" , this->socket_id );
     socket_json.insert( "body" , json );
 
-    if( this->websocket.state() == QAbstractSocket::ConnectedState && this->communicator_status >= CONNECTED ){
+    if( this->websocket.state() == QAbstractSocket::ConnectedState && this->socket_status >= CONNECTED ){
 
         QTimer::singleShot( qrand() % 100 , this , [ socket_json , this ](){
 
             try {
                 this->mutext.lockForRead();
-                if( this->websocket.state() == QAbstractSocket::ConnectedState && this->communicator_status >= CONNECTED ){
+                if( this->websocket.state() == QAbstractSocket::ConnectedState && this->socket_status >= CONNECTED ){
                     this->mutext.unlock();
 
                     // TO sockets.geoworldsim.com

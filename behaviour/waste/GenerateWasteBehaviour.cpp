@@ -5,7 +5,7 @@
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
-QString GenerateWasteBehaviour::DAILY_GENERATION = "daily_generation";
+QString GenerateWasteBehaviour::GENERATION = "generation";
 QString GenerateWasteBehaviour::SORTING_TYPES_CHARACTERIZATION = "characterization";
 QString GenerateWasteBehaviour::NEXTS = "nexts";
 
@@ -21,7 +21,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
     // Packaging: ST5
     // Paper: ST7
     QJsonObject default_characterization = QJsonObject({
-                               { "SortingType:2" , QJsonObject({
+                               { "2" , QJsonObject({
                                        { "food_waste" , 0.0413 } ,
                                        { "no_food_waste" , 0.4153 } ,
                                        { "gardening_waste" , 0.00 } ,
@@ -57,7 +57,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
                                        { "other_not_in_other_categories" , 0.00  }
                                 }) } ,
 
-                                { "SortingType:7" , QJsonObject({
+                                { "7" , QJsonObject({
                                         { "food_waste" , 0.0256 } ,
                                         { "no_food_waste" ,    0.0222 } ,
                                         { "gardening_waste" ,  0.0115  } ,
@@ -92,7 +92,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
                                         { "10_mm_sieved_fraction" ,     0.0018  } ,
                                         { "other_not_in_other_categories" ,   0.0010  }
                                     }) } ,
-                                    { "SortingType:5" , QJsonObject({
+                                    { "5" , QJsonObject({
                                             { "food_waste" , 0.0014 } ,
                                             { "no_food_waste" ,    0.0037 } ,
                                             { "gardening_waste" ,  0.00  } ,
@@ -127,7 +127,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
                                             { "10_mm_sieved_fraction" ,  0.0170  } ,
                                             { "other_not_in_other_categories" ,    0.0017 }
                                  }) } ,
-                                 { "SortingType:10" , QJsonObject({
+                                 { "10" , QJsonObject({
                                             { "food_waste" ,  0.0557} ,
                                             { "no_food_waste" ,  0.8877 } ,
                                             { "gardening_waste" ,  0.00  } ,
@@ -164,7 +164,7 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
                                     }) }
                                 });
 
-    this->setProperty( this->getProperty( SORTING_TYPES_CHARACTERIZATION ).toString() , default_characterization );
+    this->setProperty( SORTING_TYPES_CHARACTERIZATION , default_characterization );
 
 }
 
@@ -186,7 +186,7 @@ QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
 
-    QJsonObject characterization_data = this->getProperty( SORTING_TYPES_CHARACTERIZATION ).toObject( this->getProperty( "characterization" ).toObject());
+    QJsonObject characterization_data = this->getProperty( SORTING_TYPES_CHARACTERIZATION ).toObject();
 
     // Accumulate the total per sorting_type and waste_category
     QMap< QString , GWSMassUnit > totals;
@@ -204,7 +204,7 @@ QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
     }
 
     // Iterate the daily generation
-    QJsonObject generation_data = this->getProperty( DAILY_GENERATION ).toObject( this->getProperty("daily_generation" ).toObject() );
+    QJsonObject generation_data = this->getProperty( GENERATION ).toObject();
 
     foreach(QString key , generation_data.keys() ){
 

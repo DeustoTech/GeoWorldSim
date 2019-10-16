@@ -5,7 +5,11 @@
 
 #include "../../util/geometry/Coordinate.h"
 
-class PolluteBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+
+class PolluteBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -16,11 +20,10 @@ public:
     // PARAMETERS
     static QString INPUT_VEHICLE_SUBTYPE;
     static QString INPUT_VEHICLE_TYPE;
-    static QString ABATEMENT_TYPE;
     static QString INPUT_POLLUTANT_TYPES;
-    static QString CURRENT_ROAD_GRADIENT;
-    static QString CURRENT_ROAD_TYPE;
-    static QString CURRENT_ROAD_TRAFFIC_SITUATION;
+    static QString INPUT_CURRENT_ROAD_GRADIENT;
+    static QString INPUT_CURRENT_ROAD_TYPE;
+    static QString INPUT_CURRENT_ROAD_TRAFFIC_SITUATION;
     static QString OUTPUT_POLLUTANTS;
     static QString NEXTS;
 
@@ -31,8 +34,11 @@ protected:
     virtual void afterCreateHook();
 
 private:
-    GWSCoordinate last_position;
+    geometry::Coordinate last_position;
 
 };
+
+}
+}
 
 #endif // POLLUTEBEHAVIOUR_H

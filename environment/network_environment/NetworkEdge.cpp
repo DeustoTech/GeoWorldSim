@@ -1,30 +1,30 @@
 #include "NetworkEdge.h"
 
-QString GWSNetworkEdge::EDGE_FROM_X_PROP = "from_x";
-QString GWSNetworkEdge::EDGE_FROM_Y_PROP = "from_y";
-QString GWSNetworkEdge::EDGE_FROM_Z_PROP = "from_z";
-QString GWSNetworkEdge::EDGE_TO_X_PROP = "to_x";
-QString GWSNetworkEdge::EDGE_TO_Y_PROP = "to_y";
-QString GWSNetworkEdge::EDGE_TO_Z_PROP = "to_z";
+QString geoworldsim::graph::NetworkEdge::EDGE_FROM_X_PROP = "from_x";
+QString geoworldsim::graph::NetworkEdge::EDGE_FROM_Y_PROP = "from_y";
+QString geoworldsim::graph::NetworkEdge::EDGE_FROM_Z_PROP = "from_z";
+QString geoworldsim::graph::NetworkEdge::EDGE_TO_X_PROP = "to_x";
+QString geoworldsim::graph::NetworkEdge::EDGE_TO_Y_PROP = "to_y";
+QString geoworldsim::graph::NetworkEdge::EDGE_TO_Z_PROP = "to_z";
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-bool GWSNetworkEdge::isValid() const {
+bool geoworldsim::graph::NetworkEdge::isValid() const {
     return this->getFromCoordinate().isValid() && this->getToCoordinate().isValid();
 }
 
-GWSCoordinate GWSNetworkEdge::getFromCoordinate() const{
+geoworldsim::geometry::Coordinate geoworldsim::graph::NetworkEdge::getFromCoordinate() const{
     return this->from;
 }
 
-GWSCoordinate GWSNetworkEdge::getToCoordinate() const{
+geoworldsim::geometry::Coordinate geoworldsim::graph::NetworkEdge::getToCoordinate() const{
     return this->to;
 }
 
-GWSLengthUnit GWSNetworkEdge::getLength() const {
-    return GWSLengthUnit( this->cost );
+geoworldsim::unit::LengthUnit geoworldsim::graph::NetworkEdge::getLength() const {
+    return unit::LengthUnit( this->cost );
 }
 
 /**
@@ -32,7 +32,7 @@ GWSLengthUnit GWSNetworkEdge::getLength() const {
  * (positive for climbing up and negative for going down)
  * @return
  */
-double GWSNetworkEdge::getGradient() const{
+double geoworldsim::graph::NetworkEdge::getGradient() const{
     double length = this->getLength().number();
     if( length ){
         try {
@@ -49,6 +49,6 @@ double GWSNetworkEdge::getGradient() const{
  SETTERS
 **********************************************************************/
 
-void GWSNetworkEdge::setLength(GWSLengthUnit length){
+void geoworldsim::graph::NetworkEdge::setLength(geoworldsim::unit::LengthUnit length){
     this->cost = length.number();
 }

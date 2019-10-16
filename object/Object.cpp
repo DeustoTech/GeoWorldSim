@@ -9,23 +9,25 @@
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
-QString GWSObject::GWS_UID_PROP = "id";
-QString GWSObject::GWS_CLASS_PROP = "@gwsclass";
-QString GWSObject::GWS_INHERITANCE_FAMILY_PROP = "@gwsgroups";
 
-quint64 GWSObject::counter = QDateTime::currentMSecsSinceEpoch();
+QString geoworldsim::Object::GWS_UID_PROP = "id";
+QString geoworldsim::Object::GWS_CLASS_PROP = "@gwsclass";
+QString geoworldsim::Object::GWS_INHERITANCE_FAMILY_PROP = "@gwsgroups";
 
-GWSObject::GWSObject() : QObject() , deleted(false) {
+quint64 geoworldsim::Object::counter = QDateTime::currentMSecsSinceEpoch();
+
+geoworldsim::Object::Object() : QObject() , deleted(false) {
     this->properties = new QJsonObject();
 
-    QString generated_id = QString("Entity::%1").arg( ++GWSObject::counter );
-    this->setProperty( GWSObject::GWS_UID_PROP ,  generated_id );
+    QString generated_id = QString("Entity::%1").arg( ++geoworldsim::Object::counter );
+    this->setProperty( geoworldsim::Object::GWS_UID_PROP ,  generated_id );
 }
 
-GWSObject::GWSObject(const GWSObject &other) : QObject(){
+geoworldsim::Object::Object(const geoworldsim::Object &other) : QObject(){
+    this->properties = other.properties;
 }
 
-GWSObject::~GWSObject(){
+geoworldsim::Object::~Object(){
     this->beforeDestroyHook();
     this->deleted = true;
     delete this->properties;
@@ -38,7 +40,7 @@ GWSObject::~GWSObject(){
 /**
  * @brief GSSObject::toMiniJSON Called when asked for many objects
  */
-QJsonObject GWSObject::serializeMini() const{
+QJsonObject geoworldsim::Object::serializeMini() const{
     QJsonObject json;
     json.insert( GWS_UID_PROP , this->getUID() );
     json.insert( GWS_CLASS_PROP , this->metaObject()->className() );
@@ -52,7 +54,7 @@ QJsonObject GWSObject::serializeMini() const{
  * Can be overwritten if want to add extra variables to child classes
  * @return
  */
-QJsonObject GWSObject::serialize() const{
+QJsonObject geoworldsim::Object::serialize() const{
     QJsonObject json( this->serializeMini() );
 
     this->mutex.lockForRead();
@@ -69,7 +71,7 @@ QJsonObject GWSObject::serialize() const{
  IMPORTERS
 **********************************************************************/
 
-void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> parent){
+void geoworldsim::Object::deserialize(const QJsonObject &json, QSharedPointer<geoworldsim::Object> parent){
     Q_UNUSED( parent );
 
     // Required properties
@@ -110,21 +112,21 @@ void GWSObject::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> p
  GETTERS
 **********************************************************************/
 
-QString GWSObject::getUID() const{
+QString geoworldsim::Object::getUID() const{
     this->mutex.lockForRead();
-    QJsonValue uuid = this->properties->value( GWSObject::GWS_UID_PROP );
+    QJsonValue uuid = this->properties->value( geoworldsim::Object::GWS_UID_PROP );
     this->mutex.unlock();
     return uuid.toString();
 }
 
-QSharedPointer<GWSObject> GWSObject::getSharedPointer() const{
+QSharedPointer<geoworldsim::Object> geoworldsim::Object::getSharedPointer() const{
     return this->self_shared_pointer;
 }
 
-QJsonArray GWSObject::getInheritanceFamily() const{
+QJsonArray geoworldsim::Object::getInheritanceFamily() const{
 
     this->mutex.lockForRead();
-    QJsonArray inheritance_family = this->properties->value( GWSObject::GWS_INHERITANCE_FAMILY_PROP ).toArray();
+    QJsonArray inheritance_family = this->properties->value( geoworldsim::Object::GWS_INHERITANCE_FAMILY_PROP ).toArray();
     this->mutex.unlock();
 
     inheritance_family.append( this->metaObject()->className() );
@@ -139,11 +141,11 @@ QJsonArray GWSObject::getInheritanceFamily() const{
     return inheritance_family;
 }
 
-bool GWSObject::hasProperty( const QString &name ) const{
+bool geoworldsim::Object::hasProperty( const QString &name ) const{
     return this->properties->contains( name );
 }
 
-QJsonValue GWSObject::getProperty( const QString &name ) const{
+QJsonValue geoworldsim::Object::getProperty( const QString &name ) const{
     if( name.startsWith( "<" ) && name.endsWith( ">" ) ){
         QString str = name;
         str = str.remove( 0 , 1 );
@@ -164,7 +166,7 @@ QJsonValue GWSObject::getProperty( const QString &name ) const{
     }
 }
 
-QJsonObject GWSObject::getProperties(const QStringList &names) const{
+QJsonObject geoworldsim::Object::getProperties(const QStringList &names) const{
     QJsonObject props;
 
     foreach( QString name , names ){
@@ -194,7 +196,7 @@ QJsonObject GWSObject::getProperties(const QStringList &names) const{
     return props;
 }
 
-QJsonValue GWSObject::operator []( const QString &name ) const{
+QJsonValue geoworldsim::Object::operator []( const QString &name ) const{
     return this->getProperty( name );
 }
 
@@ -202,15 +204,15 @@ QJsonValue GWSObject::operator []( const QString &name ) const{
  SETTERS
 **********************************************************************/
 
-bool GWSObject::setProperty( const QString &name, const GWSUnit &value){
+bool geoworldsim::Object::setProperty( const QString &name, const geoworldsim::unit::Unit &value){
     return this->setProperties( { { name , value.number() } } );
 }
 
-bool GWSObject::setProperty( const QString &name, const QJsonValue &value){
+bool geoworldsim::Object::setProperty( const QString &name, const QJsonValue &value){
     return this->setProperties( { { name , value } } );
 }
 
-bool GWSObject::setProperties(const QJsonObject &obj){
+bool geoworldsim::Object::setProperties(const QJsonObject &obj){
 
     this->mutex.lockForWrite();
     foreach( QString name , obj.keys()) {
@@ -219,7 +221,7 @@ bool GWSObject::setProperties(const QJsonObject &obj){
     this->mutex.unlock();
 
     foreach( QString name , obj.keys() ) {
-        foreach(std::function<void( QSharedPointer<GWSObject> , QString )> callback , this->subscriptions.value( name ) ){
+        foreach(std::function<void( QSharedPointer<geoworldsim::Object> , QString )> callback , this->subscriptions.value( name ) ){
             QtConcurrent::run([ callback , this , &name ]{
                 callback( this->getSharedPointer() , name );
             });
@@ -229,11 +231,11 @@ bool GWSObject::setProperties(const QJsonObject &obj){
     return true;
 }
 
-bool GWSObject::removeProperty( const QString &name ){
+bool geoworldsim::Object::removeProperty( const QString &name ){
     return this->removeProperties( QStringList({ name }) );
 }
 
-bool GWSObject::removeProperties(const QStringList &names){
+bool geoworldsim::Object::removeProperties(const QStringList &names){
 
     this->mutex.lockForWrite();
     foreach( QString name , names) {
@@ -242,7 +244,7 @@ bool GWSObject::removeProperties(const QStringList &names){
     this->mutex.unlock();
 
     foreach( QString name , names ) {
-        foreach(std::function<void( QSharedPointer<GWSObject> , QString )> callback , this->subscriptions.value( name ) ){
+        foreach(std::function<void( QSharedPointer<geoworldsim::Object> , QString )> callback , this->subscriptions.value( name ) ){
             QtConcurrent::run([ callback , this , &name ]{
                 callback( this->getSharedPointer() , name );
             });
@@ -252,7 +254,7 @@ bool GWSObject::removeProperties(const QStringList &names){
     return true;
 }
 
-void GWSObject::copyProperties( GWSObject &other){
+void geoworldsim::Object::copyProperties( geoworldsim::Object &other){
     /*for (int i = 0; i < other.dynamicPropertyNames().size(); ++i) {
         const char* property_name = other.dynamicPropertyNames().at( i );
         const QVariant property_value = other.getProperty( property_name );
@@ -260,13 +262,13 @@ void GWSObject::copyProperties( GWSObject &other){
     }*/
 }
 
-bool GWSObject::incrementProperty( QString &name, const QJsonValue &value){
+bool geoworldsim::Object::incrementProperty( QString &name, const QJsonValue &value){
     QJsonValue existing_value = this->getProperty( name );
-    QJsonValue values_sum = GWSObjectFactory::incrementValue( existing_value , value );
+    QJsonValue values_sum = geoworldsim::ObjectFactory::incrementValue( existing_value , value );
     return this->setProperty( name , values_sum );
 }
 
-void GWSObject::addSubscription(const QString &property_name, std::function<void (QSharedPointer<GWSObject>, QString)> callback){
+void geoworldsim::Object::addSubscription(const QString &property_name, std::function<void (QSharedPointer<geoworldsim::Object>, QString)> callback){
 
 }
 
@@ -274,7 +276,7 @@ void GWSObject::addSubscription(const QString &property_name, std::function<void
  EVENTS
 **********************************************************************/
 
-/*bool GWSObject::event(QEvent *event){
+/*bool geoworldsim::GWSObject::event(QEvent *event){
 
     if( event->type() == QEvent::DynamicPropertyChange ){
         QDynamicPropertyChangeEvent* const ev = static_cast<QDynamicPropertyChangeEvent*>( event );
@@ -289,3 +291,4 @@ void GWSObject::addSubscription(const QString &property_name, std::function<void
 
     return QObject::event( event );
 }*/
+

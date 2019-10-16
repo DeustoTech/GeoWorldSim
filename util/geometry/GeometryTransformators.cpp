@@ -5,7 +5,7 @@
 #include "geos/simplify/TopologyPreservingSimplifier.h"
 #include "GeometryToGeoJSON.h"
 
-GWSGeometry GWSGeometryTransformators::transformMove( const GWSGeometry &geometry , const GWSCoordinate &apply_movement){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformMove( const geoworldsim::geometry::Geometry &geometry , const geoworldsim::geometry::Coordinate &apply_movement){
     if( !apply_movement.isValid() ){ return geometry; }
 
     if( !geometry.inner_geometry ){
@@ -13,34 +13,34 @@ GWSGeometry GWSGeometryTransformators::transformMove( const GWSGeometry &geometr
         geojson.insert( "type" , "Point" );
         QJsonArray coordinate = { apply_movement.getX() , apply_movement.getY() , apply_movement.getZ() };
         geojson.insert( "coordinates" , coordinate );
-        return GWSGeometry( geojson );
+        return Geometry( geojson );
     }
 
     // Else
-    GWSGeometry new_geometry = GWSGeometry( geometry );
-    GWSGeometryTransformMoveFilter move = GWSGeometryTransformMoveFilter( apply_movement );
+    Geometry new_geometry = Geometry( geometry );
+    GeometryTransformMoveFilter move = GeometryTransformMoveFilter( apply_movement );
     new_geometry.inner_geometry->apply_rw( move );
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSGeometry GWSGeometryTransformators::transformBuffer( const GWSGeometry &geometry , double threshold ){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformBuffer( const geoworldsim::geometry::Geometry &geometry , double threshold ){
     geos::geom::Geometry* buffered = geometry.inner_geometry->buffer( threshold );
-    GWSGeometry new_geometry;
+    Geometry new_geometry;
     new_geometry.inner_geometry = buffered;
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSGeometry GWSGeometryTransformators::transformUnion( const GWSGeometry &geometry , const GWSGeometry &other){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformUnion( const geoworldsim::geometry::Geometry &geometry , const geoworldsim::geometry::Geometry &other){
     geos::geom::Geometry* unioned = geometry.inner_geometry->Union( other.inner_geometry );
-    GWSGeometry new_geometry;
+    Geometry new_geometry;
     new_geometry.inner_geometry = unioned;
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSGeometry GWSGeometryTransformators::transformToFit(const GWSGeometry &origin, const GWSGeometry &extension){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformToFit(const geoworldsim::geometry::Geometry &origin, const geoworldsim::geometry::Geometry &extension){
     geos::geom::Geometry* boundary = Q_NULLPTR;
     if( origin.inner_geometry && extension.inner_geometry ) {
         try {
@@ -55,33 +55,33 @@ GWSGeometry GWSGeometryTransformators::transformToFit(const GWSGeometry &origin,
         boundary = extension.inner_geometry->clone();
     }
 
-    if( !boundary ){ return GWSGeometry(); }
+    if( !boundary ){ return Geometry(); }
 
-    GWSGeometry new_geometry;
+    Geometry new_geometry;
     new_geometry.inner_geometry = boundary;
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSGeometry GWSGeometryTransformators::transformIntersection( const GWSGeometry &geometry , const GWSGeometry &other){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformIntersection( const geoworldsim::geometry::Geometry &geometry , const geoworldsim::geometry::Geometry &other){
     if( !geometry.inner_geometry ){ return geometry; }
     geos::geom::Geometry* intersected = geometry.inner_geometry->intersection( other.inner_geometry );
-    GWSGeometry new_geometry;
+    Geometry new_geometry;
     new_geometry.inner_geometry = intersected;
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
-GWSGeometry GWSGeometryTransformators::transformSimplify(const GWSGeometry &geometry, double tolerance){
+geoworldsim::geometry::Geometry geoworldsim::geometry::GeometryTransformators::transformSimplify(const geoworldsim::geometry::Geometry &geometry, double tolerance){
     if( !geometry.inner_geometry ){ return geometry; }
-    GWSGeometry new_geometry;
+    Geometry new_geometry;
     std::auto_ptr<geos::geom::Geometry> geom = geos::simplify::TopologyPreservingSimplifier::simplify( geometry.inner_geometry , tolerance );
     if( !geom->isValid() ){
         geom.reset();
         return geometry;
     }
     new_geometry.inner_geometry = geom.release();
-    new_geometry.geojson = GWSGeometryToGeoJSON::GeometryToGeoJSON( new_geometry.inner_geometry );
+    new_geometry.geojson = GeometryToGeoJSON::toGeoJSON( new_geometry.inner_geometry );
     return new_geometry;
 }
 
@@ -89,11 +89,11 @@ GWSGeometry GWSGeometryTransformators::transformSimplify(const GWSGeometry &geom
  SPATIAL TRANSFORMS FILTERS
 **********************************************************************/
 
-GWSGeometryTransformMoveFilter::GWSGeometryTransformMoveFilter(const GWSCoordinate &move ) : geos::geom::CoordinateSequenceFilter() {
+geoworldsim::geometry::GeometryTransformMoveFilter::GeometryTransformMoveFilter(const geoworldsim::geometry::Coordinate &move ) : geos::geom::CoordinateSequenceFilter() {
     this->apply_movement = move;
 }
 
-void GWSGeometryTransformMoveFilter::filter_rw(CoordinateSequence& seq , std::size_t i ){
+void geoworldsim::geometry::GeometryTransformMoveFilter::filter_rw( geos::geom::CoordinateSequence& seq , std::size_t i ){
     const geos::geom::Coordinate origin = seq.getAt(i);
     geos::geom::Coordinate moved( origin.x + this->apply_movement.getX() , origin.y + this->apply_movement.getY() , origin.z + this->apply_movement.getZ() );
     seq.setAt(moved, i);
@@ -102,6 +102,6 @@ void GWSGeometryTransformMoveFilter::filter_rw(CoordinateSequence& seq , std::si
         this->finished = true;
     }
 }
-void GWSGeometryTransformMoveFilter::filter_ro(CoordinateSequence &seq, std::size_t i){ Q_UNUSED(seq); Q_UNUSED(i) }
-bool GWSGeometryTransformMoveFilter::isDone() const { return this->finished; }
-bool GWSGeometryTransformMoveFilter::isGeometryChanged() const { return true; }
+void geoworldsim::geometry::GeometryTransformMoveFilter::filter_ro( geos::geom::CoordinateSequence &seq, std::size_t i){ Q_UNUSED(seq); Q_UNUSED(i) }
+bool geoworldsim::geometry::GeometryTransformMoveFilter::isDone() const { return this->finished; }
+bool geoworldsim::geometry::GeometryTransformMoveFilter::isGeometryChanged() const { return true; }

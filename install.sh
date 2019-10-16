@@ -26,6 +26,7 @@ sudo apt-get install -y unzip
 sudo apt-get install -y npm
 sudo apt-get install -y libpq-dev
 sudo apt-get install -y libgeos-dev libgeos++-dev
+sudo apt-get install -y libssl-dev
 sudo apt-get install -y liblemon-dev
 sudo apt-get install -y libspatialindex-dev
 sudo apt-get install -y libproj-dev

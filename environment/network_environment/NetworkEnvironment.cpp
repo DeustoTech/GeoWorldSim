@@ -6,28 +6,26 @@
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-#include "../../app/App.h"
+QString geoworldsim::environment::NetworkEnvironment::EDGE_PROP = "edge";
 
-QString GWSNetworkEnvironment::EDGE_PROP = "edge";
-
-GWSNetworkEnvironment* GWSNetworkEnvironment::globalInstance(){
-    static GWSNetworkEnvironment instance;
+geoworldsim::environment::NetworkEnvironment* geoworldsim::environment::NetworkEnvironment::globalInstance(){
+    static geoworldsim::environment::NetworkEnvironment instance;
     return &instance;
 }
 
-GWSNetworkEnvironment::GWSNetworkEnvironment() : GWSEnvironment(){
+geoworldsim::environment::NetworkEnvironment::NetworkEnvironment() : Environment(){
     qInfo() << "NetworkEnvironment created";
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    EnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
-GWSNetworkEnvironment::~GWSNetworkEnvironment(){
+geoworldsim::environment::NetworkEnvironment::~NetworkEnvironment(){
 }
 
 /**********************************************************************
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSNetworkEnvironment::serialize() const{
+QJsonObject geoworldsim::environment::NetworkEnvironment::serialize() const{
     QJsonObject json;
     //QJsonObject json = GWSEnvironment::serializeMini();
     return json;
@@ -37,11 +35,11 @@ QJsonObject GWSNetworkEnvironment::serialize() const{
  GETTERS
 **********************************************************************/
 
-QString GWSNetworkEnvironment::getEdge( const GWSCoordinate &from , const GWSCoordinate &to , const QString &class_name) const{
+QString geoworldsim::environment::NetworkEnvironment::getEdge( const geoworldsim::geometry::Coordinate &from , const geoworldsim::geometry::Coordinate &to , const QString &class_name) const{
     if( this->network_edges.keys().contains( class_name ) ){
         QString agent_id = this->network_edges.value( class_name )->getNearestElement( from );
-        QSharedPointer< GWSEntity > agent = GWSEntityEnvironment::globalInstance()->getByUID( agent_id );
-        GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
+        QSharedPointer< Entity > agent = EntityEnvironment::globalInstance()->getByUID( agent_id );
+        graph::NetworkEdge edge = graph::NetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
         if( edge.getToCoordinate() == to ){
             return agent_id;
         }
@@ -49,42 +47,42 @@ QString GWSNetworkEnvironment::getEdge( const GWSCoordinate &from , const GWSCoo
     return QString();
 }
 
-QString GWSNetworkEnvironment::getNearestAgent( const GWSCoordinate &coor , const QString &class_name ) const{
+QString geoworldsim::environment::NetworkEnvironment::getNearestAgent( const geoworldsim::geometry::Coordinate &coor , const QString &class_name ) const{
     if( this->network_edges.keys().contains( class_name ) ){
         return this->network_edges.value( class_name )->getNearestElement( coor );
     }
     return QString();
 }
 
-QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > GWSNetworkEnvironment::getNearestNodeAndPath(const GWSCoordinate &coor, QList<GWSCoordinate> get_nearest, const QString &class_name) const {
+QPair< geoworldsim::geometry::Coordinate , QList< QSharedPointer< geoworldsim::Entity > > > geoworldsim::environment::NetworkEnvironment::getNearestNodeAndPath(const geoworldsim::geometry::Coordinate &coor, QList< geoworldsim::geometry::Coordinate > get_nearest, const QString &class_name) const {
     QList< QStringList > routes_to_all = this->getShortestPaths( coor , get_nearest , class_name );
 
     Q_ASSERT( routes_to_all.size() == get_nearest.size() );
 
     // Check which route is shortest
-    GWSLengthUnit shortest_length = GWSLengthUnit( 9999999999 );
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > nearest_node_and_route;
+    unit::LengthUnit shortest_length = unit::LengthUnit( 9999999999 );
+    QPair< geoworldsim::geometry::Coordinate , QList< QSharedPointer< Entity > > > nearest_node_and_route;
     for(int i = 0 ; i < get_nearest.size() ; i++ ){
 
         QStringList route = routes_to_all.at( i );
         if( route.isEmpty() ){ continue; }
 
-        QList< QSharedPointer<GWSEntity> > route_agents = GWSEntityEnvironment::globalInstance()->getByUIDS( route );
+        QList< QSharedPointer< Entity > > route_agents = EntityEnvironment::globalInstance()->getByUIDS( route );
         if( route_agents.isEmpty() ){ continue; }
 
-        GWSLengthUnit l = GWSLengthUnit(0);
-        foreach( QSharedPointer<GWSEntity> e , route_agents ){
-            l = l + GWSNetworkEdge( e->getProperty( EDGE_PROP ).toObject() ).getLength();
+        unit::LengthUnit l = unit::LengthUnit(0);
+        foreach( QSharedPointer< Entity > e , route_agents ){
+            l = l + graph::NetworkEdge( e->getProperty( EDGE_PROP ).toObject() ).getLength();
         }
         if( l < shortest_length ){
             shortest_length = l;
-            nearest_node_and_route = QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > >( get_nearest.at( i ) , route_agents );
+            nearest_node_and_route = QPair< geoworldsim::geometry::Coordinate , QList< QSharedPointer< Entity > > >( get_nearest.at( i ) , route_agents );
         }
     }
     return nearest_node_and_route;
 }
 
-QStringList GWSNetworkEnvironment::getShortestPath( const GWSCoordinate &from, const GWSCoordinate &to , const QString &class_name ) const{
+QStringList geoworldsim::environment::NetworkEnvironment::getShortestPath( const geoworldsim::geometry::Coordinate &from, const geoworldsim::geometry::Coordinate &to , const QString &class_name ) const{
 
     if( this->network_routings.keys().contains( class_name ) ){
         // Move given coordinates to real graph nodes
@@ -97,10 +95,10 @@ QStringList GWSNetworkEnvironment::getShortestPath( const GWSCoordinate &from, c
     return QStringList();
 }
 
-QList< QStringList > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinate > ordered_coors , const QString &class_name ) const{
+QList< QStringList > geoworldsim::environment::NetworkEnvironment::getShortestPath( QList< geoworldsim::geometry::Coordinate > ordered_coors , const QString &class_name ) const{
     if( this->network_routings.keys().contains( class_name ) ){
         QStringList snapped_ordered;
-        foreach (GWSCoordinate c, ordered_coors) {
+        foreach (geoworldsim::geometry::Coordinate c, ordered_coors) {
             snapped_ordered.append( this->getNearestNodeUID( c , class_name ) );
         }
         return this->network_routings.value( class_name )->getShortestPath( snapped_ordered );
@@ -110,7 +108,7 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPath( QList< GWSCoordinat
     return QList< QStringList >();
 }
 
-QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinate &from_one, QList< GWSCoordinate > to_many , const QString &class_name ) const{
+QList< QStringList > geoworldsim::environment::NetworkEnvironment::getShortestPaths( const geoworldsim::geometry::Coordinate &from_one, QList< geoworldsim::geometry::Coordinate > to_many , const QString &class_name ) const{
     QList< QStringList > paths;
 
     if( this->network_routings.keys().contains( class_name ) ){
@@ -124,7 +122,7 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinat
         }
 
         QStringList snapped_to_many;
-        foreach( GWSCoordinate c , to_many ) {
+        foreach( geoworldsim::geometry::Coordinate c , to_many ) {
             snapped_to_many.append( this->getNearestNodeUID( c , class_name ) );
         }
         paths = this->network_routings.value( class_name )->getShortestPaths( snapped_from , snapped_to_many );
@@ -146,50 +144,50 @@ QList< QStringList > GWSNetworkEnvironment::getShortestPaths( const GWSCoordinat
  PRIVATE
 **********************************************************************/
 
-void GWSNetworkEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
+void geoworldsim::environment::NetworkEnvironment::registerEntity( QSharedPointer< Entity > entity ){
 
     // If already registered
-    if( agent.isNull() || agent->getEnvironments().contains( this ) || agent->getProperty( EDGE_PROP ).isNull() ){
+    if( entity.isNull() || entity->getEnvironments().contains( this ) || entity->getProperty( EDGE_PROP ).isNull() ){
         return;
     }
 
-    GWSEnvironment::registerEntity( agent );
+    Environment::registerEntity( entity );
 
-    QJsonObject json = agent->getProperty( EDGE_PROP ).toObject();
+    QJsonObject json = entity->getProperty( EDGE_PROP ).toObject();
 
     if( json.value( SKIP_INDEXING ).toBool() ){
         return;
     }
 
-    GWSNetworkEdge edge = GWSNetworkEdge( json );
+    graph::NetworkEdge edge = graph::NetworkEdge( json );
     if( !edge.isValid() ){
         return;
     }
 
-    this->upsertEntityToIndex( agent , edge );
+    this->upsertEntityToIndex( entity , edge );
 
     if( json.value( SKIP_SUBSCRIBING ).toBool() ){
         return;
     }
 
     // Listen to agent property changes
-    agent->addSubscription( EDGE_PROP , [this](QSharedPointer<GWSObject> entity , QString property_name ){
-        this->upsertEntityToIndex( entity.dynamicCast<GWSEntity>() , GWSNetworkEdge( entity->getProperty( property_name ).toObject() ) );
+    entity->addSubscription( EDGE_PROP , [this](QSharedPointer< Object > entity , QString property_name ){
+        this->upsertEntityToIndex( entity.dynamicCast< Entity >() , graph::NetworkEdge( entity->getProperty( property_name ).toObject() ) );
     });
 
 }
 
-void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
+void geoworldsim::environment::NetworkEnvironment::unregisterEntity( QSharedPointer< Entity > entity ){
 
     try {
 
-        GWSEnvironment::unregisterEntity( agent );
-        QJsonArray classes = agent->getInheritanceFamily();
+        Environment::unregisterEntity( entity );
+        QJsonArray classes = entity->getInheritanceFamily();
 
-        GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
-        QString uuid = agent->getUID();
+        graph::NetworkEdge edge = graph::NetworkEdge( entity->getProperty( EDGE_PROP ).toObject() );
+        QString uuid = entity->getUID();
 
-        //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSNetworkEnvironment::entityPropertyChanged );
+        //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &geoworldsim::environment::NetworkEnvironment::entityPropertyChanged );
 
         foreach(QJsonValue v , classes){
 
@@ -206,7 +204,7 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
         }
 
     } catch (std::exception &e){
-        qWarning() << QString("Simulation threw an exception unregistering agent from GWSNetworkEnvironment. Exception %1").arg( e.what() );
+        qWarning() << QString("Simulation threw an exception unregistering agent from geoworldsim::environment::NetworkEnvironment. Exception %1").arg( e.what() );
     }
 }
 
@@ -214,26 +212,26 @@ void GWSNetworkEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
  PROTECTED
 **********************************************************************/
 
-void GWSNetworkEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent, const GWSNetworkEdge &edge ){
-    foreach( QJsonValue v , agent->getInheritanceFamily() ) {
+void geoworldsim::environment::NetworkEnvironment::upsertEntityToIndex(QSharedPointer< Entity > entity , const graph::NetworkEdge &edge ){
+    foreach( QJsonValue v , entity ->getInheritanceFamily() ) {
 
-        QString uuid = agent->getUID();
+        QString uuid = entity ->getUID();
         QString family = v.toString();
         if( family.isEmpty() ){ continue; }
 
         this->mutex.lockForRead();
-        QSharedPointer< GWSQuadtree > tree = this->network_edges.value( family , Q_NULLPTR );
-        QSharedPointer< GWSRouting > routing = this->network_routings.value( family , Q_NULLPTR );
+        QSharedPointer< geometry::Quadtree > tree = this->network_edges.value( family , Q_NULLPTR );
+        QSharedPointer< routing::Routing > routing = this->network_routings.value( family , Q_NULLPTR );
 
         if( !tree ){
             this->mutex.unlock();
 
             this->mutex.lockForWrite();
             this->environment_entity_index_types.append( family );
-            tree = QSharedPointer< GWSQuadtree >( new GWSQuadtree() );
+            tree = QSharedPointer< geometry::Quadtree >( new geometry::Quadtree() );
             tree.data()->setObjectName( QString("%1 %2").arg( this->metaObject()->className() ).arg( family ) );
             this->network_edges.insert( family , tree );
-            routing = QSharedPointer< GWSRouting >( new GWSRouting() );
+            routing = QSharedPointer< routing::Routing >( new routing::Routing() );
             this->network_routings.insert( family , routing );
         }
         this->mutex.unlock();
@@ -243,13 +241,13 @@ void GWSNetworkEnvironment::upsertEntityToIndex(QSharedPointer<GWSEntity> agent,
     }
 }
 
-void GWSNetworkEnvironment::entityPropertyChanged( QString property_name ){
+void geoworldsim::environment::NetworkEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == EDGE_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
-        GWSEntity* agent = dynamic_cast<GWSEntity*>( object );
+        Entity* agent = dynamic_cast< Entity* >( object );
         if( !agent ){ return; }
-        this->upsertEntityToIndex( agent->getSharedPointer() , GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() ) );
+        this->upsertEntityToIndex( agent->getSharedPointer() , graph::NetworkEdge( agent->getProperty( EDGE_PROP ).toObject() ) );
     }
 }
 
@@ -257,23 +255,23 @@ void GWSNetworkEnvironment::entityPropertyChanged( QString property_name ){
  PRIVATE
 **********************************************************************/
 
-QString GWSNetworkEnvironment::getNearestNodeUID( const GWSCoordinate& coor , const QString& class_name ) const{
+QString geoworldsim::environment::NetworkEnvironment::getNearestNodeUID( const geoworldsim::geometry::Coordinate& coor , const QString& class_name ) const{
 
     if( this->network_edges.keys().contains( class_name ) ){
-        QString agent_id = this->getNearestAgent( coor , class_name );
-        if( agent_id.isEmpty() ){
-            return agent_id;
+        QString entity_id = this->getNearestAgent( coor , class_name );
+        if( entity_id.isEmpty() ){
+            return entity_id;
         }
 
-        QSharedPointer<GWSEntity> agent = GWSEntityEnvironment::globalInstance()->getByUID( agent_id );
-        GWSNetworkEdge edge = GWSNetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
+        QSharedPointer< Entity> agent = EntityEnvironment::globalInstance()->getByUID( entity_id );
+        graph::NetworkEdge edge = graph::NetworkEdge( agent->getProperty( EDGE_PROP ).toObject() );
 
         if( !edge.isValid() ){
             return QString();
         }
 
-        GWSLengthUnit from_distance = coor.getDistance( edge.getFromCoordinate() );
-        GWSLengthUnit to_distance = coor.getDistance( edge.getToCoordinate() );
+        unit::LengthUnit from_distance = coor.getDistance( edge.getFromCoordinate() );
+        unit::LengthUnit to_distance = coor.getDistance( edge.getToCoordinate() );
         return from_distance < to_distance ? edge.getFromNodeUID() : edge.getToNodeUID();
     }
 

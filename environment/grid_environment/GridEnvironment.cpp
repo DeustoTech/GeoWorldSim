@@ -6,26 +6,27 @@
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString GWSGridEnvironment::GRID_PROP = "grid";
 
-GWSGridEnvironment* GWSGridEnvironment::globalInstance(){
-    static GWSGridEnvironment instance;
+QString geoworldsim::environment::GridEnvironment::GRID_PROP = "grid";
+
+geoworldsim::environment::GridEnvironment* geoworldsim::environment::GridEnvironment::globalInstance(){
+    static geoworldsim::environment::GridEnvironment instance;
     return &instance;
 }
 
-GWSGridEnvironment::GWSGridEnvironment() : GWSEnvironment() {
+geoworldsim::environment::GridEnvironment::geoworldsim::environment::GridEnvironment() : GWSEnvironment() {
     qInfo() << "Grid environment created";
     GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
-GWSGridEnvironment::~GWSGridEnvironment(){
+geoworldsim::environment::GridEnvironment::~geoworldsim::environment::GridEnvironment(){
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-const GWSGeometry GWSGridEnvironment::getBounds() const{
+const GWSGeometry geoworldsim::environment::GridEnvironment::getBounds() const{
     GWSGeometry bounds;
     foreach( QSharedPointer<GWSGrid> t , this->environment_entity_grids.values() ) {
         bounds = GWSGeometryTransformators::transformToFit( bounds , t->getBounds() );
@@ -33,7 +34,7 @@ const GWSGeometry GWSGridEnvironment::getBounds() const{
     return bounds;
 }
 
-const GWSGeometry GWSGridEnvironment::getBounds( QString class_name ) const {
+const GWSGeometry geoworldsim::environment::GridEnvironment::getBounds( QString class_name ) const {
     QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
     if( grid ){
         return grid->getBounds();
@@ -41,7 +42,7 @@ const GWSGeometry GWSGridEnvironment::getBounds( QString class_name ) const {
     return GWSGeometry();
 }
 
-const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry geom ) const {
+const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QString class_name , GWSGeometry geom ) const {
     QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
     if( grid ){
         return grid->getValue( geom );
@@ -49,7 +50,7 @@ const QJsonValue GWSGridEnvironment::getValue( QString class_name , GWSGeometry 
     return QJsonValue::Null;
 }
 
-const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
+const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
     QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( entity->metaObject()->className() , Q_NULLPTR );
     if( grid ){
         GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
@@ -62,7 +63,7 @@ const QJsonValue GWSGridEnvironment::getValue( QSharedPointer<GWSEntity> entity 
  PRIVATE
 **********************************************************************/
 
-void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
+void geoworldsim::environment::GridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
     if( entity.isNull() || entity->getProperty( GRID_PROP ).isNull() ){
         return;
@@ -82,9 +83,9 @@ void GWSGridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
 
 }
 
-void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
+void geoworldsim::environment::GridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
     GWSEnvironment::unregisterEntity( entity );
-    //this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSGridEnvironment::entityPropertyChanged );
+    //this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &geoworldsim::environment::GridEnvironment::entityPropertyChanged );
 }
 
 
@@ -92,7 +93,7 @@ void GWSGridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
  PROTECTED
 **********************************************************************/
 
-void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , const QJsonValue& value ){
+void geoworldsim::environment::GridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , const QJsonValue& value ){
 
     GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     if( !entity_geom.isValid() ){ return; }
@@ -122,7 +123,7 @@ void GWSGridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , c
     }
 }
 
-void GWSGridEnvironment::entityPropertyChanged( QString property_name ){
+void geoworldsim::environment::GridEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == GRID_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
@@ -131,3 +132,4 @@ void GWSGridEnvironment::entityPropertyChanged( QString property_name ){
         this->upsertValueToGrid( entity->getSharedPointer() , entity->getProperty( GRID_PROP ) );
     }
 }
+

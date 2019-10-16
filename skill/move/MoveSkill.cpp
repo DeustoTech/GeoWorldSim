@@ -1,60 +1,58 @@
 #include "MoveSkill.h"
 
 #include <QtMath>
-
-#include "../../environment/Environment.h"
-#include "../../app/App.h"
+#include "../../util/units/Units.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString MoveSkill::MAX_SPEED = "maxspeed";
-QString MoveSkill::CURRENT_SPEED = "current_speed";
-QString MoveSkill::MOVING_TOWARDS = "moving_towards";
-QString MoveSkill::ACCUMULATED_DISTANCE = "accumulated_travelled_distance";
-QString MoveSkill::ACCUMULATED_TIME = "accumulated_travelled_time";
+QString geoworldsim::skill::MoveSkill::MAX_SPEED = "maxspeed";
+QString geoworldsim::skill::MoveSkill::CURRENT_SPEED = "current_speed";
+QString geoworldsim::skill::MoveSkill::MOVING_TOWARDS = "moving_towards";
+QString geoworldsim::skill::MoveSkill::ACCUMULATED_DISTANCE = "accumulated_travelled_distance";
+QString geoworldsim::skill::MoveSkill::ACCUMULATED_TIME = "accumulated_travelled_time";
 
-MoveSkill::MoveSkill() : GWSSkill(){
+geoworldsim::skill::MoveSkill::MoveSkill() : Skill(){
 }
 
-MoveSkill::~MoveSkill(){
+geoworldsim::skill::MoveSkill::~MoveSkill(){
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-/*GWSSpeedUnit MoveSkill::getCurrentSpeed() {
+/*GWSSpeedUnit geoworldsim::skill::MoveSkill::getCurrentSpeed() {
     QSharedPointer<GWSAgent> agent = this->getAgent();
     return GWSSpeedUnit( agent->getProperty( STORE_CURRENT_SPEED_PROP ).toDouble() );
 }
 
-GWSCoordinate MoveSkill::getMovingTowardsCoordinate(){
+geometry::Coordinate geoworldsim::skill::MoveSkill::getMovingTowardsCoordinate(){
     QSharedPointer<GWSAgent> agent = this->getAgent();
     if( agent->getProperty( STORE_MOVING_TOWARDS_X_PROP ).isNull() || agent->getProperty( STORE_MOVING_TOWARDS_Y_PROP ).isNull() ){
-        return GWSCoordinate( NAN , NAN , NAN );
+        return geometry::Coordinate( NAN , NAN , NAN );
     }
-    return GWSCoordinate( agent->getProperty( STORE_MOVING_TOWARDS_X_PROP ) .toDouble( ) , agent->getProperty( STORE_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
+    return geometry::Coordinate( agent->getProperty( STORE_MOVING_TOWARDS_X_PROP ) .toDouble( ) , agent->getProperty( STORE_MOVING_TOWARDS_Y_PROP ).toDouble( ) , 0 );
 }*/
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-GWSSpeedUnit MoveSkill::calculateNewSpeed(const GWSSpeedUnit &current_speed, const GWSSpeedUnit &max_speed, double force){
+geoworldsim::unit::SpeedUnit geoworldsim::skill::MoveSkill::calculateNewSpeed(const geoworldsim::unit::SpeedUnit &current_speed, const geoworldsim::unit::SpeedUnit &max_speed, double force){
     double normalized_force = qMax( -1.0 , qMin( 1.0 , force ) );
 
-    GWSSpeedUnit variation = max_speed * normalized_force;
-    GWSSpeedUnit new_speed = current_speed + variation;
-    new_speed = qMax( GWSSpeedUnit( 0 ) , new_speed );
-    if( max_speed > GWSSpeedUnit( 0 ) && max_speed < new_speed ){ new_speed = max_speed; }
+    unit::SpeedUnit variation = max_speed * normalized_force;
+    unit::SpeedUnit new_speed = current_speed + variation;
+    new_speed = qMax( unit::SpeedUnit( 0 ) , new_speed );
+    if( max_speed > unit::SpeedUnit( 0 ) && max_speed < new_speed ){ new_speed = max_speed; }
 
     return new_speed;
 }
 
-void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, const GWSGeometry &movement_towards_geom){
+void geoworldsim::skill::MoveSkill::move(const geoworldsim::unit::TimeUnit &movement_duration, const geoworldsim::unit::SpeedUnit &movement_speed, const geoworldsim::geometry::Geometry &movement_towards_geom){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
-    agent->setProperties( QJsonObject({
+    QSharedPointer< Entity > entity = this->getEntity();
+    entity->setProperties( QJsonObject({
          { CURRENT_SPEED , movement_speed.number() } ,
          { MOVING_TOWARDS , movement_towards_geom.getGeoJSON() }
                                       }) );
@@ -68,14 +66,14 @@ void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &m
             * movement_duration.number();
 
     // Current position
-    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-    if( !agent_geom.isValid() ){
-        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( agent->metaObject()->className() ).arg( agent->getUID() );
+    geometry::Geometry entity_geom = geometry::Geometry( entity->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    if( !entity_geom.isValid() ){
+        qWarning() << QString("Agent %1 %2 tried to move without geometry").arg( entity->metaObject()->className() ).arg( entity->getUID() );
     }
 
     // Get coors from geometries:
-    const GWSCoordinate& current_coor = agent_geom.getCentroid();
-    const GWSCoordinate& movement_towards_coor = movement_towards_geom.getCentroid();
+    const geometry::Coordinate& current_coor = entity_geom.getCentroid();
+    const geometry::Coordinate& movement_towards_coor = movement_towards_geom.getCentroid();
 
     // Distance
     double meter_distance = current_coor.getDistance( movement_towards_coor ).number();
@@ -99,12 +97,12 @@ void MoveSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &m
         double y_move = y_distance * distance_percentage * ( movement_towards_coor.getY() > current_coor.getY() ? 1 : -1 );
 
         // Set the agents position
-        GWSCoordinate apply_movement = GWSCoordinate( x_move , y_move );
-        GWSGeometry moved_geometry = GWSGeometryTransformators::transformMove( agent_geom , apply_movement );
-        agent->setProperty( GWSPhysicalEnvironment::GEOMETRY_PROP , moved_geometry.getGeoJSON() );
+        geometry::Coordinate apply_movement = geometry::Coordinate( x_move , y_move );
+        geometry::Geometry moved_geometry = geometry::GeometryTransformators::transformMove( entity_geom , apply_movement );
+        entity->setProperty( environment::PhysicalEnvironment::GEOMETRY_PROP , moved_geometry.getGeoJSON() );
     }
 
-    agent->setProperty( ACCUMULATED_DISTANCE , agent->getProperty( ACCUMULATED_DISTANCE ).toDouble() + meters );
-    agent->setProperty( ACCUMULATED_TIME , agent->getProperty( ACCUMULATED_TIME ).toDouble() + movement_duration.number() );
+    entity->setProperty( ACCUMULATED_DISTANCE , entity->getProperty( ACCUMULATED_DISTANCE ).toDouble() + meters );
+    entity->setProperty( ACCUMULATED_TIME , entity->getProperty( ACCUMULATED_TIME ).toDouble() + movement_duration.number() );
 
 }

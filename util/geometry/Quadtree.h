@@ -1,5 +1,5 @@
-#ifndef GWSQUADTREE_H
-#define GWSQUADTREE_H
+#ifndef QUADTREE_H
+#define QUADTREE_H
 
 #include <QObject>
 #include <QReadWriteLock>
@@ -10,40 +10,42 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../util/geometry/Geometry.h"
 
-using namespace geos::index::quadtree;
+namespace geoworldsim {
+namespace geometry {
 
-class GWSQuadtree : public QObject
+
+class Quadtree : public QObject
 {
     Q_OBJECT
 
 public:
-    GWSQuadtree();
-    ~GWSQuadtree();
+    Quadtree();
+    ~Quadtree();
 
     // GETTERS
     QStringList getElements() const;
-    const GWSGeometry getBounds() const;
-    const GWSGeometry getGeometry( const QString &object_id ) const;
+    const Geometry getBounds() const;
+    const Geometry getGeometry( const QString &object_id ) const;
 
-    QStringList getElements( const GWSCoordinate &coordinate );
-    QStringList getElements( const GWSGeometry &geom );
+    QStringList getElements( const Coordinate &coordinate );
+    QStringList getElements( const Geometry &geom );
     QStringList getElements( double minX, double maxX, double minY, double maxY );
 
-    QString getNearestElement( const GWSCoordinate &coor );
-    QString getNearestElement( const GWSGeometry &geometry );
+    QString getNearestElement( const Coordinate &coor );
+    QString getNearestElement( const Geometry &geometry );
 
 
 signals:
 
-    void upsertGeometrySignal( const QString &object_id , const GWSGeometry &coor );
-    void upsertCoordinateSignal( const QString &object_id , const GWSCoordinate &coor );
+    void upsertGeometrySignal( const QString &object_id , const Geometry &coor );
+    void upsertCoordinateSignal( const QString &object_id , const Coordinate &coor );
     void removeSignal( const QString &object_id );
 
 public slots:
 
     // SETTERS
-    void upsertCoordinate( const QString &object_id , const GWSCoordinate &coor );
-    void upsertGeometry( const QString &object_id , const GWSGeometry &geom );
+    void upsertCoordinate( const QString &object_id , const Coordinate &coor );
+    void upsertGeometry( const QString &object_id , const Geometry &geom );
     void remove( const QString &object_id );
 
 protected:
@@ -53,18 +55,18 @@ protected:
 private:
 
     // HELPER CLASS
-    class GWSQuadtreeElement {
+    class QuadtreeElement {
     public:
-        GWSQuadtreeElement( std::string object_id , const GWSGeometry &geometry ) : object_id( object_id ) , geometry( geometry ) {}
+        QuadtreeElement( std::string object_id , const Geometry &geometry ) : object_id( object_id ) , geometry( geometry ) {}
         std::string object_id;
-        GWSGeometry geometry;
+        Geometry geometry;
         geos::geom::Envelope envelope;
     };
 
     mutable QReadWriteLock mutex;
 
     QStringList ids_contained;
-    QMap< std::string , GWSQuadtree::GWSQuadtreeElement* >* quadtree_elements; // QMAP< (XHASH + YHASH) , QuadTreeElement >
+    QMap< std::string , Quadtree::QuadtreeElement* >* quadtree_elements; // QMAP< (XHASH + YHASH) , QuadTreeElement >
     QMap< std::string , geos::index::quadtree::Quadtree* >* quadtree_layers; // QMAP< (XHASH + YHASH) , QuadTree >
     const unsigned int layer_depth_amount = 5;
     int stored_amount = 0;
@@ -77,6 +79,9 @@ private:
 
 };
 
-Q_DECLARE_METATYPE(GWSQuadtree*)
+}
+}
 
-#endif // GWSQUADTREE_H
+Q_DECLARE_METATYPE(geoworldsim::geometry::Quadtree*)
+
+#endif // QUADTREE_H

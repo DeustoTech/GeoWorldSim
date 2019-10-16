@@ -8,32 +8,36 @@
 
 #include "./../object/Object.h"
 
-class GWSObjectFactory : public QObject
+namespace geoworldsim {
+
+class ObjectFactory : public QObject
 {
     Q_OBJECT
 
 public:
-    static GWSObjectFactory* globalInstance();
+    static ObjectFactory* globalInstance();
 
     // METHODS
     void registerType( const QMetaObject metaobject );
     const QMetaObject getRegisteredType( const QString &type_name );
-    QSharedPointer<GWSObject> fromType( const QString &type , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
-    QSharedPointer<GWSObject> fromBytes( const QByteArray &bytes , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
-    QSharedPointer<GWSObject> fromJSON( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    QSharedPointer<Object> fromType( const QString &type , QSharedPointer<Object> parent = QSharedPointer<Object>() );
+    QSharedPointer<Object> fromBytes( const QByteArray &bytes , QSharedPointer<Object> parent = QSharedPointer<Object>() );
+    QSharedPointer<Object> fromJSON( const QJsonObject &json , QSharedPointer<Object> parent = QSharedPointer<Object>() );
 
     // STATICS
-    static QJsonValue simpleOrParentPropertyName(const QString &property_name , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
-    static QJsonValue simpleOrParentPropertyValue( const QJsonValue &property_value , QSharedPointer<GWSObject> object ,  QSharedPointer<GWSObject> parent );
+    static QJsonValue simpleOrParentPropertyName(const QString &property_name , QSharedPointer<Object> object ,  QSharedPointer<Object> parent );
+    static QJsonValue simpleOrParentPropertyValue( const QJsonValue &property_value , QSharedPointer<Object> object ,  QSharedPointer<Object> parent );
     static QJsonValue incrementValue( const QJsonValue &existing_value , const QJsonValue &increment);
 
 protected:
-    GWSObjectFactory();
-    GWSObjectFactory(GWSObjectFactory const&);
-    ~GWSObjectFactory();
+    ObjectFactory();
+    ObjectFactory(ObjectFactory const&);
+    ~ObjectFactory();
 
 private:
     QMap<QString , QMetaObject> constructors;
 };
+
+}
 
 #endif // GWSOBJECTFACTORY_H

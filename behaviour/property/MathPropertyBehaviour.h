@@ -2,17 +2,18 @@
 #define MATHENTITYPROPERTYBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
-#include "../../environment/entity_environment/EntityEnvironment.h"
 
-class MathEntityPropertyBehaviour : public GWSBehaviour
+class MathPropertyBehaviour : public GWSBehaviour
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit MathEntityPropertyBehaviour();
+    Q_INVOKABLE explicit MathPropertyBehaviour();
 
 
     // PROPERTIES
+    static QString ENTITY_ID;
+    static QString ENTITY_TYPE;
     static QString OPERATOR;
     static QString OPERAND_VALUE;
     static QString OPERAND_PROPERTY;

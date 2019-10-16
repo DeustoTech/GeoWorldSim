@@ -6,12 +6,12 @@
 
 #include "../../app/App.h"
 
-GWSParallelismController* GWSParallelismController::globalInstance(){
-    static GWSParallelismController instance;
+geoworldsim::parallel::ParallelismController* geoworldsim::parallel::ParallelismController::globalInstance(){
+    static geoworldsim::parallel::ParallelismController instance;
     return &instance;
 }
 
-GWSParallelismController::GWSParallelismController() : QObject(){
+geoworldsim::parallel::ParallelismController::ParallelismController() : QObject(){
     this->main_thread = this->thread();
 
     // EDIT : /etc/security/limits.conf
@@ -20,7 +20,7 @@ GWSParallelismController::GWSParallelismController() : QObject(){
     // lsof | grep QtCreator
 
     // Remove one to be left for main thread
-    int thread_limit = GWSApp::globalInstance()->getConfiguration().value( "max_threads" ).toInt( QThreadPool::globalInstance()->maxThreadCount() );
+    int thread_limit = App::globalInstance()->getConfiguration().value( "max_threads" ).toInt( QThreadPool::globalInstance()->maxThreadCount() );
     thread_limit = qMax( 1 , thread_limit );
 
     for(int i = 0; i < thread_limit; i++){
@@ -35,7 +35,7 @@ GWSParallelismController::GWSParallelismController() : QObject(){
     qInfo() << QString("Parallelism Controller created with %1 threads").arg( this->available_threads.size() );
 }
 
-GWSParallelismController::~GWSParallelismController(){
+geoworldsim::parallel::ParallelismController::~ParallelismController(){
     foreach (QThread* t , this->available_threads) {
         t->exit();
     }
@@ -45,7 +45,7 @@ GWSParallelismController::~GWSParallelismController(){
  GETTERS
 **********************************************************************/
 
-int GWSParallelismController::getThreadsCount() const{
+int geoworldsim::parallel::ParallelismController::getThreadsCount() const{
     return this->available_threads.size();
 }
 
@@ -53,15 +53,15 @@ int GWSParallelismController::getThreadsCount() const{
  METHODS
 **********************************************************************/
 
-QThread* GWSParallelismController::getThread(){
+QThread* geoworldsim::parallel::ParallelismController::getThread(){
     return this->available_threads.at( qrand() % this->available_threads.size() );
 }
 
-QThread* GWSParallelismController::getMainThread(){
+QThread* geoworldsim::parallel::ParallelismController::getMainThread(){
     return this->main_thread;
 }
 
-QThread* GWSParallelismController::liberateThread(QThread *thread){
+QThread* geoworldsim::parallel::ParallelismController::liberateThread(QThread *thread){
     Q_UNUSED(thread)
     return this->main_thread;
 }

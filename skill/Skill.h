@@ -1,33 +1,41 @@
-#ifndef GWSSKILL_H
-#define GWSSKILL_H
+#ifndef SKILL_H
+#define SKILL_H
 
 #include <QSharedPointer>
 
 #include "../../object/Object.h"
 #include "../../entity/Entity.h"
 
-class GWSSkill : public GWSObject
+namespace geoworldsim {
+namespace skill {
+
+
+class Skill : public Object
 {
     Q_OBJECT
-    friend class GWSEntity; // Entity can check skill insides
+    friend class geoworldsim::Entity; // Entity can check skill insides
 
 public:
-    Q_INVOKABLE explicit GWSSkill();
+    Q_INVOKABLE explicit Skill();
 
     // IMPORTERS
-    virtual void deserialize( const QJsonObject &json, QSharedPointer<GWSObject> skilled_entity);
+    virtual void deserialize( const QJsonObject &json, QSharedPointer<Object> skilled_entity);
 
     // EXPORTERS
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    QSharedPointer<GWSEntity> getEntity() const;
+    QSharedPointer< Entity > getEntity() const;
     virtual QJsonValue getProperty( const QString& name ) const;
 
 private:
-    QSharedPointer<GWSEntity> skilled_entity;
+    QSharedPointer< Entity > skilled_entity;
 };
 
-Q_DECLARE_METATYPE( QSharedPointer<GWSSkill> ) // REQUIRED TO BE USED IN SIGNAL AND SLOTS
 
-#endif // GWSSKILL_H
+}
+}
+
+Q_DECLARE_METATYPE( QSharedPointer<geoworldsim::skill::Skill> ) // REQUIRED TO BE USED IN SIGNAL AND SLOTS
+
+#endif // SKILL_H

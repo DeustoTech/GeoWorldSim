@@ -1,31 +1,37 @@
-#ifndef GWSENVIRONMENTSGROUP_H
-#define GWSENVIRONMENTSGROUP_H
+#ifndef ENVIRONMENTSGROUP_H
+#define ENVIRONMENTSGROUP_H
 
 #include "../../object/Object.h"
 #include "../../environment/Environment.h"
 
-class GWSEnvironmentsGroup : public GWSObject
+namespace geoworldsim {
+namespace environment {
+
+class EnvironmentsGroup : public Object
 {
     Q_OBJECT
 
 public:
-    static GWSEnvironmentsGroup* globalInstance();
+    static EnvironmentsGroup* globalInstance();
 
     // SETTERS
-     void addEnvironment( GWSEnvironment* subenvironment );
+     void addEnvironment( Environment* subenvironment );
 
-    void registerEntity( QSharedPointer<GWSEntity> agent );
-    void unregisterEntity( QSharedPointer<GWSEntity> agent );
+    void registerEntity( QSharedPointer< Entity > entity );
+    void unregisterEntity( QSharedPointer< Entity > entity );
 
 protected:
-    GWSEnvironmentsGroup();
-    GWSEnvironmentsGroup(GWSEnvironmentsGroup const&);
-    ~GWSEnvironmentsGroup();
+    EnvironmentsGroup();
+    EnvironmentsGroup(EnvironmentsGroup const&);
+    ~EnvironmentsGroup();
 
 private:
      // To be notified when registering agents
-     QList< GWSEnvironment* > sub_environments;
+     QList< Environment* > sub_environments;
 
 };
 
-#endif // GWSENVIRONMENTSGROUP_H
+}
+}
+
+#endif // ENVIRONMENTSGROUP_H

@@ -12,7 +12,7 @@ public:
 
     // PROPERTIES
 
-    static QString DAILY_GENERATION; // Object with key-value per waste_category or sorting_type
+    static QString GENERATION; // Object with key-value per waste_category or sorting_type
     static QString SORTING_TYPES_CHARACTERIZATION; // Object of objects describing sorting type waste_categories and their amount (No matter if absolute or percentage)
     static QString STORE_GENERATED_WASTE_AS;
     static QString NEXTS;

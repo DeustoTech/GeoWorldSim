@@ -1,20 +1,25 @@
-#ifndef GWSENTITYSOURCE_H
-#define GWSENTITYSOURCE_H
+#ifndef ENTITYSOURCE_H
+#define ENTITYSOURCE_H
 
 #include <QObject>
 #include <../../entity/Entity.h>
 
-class GWSEntitySource : public GWSEntity
+namespace geoworldsim {
+
+
+class EntitySource : public Entity
 {
     Q_OBJECT
 
 public:
 
-    Q_INVOKABLE explicit GWSEntitySource();
+    Q_INVOKABLE explicit EntitySource();
     //~GWSAgentSource();
 
     // PROPERTIES
     static QString AMOUNT_PER_SECOND_PROP;
 };
 
-#endif // GWSENTITYSOURCE_H
+}
+
+#endif // ENTITYSOURCE_H

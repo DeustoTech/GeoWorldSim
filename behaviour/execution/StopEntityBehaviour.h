@@ -3,7 +3,11 @@
 
 #include "../Behaviour.h"
 
-class StopEntityBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+
+class StopEntityBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -13,5 +17,8 @@ public:
 private slots:
     virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // STOPENTITYBEHAVIOUR_H

@@ -6,16 +6,16 @@
 #include "GeometryGetters.h"
 #include "GeometryComparators.h"
 
-GWSGeometry::GWSGeometry( const QJsonObject &geojson ) {
+geoworldsim::geometry::Geometry::Geometry( const QJsonObject &geojson ) {
     this->geojson = QJsonObject( geojson );
     if( this->inner_geometry ){
         delete this->inner_geometry;
         this->inner_geometry = Q_NULLPTR;
     }
-    this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
+    this->inner_geometry = GeometryToGeoJSON::fromGeoJSON( this->geojson );
 }
 
-GWSGeometry::GWSGeometry( const GWSCoordinate &coor ){
+geoworldsim::geometry::Geometry::Geometry( const geoworldsim::geometry::Coordinate &coor ){
     QJsonObject geojson;
     geojson.insert( "type" , "Point" );
     geojson.insert( "coordinates" , QJsonArray({ coor.getX() , coor.getY() , coor.getZ() }) );
@@ -24,12 +24,12 @@ GWSGeometry::GWSGeometry( const GWSCoordinate &coor ){
         delete this->inner_geometry;
         this->inner_geometry = Q_NULLPTR;
     }
-    this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
+    this->inner_geometry = GeometryToGeoJSON::fromGeoJSON( this->geojson );
 }
 
-GWSGeometry::GWSGeometry( const GWSGeometry &other ) : GWSGeometry( other.geojson ){}
+geoworldsim::geometry::Geometry::Geometry( const geoworldsim::geometry::Geometry &other ) : geoworldsim::geometry::Geometry( other.geojson ){}
 
-GWSGeometry::~GWSGeometry(){
+geoworldsim::geometry::Geometry::~Geometry(){
     if( this->inner_geometry ){
         delete this->inner_geometry;
         this->inner_geometry = Q_NULLPTR;
@@ -40,49 +40,53 @@ GWSGeometry::~GWSGeometry(){
  GETTERS
 **********************************************************************/
 
-QString GWSGeometry::getUID() const {
+QString geoworldsim::geometry::Geometry::getUID() const {
     return QJsonDocument( this->geojson ).toBinaryData();
 }
 
-QJsonObject GWSGeometry::getGeoJSON() const{
+QJsonObject geoworldsim::geometry::Geometry::getGeoJSON() const{
     return this->geojson;
 }
 
-bool GWSGeometry::isValid() const{
+bool geoworldsim::geometry::Geometry::isValid() const{
     return this->inner_geometry != Q_NULLPTR && !this->geojson.isEmpty();
 }
 
-GWSCoordinate GWSGeometry::getCentroid() const{
+geoworldsim::geometry::Coordinate geoworldsim::geometry::Geometry::getCentroid() const{
     if( this->isValid() ){
         geos::geom::Coordinate centroid;
         this->inner_geometry->getCentroid( centroid );
-        return GWSCoordinate( centroid.x , centroid.y , centroid.z );
+        return Coordinate( centroid.x , centroid.y , centroid.z );
     }
-    return GWSCoordinate();
+    return Coordinate();
 }
 
-GWSLengthUnit GWSGeometry::getDistance(const GWSGeometry &other) const{
-    return GWSGeometryComparators::getDistance( *this , other );
+geoworldsim::unit::LengthUnit geoworldsim::geometry::Geometry::getDistance(const geoworldsim::geometry::Geometry &other) const{
+    return GeometryComparators::getDistance( *this , other );
+}
+
+geoworldsim::unit::LengthUnit geoworldsim::geometry::Geometry::getDistance(const geoworldsim::geometry::Coordinate &other) const{
+    return GeometryComparators::getDistance( *this , other );
 }
 
 /**********************************************************************
  OPERATORS
 **********************************************************************/
 
-bool GWSGeometry::operator == (const GWSGeometry& other) const {
+bool geoworldsim::geometry::Geometry::operator == (const geoworldsim::geometry::Geometry& other) const {
     return this->geojson == other.geojson ;
 }
 
-bool GWSGeometry::operator != (const GWSGeometry& other) const{
+bool geoworldsim::geometry::Geometry::operator != (const geoworldsim::geometry::Geometry& other) const{
     return !(*this == other);
 }
 
-bool GWSGeometry::operator < (const GWSGeometry& other) const{
+bool geoworldsim::geometry::Geometry::operator < (const geoworldsim::geometry::Geometry& other) const{
     return this->getUID() < other.getUID();
 }
 
-GWSGeometry& GWSGeometry::operator = (const GWSGeometry& other){
+geoworldsim::geometry::Geometry& geoworldsim::geometry::Geometry::operator = (const geoworldsim::geometry::Geometry& other){
     this->geojson = other.geojson;
-    this->inner_geometry = GWSGeometryToGeoJSON::GeometryFromGeoJSON( this->geojson );
+    this->inner_geometry = GeometryToGeoJSON::fromGeoJSON( this->geojson );
     return *this;
 }

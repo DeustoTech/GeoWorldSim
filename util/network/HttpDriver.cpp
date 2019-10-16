@@ -1,4 +1,4 @@
-#include "APIDriver.h"
+#include "HttpDriver.h"
 
 #include <QDebug>
 #include <QTimer>
@@ -11,31 +11,44 @@
 #include "../../app/App.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
-GWSAPIDriver* GWSAPIDriver::globalInstance(){
-    static GWSAPIDriver instance;
+geoworldsim::network::HttpDriver* geoworldsim::network::HttpDriver::globalInstance(){
+    static HttpDriver instance;
     return &instance;
 }
 
-GWSAPIDriver::GWSAPIDriver() : QObject(){
-    this->pending_requests = new QList< GWSAPIDriverElement* >();
+geoworldsim::network::HttpDriver::HttpDriver() : QObject(){
+
+    QNetworkProxyQuery npq( QUrl( "https://history.geoworldsim.com" ) );
+    QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
+
+    if( proxies_list.isEmpty() ){
+        qWarning() << Q_FUNC_INFO << "No proxy found.";
+    }
+
+    // Must be created in main thread for it to work
+    this->access_manager = new QNetworkAccessManager();
+    this->access_manager->setProxy( proxies_list.at(0) );
+
+    this->pending_requests = new QList< HttpDriverElement* >();
 }
 
-GWSAPIDriver::GWSAPIDriver(const GWSAPIDriver &other) : QObject(){
+geoworldsim::network::HttpDriver::HttpDriver(const HttpDriver &other) : QObject(){
     Q_UNUSED( other );
 }
 
-GWSAPIDriver::~GWSAPIDriver(){
+geoworldsim::network::HttpDriver::~HttpDriver(){
     for(int i = 0 ; i < this->pending_requests->size() ; i++) {
         delete this->pending_requests->at( i );
     }
     delete this->pending_requests;
+    if( this->access_manager ){ this->access_manager->deleteLater(); }
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-int GWSAPIDriver::getRequestsAmount() const{
+int geoworldsim::network::HttpDriver::getRequestsAmount() const{
     return this->current_requests_amount;
 }
 
@@ -49,7 +62,7 @@ int GWSAPIDriver::getRequestsAmount() const{
  * @param url
  * @return
  */
-void GWSAPIDriver::GET( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
+void geoworldsim::network::HttpDriver::GET( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
     this->operation( QNetworkAccessManager::GetOperation , url , callback , headers );
 }
 
@@ -63,11 +76,11 @@ void GWSAPIDriver::GET( QUrl url , std::function<void(QNetworkReply*)> callback 
  * @param url
  * @return
  */
-void GWSAPIDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+void geoworldsim::network::HttpDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
     this->operation( QNetworkAccessManager::PostOperation , url , callback , headers , data );
 }
 
-void GWSAPIDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
+void geoworldsim::network::HttpDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
     this->POST( url , callback , headers , QJsonDocument( data ).toJson() );
 }
 
@@ -81,11 +94,11 @@ void GWSAPIDriver::POST(QUrl url , std::function<void(QNetworkReply*)> callback 
  * @param url
  * @return
  */
-void GWSAPIDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+void geoworldsim::network::HttpDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
     this->operation( QNetworkAccessManager::PutOperation , url , callback , headers , data );
 }
 
-void GWSAPIDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
+void geoworldsim::network::HttpDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QJsonObject data){
     this->POST( url , callback , headers , QJsonDocument( data ).toJson() );
 }
 
@@ -99,7 +112,7 @@ void GWSAPIDriver::PUT(QUrl url , std::function<void(QNetworkReply*)> callback ,
  * @param url
  * @return
  */
-void GWSAPIDriver::PATCH(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
+void geoworldsim::network::HttpDriver::PATCH(QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data ){
     this->operation( QNetworkAccessManager::CustomOperation , url , callback , headers , data , "PATCH" );
 }
 
@@ -113,7 +126,7 @@ void GWSAPIDriver::PATCH(QUrl url , std::function<void(QNetworkReply*)> callback
  * @param url
  * @return
  */
-void GWSAPIDriver::DELETE( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
+void geoworldsim::network::HttpDriver::DELETE( QUrl url , std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers ){
     this->operation( QNetworkAccessManager::DeleteOperation , url , callback , headers );
 }
 
@@ -121,23 +134,22 @@ void GWSAPIDriver::DELETE( QUrl url , std::function<void(QNetworkReply*)> callba
  PROTECTED
 **********************************************************************/
 
-void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl url, std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data , QByteArray custom_operation ){
+void geoworldsim::network::HttpDriver::operation(QNetworkAccessManager::Operation operation, QUrl url, std::function<void(QNetworkReply*)> callback , QMap<QString, QString> headers, QByteArray data , QByteArray custom_operation ){
 
-    GWSAPIDriverElement* pending_request = new GWSAPIDriverElement();
+    HttpDriverElement* pending_request = new HttpDriverElement();
 
     // Request
     pending_request->request = QNetworkRequest(url);
     QSslConfiguration sslConfiguration( QSslConfiguration::defaultConfiguration() );
-    sslConfiguration.setProtocol( QSsl::TlsV1_2 );
+    sslConfiguration.setProtocol( QSsl::TlsV1SslV3 );
     pending_request->request.setSslConfiguration( sslConfiguration );
-
 
     // Operation
     pending_request->operation = operation;
 
     // Add request headers
     foreach ( const QString header, headers.keys() ){
-        pending_request->request.setRawHeader( header.toStdString().c_str(), headers.value( header ).toStdString().c_str() );
+        pending_request->request.setRawHeader( header.toStdString().c_str() , headers.value( header ).toStdString().c_str() );
     }
 
     // Add data
@@ -161,7 +173,7 @@ void GWSAPIDriver::operation(QNetworkAccessManager::Operation operation, QUrl ur
 
 }
 
-void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement* pending ){
+void geoworldsim::network::HttpDriver::executePendingOperation( HttpDriverElement* pending ){
 
     try {
 
@@ -169,21 +181,8 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement* pending ){
         this->current_requests_amount++;
         //this->mutex.unlock();
 
-        // Must be executed in GWSApp thread
-        QTimer::singleShot( 10 , GWSApp::globalInstance() , [ pending , this ]{
-
-            if( !this->access_manager ){
-                QNetworkProxyQuery npq( QUrl( "https://google.com" ) );
-                QList<QNetworkProxy> proxies_list = QNetworkProxyFactory::systemProxyForQuery( npq );
-
-                if( proxies_list.isEmpty() ){
-                    qWarning() << Q_FUNC_INFO << "No proxy found.";
-                }
-
-                // Must be created in main thread for it to work
-                this->access_manager = new QNetworkAccessManager();
-                this->access_manager->setProxy( proxies_list.at(0) );
-            }
+        // Must be executed in the main GWSApp thread and give it some timer for the main thread to breathe
+        QTimer::singleShot( 1000 , Qt::VeryCoarseTimer , App::globalInstance() , [ pending , this ]{
 
             QNetworkReply* ref_reply = Q_NULLPTR;
             QBuffer data;
@@ -208,7 +207,7 @@ void GWSAPIDriver::executePendingOperation( GWSAPIDriverElement* pending ){
                         //this->mutex.unlock();
 
                         //this->mutex.lockForWrite();
-                        GWSAPIDriverElement* next = this->pending_requests->at( 0 );
+                        HttpDriverElement* next = this->pending_requests->at( 0 );
                         this->pending_requests->removeAt( 0 );
                         //this->mutex.unlock();
 

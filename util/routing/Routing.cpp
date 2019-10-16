@@ -1,16 +1,16 @@
 #include "Routing.h"
 
-GWSRouting::GWSRouting() : QObject(){
+geoworldsim::routing::Routing::Routing() : QObject(){
     this->arc_to_object_ids = new QMap< lemon::ListDigraph::Arc , std::string >();
     this->hash_to_node = new QMap< std::string , lemon::ListDigraph::Node >();
     this->routing_graph = new lemon::ListDigraph();
-    this->graph_edge_visitor = new GWSEdgeVisitor( this->routing_graph );
+    this->graph_edge_visitor = new graph::EdgeVisitor( this->routing_graph );
 
-    this->connect( this , &GWSRouting::upsertEdgeSignal , this , &GWSRouting::upsertEdge );
-    this->connect( this , &GWSRouting::removeEdgeSignal , this , &GWSRouting::removeEdge );
+    this->connect( this , &geoworldsim::routing::Routing::upsertEdgeSignal , this , &geoworldsim::routing::Routing::upsertEdge );
+    this->connect( this , &geoworldsim::routing::Routing::removeEdgeSignal , this , &geoworldsim::routing::Routing::removeEdge );
 }
 
-GWSRouting::~GWSRouting(){
+geoworldsim::routing::Routing::~Routing(){
     delete this->arc_to_object_ids;
     delete this->hash_to_node;
     delete this->routing_graph;
@@ -21,15 +21,15 @@ GWSRouting::~GWSRouting(){
  GETTERS
 **********************************************************************/
 
-QStringList GWSRouting::getShortestPath( const QString &from_hash , const QString &to_hash ){
+QStringList geoworldsim::routing::Routing::getShortestPath( const QString &from_hash , const QString &to_hash ){
     return this->getShortestPath( { from_hash , to_hash } ).at(0);
 }
 
 
-QList< QStringList > GWSRouting::getShortestPath( const QStringList &ordered_hashes ){
+QList< QStringList > geoworldsim::routing::Routing::getShortestPath( const QStringList &ordered_hashes ){
     QList< QStringList > result_routes;
 
-    lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+    lemon::Dijkstra< lemon::ListDigraph, graph::EdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , graph::EdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
 
     for(int i = 0; i < ordered_hashes.size()-1; i++){
 
@@ -93,7 +93,7 @@ QList< QStringList > GWSRouting::getShortestPath( const QStringList &ordered_has
 }
 
 
-QList< QStringList > GWSRouting::getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes ){
+QList< QStringList > geoworldsim::routing::Routing::getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes ){
     QList< QStringList > result_routes;
 
     if( from_one_hash.isEmpty() ){
@@ -113,7 +113,7 @@ QList< QStringList > GWSRouting::getShortestPaths( const QString &from_one_hash 
     }
 
     // Get start node and start graph from it
-    lemon::Dijkstra< lemon::ListDigraph, GWSEdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , GWSEdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
+    lemon::Dijkstra< lemon::ListDigraph, graph::EdgeVisitor > dijkstra_algorithm = lemon::Dijkstra< lemon::ListDigraph , graph::EdgeVisitor >( *this->routing_graph , *this->graph_edge_visitor );
 
     dijkstra_algorithm.run( start );
 
@@ -169,7 +169,7 @@ QList< QStringList > GWSRouting::getShortestPaths( const QString &from_one_hash 
  METHODS
 **********************************************************************/
 
-void GWSRouting::upsertEdge(const QString &object_id , const GWSEdge &edge){
+void geoworldsim::routing::Routing::upsertEdge(const QString &object_id , const graph::Edge &edge){
 
     try {
 
@@ -204,7 +204,7 @@ void GWSRouting::upsertEdge(const QString &object_id , const GWSEdge &edge){
     } catch(...){}
 }
 
-void GWSRouting::removeEdge(const QString &object_id ){
+void geoworldsim::routing::Routing::removeEdge(const QString &object_id ){
 
     lemon::ListDigraph::Arc arc = this->arc_to_object_ids->key( object_id.toStdString() );
     if( this->routing_graph->id( arc ) > 0 ){
@@ -217,7 +217,7 @@ void GWSRouting::removeEdge(const QString &object_id ){
  PROTECTED
 **********************************************************************/
 
-void GWSRouting::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QStringList route ){
+void geoworldsim::routing::Routing::cachePath( lemon::ListDigraph::Node start , lemon::ListDigraph::Node end , QStringList route ){
 
     this->mutex.lockForRead();
     if( !this->routes_cache.keys().contains( start ) ){

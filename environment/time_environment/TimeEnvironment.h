@@ -7,16 +7,16 @@
 #include "../../environment/Environment.h"
 #include "../../util/units/Units.h"
 
-/**
- * @brief The TimeEnvironment class
- * Class to be used in environment to get time / hours.
- */
-class GWSTimeEnvironment : public GWSEnvironment
+namespace geoworldsim {
+namespace environment {
+
+
+class TimeEnvironment : public Environment
 {
     Q_OBJECT
 
 public:
-    static GWSTimeEnvironment* globalInstance();
+    static TimeEnvironment* globalInstance();
 
     // PROPERTIES
     /**
@@ -46,16 +46,16 @@ public:
     //void incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds );
 
     // METHODS
-    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
-    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
+    virtual void registerEntity( QSharedPointer<Entity> agent );
+    virtual void unregisterEntity( QSharedPointer<Entity> agent );
 
 protected slots:
     void entityPropertyChanged( QString property_name );
 
 private:
-    GWSTimeEnvironment();
-    GWSTimeEnvironment(GWSTimeEnvironment const&);
-    ~GWSTimeEnvironment();
+    TimeEnvironment();
+    TimeEnvironment(TimeEnvironment const&);
+    ~TimeEnvironment();
 
     quint64 simulation_datetime_msecs;
     quint64 software_started_datetime_msecs;
@@ -65,5 +65,8 @@ private:
     double time_speed = 1;
 
 };
+
+}
+}
 
 #endif // GWSTIMEENVIRONMENT_H

@@ -20,12 +20,12 @@ public:
     ~GWSTSPRouting();
 
     // METHODS
-    QList<GWSCoordinate> nearestNeighborTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
-    QList<GWSCoordinate> greedyTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
-    QList<GWSCoordinate> insertionTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
-    QList<GWSCoordinate> christofidesTsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
-    QList<GWSCoordinate> opt2Tsp(GWSCoordinate start, QList<GWSCoordinate> visits, GWSCoordinate end);
-    QList<GWSCoordinate> orderCircularTsp(GWSCoordinate start, GWSCoordinate end, QList<GWSCoordinate> tsp_circular_nodes);
+    QList<GWSCoordinate> nearestNeighborTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
+    QList<GWSCoordinate> greedyTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
+    QList<GWSCoordinate> insertionTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
+    QList<GWSCoordinate> christofidesTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
+    QList<GWSCoordinate> opt2Tsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
+    QList<GWSCoordinate> orderCircularTsp(const GWSCoordinate& start, QList<GWSCoordinate> tsp_circular_nodes, const GWSCoordinate& end);
 
 private:
 

@@ -1,29 +1,33 @@
-#ifndef GWSEDGE_H
-#define GWSEDGE_H
+#ifndef EDGE_H
+#define EDGE_H
 
 #include <QString>
 
-struct GWSEdge {
 
-    friend class GWSEdgeVisitor;
+namespace geoworldsim {
+namespace graph {
+
+struct Edge {
+
+    friend class EdgeVisitor;
 
 public:
 
     // CONSTRUCTORS
-    GWSEdge() : cost(1) , type("None") , from_hash("None") , to_hash("None"){}
-    GWSEdge(double cost , QString type , QString from_hash , QString to_hash ) : cost(cost) , type(type) , from_hash(from_hash) , to_hash(to_hash){}
-    GWSEdge(const GWSEdge &other) : GWSEdge(other.cost , other.type , other.from_hash , other.to_hash){}
-    ~GWSEdge(){}
+    Edge() : cost(1) , type("None") , from_hash("None") , to_hash("None"){}
+    Edge(double cost , QString type , QString from_hash , QString to_hash ) : cost(cost) , type(type) , from_hash(from_hash) , to_hash(to_hash){}
+    Edge(const Edge &other) : Edge(other.cost , other.type , other.from_hash , other.to_hash){}
+    ~Edge(){}
 
     // GETTERS
     virtual bool isValid() const;
     double getCost( double accumulated_cost = 0 ) const;
     QString getType() const;
 
-    bool operator == (const GWSEdge&) const;
-    bool operator != (const GWSEdge&) const;
-    bool operator < (const GWSEdge&) const;
-    GWSEdge& operator= (const GWSEdge&);
+    bool operator == (const Edge&) const;
+    bool operator != (const Edge&) const;
+    bool operator < (const Edge&) const;
+    Edge& operator= (const Edge&);
 
     // Returns an unique ID
     virtual QString getFromNodeUID() const { return this->from_hash; }
@@ -39,4 +43,7 @@ protected:
 
 };
 
-#endif // GWSEDGE_H
+}
+}
+
+#endif // EDGE_H

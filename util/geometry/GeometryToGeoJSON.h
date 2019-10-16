@@ -1,16 +1,27 @@
-#ifndef GWSGEOMETRYTOGEOJSON_H
-#define GWSGEOMETRYTOGEOJSON_H
+#ifndef GEOMETRYTOGEOJSON_H
+#define GEOMETRYTOGEOJSON_H
 
 #include <QJsonObject>
 #include "geos/geom/Geometry.h"
 
-class GWSGeometryToGeoJSON
-{
-public:
+namespace geoworldsim {
+namespace geometry {
 
-    static geos::geom::Geometry* GeometryFromGeoJSON( const QJsonObject &geojson );
-    static QJsonObject GeometryToGeoJSON( geos::geom::Geometry* geometry );
+
+class GeometryToGeoJSON
+{
+
+    friend class Geometry;
+
+public:
+    static QJsonObject toGeoJSON( geos::geom::Geometry* geometry );
+
+private:
+    static geos::geom::Geometry* fromGeoJSON( const QJsonObject &geojson );
 
 };
 
-#endif // GWSGEOMETRYTOGEOJSON_H
+}
+}
+
+#endif // GEOMETRYTOGEOJSON_H

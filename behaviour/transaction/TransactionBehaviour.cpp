@@ -48,16 +48,16 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     transaction.insert( GWSObject::GWS_CLASS_PROP , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
     transaction.insert( "type" , this->getProperty( TRANSACTION_TYPE ).toString( "Transaction" ) );
 
-    transaction.insert( "emitter_uid" , emitter->getUID() );
+    transaction.insert( "emitter_id" , emitter->getUID() );
     transaction.insert( "emitter_type" , emitter->getProperty("type") );
     transaction.insert( "emitter_geometry" , GWSGeometry( emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
-    transaction.insert( "receiver_uid" , receiver->getUID() );
+    transaction.insert( "receiver_id" , receiver->getUID() );
     transaction.insert( "receiver_type" , receiver->getProperty("type") );
     transaction.insert( "receiver_geometry" , GWSGeometry( receiver->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() ).getGeoJSON() );
 
     //transaction.insert( "geometry" , emitter->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-    transaction.insert( "time" , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
+    transaction.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
 
     // Perform the transaction
     QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();
@@ -79,7 +79,11 @@ QPair< double , QJsonArray > TransactionBehaviour::behave(){
     if( snapshots > 0 && this->getTickedAmount() % snapshots == 0 ){
         emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( transaction );
         emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( emitter->serialize() );
-        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( receiver->serialize() );
+
+        // Send with emitters current datetime
+        QJsonObject receiver_json = receiver->serialize();
+        receiver_json.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , emitter->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ) );
+        emit GWSCommunicationEnvironment::globalInstance()->sendEntitySignal( receiver_json );
     }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

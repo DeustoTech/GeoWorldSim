@@ -21,11 +21,6 @@ public:
     static QString NEXTS;
     static QString NEXTS_IF_NO_ROUTING_CLOSEST_FOUND;
 
-protected:
-
-    GWSCoordinate closest_coor_and_route;
-    QPair< GWSCoordinate, QString > closest_coor_id;
-
 protected slots:
 
      virtual QPair< double , QJsonArray > behave();

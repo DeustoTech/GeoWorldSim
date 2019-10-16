@@ -4,19 +4,19 @@
  GETTERS
 **********************************************************************/
 
-/*QString GWSEdge::getUID() const{
+/*QString geoworldsim::graph::GWSEdge::getUID() const{
     return this->type + "::" + this->getFromNodeUID() + "->" + this->getToNodeUID();
 }*/
 
-bool GWSEdge::isValid() const{
+bool geoworldsim::graph::Edge::isValid() const{
     return !this->getFromNodeUID().isEmpty() && !this->getToNodeUID().isEmpty();
 }
 
-double GWSEdge::getCost( double accumulated_cost ) const{
+double geoworldsim::graph::Edge::getCost( double accumulated_cost ) const{
     return this->cost + accumulated_cost;
 }
 
-QString GWSEdge::getType() const{
+QString geoworldsim::graph::Edge::getType() const{
     return this->type;
 }
 
@@ -24,19 +24,19 @@ QString GWSEdge::getType() const{
  OPERATORS
 **********************************************************************/
 
-bool GWSEdge::operator == (const GWSEdge& other) const {
+bool geoworldsim::graph::Edge::operator == (const geoworldsim::graph::Edge& other) const {
     return ( this->getFromNodeUID() == other.getFromNodeUID() ) && ( this->getToNodeUID() == other.getToNodeUID() );
 }
 
-bool GWSEdge::operator != (const GWSEdge& other) const{
+bool geoworldsim::graph::Edge::operator != (const geoworldsim::graph::Edge& other) const{
     return !(*this == other);
 }
 
-bool GWSEdge::operator < (const GWSEdge& other) const{
+bool geoworldsim::graph::Edge::operator < (const geoworldsim::graph::Edge& other) const{
     return this->getFromNodeUID() < other.getFromNodeUID();
 }
 
-GWSEdge& GWSEdge::operator = (const GWSEdge& other){
+geoworldsim::graph::Edge& geoworldsim::graph::Edge::operator = (const geoworldsim::graph::Edge& other){
     this->cost = other.cost;
     this->type = other.type;
     return *this;

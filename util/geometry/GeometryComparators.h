@@ -1,19 +1,28 @@
-#ifndef GWSGEOMETRYCOMPARATORS_H
-#define GWSGEOMETRYCOMPARATORS_H
+#ifndef GEOMETRYCOMPARATORS_H
+#define GEOMETRYCOMPARATORS_H
 
 #include "Geometry.h"
 #include "../../util/units/Units.h"
 
-class GWSGeometryComparators {
+
+namespace geoworldsim {
+namespace geometry {
+
+
+class GeometryComparators {
 
 public:
-    static bool isInBounds( const GWSGeometry &geometry , double minX , double maxX , double minY , double maxY );
-    static bool contains( const GWSGeometry &geometry , const GWSCoordinate &coor );
-    static bool intersects( const GWSGeometry &geometry , const GWSGeometry &other);
-    static bool intersects( const GWSGeometry &geometry , double minX , double maxX , double minY , double maxY );
-    static bool equals( const GWSGeometry &geometry , const GWSGeometry &other );
-    static GWSLengthUnit getDistance( const GWSGeometry &geometry , const GWSGeometry &other );
+    static bool isInBounds( const Geometry &geometry , double minX , double maxX , double minY , double maxY );
+    static bool contains( const Geometry &geometry , const Coordinate &coor );
+    static bool intersects( const Geometry &geometry , const Geometry &other);
+    static bool intersects( const Geometry &geometry , double minX , double maxX , double minY , double maxY );
+    static bool equals( const Geometry &geometry , const Geometry &other );
+    static unit::LengthUnit getDistance( const Geometry &geometry , const Geometry& other );
+    static unit::LengthUnit getDistance( const Geometry &geometry , const Coordinate& other );
 
 };
 
-#endif // GWSGEOMETRYCOMPARATORS_H
+}
+}
+
+#endif // GEOMETRYCOMPARATORS_H
