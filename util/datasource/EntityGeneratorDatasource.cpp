@@ -51,7 +51,7 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
                     pending_readers->removeAll( reader );
                     reader->deleteLater();
 
-                    if( pending_readers->isEmpty() ){
+                    if( pending_readers && pending_readers->isEmpty() ){
                         delete pending_readers;
                         emit this->dataReadingFinishedSignal();
                     }
@@ -66,7 +66,7 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
                 QSharedPointer<geoworldsim::Object> entity = ObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() );
             }
 
-            if( pending_readers->isEmpty() ){
+            if( pending_readers && pending_readers->isEmpty() ){
                 delete pending_readers;
                 pending_readers = Q_NULLPTR;
                 emit this->dataReadingFinishedSignal();
