@@ -9,15 +9,16 @@
 #include <QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-class GWSApp : public QCoreApplication
+namespace geoworldsim {
+
+class App : public QCoreApplication
 {
     Q_OBJECT
 
 public:
-    static GWSApp* globalInstance(int argc = 0, char* argv[] = 0);
+    static App* globalInstance(int argc = 0, char* argv[] = 0);
 
-    enum exit_codes {
-    };
+    enum exit_codes {};
 
     // GETTERS
     QString getAppId();
@@ -31,9 +32,9 @@ public slots:
     void exit(int retcode);
 
 private:
-    GWSApp(int argc, char* argv[]);
-    GWSApp(GWSApp const&);
-    ~GWSApp();
+    App(int argc, char* argv[]);
+    App(App const&);
+    ~App();
 
     QNetworkAccessManager http_manager; // HTTP Posts to alerts.geoworldsim.com
 
@@ -47,5 +48,7 @@ private:
     quint64 run_time; // From start to end
 
 };
+
+}
 
 #endif // GWSAPP_H

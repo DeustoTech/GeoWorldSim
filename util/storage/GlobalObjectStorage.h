@@ -1,17 +1,20 @@
-#ifndef GWSGLOBALGSSOBJECTSTORAGE_H
-#define GWSGLOBALGSSOBJECTSTORAGE_H
+#ifndef GLOBALGSSOBJECTSTORAGE_H
+#define GLOBALGSSOBJECTSTORAGE_H
 
 #include "../../object/Object.h"
-
 #include "../../util/storage/ObjectStorage.h"
 
-class GWSGlobalObjectStorage : public GWSObject
+namespace geoworldsim {
+namespace storage {
+
+
+class GlobalObjectStorage : public Object
 {
     Q_OBJECT
 
 public:
 
-    static GWSGlobalObjectStorage* globalInstance();
+    static GlobalObjectStorage* globalInstance();
 
     // GETTERS
     QSharedPointer<QObject> getByClassAndUID( const QMetaObject& metaobject , const QString& uid ) const;
@@ -33,12 +36,15 @@ public:
 
 private:
 
-    GWSGlobalObjectStorage();
-    GWSGlobalObjectStorage(GWSGlobalObjectStorage const&);
-    ~GWSGlobalObjectStorage();
+    GlobalObjectStorage();
+    GlobalObjectStorage(GlobalObjectStorage const&);
+    ~GlobalObjectStorage();
 
-    GWSObjectStorage* storage;
+    ObjectStorage* storage;
 
 };
 
-#endif // GWSGLOBALGSSOBJECTSTORAGE_H
+}
+}
+
+#endif // GLOBALGSSOBJECTSTORAGE_H

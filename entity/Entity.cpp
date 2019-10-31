@@ -7,33 +7,31 @@
 #include <QThread>
 
 #include "../../app/App.h"
-#include "../../util/parallelism/ParallelismController.h"
 #include "../../object/ObjectFactory.h"
-#include "../../behaviour/Behaviour.h"
 #include "../../skill/Skill.h"
+#include "../../behaviour/Behaviour.h"
+#include "../../util/parallelism/ParallelismController.h"
 
-#include "../../environment/Environment.h"
 #include "../../environment/EnvironmentsGroup.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
+QString geoworldsim::Entity::STYLE_COLOR_PROP = "color";
+QString geoworldsim::Entity::STYLE_OPACITY_PROP = "opacity";
+QString geoworldsim::Entity::STYLE_BORDER_COLOR_PROP = "border_color";
+QString geoworldsim::Entity::STYLE_BORDER_WEIGHT_PROP = "border_weight";
+QString geoworldsim::Entity::STYLE_DASH_ARRAY_PROP = "dash_array";
+QString geoworldsim::Entity::STYLE_ICON_URL_PROP = "icon_url";
+QString geoworldsim::Entity::STYLE_ZOOM_LEVEL_PROP = "zoom_level";
 
-QString GWSEntity::STYLE_COLOR_PROP = "color";
-QString GWSEntity::STYLE_OPACITY_PROP = "opacity";
-QString GWSEntity::STYLE_BORDER_COLOR_PROP = "border_color";
-QString GWSEntity::STYLE_BORDER_WEIGHT_PROP = "border_weight";
-QString GWSEntity::STYLE_DASH_ARRAY_PROP = "dash_array";
-QString GWSEntity::STYLE_ICON_URL_PROP = "icon_url";
-QString GWSEntity::STYLE_ZOOM_LEVEL_PROP = "zoom_level";
-
-GWSEntity::GWSEntity() : GWSObject() , busy_counter(0) {
-    this->moveToThread( GWSParallelismController::globalInstance()->getThread() );
+geoworldsim::Entity::Entity() : Object() , busy_counter(0) {
+    this->moveToThread( parallel::ParallelismController::globalInstance()->getThread() );
 }
 
-GWSEntity::~GWSEntity() {
-    // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , entity , &GWSEntity::deleteLater );
+geoworldsim::Entity::~Entity() {
+    // WARNING!: call deleteLater() using a timer : QTimer::singleShot( 1000 , entity , &geoworldsim::GWSEntity::deleteLater );
 
-    foreach(GWSEnvironment* env , this->environments_registerd_in ) {
+    foreach(geoworldsim::environment::Environment* env , this->environments_registerd_in ) {
         env->unregisterEntity( this->getSharedPointer() );
     }
 
@@ -46,11 +44,11 @@ GWSEntity::~GWSEntity() {
  IMPORTERS
 **********************************************************************/
 
-void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
+void geoworldsim::Entity::deserialize( const QJsonObject &json , QSharedPointer<Object> parent ){
 
     QTimer::singleShot( 10 , this , [this , json , parent]{
 
-        GWSObject::deserialize( json , parent );
+        Object::deserialize( json , parent );
 
         // SKILLS
         if( json.keys().contains( "@skills" ) ){
@@ -60,7 +58,7 @@ void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject>
             }
             QJsonArray jskills = json.value("@skills").toArray();
             foreach( QJsonValue js , jskills ){
-                QSharedPointer<GWSSkill> skill = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSSkill>();
+                QSharedPointer< geoworldsim::skill::Skill > skill = ObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<geoworldsim::skill::Skill>();
                 if( skill.isNull() ){ continue; }
                 this->addSkill( skill );
             }
@@ -75,14 +73,14 @@ void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject>
             QJsonArray jsbehaviours = json.value("@behaviours").toArray();
             for( int i = jsbehaviours.size()-1 ; i >= 0 ; i-- ){ // Iterate backwards to have @nexts already created
                 QJsonValue js = jsbehaviours.at( i );
-                QSharedPointer<GWSBehaviour> behaviour = GWSObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<GWSBehaviour>();
+                QSharedPointer<geoworldsim::behaviour::Behaviour> behaviour = ObjectFactory::globalInstance()->fromJSON( js.toObject() , this->getSharedPointer() ).dynamicCast<geoworldsim::behaviour::Behaviour>();
                 if( behaviour.isNull() ){ continue; }
                 this->addBehaviour( behaviour );
             }
         }
 
         // ADD to MAIN environments !WARNING, DO NOT RE-REGISTER THEM AGAIN
-        GWSEnvironmentsGroup::globalInstance()->registerEntity( this->getSharedPointer() );
+        geoworldsim::environment::EnvironmentsGroup::globalInstance()->registerEntity( this->getSharedPointer() );
     });
 
 }
@@ -92,19 +90,19 @@ void GWSEntity::deserialize( const QJsonObject &json , QSharedPointer<GWSObject>
 **********************************************************************/
 
 /**
- * @brief GWSEntity::serialize Called when asked for more info about this agent.
+ * @brief geoworldsim::GWSEntity::serialize Called when asked for more info about this agent.
  * Contains all the additional information of the agent.
  * Can be overwritten if want to add extra variables to child classes
  * @return
  */
-QJsonObject GWSEntity::serialize() const{
+QJsonObject geoworldsim::Entity::serialize() const{
 
-    QJsonObject json = GWSObject::serialize();
+    QJsonObject json = Object::serialize();
 
     //Skills  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
     /*QJsonArray skills;
     if( this->skills ){
-        foreach (QSharedPointer<GWSObject> s , this->skills->getByClass( GWSSkill::staticMetaObject.className() ) ){
+        foreach (QSharedPointer<GWSObject> s , this->skills->getByClass( geoworldsim::skill::Skill::staticMetaObject.className() ) ){
             skills.append( s->serializeMini() );
         }
     }
@@ -114,7 +112,7 @@ QJsonObject GWSEntity::serialize() const{
     // BEHAVIOUR  // DO NOT PROPAGATE THEM TO OTHER ENVIRONMENTS OR UI
     /*QJsonArray behaviours;
     if( this->behaviours ){
-        foreach( QSharedPointer<GWSObject> s , this->behaviours->getByClass( GWSBehaviour::staticMetaObject.className() ) ){
+        foreach( QSharedPointer<GWSObject> s , this->behaviours->getByClass( geoworldsim::behaviour::Behaviour::staticMetaObject.className() ) ){
             behaviours.append( s->serializeMini() );
         }
     }
@@ -137,15 +135,15 @@ QJsonObject GWSEntity::serialize() const{
  GETTERS
 **********************************************************************/
 
-QList<GWSEnvironment*> GWSEntity::getEnvironments() const{
+QList<geoworldsim::environment::Environment*> geoworldsim::Entity::getEnvironments() const{
     return this->environments_registerd_in;
 }
 
-bool GWSEntity::isBusy() const{
+bool geoworldsim::Entity::isBusy() const{
     return busy_counter > 0;
 }
 
-bool GWSEntity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
+bool geoworldsim::Entity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
     bool valid = true;
     foreach( QString key , filter.keys() ){
 
@@ -169,18 +167,18 @@ bool GWSEntity::fulfillsFilter(QJsonObject filter , bool nulls_allowed) const{
 
 
 
-QSharedPointer<GWSEntity> GWSEntity::getSharedPointer() const{
-    QSharedPointer<GWSObject> obj = GWSObject::getSharedPointer();
-    return obj.dynamicCast<GWSEntity>();
+QSharedPointer<geoworldsim::Entity> geoworldsim::Entity::getSharedPointer() const{
+    QSharedPointer<Object> obj = Object::getSharedPointer();
+    return obj.dynamicCast<geoworldsim::Entity>();
 }
 
-bool GWSEntity::hasSkill( QString class_name ) const{
+bool geoworldsim::Entity::hasSkill( QString class_name ) const{
     return this->skills && this->skills->contains( class_name );
 }
 
-QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent ) const{
+QSharedPointer<geoworldsim::skill::Skill> geoworldsim::Entity::getSkill( QString class_name , bool silent ) const{
     if( !this->skills ){ return Q_NULLPTR; }
-    const QList< QSharedPointer<GWSSkill> > skills = this->skills->getByClass<GWSSkill>( class_name );
+    const QList< QSharedPointer<geoworldsim::skill::Skill> > skills = this->skills->getByClass<geoworldsim::skill::Skill>( class_name );
     if( skills.isEmpty() ){
         if( !silent ){ qDebug() << QString("%1:%2 has no skill %3").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( class_name ); }
         return Q_NULLPTR;
@@ -188,7 +186,7 @@ QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent )
     return skills.at(0);
 }
 
-/*template <class T> QSharedPointer<T> GWSEntity::getSkill( QString class_name ) const{
+/*template <class T> QSharedPointer<T> geoworldsim::GWSEntity::getSkill( QString class_name ) const{
     if( !this->skills ){ return 0; }
     const QList< QSharedPointer<GWSObject> > objs = this->skills->getByClass( class_name );
     if( objs.isEmpty() ){
@@ -198,13 +196,13 @@ QSharedPointer<GWSSkill> GWSEntity::getSkill( QString class_name , bool silent )
     return objs.at(0).dynamicCast<T>();
 }*/
 
-QList< QSharedPointer<GWSSkill> > GWSEntity::getSkills( QString class_name ) const{
-    if( !this->skills ){ return QList< QSharedPointer<GWSSkill> >(); }
-    return this->skills->getByClass<GWSSkill>( class_name );
+QList< QSharedPointer<geoworldsim::skill::Skill> > geoworldsim::Entity::getSkills( QString class_name ) const{
+    if( !this->skills ){ return QList< QSharedPointer<geoworldsim::skill::Skill> >(); }
+    return this->skills->getByClass<geoworldsim::skill::Skill>( class_name );
 }
 
-/*template <class T> QList< QSharedPointer<T> > GWSEntity::getSkills( QString class_name ) const{
-    QList< QSharedPointer<GWSSkill> > s;
+/*template <class T> QList< QSharedPointer<T> > geoworldsim::GWSEntity::getSkills( QString class_name ) const{
+    QList< QSharedPointer<geoworldsim::skill::Skill> > s;
     if( !this->skills ){ return s; }
     foreach( QSharedPointer<GWSObject> obj , this->skills->getByClass( class_name )){
         s.append( obj.dynamicCast<T>() );
@@ -212,62 +210,62 @@ QList< QSharedPointer<GWSSkill> > GWSEntity::getSkills( QString class_name ) con
     return s;
 }*/
 
-QList< QSharedPointer<GWSBehaviour> > GWSEntity::getCurrentlyExecutingBehaviours() const{
+QList< QSharedPointer<geoworldsim::behaviour::Behaviour> > geoworldsim::Entity::getCurrentlyExecutingBehaviours() const{
     return this->to_be_executed_behaviours;
 }
 
-QStringList GWSEntity::getCurrentlyExecutingBehaviourUIDS() const{
+QStringList geoworldsim::Entity::getCurrentlyExecutingBehaviourUIDS() const{
     QStringList uids;
-    foreach (QSharedPointer<GWSBehaviour> b , this->to_be_executed_behaviours ) {
+    foreach( QSharedPointer< behaviour::Behaviour > b , this->to_be_executed_behaviours ) {
         uids.append( b->getUID() );
     }
     return uids;
 }
 
-QSharedPointer<GWSBehaviour> GWSEntity::getBehaviour( QString id ) const {
-    return this->behaviours->getByClassAndUID( GWSBehaviour::staticMetaObject.className() , id ).dynamicCast<GWSBehaviour>();
+QSharedPointer< geoworldsim::behaviour::Behaviour > geoworldsim::Entity::getBehaviour( QString id ) const {
+    return this->behaviours->getByClassAndUID( behaviour::Behaviour::staticMetaObject.className() , id ).dynamicCast< behaviour::Behaviour >();
 }
 
-QList< QSharedPointer<GWSBehaviour> > GWSEntity::getBehaviours(QString class_name) const{
-    if( !this->behaviours ){ return QList< QSharedPointer<GWSBehaviour> >(); }
-    return this->behaviours->getByClass<GWSBehaviour>( class_name );
+QList< QSharedPointer< geoworldsim::behaviour::Behaviour > > geoworldsim::Entity::getBehaviours(QString class_name) const{
+    if( !this->behaviours ){ return QList< QSharedPointer< behaviour::Behaviour > >(); }
+    return this->behaviours->getByClass<  behaviour::Behaviour >( class_name );
 }
 
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
-void GWSEntity::incrementBusy(){
+void geoworldsim::Entity::incrementBusy(){
     this->busy_counter++;
 }
 
-void GWSEntity::decrementBusy(){
+void geoworldsim::Entity::decrementBusy(){
     this->busy_counter = qMax( this->busy_counter-1 , 0 );
 }
 
-void GWSEntity::addSkill( QSharedPointer<GWSSkill> skill ){
+void geoworldsim::Entity::addSkill( QSharedPointer< geoworldsim::skill::Skill > skill ){
     if( !this->skills ){
-        this->skills = new GWSObjectStorage();
+        this->skills = new storage::ObjectStorage();
         this->skills->setObjectName( QString("%1 Skills").arg( this->getUID() ) );
     }
     skill->skilled_entity = this->getSharedPointer();
     emit this->skills->addObjectSignal( skill );
 }
 
-void GWSEntity::removeSkill(QSharedPointer<GWSSkill> skill){
+void geoworldsim::Entity::removeSkill(QSharedPointer<geoworldsim::skill::Skill> skill){
     emit this->skills->removeObjectSignal( skill );
 }
 
-void GWSEntity::addBehaviour( QSharedPointer<GWSBehaviour> behaviour){
+void geoworldsim::Entity::addBehaviour( QSharedPointer<geoworldsim::behaviour::Behaviour> behaviour){
     if( !this->behaviours ){
-        this->behaviours = new GWSObjectStorage();
+        this->behaviours = new storage::ObjectStorage();
         this->behaviours->setObjectName( QString("%1 Behaviours").arg( this->getUID() ) );
     }
     behaviour->behaving_entity = this->getSharedPointer();
     emit this->behaviours->addObjectSignal( behaviour );
 }
 
-void GWSEntity::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> behaviour){
+void geoworldsim::Entity::addCurrentlyExecutingBehaviour( QSharedPointer<geoworldsim::behaviour::Behaviour> behaviour){
     this->to_be_executed_behaviours.append( behaviour );
 }
 
@@ -275,19 +273,19 @@ void GWSEntity::addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> beh
  SLOTS
 **********************************************************************/
 
-void GWSEntity::run(){
-    this->setProperty( GWSExecutionEnvironment::ENTITY_BIRTH_PROP , -1 ); // Birth date -1 will be always started
-    GWSExecutionEnvironment::globalInstance()->registerEntity( this->getSharedPointer() );
+void geoworldsim::Entity::run(){
+    this->setProperty( geoworldsim::environment::ExecutionEnvironment::ENTITY_BIRTH_PROP , -1 ); // Birth date -1 will be always started
+    geoworldsim::environment::ExecutionEnvironment::globalInstance()->registerEntity( this->getSharedPointer() );
 }
 
-void GWSEntity::stop(){
-    GWSExecutionEnvironment::globalInstance()->unregisterEntity( this->getSharedPointer() );
+void geoworldsim::Entity::stop(){
+    geoworldsim::environment::ExecutionEnvironment::globalInstance()->unregisterEntity( this->getSharedPointer() );
 }
 
 /**
  * This method is a wrapper slot to be invoked by the Environment for behave() to be executed in the entity's thread.
  **/
-void GWSEntity::tick(){
+void geoworldsim::Entity::tick(){
 
     // Increment has been made in Execution environment
     this->behave();
@@ -296,14 +294,14 @@ void GWSEntity::tick(){
     emit this->entityBehavedSignal();
 }
 
-void GWSEntity::behave(){
+void geoworldsim::Entity::behave(){
 
     // No start behaviour
-    if( this->to_be_executed_behaviours.isEmpty() && this->getProperty( GWSExecutionEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
+    if( this->to_be_executed_behaviours.isEmpty() && this->getProperty( geoworldsim::environment::ExecutionEnvironment::WAIT_FOR_ME_PROP ).toBool() ){
         qWarning() << QString("Entity %1 %2 has no start behaviour and should be waited for it. If running, it will probablly block execution time wating for it.").arg( this->metaObject()->className() ).arg( this->getUID() );
     }
 
-    qint64 behaving_time = this->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
+    qint64 behaving_time = this->getProperty( geoworldsim::environment::TimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
 
     if( this->to_be_executed_behaviours.isEmpty() ){
         qDebug() << QString("Entity %1 %2 has no behaviours to behave.").arg( this->metaObject()->className() ).arg( this->getUID() );
@@ -313,7 +311,7 @@ void GWSEntity::behave(){
     double max_behaviour_time_to_increment = 0;
     QJsonArray next_execute_behaviour_ids;
 
-    foreach ( QSharedPointer<GWSBehaviour> behaviour , this->to_be_executed_behaviours ) {
+    foreach ( QSharedPointer<geoworldsim::behaviour::Behaviour> behaviour , this->to_be_executed_behaviours ) {
 
         QPair< double , QJsonArray > duration_and_nexts_ids = behaviour->tick( behaving_time );
         foreach (QJsonValue id , duration_and_nexts_ids.second ) {
@@ -323,16 +321,16 @@ void GWSEntity::behave(){
         max_behaviour_time_to_increment = qMax( max_behaviour_time_to_increment , duration_and_nexts_ids.first );
     }
 
-    QList< QSharedPointer<GWSBehaviour> > next_execute_behaviours;
+    QList< QSharedPointer<geoworldsim::behaviour::Behaviour> > next_execute_behaviours;
     foreach( QJsonValue v , next_execute_behaviour_ids ) {
 
         QString id = v.toString();
         if( id.isEmpty() ){ continue; }
 
-        QSharedPointer<GWSBehaviour> behaviour = this->getBehaviour( id );
+        QSharedPointer<geoworldsim::behaviour::Behaviour> behaviour = this->getBehaviour( id );
         if( behaviour.isNull() ){
             qCritical() << QString("Entity %1 %2 requested behaviour %3 but does not exist.").arg( this->metaObject()->className() ).arg( this->getUID() ).arg( id );
-            GWSApp::globalInstance()->exit( -1 );
+            App::globalInstance()->exit( -1 );
         } else {
             next_execute_behaviours.append( behaviour );
         }
@@ -340,5 +338,7 @@ void GWSEntity::behave(){
 
     // Store to be executed in next tick
     this->to_be_executed_behaviours = next_execute_behaviours;
-    this->setProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP , behaving_time + (max_behaviour_time_to_increment * 1000) );
+    this->setProperty( geoworldsim::environment::TimeEnvironment::INTERNAL_TIME_PROP , behaving_time + (max_behaviour_time_to_increment * 1000) );
+
 }
+

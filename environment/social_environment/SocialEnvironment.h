@@ -1,10 +1,14 @@
-#ifndef GWSSOCIALENVIRONMENT_H
-#define GWSSOCIALENVIRONMENT_H
+#ifndef SOCIALENVIRONMENT_H
+#define SOCIALENVIRONMENT_H
 
 #include "../../environment/Environment.h"
 #include "SocialRelation.h"
 
-class GWSSocialEnvironment : public GWSEnvironment
+
+namespace geoworldsim {
+namespace environment {
+
+class GWSSocialEnvironment : public Environment
 {
     Q_OBJECT
 
@@ -12,8 +16,8 @@ public:
     static GWSSocialEnvironment* globalInstance();
 
     // GETTERS
-    QStringList getOutRelationeds( QSharedPointer<GWSEntity> agent , QString relation_type );
-    QStringList getInRelationeds( QSharedPointer<GWSEntity> agent , QString relation_type );
+    QStringList getOutRelationeds( QSharedPointer<geoworldsim::Entity> agent , QString relation_type );
+    QStringList getInRelationeds( QSharedPointer<geoworldsim::Entity> agent , QString relation_type );
 
     // METHODS
     //virtual void registerAgent( QSharedPointer<GWSAgent> agent );
@@ -25,9 +29,12 @@ private:
     GWSSocialEnvironment(GWSSocialEnvironment const&);
     ~GWSSocialEnvironment();
 
-    QMap< QString , QMap < QString , QList< GWSSocialRelation > > > out_relations; // QMAP< Relation type , QMAP< Emitter , Relations > >
-    QMap< QString , QMap < QString , QList< GWSSocialRelation > > > in_relations; // QMAP< Relation type , QMAP< Receiver , Relations > >
+    QMap< QString , QMap < QString , QList< social::SocialRelation > > > out_relations; // QMAP< Relation type , QMAP< Emitter , Relations > >
+    QMap< QString , QMap < QString , QList< social::SocialRelation > > > in_relations; // QMAP< Relation type , QMAP< Receiver , Relations > >
 
 };
 
-#endif // GWSSOCIALENVIRONMENT_H
+}
+}
+
+#endif // SOCIALENVIRONMENT_H

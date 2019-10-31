@@ -66,16 +66,16 @@ app.post('/' , async (req, res) => {
         let configuration = req.body;
     
         if( !configuration.target || !configuration.id ){
-            return res.status(404).send();
+	    throw 'Sent file with no target or scenario ID';
         }
 
         const fetch = require('node-fetch');
         const { spawn } = require('child_process');
         const fs = require('fs');
-        let filename = `${__dirname}/${configuration.id}.json`;
+        let filename = `${__dirname}/logs/${configuration.id}.json`;
         
         if( !fs.existsSync( `${__dirname}/targets/${configuration.target}` ) ){
-            return res.status(404).send();
+	    throw 'Sent file requesting non existing target';
         }
         
         // CREATE CONFIG FILE
@@ -105,11 +105,11 @@ app.post('/' , async (req, res) => {
             let status = 'crashed';
             if( code == 0 ){
                 status = 'finished'
-                fs.unlinkSync( filename );
+                //fs.unlinkSync( filename );
             }
             if( timeout ){ 
                 status = 'timeout';
-                fs.unlinkSync( filename );
+                //fs.unlinkSync( filename );
             }
             
             console.log( `Simulation ${configuration.target}:${configuration.id} exited with code ${code}` );
@@ -126,7 +126,7 @@ app.post('/' , async (req, res) => {
         res.send( configuration );
         
     } catch( err ){
-        res.status(500).send( err );
+        res.status(404).send( err );
         console.log( 'Error launching simulation' , err );
     };
     

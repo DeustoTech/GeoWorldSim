@@ -3,31 +3,29 @@
 #include <QDir>
 #include <QJsonDocument>
 
-#include "../../skill/move/MoveThroughRouteSkill.h"
-#include "../../skill/move/MoveSkill.h"
 #include "../../util/storage/GlobalObjectStorage.h"
 
-QString PolluteSkill::POLLUTANT_TYPE_PROP = "pollutant_type";
-QString PolluteSkill::VEHICLE_TYPE_PROP = "vehicle_subtype";
+QString geoworldsim::skill::PolluteSkill::POLLUTANT_TYPE_PROP = "pollutant_type";
+QString geoworldsim::skill::PolluteSkill::VEHICLE_TYPE_PROP = "vehicle_subtype";
 
-PolluteSkill::PolluteSkill()  : GWSSkill( ){
+geoworldsim::skill::PolluteSkill::PolluteSkill() : Skill( ){
 
 }
 
-PolluteSkill::~PolluteSkill(){
+geoworldsim::skill::PolluteSkill::~PolluteSkill(){
 }
 
 
-GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subtype , QString pollutant , GWSSpeedUnit speed , double gradient , QString roadType , double trafficSit , GWSLengthUnit distance ){
+geoworldsim::unit::MassUnit geoworldsim::skill::PolluteSkill::pollute( QString transport_mode, QString vehicle_subtype , QString pollutant , geoworldsim::unit::SpeedUnit speed , double gradient , QString roadType , double trafficSit , geoworldsim::unit::LengthUnit distance ){
 
-        QSharedPointer<GWSEntity> agent = this->getEntity();
+        QSharedPointer<Entity> agent = this->getEntity();
 
-        GWSMassUnit polluted_amount;
+        unit::MassUnit polluted_amount;
 
         //QMap < QString, GWSSvm* > models = this->models;
         //QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
         QString svm_path = "../../data/" + transport_mode + "/" + vehicle_subtype + "/" + pollutant;
-        QSharedPointer< GWSSvm > pollutant_svm = GWSGlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
+        QSharedPointer< GWSSvm > pollutant_svm = storage::GlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
 
         if ( !pollutant_svm ){
 
@@ -54,7 +52,7 @@ GWSMassUnit PolluteSkill::pollute( QString transport_mode, QString vehicle_subty
                 qWarning() << QString("Could not find SVM file %1").arg( svm_path );
             }
 
-            GWSGlobalObjectStorage::globalInstance()->add( pollutant_svm );
+            storage::GlobalObjectStorage::globalInstance()->add( pollutant_svm );
         }
 
         QMap<QString , QVariant> input;

@@ -1,5 +1,5 @@
-#ifndef GWSUNITS
-#define GWSUNITS
+#ifndef UNITS
+#define UNITS
 
 #include <QVariant>
 #include <QDebug>
@@ -8,55 +8,59 @@
  BASE UNIT CLASS
 **********************************************************************/
 
-struct GWSUnit {
+namespace geoworldsim {
+namespace unit {
+
+
+struct Unit {
     double value = 0;
     const char* unit = "undefined";
     QString type = Q_NULLPTR;
 
     // CONSTRUCTORS
-    GWSUnit() : value(0) , unit("undefined"){}
-    GWSUnit(double value, const char* unit) : value(value) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
-    GWSUnit(const GWSUnit &other) : GWSUnit(other.value , other.unit ){}
+    Unit() : value(0) , unit("undefined"){}
+    Unit(double value, const char* unit) : value(value) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
+    Unit(const Unit &other) : Unit(other.value , other.unit ){}
 
     //GWSUnit() : type(0) , unit("undefined"){}
-    GWSUnit(QString type, const char* unit) : type(type) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
+    Unit(QString type, const char* unit) : type(type) , unit( unit ){ Q_ASSERT(unit); } // ATTENTION, CAREFULL WITH IMPLICIT SHARING
     //GWSUnit(const GWSUnit &other) : GWSUnit(other.type , other.unit ){}
-    ~GWSUnit(){}
+    ~Unit(){}
 
     // GETTERS
     double number() const { return value; }
     bool isValid() const { return this->number() == this->number();}
 
     // SETTERS
-    GWSUnit operator =(const double value){
+    Unit operator =(const double value){
         this->value = value;
         return *this;
     }
 
-    GWSUnit operator =(const GWSUnit other){
+    Unit operator =(const Unit other){
         Q_ASSERT( this->unit == other.unit );
         this->value = other.value;
         return *this;
     }
 
     // COMPARE
-    bool operator <(const GWSUnit other) const {
+    bool operator <(const Unit other) const {
         Q_ASSERT( unit == other.unit );
         return value < other.value;
     }
-    bool operator <=(const GWSUnit other) const{
+    bool operator <=(const Unit other) const{
         Q_ASSERT( unit == other.unit );
         return value <= other.value;
     }
-    bool operator >(const GWSUnit other) const{
+    bool operator >(const Unit other) const{
         Q_ASSERT( unit == other.unit );
         return this->value > other.value;
     }
-    bool operator >=(const GWSUnit other) const{
+    bool operator >=(const Unit other) const{
         Q_ASSERT( unit == other.unit );
         return this->value >= other.value;
     }
-    bool operator ==(const GWSUnit other) const{
+    bool operator ==(const Unit other) const{
         Q_ASSERT( unit == other.unit );
         return this->value == other.value;
     }
@@ -65,42 +69,42 @@ struct GWSUnit {
     }
 
     // MATH
-    GWSUnit operator +(const GWSUnit other) const{
+    Unit operator +(const Unit other) const{
         Q_ASSERT( this->unit == other.unit );
-        return GWSUnit( this->value + other.value , this->unit );
+        return Unit( this->value + other.value , this->unit );
     }
-    GWSUnit operator +(const double v) const{
-        return GWSUnit( this->value + v , this->unit );
+    Unit operator +(const double v) const{
+        return Unit( this->value + v , this->unit );
     }
-    GWSUnit operator +=(const GWSUnit other){
+    Unit operator +=(const Unit other){
         Q_ASSERT( this->unit == other.unit );
         this->value += this->value + other.value;
-        return GWSUnit( this->value , this->unit );
+        return Unit( this->value , this->unit );
     }
-    GWSUnit operator +=(const double v){
+    Unit operator +=(const double v){
         this->value += v;
-        return GWSUnit( this->value , this->unit );
+        return Unit( this->value , this->unit );
     }
 
-    GWSUnit operator -(const GWSUnit other) const{
+    Unit operator -(const Unit other) const{
         Q_ASSERT( this->unit == other.unit );
-        return GWSUnit( this->value - other.value , this->unit );
+        return Unit( this->value - other.value , this->unit );
     }
-    GWSUnit operator -(const double v) const{
-        return GWSUnit( this->value - v , this->unit );
+    Unit operator -(const double v) const{
+        return Unit( this->value - v , this->unit );
     }
 
-    GWSUnit operator *(const GWSUnit other) const{
-        return GWSUnit( this->value * other.value , "" );
+    Unit operator *(const Unit other) const{
+        return Unit( this->value * other.value , "" );
     }
-    GWSUnit operator *(const double v) const{
-        return GWSUnit( this->value * v , this->unit );
+    Unit operator *(const double v) const{
+        return Unit( this->value * v , this->unit );
     }
-    GWSUnit operator /(const GWSUnit other) const{
-        return GWSUnit( this->value / other.value , "" );
+    Unit operator /(const Unit other) const{
+        return Unit( this->value / other.value , "" );
     }
-    GWSUnit operator /(const double v) const{
-        return GWSUnit( this->value / v , this->unit );
+    Unit operator /(const double v) const{
+        return Unit( this->value / v , this->unit );
     }
 };
 
@@ -108,100 +112,100 @@ struct GWSUnit {
  TIME IN SECONDS
 **********************************************************************/
 
-struct GWSTimeUnit : GWSUnit {
-    GWSTimeUnit(double seconds) : GWSUnit(seconds , "second"){}
-    GWSTimeUnit(const GWSUnit &other) : GWSTimeUnit(other.value){}
-    GWSTimeUnit() : GWSTimeUnit(0){}
+struct TimeUnit : Unit {
+    TimeUnit(double seconds) : Unit(seconds , "second"){}
+    TimeUnit(const Unit &other) : TimeUnit(other.value){}
+    TimeUnit() : TimeUnit(0){}
 };
 
 /**********************************************************************
  LENGTH IN METERS
 **********************************************************************/
 
-struct GWSLengthUnit : GWSUnit {
-    GWSLengthUnit(double meters) : GWSUnit(meters , "meter"){}
-    GWSLengthUnit(const GWSUnit &other) : GWSLengthUnit(other.value){}
-    GWSLengthUnit() : GWSLengthUnit(0){}
+struct LengthUnit : Unit {
+    LengthUnit(double meters) : Unit(meters , "meter"){}
+    LengthUnit(const Unit &other) : LengthUnit(other.value){}
+    LengthUnit() : LengthUnit(0){}
 };
 
 /**********************************************************************
  MASS IN GRAMS
 **********************************************************************/
 
-struct GWSMassUnit : GWSUnit {
-    GWSMassUnit(double grams) : GWSUnit(grams , "gram"){}
-    GWSMassUnit(const GWSUnit &other) : GWSMassUnit(other.value){}
-    GWSMassUnit() : GWSMassUnit(0){}
+struct MassUnit : Unit {
+    MassUnit(double grams) : Unit(grams , "gram"){}
+    MassUnit(const Unit &other) : MassUnit(other.value){}
+    MassUnit() : MassUnit(0){}
 };
 
 /**********************************************************************
  PRICE IN EUROS
 **********************************************************************/
 
-struct GWSCurrencyUnit : GWSUnit {
-    GWSCurrencyUnit(double euros) : GWSUnit(euros , "euro"){}
-    GWSCurrencyUnit(const GWSUnit &other) : GWSCurrencyUnit(other.value){}
-    GWSCurrencyUnit() : GWSCurrencyUnit(0){}
+struct CurrencyUnit : Unit {
+    CurrencyUnit(double euros) : Unit(euros , "euro"){}
+    CurrencyUnit(const Unit &other) : CurrencyUnit(other.value){}
+    CurrencyUnit() : CurrencyUnit(0){}
 };
 
 /**********************************************************************
  SPEED IN METERS PER SECOND
 **********************************************************************/
 
-struct GWSSpeedUnit : GWSUnit {
-    GWSSpeedUnit(double meters_per_second) : GWSUnit(meters_per_second , "meter per second"){}
-    GWSSpeedUnit(const GWSUnit &other) : GWSSpeedUnit(other.value){}
-    GWSSpeedUnit() : GWSSpeedUnit(0){}
+struct SpeedUnit : Unit {
+    SpeedUnit(double meters_per_second) : Unit(meters_per_second , "meter per second"){}
+    SpeedUnit(const Unit &other) : SpeedUnit(other.value){}
+    SpeedUnit() : SpeedUnit(0){}
 };
 
 /**********************************************************************
  TEMPERATURE IN CELSIUS DEGREES
 **********************************************************************/
 
-struct GWSTemperatureUnit : GWSUnit {
-    GWSTemperatureUnit(double celsius) : GWSUnit(celsius , "celsius degree"){}
-    GWSTemperatureUnit(const GWSUnit &other) : GWSTemperatureUnit(other.value){}
-    GWSTemperatureUnit() : GWSTemperatureUnit(0){}
+struct TemperatureUnit : Unit {
+    TemperatureUnit(double celsius) : Unit(celsius , "celsius degree"){}
+    TemperatureUnit(const Unit &other) : TemperatureUnit(other.value){}
+    TemperatureUnit() : TemperatureUnit(0){}
 };
 
 /**********************************************************************
  AREA IN SQUARE METERS
 **********************************************************************/
 
-struct GWSAreaUnit : GWSUnit {
-    GWSAreaUnit(double square_meters) : GWSUnit(square_meters , "square meter"){}
-    GWSAreaUnit(const GWSUnit &other) : GWSAreaUnit(other.value){}
-    GWSAreaUnit() : GWSAreaUnit(0){}
+struct AreaUnit : Unit {
+    AreaUnit(double square_meters) : Unit(square_meters , "square meter"){}
+    AreaUnit(const Unit &other) : AreaUnit(other.value){}
+    AreaUnit() : AreaUnit(0){}
 };
 
 /**********************************************************************
  VOLUME UNITS IN LITER
 **********************************************************************/
 
-struct GWSVolumeUnit : GWSUnit {
-    GWSVolumeUnit(double liters) : GWSUnit(liters , "liter"){}
-    GWSVolumeUnit(const GWSUnit &other) : GWSVolumeUnit(other.value){}
-    GWSVolumeUnit() : GWSVolumeUnit(0){}
+struct VolumeUnit : Unit {
+    VolumeUnit(double liters) : Unit(liters , "liter"){}
+    VolumeUnit(const Unit &other) : VolumeUnit(other.value){}
+    VolumeUnit() : VolumeUnit(0){}
 };
 
 /**********************************************************************
  POWER IN WATTS
 **********************************************************************/
 
-struct GWSPowerUnit : GWSUnit {
-    GWSPowerUnit(double watts) : GWSUnit(watts , "watt"){}
-    GWSPowerUnit(const GWSUnit &other) : GWSPowerUnit(other.value){}
-    GWSPowerUnit() : GWSPowerUnit(0){}
+struct PowerUnit : Unit {
+    PowerUnit(double watts) : Unit(watts , "watt"){}
+    PowerUnit(const Unit &other) : PowerUnit(other.value){}
+    PowerUnit() : PowerUnit(0){}
 };
 
 /**********************************************************************
  FREQUENCY UNITS IN HERTZ
 **********************************************************************/
 
-struct GWSFrequencyUnit : GWSUnit {
-    GWSFrequencyUnit(double hertzs) : GWSUnit(hertzs , "hertz"){}
-    GWSFrequencyUnit(const GWSUnit &other) : GWSFrequencyUnit(other.value){}
-    GWSFrequencyUnit() : GWSFrequencyUnit(0){}
+struct FrequencyUnit : Unit {
+    FrequencyUnit(double hertzs) : Unit(hertzs , "hertz"){}
+    FrequencyUnit(const Unit &other) : FrequencyUnit(other.value){}
+    FrequencyUnit() : FrequencyUnit(0){}
 };
 
 
@@ -209,14 +213,18 @@ struct GWSFrequencyUnit : GWSUnit {
  RESOURCES TO BE USED AS INPUT/OUTPUT PROPERTIES
 **********************************************************************/
 
-struct GWSResourceUnit : GWSUnit {
-    GWSResourceUnit(QString resource) : GWSUnit( resource, "resource"){}
-    GWSResourceUnit(const GWSUnit &other) : GWSResourceUnit(other.type) {}
-    GWSResourceUnit() : GWSResourceUnit(0){}
+struct ResourceUnit : Unit {
+    ResourceUnit(QString resource) : Unit( resource, "resource"){}
+    ResourceUnit(const Unit &other) : ResourceUnit(other.type) {}
+    ResourceUnit() : ResourceUnit(0){}
 };
+
+
+}
+}
 
 // DO NOT Declare Units to be used as QMETAPROPERTY
 // NEED TO BE STORED AS DOUBLE, TO BE SERIALIZABLE
 
-#endif // GWSUNITS
+#endif // UNITS
 

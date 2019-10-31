@@ -1,22 +1,22 @@
-#include "MoveThroughRouteBehaviour.h"
+#include "MoveThroughNetworkBehaviour.h"
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 
 #include "../../app/App.h"
-#include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/MoveThroughNetworkSkill.h"
 
-QString MoveThroughRouteBehaviour::INPUT_TRANSPORT_NETWORK_TYPE = "input_transport_network_type";
-QString MoveThroughRouteBehaviour::INPUT_ROUTE_DESTINATION = "input_route_destination";
-QString MoveThroughRouteBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
-QString MoveThroughRouteBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
+QString MoveThroughNetworkBehaviour::INPUT_TRANSPORT_NETWORK_TYPE = "input_transport_network_type";
+QString MoveThroughNetworkBehaviour::INPUT_ROUTE_DESTINATION = "input_route_destination";
+QString MoveThroughNetworkBehaviour::NEXTS_IF_ARRIVED = "nexts_if_arrived";
+QString MoveThroughNetworkBehaviour::NEXTS_IF_NOT_ARRIVED = "nexts_if_not_arrived";
 
 
-MoveThroughRouteBehaviour::MoveThroughRouteBehaviour() : MoveBehaviour(){
+MoveThroughNetworkBehaviour::MoveThroughNetworkBehaviour() : MoveBehaviour(){
 }
 
-MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
+MoveThroughNetworkBehaviour::~MoveThroughNetworkBehaviour(){
 }
 
 
@@ -24,15 +24,15 @@ MoveThroughRouteBehaviour::~MoveThroughRouteBehaviour(){
  INITIALIZE
 **********************************************************************/
 
-void MoveThroughRouteBehaviour::afterCreateHook(){
+void MoveThroughNetworkBehaviour::afterCreateHook(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
 
     // Check if entity has a MoveSkill, otherwise create it and set its max_speed
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = entity->getSkill( MoveThroughRouteSkill::staticMetaObject.className() , true ).dynamicCast<MoveThroughRouteSkill>();
-    if( movethroughroute_skill.isNull() ){
-        movethroughroute_skill = QSharedPointer<MoveThroughRouteSkill>( new MoveThroughRouteSkill() );
-        entity->addSkill( movethroughroute_skill );
+    QSharedPointer<MoveThroughNetworkSkill> movethroughnetwork_skill = entity->getSkill( MoveThroughNetworkSkill::staticMetaObject.className() , true ).dynamicCast<MoveThroughNetworkSkill>();
+    if( movethroughnetwork_skill.isNull() ){
+        movethroughnetwork_skill = QSharedPointer<MoveThroughNetworkSkill>( new MoveThroughNetworkSkill() );
+        entity->addSkill( movethroughnetwork_skill );
     }
 
 }
@@ -41,14 +41,14 @@ void MoveThroughRouteBehaviour::afterCreateHook(){
  METHODS
 **********************************************************************/
 
-QPair<double, QJsonArray> MoveThroughRouteBehaviour::behave(){
+QPair<double, QJsonArray> MoveThroughNetworkBehaviour::behave(){
 
     QSharedPointer<GWSEntity> entity = this->getEntity();
     GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     GWSTimeUnit duration_of_movement = this->getProperty( BEHAVIOUR_DURATION ).toDouble( 1 );
 
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = entity->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
+    QSharedPointer<MoveThroughNetworkSkill> movethroughroute_skill = entity->getSkill( MoveThroughNetworkSkill::staticMetaObject.className() ).dynamicCast<MoveThroughNetworkSkill>();
 
     GWSGeometry route_destination = this->getProperty( INPUT_ROUTE_DESTINATION ).toObject();
     if( !route_destination.isValid() ){

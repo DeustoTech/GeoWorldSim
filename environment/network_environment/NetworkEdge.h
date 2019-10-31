@@ -1,12 +1,15 @@
-#ifndef GWSNETWORKEDGE_H
-#define GWSNETWORKEDGE_H
+#ifndef NETWORKEDGE_H
+#define NETWORKEDGE_H
 
 #include <QJsonObject>
 
 #include "../../util/graph/Edge.h"
 #include "../../util/geometry/Coordinate.h"
 
-struct GWSNetworkEdge : GWSEdge {
+namespace geoworldsim {
+namespace graph {
+
+struct NetworkEdge : Edge {
 
 public:
 
@@ -19,28 +22,32 @@ public:
     static QString EDGE_TO_Z_PROP;
 
     // CONSTRUCTORS
-    GWSNetworkEdge() : GWSEdge() {}
-    GWSNetworkEdge( QJsonObject json ) : GWSNetworkEdge( GWSCoordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() , json.value( EDGE_FROM_Z_PROP ).toDouble() ) , GWSCoordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() , json.value( EDGE_TO_Z_PROP ).toDouble() ) ) {}
-    GWSNetworkEdge( const GWSCoordinate &from , const GWSCoordinate &to ) : GWSEdge( from.getDistance(to).number() , "Network" , from.toString() , to.toString() ) , from(from) , to(to) {}
-    GWSNetworkEdge(const GWSNetworkEdge &other) : GWSNetworkEdge(other.from , other.to){}
-    ~GWSNetworkEdge(){}
+    NetworkEdge() : Edge() {}
+    NetworkEdge( QJsonObject json ) : NetworkEdge( geometry::Coordinate( json.value( EDGE_FROM_X_PROP ).toDouble() , json.value( EDGE_FROM_Y_PROP ).toDouble() , json.value( EDGE_FROM_Z_PROP ).toDouble() ) , geometry::Coordinate( json.value( EDGE_TO_X_PROP ).toDouble() , json.value( EDGE_TO_Y_PROP ).toDouble() , json.value( EDGE_TO_Z_PROP ).toDouble() ) ) {}
+    NetworkEdge( const geometry::Coordinate &from , const geometry::Coordinate &to ) : Edge( from.getDistance(to).number() , "Network" , from.toString() , to.toString() ) , from(from) , to(to) {}
+    NetworkEdge(const NetworkEdge &other) : NetworkEdge(other.from , other.to){}
+    ~NetworkEdge(){}
 
     // GETTERS
     virtual bool isValid() const;
-    virtual GWSCoordinate getFromCoordinate() const;
-    virtual GWSCoordinate getToCoordinate() const;
-    virtual GWSLengthUnit getLength() const;
+    virtual geometry::Coordinate getFromCoordinate() const;
+    virtual geometry::Coordinate getToCoordinate() const;
+    virtual unit::LengthUnit getLength() const;
     virtual double getGradient() const; // Positive for climbing up and negative for going down
 
     // SETTERS
-    void setLength( GWSLengthUnit length );
+    void setLength( unit::LengthUnit length );
 
 protected:
 
     // PROPERTIES
-    GWSCoordinate from;
-    GWSCoordinate to;
+    geometry::Coordinate from;
+    geometry::Coordinate to;
 
 };
 
-#endif // GWSNETWORKEDGE_H
+
+}
+}
+
+#endif // NETWORKEDGE_H

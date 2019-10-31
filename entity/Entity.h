@@ -1,5 +1,5 @@
-#ifndef GWSENTITY_H
-#define GWSENTITY_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 //#include <QtQml/QQmlEngine>
 #include <QMetaType>
@@ -12,30 +12,32 @@
 #include <QFuture>
 
 #include "./../object/Object.h"
-
-#include "./../util/units/Units.h"
 #include "./../util/storage/ObjectStorage.h"
 
-QT_FORWARD_DECLARE_CLASS(GWSEnvironment)
-QT_FORWARD_DECLARE_CLASS(GWSPhysicalEnvironment)
-QT_FORWARD_DECLARE_CLASS(GWSExecutionEnvironment)
-QT_FORWARD_DECLARE_CLASS(GWSSkill)
-QT_FORWARD_DECLARE_CLASS(GWSBehaviour)
+namespace geoworldsim {
 
-// Declare Coordinate to be used as QMETAPROPERTY
-// Q_DECLARE_METATYPE(GWSGeometry)
+namespace environment {
+    QT_FORWARD_DECLARE_CLASS(Environment)
+    QT_FORWARD_DECLARE_CLASS(ExecutionEnvironment)
+}
+namespace skill {
+    QT_FORWARD_DECLARE_CLASS(Skill)
+}
+namespace behaviour {
+    QT_FORWARD_DECLARE_CLASS(Behaviour)
+}
 
-class GWSEntity : public GWSObject
+class Entity : public Object
 {
-    friend class GWSEnvironment; // Environment will be able to overwrite the attributes
-    friend class GWSExecutionEnvironment;
+    friend class environment::Environment; // Environment will be able to overwrite the attributes
+    friend class environment::ExecutionEnvironment;
 
     Q_OBJECT // Required for every child!! Adds Qt extra functionality like SIGNAL/SLOTS
 
 public:
 
-    Q_INVOKABLE explicit GWSEntity(); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
-    ~GWSEntity();
+    Q_INVOKABLE explicit Entity(); // Required Q_INVOKABLE to be registerd in GWSObjectFactory
+    ~Entity();
 
     // STYLE PROPERTIES
     static QString STYLE_COLOR_PROP;
@@ -47,38 +49,36 @@ public:
     static QString STYLE_ZOOM_LEVEL_PROP;
 
     // IMPORTERS
-    virtual void deserialize( const QJsonObject &json , QSharedPointer<GWSObject> parent = QSharedPointer<GWSObject>() );
+    virtual void deserialize( const QJsonObject &json , QSharedPointer<Object> parent = QSharedPointer<Object>() );
 
     // EXPORTERS
     virtual QJsonObject serialize() const; // Called when asked for more info about this entity. Can be overwritten if want to add extra variables to the exporters
     //virtual QImage toImage( const GWSEnvelope image_bounds , unsigned int image_width = 1024 , unsigned int image_height = 1024 );
 
     // GETTERS
-    QList<GWSEnvironment*> getEnvironments() const;
+    QList< environment::Environment* > getEnvironments() const;
     bool isBusy() const;
     bool fulfillsFilter( QJsonObject filter , bool nulls_allowed = true ) const;
-    QSharedPointer<GWSEntity> getSharedPointer() const;
+    QSharedPointer<Entity> getSharedPointer() const;
 
     // SKILLS
     bool hasSkill( QString class_name ) const;
-    QSharedPointer<GWSSkill> getSkill( QString class_name , bool silent = false ) const;
-    //template <class T> QSharedPointer<T> getSkill( QString class_name ) const;
-    QList< QSharedPointer<GWSSkill> > getSkills( QString class_name ) const;
-    //template <class T> QList< QSharedPointer<T> > getSkills( QString class_name ) const;
+    QSharedPointer< skill::Skill > getSkill( QString class_name , bool silent = false ) const;
+    QList< QSharedPointer< skill::Skill > > getSkills( QString class_name ) const;
 
     // BEHAVIOURS
-    QList< QSharedPointer<GWSBehaviour> > getCurrentlyExecutingBehaviours() const;
+    QList< QSharedPointer< behaviour::Behaviour > > getCurrentlyExecutingBehaviours() const;
     QStringList getCurrentlyExecutingBehaviourUIDS() const;
-    QSharedPointer<GWSBehaviour> getBehaviour( QString behaviour_id ) const;
-    QList< QSharedPointer<GWSBehaviour> > getBehaviours( QString class_name ) const;
+    QSharedPointer< behaviour::Behaviour > getBehaviour( QString behaviour_id ) const;
+    QList< QSharedPointer< behaviour::Behaviour > > getBehaviours( QString class_name ) const;
 
     // SETTERS
     void incrementBusy();
     void decrementBusy();
-    void addSkill( QSharedPointer<GWSSkill> skill );
-    void removeSkill( QSharedPointer<GWSSkill> skill );
-    void addBehaviour( QSharedPointer<GWSBehaviour> behaviour );
-    void addCurrentlyExecutingBehaviour( QSharedPointer<GWSBehaviour> behaviour );
+    void addSkill( QSharedPointer< skill::Skill > skill );
+    void removeSkill( QSharedPointer< skill::Skill > skill );
+    void addBehaviour( QSharedPointer< behaviour::Behaviour > behaviour );
+    void addCurrentlyExecutingBehaviour( QSharedPointer< behaviour::Behaviour > behaviour );
 
 public slots:
     void run();
@@ -97,24 +97,26 @@ signals:
 
 protected:
 
-    QList<GWSEnvironment*> environments_registerd_in; // List of environments it lives in
+    QList< environment::Environment* > environments_registerd_in; // List of environments it lives in
 
     /**
      * @brief Entity skills storage
      */
-    GWSObjectStorage* skills = Q_NULLPTR;
+    storage::ObjectStorage* skills = Q_NULLPTR;
 
     /**
      * @brief Entity behaviour
      */
-    GWSObjectStorage* behaviours = Q_NULLPTR;
-    QList< QSharedPointer<GWSBehaviour> > to_be_executed_behaviours;
+    storage::ObjectStorage* behaviours = Q_NULLPTR;
+    QList< QSharedPointer< behaviour::Behaviour > > to_be_executed_behaviours;
 
 private:
 
     int busy_counter = 0;
 };
 
-Q_DECLARE_METATYPE(GWSEntity*) // REQUIRED IN EVERY CHILD
+}
+
+Q_DECLARE_METATYPE( geoworldsim::Entity* ) // REQUIRED IN EVERY CHILD
 
 #endif // GWSENTITY_H

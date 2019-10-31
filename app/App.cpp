@@ -12,6 +12,7 @@
 #include <QException>
 #include <QString>
 
+#include "../../util/network/HttpDriver.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/grid_environment/GridEnvironment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
@@ -21,13 +22,14 @@
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
-GWSApp* GWSApp::globalInstance(int argc, char *argv[]){
+
+geoworldsim::App* geoworldsim::App::globalInstance(int argc, char *argv[]){
     // int &argc, char *argv[]
-    static GWSApp instance(argc , argv);
+    static geoworldsim::App instance(argc , argv);
     return &instance;
 }
 
-GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , created_timestamp( QDateTime::currentMSecsSinceEpoch() ) {
+geoworldsim::App::App(int argc, char* argv[]) : QCoreApplication( argc , argv ) , created_timestamp( QDateTime::currentMSecsSinceEpoch() ) {
 
     // READ CONFIGURATION FILE
     QJsonParseError jerror;
@@ -52,10 +54,10 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
     /*if( this->getConfiguration().value("console").toInt( -1 ) >= 0 ){
 
         qInstallMessageHandler( [](QtMsgType type, const QMessageLogContext &context, const QString &msg){
-            if( type >= GWSApp::globalInstance()->getConfiguration().value("console").toInt(-1) ){
+            if( type >= geoworldsim::GWSApp::globalInstance()->getConfiguration().value("console").toInt(-1) ){
                 QMap<QtMsgType , QString> message_types = {{ QtDebugMsg , "Debug" },{ QtWarningMsg , "Warning" } , { QtCriticalMsg , "Critical" } , { QtFatalMsg , "Fatal" } , { QtInfoMsg , "Info" } };
                 QJsonObject message;
-                message.insert( GWSObject::GWS_UID_PROP , GWSApp::globalInstance()->getAppId() );
+                message.insert( GWSObject::GWS_UID_PROP , geoworldsim::GWSApp::globalInstance()->getAppId() );
                 message.insert( "type" , QString("Simulation-Log") );
                 message.insert( "log_type" , message_types.value( type ) );
                 message.insert( "log" , msg );
@@ -65,17 +67,20 @@ GWSApp::GWSApp(int argc, char* argv[]) : QCoreApplication( argc , argv ) , creat
                 message.insert( "line" , context.line );
                 message.insert( "category" , context.category );
                 message.insert( "function" , context.function );
-                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message , GWSApp::globalInstance()->getAppId() + "-LOG" );
+                emit GWSCommunicationEnvironment::globalInstance()->sendAgentSignal( message , geoworldsim::GWSApp::globalInstance()->getAppId() + "-LOG" );
             }
         } );
     }*/
+
+    // Init API driver to get this thread as the main one
+    network::HttpDriver::globalInstance();
 
     // Init random generators
     qsrand( QDateTime::currentDateTime().time().second() );
 
 }
 
-GWSApp::~GWSApp(){
+geoworldsim::App::~App(){
     this->json_configuration.remove("id"); // Set to null
 }
 
@@ -83,15 +88,15 @@ GWSApp::~GWSApp(){
  GETTERS
 **********************************************************************/
 
-QString GWSApp::getAppId(){
+QString geoworldsim::App::getAppId(){
     return this->json_configuration.value( "id" ).toString();
 }
 
-QString GWSApp::getUserId(){
+QString geoworldsim::App::getUserId(){
     return this->json_configuration.value( "user_id" ).toString();
 }
 
-const QJsonObject& GWSApp::getConfiguration(){
+const QJsonObject& geoworldsim::App::getConfiguration(){
     return this->json_configuration;
 }
 
@@ -99,21 +104,21 @@ const QJsonObject& GWSApp::getConfiguration(){
  METHODS
 **********************************************************************/
 
-int GWSApp::exec(){
+int geoworldsim::App::exec(){
     qInfo() << QString("Simulation with UID %1 starting at %2").arg( this->getAppId() ).arg( QDateTime::currentDateTime().toString() );
 
     try {
         QCoreApplication::exec(); // Real exec()
     } catch(std::exception &e){
-        GWSExecutionEnvironment::globalInstance()->stop();
-        GWSExecutionEnvironment::globalInstance()->run();
+        geoworldsim::environment::ExecutionEnvironment::globalInstance()->stop();
+        geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
         this->exec();
     }
 
     return -1;
 }
 
-void GWSApp::exit(int retcode){
+void geoworldsim::App::exit(int retcode){
     qInfo() << QString("Simulation with UID %1 exiting at %2 with code %3").arg( this->getAppId() ).arg( QDateTime::currentDateTime().toString() ).arg( retcode );
     QCoreApplication::exit(retcode);
 }

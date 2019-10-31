@@ -1,16 +1,20 @@
-#ifndef GWSPARALLELISMCONTROLLER_H
-#define GWSPARALLELISMCONTROLLER_H
+#ifndef PARALLELISMCONTROLLER_H
+#define PARALLELISMCONTROLLER_H
 
 #include <QObject>
 #include <QMap>
 #include <QThread>
 
-class GWSParallelismController : public QObject
+namespace geoworldsim {
+namespace parallel {
+
+
+class ParallelismController : public QObject
 {
     Q_OBJECT
 public:
 
-    static GWSParallelismController* globalInstance();
+    static ParallelismController* globalInstance();
 
     // GETTERS
     int getThreadsCount() const;
@@ -25,9 +29,9 @@ signals:
 
 private:
 
-    GWSParallelismController();
-    GWSParallelismController(GWSParallelismController const&);
-    ~GWSParallelismController();
+    ParallelismController();
+    ParallelismController(ParallelismController const&);
+    ~ParallelismController();
 
     QThread* main_thread;
 
@@ -35,4 +39,9 @@ private:
 
 };
 
-#endif // GWSPARALLELISMCONTROLLER_H
+
+}
+}
+
+
+#endif // PARALLELISMCONTROLLER_H

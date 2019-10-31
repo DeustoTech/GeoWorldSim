@@ -2,10 +2,13 @@
 #define MOVESKILL_H
 
 #include "../Skill.h"
-#include "../../util/units/Units.h"
 #include "../../util/geometry/Geometry.h"
 
-class MoveSkill : public GWSSkill
+namespace geoworldsim {
+namespace skill {
+
+
+class MoveSkill : public Skill
 {
     Q_OBJECT
 
@@ -28,12 +31,16 @@ public:
     //void setMaxSpeed( GWSSpeedUnit max_speed ); // In m/s
 
     // METHODS
-    virtual GWSSpeedUnit calculateNewSpeed( const GWSSpeedUnit &current_speed , const GWSSpeedUnit &max_speed , double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
-    virtual void move( const GWSTimeUnit &movement_duration , const GWSSpeedUnit &movement_speed , const GWSGeometry &movement_towards_geom );
+    virtual unit::SpeedUnit calculateNewSpeed( const unit::SpeedUnit &current_speed , const unit::SpeedUnit &max_speed , double force = 0 ); // force[0,1) Accelerate / force(-1,0] Brake
+    virtual void move( const unit::TimeUnit &movement_duration , const unit::SpeedUnit &movement_speed , const geometry::Geometry &movement_towards_geom );
 
 private:
 
 
 };
+
+
+}
+}
 
 #endif // MOVESKILL_H

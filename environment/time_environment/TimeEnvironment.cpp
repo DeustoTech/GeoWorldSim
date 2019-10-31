@@ -5,30 +5,32 @@
 #include "TimeEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
-QString GWSTimeEnvironment::INTERNAL_TIME_PROP = "time";
+QString geoworldsim::environment::TimeEnvironment::INTERNAL_TIME_PROP = "time";
 
-GWSTimeEnvironment* GWSTimeEnvironment::globalInstance(){
-    static GWSTimeEnvironment instance;
+geoworldsim::environment::TimeEnvironment* geoworldsim::environment::TimeEnvironment::globalInstance(){
+    static TimeEnvironment instance;
     return &instance;
 }
 
-GWSTimeEnvironment::GWSTimeEnvironment() : GWSEnvironment() ,
+geoworldsim::environment::TimeEnvironment::TimeEnvironment() : Environment() ,
     software_started_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) ,
     simulation_datetime_msecs( QDateTime::currentMSecsSinceEpoch() ) {
-    this->time_speed = GWSApp::globalInstance()->getConfiguration().value("speed").toDouble(1);
-    this->simulation_datetime_msecs = GWSApp::globalInstance()->getConfiguration().value( "start" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
+
+    this->time_speed = App::globalInstance()->getConfiguration().value("speed").toDouble(1);
+    this->simulation_datetime_msecs = App::globalInstance()->getConfiguration().value( "start" ).toDouble( QDateTime::currentMSecsSinceEpoch() );
+
     qInfo() << QString("TimeEnvironment created with speed %1 and datetime %2").arg( this->time_speed ).arg( QDateTime::fromMSecsSinceEpoch( this->simulation_datetime_msecs ).toString() );
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    EnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
-GWSTimeEnvironment::~GWSTimeEnvironment(){
+geoworldsim::environment::TimeEnvironment::~TimeEnvironment(){
 }
 
 /**********************************************************************
    IMPORTERS
 **********************************************************************/
 
-void GWSTimeEnvironment::deserialize(QJsonObject json){
+void geoworldsim::environment::TimeEnvironment::deserialize(QJsonObject json){
     if( json.contains("speed") ){
         this->setTimeSpeed( qMax( json["speed"].toObject()["value"].toDouble() , 0.1) );
     }
@@ -38,7 +40,7 @@ void GWSTimeEnvironment::deserialize(QJsonObject json){
    EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSTimeEnvironment::serialize(){
+QJsonObject geoworldsim::environment::TimeEnvironment::serialize(){
     QJsonObject json;
     json.insert( "datetime" , (qint64)this->getCurrentDateTime() );
     json.insert( "speed" , this->getTimeSpeed() );
@@ -49,17 +51,17 @@ QJsonObject GWSTimeEnvironment::serialize(){
    GETTERS
 **********************************************************************/
 
-qint64 GWSTimeEnvironment::getCurrentDateTime() const{
+qint64 geoworldsim::environment::TimeEnvironment::getCurrentDateTime() const{
     // Get elapsed time difference
     quint64 elapsed_msecs = ( QDateTime::currentMSecsSinceEpoch() - this->software_started_datetime_msecs ) * this->time_speed;
     return this->simulation_datetime_msecs + elapsed_msecs;
 }
 
-double GWSTimeEnvironment::getTimeSpeed() const{
+double geoworldsim::environment::TimeEnvironment::getTimeSpeed() const{
     return this->time_speed;
 }
 
-/*qint64 GWSTimeEnvironment::getAgentInternalTime( QSharedPointer<GWSAgent> agent ){
+/*qint64 geoworldsim::environment::TimeEnvironment::getAgentInternalTime( QSharedPointer<Agent> agent ){
     return this->agent_internal_times.value( agent->getUID() , -1 );
 }*/
 
@@ -67,7 +69,7 @@ double GWSTimeEnvironment::getTimeSpeed() const{
  SETTERS
 **********************************************************************/
 
-void GWSTimeEnvironment::setDatetime(quint64 datetime){
+void geoworldsim::environment::TimeEnvironment::setDatetime( quint64 datetime ){
     if( datetime >= 0 ){
         this->simulation_datetime_msecs = datetime;
         this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
@@ -76,27 +78,27 @@ void GWSTimeEnvironment::setDatetime(quint64 datetime){
     }
 }
 
-void GWSTimeEnvironment::goBackToDatetime(quint64 datetime){
+void geoworldsim::environment::TimeEnvironment::goBackToDatetime( quint64 datetime ){
     if( datetime >= 0 ){
         this->simulation_datetime_msecs = qMin( this->simulation_datetime_msecs , datetime );
         this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
     }
 }
 
-void GWSTimeEnvironment::goBackMsecs(quint64 msecs){
+void geoworldsim::environment::TimeEnvironment::goBackMsecs( quint64 msecs ){
     this->simulation_datetime_msecs -= msecs;
     this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
 }
 
-void GWSTimeEnvironment::setTimeSpeed(double time_speed){
+void geoworldsim::environment::TimeEnvironment::setTimeSpeed( double time_speed ){
     this->time_speed = qMax(0.01 , time_speed); // Avoid time_speed = 0
 }
 
-/*void GWSTimeEnvironment::setAgentInternalTime( QSharedPointer<GWSAgent> agent , qint64 datetime){
+/*void geoworldsim::environment::TimeEnvironment::setAgentInternalTime( QSharedPointer<Agent> agent , qint64 datetime){
     this->agent_internal_times.insert( agent->getUID() , datetime );
 }*/
 
-/*void GWSTimeEnvironment::incrementAgentInternalTime( QSharedPointer<GWSAgent> agent , GWSTimeUnit seconds){
+/*void geoworldsim::environment::TimeEnvironment::incrementAgentInternalTime( QSharedPointer<Agent> agent , TimeUnit seconds){
     QString agent_id = agent->getId();
     if( this->agent_internal_times.value( agent_id ) > 0 ){
         this->agent_internal_times.insert( agent_id , this->agent_internal_times.value( agent_id , 0 ) + qMax( 0.01 , seconds.number() ) * 1000 ); // Min 10 milliseconds
@@ -107,9 +109,9 @@ void GWSTimeEnvironment::setTimeSpeed(double time_speed){
  METHODS
 **********************************************************************/
 
-void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
+void geoworldsim::environment::TimeEnvironment::registerEntity( QSharedPointer< Entity > agent) {
 
-    GWSEnvironment::registerEntity( agent );
+    Environment::registerEntity( agent );
 
     // INTERNAL TIME
     if( !agent->getProperty( INTERNAL_TIME_PROP ).isNull() ){
@@ -131,24 +133,24 @@ void GWSTimeEnvironment::registerEntity( QSharedPointer<GWSEntity> agent) {
     }
 
     // Listen to agent property changes
-    //this->connect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
+    //this->connect( agent.data() , &Entity::entityPropertyChangedSignal , this , &geoworldsim::environment::TimeEnvironment::entityPropertyChanged );
 }
 
-void GWSTimeEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent){
-    GWSEnvironment::unregisterEntity( agent );
+void geoworldsim::environment::TimeEnvironment::unregisterEntity( QSharedPointer< Entity > agent){
+    Environment::unregisterEntity( agent );
 
-    //this->disconnect( agent.data() , &GWSEntity::entityPropertyChangedSignal , this , &GWSTimeEnvironment::entityPropertyChanged );
+    //this->disconnect( agent.data() , &Entity::entityPropertyChangedSignal , this , &geoworldsim::environment::TimeEnvironment::entityPropertyChanged );
 }
 
 /**********************************************************************
  PROTECTED
 **********************************************************************/
 
-void GWSTimeEnvironment::entityPropertyChanged( QString property_name ){
+void geoworldsim::environment::TimeEnvironment::entityPropertyChanged( QString property_name ){
     if( property_name == INTERNAL_TIME_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
-        GWSEntity* agent = dynamic_cast<GWSEntity*>( object );
+        Entity* agent = dynamic_cast<Entity*>( object );
         if( !agent ){ return; }
         // Nothing to do
     }

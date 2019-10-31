@@ -1,5 +1,5 @@
-#ifndef GWSOBJECTSTORAGE_H
-#define GWSOBJECTSTORAGE_H
+#ifndef OBJECTSTORAGE_H
+#define OBJECTSTORAGE_H
 
 #include <QObject>
 #include <QMetaObject>
@@ -11,13 +11,16 @@
 
 #include "../../object/Object.h"
 
-class GWSObjectStorage : public QObject
+namespace geoworldsim {
+namespace storage {
+
+class ObjectStorage : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit GWSObjectStorage();
-    ~GWSObjectStorage();
+    explicit ObjectStorage();
+    ~ObjectStorage();
 
     // GETTERS
     bool isEmpty() const;
@@ -84,4 +87,7 @@ protected:
     mutable QReadWriteLock mutex;
 };
 
-#endif // GWSOBJECTSTORAGE_H
+}
+}
+
+#endif // OBJECTSTORAGE_H

@@ -1,5 +1,5 @@
-#ifndef GWSGEOMETRY_H
-#define GWSGEOMETRY_H
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
 
 #include <QString>
 #include <QJsonObject>
@@ -8,35 +8,38 @@
 
 #include "../../util/units/Units.h"
 
-using namespace geos::geom;
+namespace geoworldsim {
+namespace geometry {
 
-struct GWSGeometry {
 
-    friend class GWSGeometryGetters;
-    friend class GWSGeometryComparators;
-    friend class GWSGeometryTransformators;
+struct Geometry {
+
+    friend class GeometryGetters;
+    friend class GeometryComparators;
+    friend class GeometryTransformators;
 
 public:
 
     // CONSTRUCTORS
-    GWSGeometry(){}
-    GWSGeometry( const QJsonObject &geojson );
-    GWSGeometry( const GWSCoordinate &coor );
-    GWSGeometry( const GWSGeometry &other );
-    ~GWSGeometry();
+    Geometry(){}
+    Geometry( const QJsonObject &geojson );
+    Geometry( const Coordinate &coor );
+    Geometry( const Geometry &other );
+    ~Geometry();
 
     // GETTERS
     QString getUID() const;
     QJsonObject getGeoJSON() const;
     bool isValid() const;
-    GWSCoordinate getCentroid() const;
-    GWSLengthUnit getDistance( const GWSGeometry& other ) const;
+    Coordinate getCentroid() const;
+    unit::LengthUnit getDistance( const Geometry& other ) const;
+    unit::LengthUnit getDistance( const Coordinate& other ) const;
 
     // OPERATORS
-    bool operator == (const GWSGeometry&) const;
-    bool operator != (const GWSGeometry&) const;
-    bool operator < (const GWSGeometry&) const;
-    GWSGeometry& operator= (const GWSGeometry&);
+    bool operator == (const Geometry&) const;
+    bool operator != (const Geometry&) const;
+    bool operator < (const Geometry&) const;
+    Geometry& operator= (const Geometry&);
 
 private:
 
@@ -46,4 +49,8 @@ private:
 
 };
 
-#endif // GWSGEOMETRY_H
+
+}
+}
+
+#endif // GEOMETRY_H

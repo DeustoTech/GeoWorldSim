@@ -8,10 +8,10 @@
 #include <QObject>
 #include <QTimer>
 
-GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject configuration){
+geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJsonObject configuration){
 
     // CREATE POPULATION
-    QList<GWSDatasourceReader*> pending_readers;
+    QList< DatasourceReader* >* pending_readers = new QList< DatasourceReader* >();
 
     QJsonObject json_population = configuration.value("population").toObject();
     QString user_id = configuration.value("user_id").toString();
@@ -38,20 +38,21 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject configura
                     qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 
-                GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id,  entities_type , entities_filter , limit );
+                DatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id,  entity_type , entity_filter , limit );
 
                 if( !reader ){
                     continue;
                 }
 
-                pending_readers.append( reader );
+                pending_readers->append( reader );
 
-                reader->connect( reader , &GWSDatasourceReader::dataReadingFinishedSignal , [ this , reader , &pending_readers ](){
+                reader->connect( reader , &DatasourceReader::dataReadingFinishedSignal , [ this , reader , pending_readers ](){
 
-                    pending_readers.removeAll( reader );
+                    pending_readers->removeAll( reader );
                     reader->deleteLater();
 
-                    if( pending_readers.isEmpty() ){
+                    if( pending_readers && pending_readers->isEmpty() ){
+                        delete pending_readers;
                         emit this->dataReadingFinishedSignal();
                     }
                 });
@@ -62,37 +63,45 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject configura
         if ( !population.value("template").isUndefined() && !population.value("amount").isUndefined() ){
             for ( int i = 0; i < population.value("amount").toInt() ; i++){
                 // Use template to generate amount entities
-                GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();
+                QSharedPointer<geoworldsim::Object> entity = ObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() );
+            }
+
+            if( pending_readers && pending_readers->isEmpty() ){
+                delete pending_readers;
+                pending_readers = Q_NULLPTR;
+                emit this->dataReadingFinishedSignal();
             }
         }
 
        qInfo() << QString("Creating population %1").arg( key );
     }
 
-    if( pending_readers.isEmpty() ){
+    if( pending_readers ){
+        delete pending_readers;
         emit this->dataReadingFinishedSignal();
     }
 
 }
 
-GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource( QJsonObject entity_template , QString user_id , QString scenario_id , QString entities_type , QString entities_filter , int amount ) : QObject (){
-    GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id , entities_type , entities_filter , amount );
+geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource( QJsonObject entity_template , QString user_id , QString scenario_id , QString entity_type , QString entity_filter , int amount ) : QObject (){
+    DatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id , entity_type , entity_filter , amount );
+
 
     if( !reader ){
         emit this->dataReadingFinishedSignal();
         return;
     }
 
-    reader->connect( reader , &GWSDatasourceReader::dataReadingFinishedSignal , [ reader , this ](){
+    reader->connect( reader , &DatasourceReader::dataReadingFinishedSignal , [ reader , this ](){
         emit this->dataReadingFinishedSignal();
         reader->deleteLater();
     });
 }
 
-GWSEntityGeneratorDatasource::~GWSEntityGeneratorDatasource(){
+geoworldsim::datasource::EntityGeneratorDatasource::~EntityGeneratorDatasource(){
 }
 
-QJsonObject GWSEntityGeneratorDatasource::joinJSON( QJsonObject json_template , QJsonObject json_data ){
+QJsonObject geoworldsim::datasource::EntityGeneratorDatasource::joinJSON( QJsonObject json_template , QJsonObject json_data ){
 
     foreach ( QString key , json_data.keys() ) {
 
@@ -120,15 +129,15 @@ QJsonObject GWSEntityGeneratorDatasource::joinJSON( QJsonObject json_template , 
     return json_template;
 }
 
-GWSDatasourceReader* GWSEntityGeneratorDatasource::generateEntities(QJsonObject entity_template, QString user_id, QString scenario_id, QString entities_type, QString entities_filter, int amount){
+geoworldsim::datasource::DatasourceReader* geoworldsim::datasource::EntityGeneratorDatasource::generateEntities(QJsonObject entity_template, QString user_id, QString scenario_id, QString entity_type, QString entity_filter, int amount){
 
     if( entity_template.isEmpty() ){
         qCritical() << "Empty JSON template to join with the datasource";
         return Q_NULLPTR;
     }
 
-    GWSDatasourceReader* reader = new GWSDatasourceReader( user_id , scenario_id , entities_type , entities_filter , amount > 0 ? amount : 999999999999999 );
-    reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , [this , entity_template]( QJsonObject data ){
+    DatasourceReader* reader = new DatasourceReader( user_id , scenario_id , entity_type , entity_filter , amount > 0 ? amount : 999999999999999 );
+    reader->connect( reader , &DatasourceReader::dataValueReadSignal , [this , entity_template]( QJsonObject data ){
 
         // FIXME
         if( data.value( "location" ).isObject() ){
@@ -141,13 +150,13 @@ GWSDatasourceReader* GWSEntityGeneratorDatasource::generateEntities(QJsonObject 
         }
 
         // Check if agent already exists
-        QString new_entity_id = template_to_be_constructed.value( GWSObject::GWS_UID_PROP ).toString();
-        QSharedPointer<GWSEntity> entity = GWSEntityEnvironment::globalInstance()->getByUID( new_entity_id );
+        QString new_entity_id = template_to_be_constructed.value( Object::GWS_UID_PROP ).toString();
+        QSharedPointer< Entity > entity = environment::EntityEnvironment::globalInstance()->getByUID( new_entity_id );
         if( entity ){
             //qWarning() << QString("Skipping duplicate (Duplicate UID %1 found)").arg( new_entity_id );
             return;
         } else {
-            entity = GWSObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast<GWSEntity>();
+            entity = ObjectFactory::globalInstance()->fromJSON( template_to_be_constructed ).dynamicCast< Entity >();
         }
 
     });

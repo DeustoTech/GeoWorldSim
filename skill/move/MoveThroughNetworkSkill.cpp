@@ -1,4 +1,4 @@
-#include "MoveThroughRouteSkill.h"
+#include "MoveThroughNetworkSkill.h"
 #include "../../environment/Environment.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
@@ -7,18 +7,18 @@
 #include "../../util/geometry/GeometryGetters.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString MoveThroughRouteSkill::EDGE_CAPACITY_PROP = "capacity";
-QString MoveThroughRouteSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
-QString MoveThroughRouteSkill::CURRENT_ROAD_ID = "current_road_id";
-QString MoveThroughRouteSkill::CURRENT_ROAD_TYPE = "current_road_type";
-QString MoveThroughRouteSkill::CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
-QString MoveThroughRouteSkill::STORE_ROUTE_AS = "calculated_route";
+QString MoveThroughNetworkSkill::EDGE_CAPACITY_PROP = "capacity";
+QString MoveThroughNetworkSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
+QString MoveThroughNetworkSkill::CURRENT_ROAD_ID = "current_road_id";
+QString MoveThroughNetworkSkill::CURRENT_ROAD_TYPE = "current_road_type";
+QString MoveThroughNetworkSkill::CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
+QString MoveThroughNetworkSkill::STORE_ROUTE_AS = "calculated_route";
 
-MoveThroughRouteSkill::MoveThroughRouteSkill() : MoveSkill(){
+MoveThroughNetworkSkill::MoveThroughNetworkSkill() : MoveSkill(){
     //this->setProperty( SKILL_NETWORK_TYPE_PROP , "GWSAgent" );
 }
 
-MoveThroughRouteSkill::~MoveThroughRouteSkill(){
+MoveThroughNetworkSkill::~MoveThroughNetworkSkill(){
 }
 
 
@@ -26,14 +26,14 @@ MoveThroughRouteSkill::~MoveThroughRouteSkill(){
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSEntity> MoveThroughRouteSkill::getCurrentEdge() const{
+QSharedPointer<GWSEntity> MoveThroughNetworkSkill::getCurrentEdge() const{
     if( !this->pending_route_edges.isEmpty() ){
         return this->pending_route_edges.at( 0 );
     }
     return Q_NULLPTR;
 }
 
-GWSGeometry MoveThroughRouteSkill::getCurrentMovingTowards() const{
+GWSGeometry MoveThroughNetworkSkill::getCurrentMovingTowards() const{
 
     if( !this->pending_edge_coordinates.isEmpty() ){
         GWSCoordinate c = this->pending_edge_coordinates.at( 0 );
@@ -47,7 +47,7 @@ GWSGeometry MoveThroughRouteSkill::getCurrentMovingTowards() const{
  METHODS
 **********************************************************************/
 
-void MoveThroughRouteSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, GWSGeometry &route_destination_geom, QString &graph_type){
+void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, GWSGeometry &route_destination_geom, QString &graph_type){
 
     // Extract current coordinates of Skilled GWSAgent
     QSharedPointer<GWSEntity> agent = this->getEntity();

@@ -1,17 +1,17 @@
-#ifndef MOVETHROUGHROUTESKILL_H
-#define MOVETHROUGHROUTESKILL_H
+#ifndef MOVETHROUGHNETWORKSKILL_H
+#define MOVETHROUGHNETWORKSKILL_H
 
 #include <QObject>
 #include "../../environment/network_environment/NetworkEdge.h"
 #include "../../skill/move/MoveSkill.h"
 
-class MoveThroughRouteSkill : public MoveSkill
+class MoveThroughNetworkSkill : public MoveSkill
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit MoveThroughRouteSkill();
-    ~MoveThroughRouteSkill();
+    Q_INVOKABLE explicit MoveThroughNetworkSkill();
+    ~MoveThroughNetworkSkill();
 
     //- PROPERTIES
     static QString EDGE_CAPACITY_PROP;
@@ -36,4 +36,4 @@ protected:
 
 };
 
-#endif // MOVETHROUGHROUTESKILL_H
+#endif // MOVETHROUGHNETWORKSKILL_H

@@ -5,13 +5,13 @@
 #include "../parallelism/ParallelismController.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
-GWSObjectStorage::GWSObjectStorage() : QObject(){
-    this->connect( this , &GWSObjectStorage::addObjectSignal , this , &GWSObjectStorage::addObject );
-    this->connect( this , &GWSObjectStorage::removeObjectSignal , this , &GWSObjectStorage::removeObject );
-    this->connect( this , &GWSObjectStorage::deleteAllObjectsSignal , this , &GWSObjectStorage::deleteAllObjects );
+geoworldsim::storage::ObjectStorage::ObjectStorage() : QObject(){
+    this->connect( this , &geoworldsim::storage::ObjectStorage::addObjectSignal , this , &geoworldsim::storage::ObjectStorage::addObject );
+    this->connect( this , &geoworldsim::storage::ObjectStorage::removeObjectSignal , this , &geoworldsim::storage::ObjectStorage::removeObject );
+    this->connect( this , &geoworldsim::storage::ObjectStorage::deleteAllObjectsSignal , this , &geoworldsim::storage::ObjectStorage::deleteAllObjects );
 }
 
-GWSObjectStorage::~GWSObjectStorage(){
+geoworldsim::storage::ObjectStorage::~ObjectStorage(){
     foreach (std::string s , this->objects.keys() ) {
         delete this->objects.value( s );
     }
@@ -27,7 +27,7 @@ GWSObjectStorage::~GWSObjectStorage(){
  GETTERS
 **********************************************************************/
 
-bool GWSObjectStorage::isEmpty() const{
+bool geoworldsim::storage::ObjectStorage::isEmpty() const{
     QString minimum_level = QObject::staticMetaObject.className();
     if( this->objects.value( minimum_level.toStdString() , Q_NULLPTR ) ){
         return false;
@@ -35,14 +35,14 @@ bool GWSObjectStorage::isEmpty() const{
     return true;
 }
 
-quint64 GWSObjectStorage::getAmount() const{
+quint64 geoworldsim::storage::ObjectStorage::getAmount() const{
     if( this != Q_NULLPTR && this->objects.value( QObject::staticMetaObject.className() , Q_NULLPTR ) ){
-        return this->objects.value( GWSObject::staticMetaObject.className() )->size();
+        return this->objects.value( geoworldsim::Object::staticMetaObject.className() )->size();
     }
     return 0;
 }
 
-const QStringList GWSObjectStorage::getClasses() const{
+const QStringList geoworldsim::storage::ObjectStorage::getClasses() const{
     QStringList l;
     foreach (std::string s , this->objects.keys() ) {
         l.append( QString::fromStdString( s ) );
@@ -50,18 +50,18 @@ const QStringList GWSObjectStorage::getClasses() const{
     return l;
 }
 
-const QList< QSharedPointer<QObject> >* GWSObjectStorage::getAll() const{
-    return this->objects.value( GWSObject::staticMetaObject.className() , Q_NULLPTR );
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getAll() const{
+    return this->objects.value( geoworldsim::Object::staticMetaObject.className() , Q_NULLPTR );
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByClassAndUID( const QString &class_name , const QString &uid ) const{
+QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByClassAndUID( const QString &class_name , const QString &uid ) const{
     if ( this->objects.value( class_name.toStdString() , Q_NULLPTR ) ){
         return this->object_uids.value( class_name.toStdString() )->value( uid.toStdString() , Q_NULLPTR );
     }
     return Q_NULLPTR;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByUID( const QString &uid ){
+QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByUID( const QString &uid ){
     foreach( std::string class_name , this->objects.keys() ) {
         QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid.toStdString() , Q_NULLPTR );
         if( !obj.isNull() ){
@@ -71,7 +71,7 @@ QSharedPointer<QObject> GWSObjectStorage::getByUID( const QString &uid ){
     return Q_NULLPTR;
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( const QString &class_name , const QString &name ) const{
+QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByClassAndName( const QString &class_name , const QString &name ) const{
     if ( this->objects.value( class_name.toStdString() , Q_NULLPTR ) ){
         QSharedPointer<QObject> obj = this->object_names.value( class_name.toStdString() )->value( name.toStdString() , Q_NULLPTR );
         if( !obj.isNull() ){
@@ -81,15 +81,15 @@ QSharedPointer<QObject> GWSObjectStorage::getByClassAndName( const QString &clas
     return Q_NULLPTR;
 }
 
-const QList< QSharedPointer<QObject> >* GWSObjectStorage::getByClass( const QString &class_name ) const{
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass( const QString &class_name ) const{
     return this->objects.value( class_name.toStdString() );
 }
 
-const QList< QSharedPointer<QObject> >* GWSObjectStorage::getByClass(const QMetaObject &metaobject) const{
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass(const QMetaObject &metaobject) const{
     return this->getByClass( metaobject.className() );
 }
 
-QSharedPointer<QObject> GWSObjectStorage::getByName(const QString &name ) const{
+QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByName(const QString &name ) const{
     this->mutex.lockForRead();
     foreach( std::string class_name , this->objects.keys() ){
         this->mutex.unlock();
@@ -102,11 +102,11 @@ QSharedPointer<QObject> GWSObjectStorage::getByName(const QString &name ) const{
     return Q_NULLPTR;
 }
 
-bool GWSObjectStorage::contains( QString class_name ) const{
+bool geoworldsim::storage::ObjectStorage::contains( QString class_name ) const{
     return this->objects.value( class_name.toStdString() , Q_NULLPTR ) != Q_NULLPTR;
 }
 
-bool GWSObjectStorage::contains( QSharedPointer<QObject> object ) const{
+bool geoworldsim::storage::ObjectStorage::contains( QSharedPointer<QObject> object ) const{
     QString c = object->metaObject()->className();
     if( !this->objects.value( c.toStdString() , Q_NULLPTR ) ){
         return false;
@@ -118,14 +118,14 @@ bool GWSObjectStorage::contains( QSharedPointer<QObject> object ) const{
  SETTERS
 **********************************************************************/
 
-void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
+void geoworldsim::storage::ObjectStorage::addObject( QSharedPointer<QObject> object ){
 
     // Prepare for QObject which have no UIDs
-    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , GWSObject::staticMetaObject.className() });
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , geoworldsim::Object::staticMetaObject.className() });
     QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
 
     // If GWSObject, we have UID
-    QSharedPointer<GWSObject> gws_object = object.dynamicCast<GWSObject>();
+    QSharedPointer< geoworldsim::Object > gws_object = object.dynamicCast< geoworldsim::Object >();
     if( gws_object ){
         classes = gws_object->getInheritanceFamily();
         uid = gws_object->getUID();
@@ -135,8 +135,8 @@ void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
     if( stored_amount % 1000 == 0 ){
         QString message = QString("Storage %1 , indexing %2 entities" ).arg( this->objectName() ).arg( stored_amount );
         qInfo() << message;
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , message } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+        emit environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , message } }) , App::globalInstance()->getAppId() + "-LOG" );
     }
 
     // Add to storages
@@ -175,14 +175,14 @@ void GWSObjectStorage::addObject( QSharedPointer<QObject> object ){
 
 }
 
-void GWSObjectStorage::removeObject( QSharedPointer<QObject> object ){
+void geoworldsim::storage::ObjectStorage::removeObject( QSharedPointer<QObject> object ){
 
     // Prepare for QObject which have no UIDs
-    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , GWSObject::staticMetaObject.className() });
+    QJsonArray classes = QJsonArray({ QObject::staticMetaObject.className() , geoworldsim::Object::staticMetaObject.className() });
     QString uid = QString("%1:%2").arg( object->metaObject()->className() ).arg( object->objectName() );
 
     // If GWSObject, we have UID
-    QSharedPointer<GWSObject> gws_object = object.dynamicCast<GWSObject>();
+    QSharedPointer< geoworldsim::Object > gws_object = object.dynamicCast< geoworldsim::Object >();
     if( gws_object ){
         classes = gws_object->getInheritanceFamily();
         uid = gws_object->getUID();
@@ -212,7 +212,7 @@ void GWSObjectStorage::removeObject( QSharedPointer<QObject> object ){
     }
 }
 
-void GWSObjectStorage::deleteAllObjects(){
+void geoworldsim::storage::ObjectStorage::deleteAllObjects(){
 
     QList< QSharedPointer<QObject> > * l = this->objects.value( QObject::metaObject()->className() , Q_NULLPTR );
     if( !l ){ return; }

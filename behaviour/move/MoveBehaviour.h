@@ -3,7 +3,11 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class MoveBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+
+class MoveBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -16,10 +20,15 @@ public:
     static QString NEXTS_IF_ARRIVED;
     static QString NEXTS_IF_NOT_ARRIVED;
 
-private slots:
+protected slots:
     virtual QPair< double , QJsonArray > behave();
 
+protected:
+    virtual void afterCreateHook();
 };
+
+}
+}
 
 #endif // MOVEBEHAVIOUR_H
 

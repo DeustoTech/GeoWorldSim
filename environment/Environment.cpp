@@ -1,39 +1,36 @@
 ﻿#include "Environment.h"
 
 #include <QJsonObject>
-#include <QTimer>
 
-#include "../../util/parallelism/ParallelismController.h"
+QString geoworldsim::environment::Environment::SKIP_INDEXING = "skip_indexing";
+QString geoworldsim::environment::Environment::SKIP_SUBSCRIBING = "skip_subscribing";
 
-QString GWSEnvironment::SKIP_INDEXING = "skip_indexing";
-QString GWSEnvironment::SKIP_SUBSCRIBING = "skip_subscribing";
-
-GWSEnvironment::GWSEnvironment() : GWSEntity(){
+geoworldsim::environment::Environment::Environment() : Entity(){
 }
 
-GWSEnvironment::~GWSEnvironment(){
+geoworldsim::environment::Environment::~Environment(){
 }
 
 /**********************************************************************
  AGENTS METHODS
 **********************************************************************/
 
-void GWSEnvironment::deserialize(const QJsonObject &json, QSharedPointer<GWSObject> parent){
+void geoworldsim::environment::Environment::deserialize(const QJsonObject &json, QSharedPointer<Object> parent){
     // Avoid GWSEntity deserialisation
-    GWSObject::deserialize( json , parent );
+    Object::deserialize( json , parent );
 }
 
-QJsonObject GWSEnvironment::serialize() const{
-    return GWSObject::serialize(); // Jump all agent serialisation
+QJsonObject geoworldsim::environment::Environment::serialize() const{
+    return Object::serialize(); // Jump all agent serialisation
 }
 
-void GWSEnvironment::registerEntity( QSharedPointer<GWSEntity> entity){
+void geoworldsim::environment::Environment::registerEntity( QSharedPointer<Entity> entity){
     if( entity->environments_registerd_in.contains( this ) ){
         return;
     }
     entity->environments_registerd_in.append( this );
 }
 
-void GWSEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity){
+void geoworldsim::environment::Environment::unregisterEntity( QSharedPointer<Entity> entity){
     entity->environments_registerd_in.removeAll( this );
 }

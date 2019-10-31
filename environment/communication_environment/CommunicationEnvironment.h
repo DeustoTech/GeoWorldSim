@@ -2,25 +2,28 @@
 #define GWSCOMMUNICATIONENVIRONMENT_H
 
 #include "../../environment/Environment.h"
-#include "../../util/distributed/ExternalListener.h"
-#include "../../util/distributed/ExternalPublisher.h"
+#include "../../util/network/ListenerWebSocket.h"
+#include "../../util/network/PublisherWebSocket.h"
 #include "../../app/App.h"
 
-class GWSCommunicationEnvironment : public GWSEnvironment
+namespace geoworldsim {
+namespace environment {
+
+class CommunicationEnvironment : public Environment
 {
     Q_OBJECT
 
 public:
-    static GWSCommunicationEnvironment* globalInstance();
+    static CommunicationEnvironment* globalInstance();
 
     // METHODS
-    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
-    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
+    virtual void registerEntity( QSharedPointer<Entity> agent );
+    virtual void unregisterEntity( QSharedPointer<Entity> agent );
 
 signals: // MUST BE USED THROUGH THESE SIGNALS FOR ASYNC INVOKING
     void listenSocketSignal( QString socket_id );
-    void sendEntitySignal( const QJsonObject &entity_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendMessageSignal( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendEntitySignal( const QJsonObject &entity_json , const QString &socket_id = App::globalInstance()->getAppId() );
+    void sendMessageSignal( const QJsonObject &message_json , const QString &socket_id = App::globalInstance()->getAppId() );
     void dataReceivedSignal( const QJsonObject &message_json , const QString &socket_id );
 
 private slots:
@@ -31,18 +34,21 @@ private slots:
     void disconnectExternalSocket( const QString &socket_id );
 
     // SOCKET DATA
-    void sendEntity( const QJsonObject &entity_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendMessage( const QJsonObject &message_json , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
-    void sendData( const QString &signal , const QJsonObject &data , const QString &socket_id = GWSApp::globalInstance()->getAppId() );
+    void sendEntity( const QJsonObject &entity_json , const QString &socket_id = App::globalInstance()->getAppId() );
+    void sendMessage( const QJsonObject &message_json , const QString &socket_id = App::globalInstance()->getAppId() );
+    void sendData( const QString &signal , const QJsonObject &data , const QString &socket_id = App::globalInstance()->getAppId() );
 
 private:
-    GWSCommunicationEnvironment();
-    GWSCommunicationEnvironment(GWSCommunicationEnvironment const&);
-    ~GWSCommunicationEnvironment();
+    CommunicationEnvironment();
+    CommunicationEnvironment(CommunicationEnvironment const&);
+    ~CommunicationEnvironment();
 
-    QMap<QString , GWSExternalListener*> listeners;
-    QMap<QString , GWSExternalPublisher*> publishers;
+    QMap<QString , network::ListenerWebSocket*> listeners;
+    QMap<QString , network::PublisherWebSocket*> publishers;
 
 };
+
+}
+}
 
 #endif // GWSCOMMUNICATIONENVIRONMENT_H

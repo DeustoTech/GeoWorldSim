@@ -42,12 +42,12 @@ HEADERS += \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
-    ../../behaviour/property/CompareEntityPropertyBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
-    ../../behaviour/property/AccumulatePropertyBehaviour.h \
+    ../../behaviour/property/ComparePropertyBehaviour.h \
+    ../../behaviour/property/SetPropertyBehaviour.h \
+    ../../behaviour/property/MathPropertyBehaviour.h \
     ../../behaviour/time/WaitUntilTimeBehaviour.h \
     ../../behaviour/waste/GenerateWasteBehaviour.h \
-    ../../behaviour/property/MathEntityPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -101,10 +101,10 @@ SOURCES += mainlauncher.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
-    ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
     ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
-    ../../behaviour/property/AccumulatePropertyBehaviour.cpp \
-    ../../behaviour/property/MathEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/ComparePropertyBehaviour.cpp \
+    ../../behaviour/property/SetPropertyBehaviour.cpp \
+    ../../behaviour/property/MathPropertyBehaviour.cpp \
     ../../behaviour/time/WaitUntilTimeBehaviour.cpp \
     ../../behaviour/waste/GenerateWasteBehaviour.cpp \
         # UTILS
@@ -164,6 +164,9 @@ unix|win32: LIBS += -lproj
 
 #INCLUDE LIBPROJ SYSTEM LIBRARY (sudo apt-get install libgdal-dev)
 unix|win32: LIBS += -lgdal
+
+#INCLUDE LIBSSL SYSTEM LIBRARY (sudo apt-get install libssl-dev)
+unix|win32: LIBS += -lssl
 
 #INCLUDE LISVM SYSTEM LIBRARY (sudo apt-get install libsvm-dev)
 unix|win32: LIBS += -lsvm

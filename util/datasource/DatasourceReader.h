@@ -1,16 +1,20 @@
-#ifndef GWSDATASOURCEREADER_H
-#define GWSDATASOURCEREADER_H
+#ifndef DATASOURCEREADER_H
+#define DATASOURCEREADER_H
 
 #include <QObject>
 #include <QJsonObject>
 #include <QJsonArray>
 
-class GWSDatasourceReader : public QObject
+namespace geoworldsim {
+namespace datasource {
+
+
+class DatasourceReader : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit GWSDatasourceReader( QString user_id , QString scenario_id , QString entity_type , QString entity_filter = "" , int limit = 99999999);
+    explicit DatasourceReader( QString user_id , QString scenario_id , QString entities_type , QString entities_filter = "" , int limit = 99999999);
 
     // METHODS
     void startReading();
@@ -41,4 +45,8 @@ private:
 
 };
 
-#endif // GWSDATASOURCEREADER_H
+
+}
+}
+
+#endif // DATASOURCEREADER_H

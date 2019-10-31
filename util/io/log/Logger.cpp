@@ -5,29 +5,29 @@
 
 #include "Logger.h"
 
-QString GWSLogger::log_name = "log";
+QString geoworldsim::io::GWSLogger::log_name = "log";
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-QString GWSLogger::getLogName(){
-    return GWSLogger::log_name;
+QString geoworldsim::io::GWSLogger::getLogName(){
+    return geoworldsim::io::GWSLogger::log_name;
 }
 
 /**********************************************************************
  SETTERS
 **********************************************************************/
 
-void GWSLogger::setLogName(QString name){
-    GWSLogger::log_name = name;
+void geoworldsim::io::GWSLogger::setLogName(QString name){
+    geoworldsim::io::GWSLogger::log_name = name;
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-void GWSLogger::log(QVariant to_write, QString log_name){
+void geoworldsim::io::GWSLogger::log(QVariant to_write, QString log_name){
 
    QFile logfile( QDir::currentPath() + "/" + log_name );
 
@@ -50,14 +50,14 @@ void GWSLogger::log(QVariant to_write, QString log_name){
 
        // Now try again
        Q_ASSERT( created );
-       GWSLogger::log( to_write , log_name );
+       geoworldsim::io::GWSLogger::log( to_write , log_name );
 
    }
 }
 
-void GWSLogger::log(QStringList list, QString log_name){
+void geoworldsim::io::GWSLogger::log(QStringList list, QString log_name){
     foreach(QString s , list){
-        GWSLogger::log( s , log_name );
+        geoworldsim::io::GWSLogger::log( s , log_name );
     }
 }
 
@@ -65,7 +65,7 @@ void GWSLogger::log(QStringList list, QString log_name){
  PROTECTED
 **********************************************************************/
 
-QString GWSLogger::getDomainPath(const QMetaObject agent_class){
+QString geoworldsim::io::GWSLogger::getDomainPath(const QMetaObject agent_class){
     QString domain_path;
 
     const QMetaObject* obj = &agent_class;

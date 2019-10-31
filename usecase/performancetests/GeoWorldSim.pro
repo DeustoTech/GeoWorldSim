@@ -45,7 +45,6 @@ HEADERS += \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/information/SendEntitySnapshotBehaviour.h \
-    ../../behaviour/property/SetEntityPropertyBehaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughRouteBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
@@ -120,7 +119,6 @@ SOURCES += main.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
-    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \

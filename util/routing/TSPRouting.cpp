@@ -7,7 +7,7 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
-#include "../../util/graph/OldEdge.h"
+#include "../../environment/network_environment/NetworkEdge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
@@ -22,9 +22,12 @@ GWSTSPRouting::~GWSTSPRouting(){
  METHODS
 **********************************************************************/
 
-QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coor){
+QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate > visit_coordinates , const GWSCoordinate& end_coor){
 
     this->mutex.lock();
+
+    visit_coordinates.append( end_coor );
+    visit_coordinates.prepend( start_coor );
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -47,7 +50,7 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(GWSCoordinate start_coor,
     return tsp_circular_route_nodes;// this->orderCircularTsp(start_coordinate , end_coordinate , tsp_circular_route_nodes);
 }
 
-QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::greedyTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -67,7 +70,7 @@ QList<GWSCoordinate> GWSTSPRouting::greedyTsp(GWSCoordinate start_coordinate, QL
 
 }
 
-QList<GWSCoordinate> GWSTSPRouting::insertionTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::insertionTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -86,7 +89,7 @@ QList<GWSCoordinate> GWSTSPRouting::insertionTsp(GWSCoordinate start_coordinate,
 
 }
 
-QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(const GWSCoordinate &start_coordinate, QList<GWSCoordinate> visit_coordinates, const GWSCoordinate &end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -104,7 +107,7 @@ QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(GWSCoordinate start_coordina
     }
 }
 
-QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(GWSCoordinate start_coordinate, QList<GWSCoordinate > visit_coordinates, GWSCoordinate end_coordinate){
+QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -136,19 +139,18 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QStringList > routes = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
-        for(int j = 0; j < visit_coordinates.size(); j++ ){
+        QList< QStringList > routes_from_i = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
+        for(int j = 0; j < routes_from_i.size(); j++ ){
 
             lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
             lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QStringList route = routes.at(j);
-            QList< QSharedPointer<GWSEntity> > route_agents = GWSEntityEnvironment::globalInstance()->getByUIDS( route );
+            QList< QSharedPointer<GWSEntity> > route_edges = GWSEntityEnvironment::globalInstance()->getByUIDS( routes_from_i.at(j) );
 
             GWSLengthUnit length = 0;
-            foreach( QSharedPointer<GWSEntity> e , route_agents ){
-                //length = length + GWSEdge( e->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
+            foreach( QSharedPointer<GWSEntity> e , route_edges ){
+                length = length + GWSNetworkEdge( e->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
             }
             if( length <= GWSLengthUnit( 0 ) ){
                 length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) );
@@ -167,16 +169,16 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
  * @param tsp_circular_nodes
  * @return
  */
-QList<GWSCoordinate> GWSTSPRouting::orderCircularTsp(GWSCoordinate start_coordinate, GWSCoordinate end_coordinate, QList<GWSCoordinate> tsp_circular_nodes){
-    Q_UNUSED(end_coordinate)
+QList<GWSCoordinate> GWSTSPRouting::orderCircularTsp(const GWSCoordinate& start, QList<GWSCoordinate> tsp_circular_nodes, const GWSCoordinate& end){
+    Q_UNUSED(end)
 
     QList<GWSCoordinate> tsp_ordered_nodes;
 
     // Find the nearest circular_route node to start_coordinate
     GWSCoordinate nearest = tsp_circular_nodes.at( 0 );
-    GWSLengthUnit min_distance = start_coordinate.getDistance( nearest );
+    GWSLengthUnit min_distance = start.getDistance( nearest );
     foreach(GWSCoordinate n , tsp_circular_nodes){
-        GWSLengthUnit d = n.getDistance( start_coordinate );
+        GWSLengthUnit d = n.getDistance( start );
         if( min_distance > d ){
             nearest = n;
             min_distance = d;

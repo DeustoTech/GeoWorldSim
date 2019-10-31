@@ -4,56 +4,48 @@
 #include "../../skill/pollute/PolluteSkill.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../skill/move/MoveSkill.h"
-#include "../../skill/move/MoveThroughRouteSkill.h"
 #include "../../object/ObjectFactory.h"
 
-QString PolluteBehaviour::INPUT_POLLUTANT_TYPES = "input_pollutant_types";
-QString PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
-QString PolluteBehaviour::CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
-QString PolluteBehaviour::CURRENT_ROAD_TYPE = "input_current_road_type";
-QString PolluteBehaviour::CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
-QString PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "input_vehicle_subtype";
-QString PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
-QString PolluteBehaviour::ABATEMENT_TYPE = "abatement_type";
-QString PolluteBehaviour::NEXTS = "nexts";
 
-PolluteBehaviour::PolluteBehaviour() : GWSBehaviour (){
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_POLLUTANT_TYPES = "input_pollutant_types";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_TYPE = "input_current_road_type";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "input_vehicle_subtype";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
+QString geoworldsim::behaviour::PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
+QString geoworldsim::behaviour::PolluteBehaviour::NEXTS = "nexts";
+
+geoworldsim::behaviour::PolluteBehaviour::PolluteBehaviour() : Behaviour (){
 }
 
 /**********************************************************************
  INITIALIZE
 **********************************************************************/
 
-void PolluteBehaviour::afterCreateHook(){
+void geoworldsim::behaviour::PolluteBehaviour::afterCreateHook(){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer< Entity > entity = this->getEntity();
 
     // Check if agent has a MoveSkill, otherwise create it and set its max_speed
-    QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
+    QSharedPointer< skill::PolluteSkill > pollute_skill = entity->getSkill( skill::PolluteSkill::staticMetaObject.className() ).dynamicCast< skill::PolluteSkill >();
     if( pollute_skill.isNull() ){
-        pollute_skill = QSharedPointer<PolluteSkill>( new PolluteSkill() );
-        agent->addSkill( pollute_skill );
+        pollute_skill = QSharedPointer< skill::PolluteSkill >( new skill::PolluteSkill() );
+        entity->addSkill( pollute_skill );
     }
 }
 
 
-QPair<double, QJsonArray> PolluteBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::PolluteBehaviour::behave(){
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
-    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-    GWSCoordinate current_coor = agent_geom.getCentroid();
-    GWSLengthUnit distance = current_coor.getDistance( this->last_position );
+    QSharedPointer< Entity > entity = this->getEntity();
+    geometry::Geometry entity_geom = geometry::Geometry( entity->getProperty( geoworldsim::environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    geometry::Coordinate current_coor = entity_geom.getCentroid();
+    unit::LengthUnit distance = current_coor.getDistance( this->last_position );
 
     QString transport_mode = this->getProperty( INPUT_VEHICLE_TYPE ).toString();
-
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    QSharedPointer<GWSEntity> current_edge = movethroughroute_skill->getCurrentEdge();
-
-    if ( transport_mode == "WALK" || transport_mode == "BICYCLE" || current_edge.isNull() ){
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-    }
 
     // DEFAULT VEHICLE TYPES
     QMap< QString , QString > default_vehicles;
@@ -62,38 +54,37 @@ QPair<double, QJsonArray> PolluteBehaviour::behave(){
     default_vehicles["BUS"] = "UBus_Std_>15-18t_Euro-IV_EGR";
     default_vehicles["ELECTRIC"] = "121.000000inductionLiIon";
 
-    QString vehicle_subtype = agent->getProperty( INPUT_VEHICLE_SUBTYPE ).toString();
+    QString vehicle_subtype = entity->getProperty( INPUT_VEHICLE_SUBTYPE ).toString();
 
     if ( vehicle_subtype.isEmpty() ){
         // Get and set vehicle type from default
        vehicle_subtype = default_vehicles[ transport_mode ];
     }
 
-    double gradient = agent->getProperty( CURRENT_ROAD_GRADIENT ).toDouble();
-    double trafficSit = agent->getProperty( CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
-    GWSSpeedUnit vehicle_speed = agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble();
-    QString roadType = current_edge->getProperty( "type" ).toString().toLower();
+    double gradient = entity->getProperty( INPUT_CURRENT_ROAD_GRADIENT ).toDouble();
+    double trafficSit = entity->getProperty( INPUT_CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
+    unit::SpeedUnit vehicle_speed = entity->getProperty( skill::MoveSkill::CURRENT_SPEED ).toDouble();
+    QString road_type = entity->getProperty( INPUT_CURRENT_ROAD_TYPE ).toString().toLower();
      
-    QSharedPointer<PolluteSkill> pollute_skill = agent->getSkill( PolluteSkill::staticMetaObject.className() ).dynamicCast<PolluteSkill>();
+    QSharedPointer< skill::PolluteSkill > pollute_skill = entity->getSkill( skill::PolluteSkill::staticMetaObject.className() ).dynamicCast< skill::PolluteSkill >();
     QJsonArray pollutant_types = this->getProperty( INPUT_POLLUTANT_TYPES ).toArray();
     
     foreach ( QJsonValue pollutant , pollutant_types ){
 
-         GWSMassUnit emission = pollute_skill->pollute( transport_mode , vehicle_subtype, pollutant.toString() , vehicle_speed , gradient , roadType , trafficSit , distance );
+         unit::MassUnit emission = pollute_skill->pollute( transport_mode , vehicle_subtype, pollutant.toString() , vehicle_speed , gradient , road_type , trafficSit , distance );
 
          if ( !emission.isValid() ){
              emission = 0;
          }
 
          // Store value
-         double existing_value = agent->getProperty("accumulated_" + pollutant.toString() ).toDouble();
-         agent->setProperties( QJsonObject({
-            { this->getProperty( OUTPUT_POLLUTANTS ).toString("instant_" + pollutant.toString() ) , emission.number() },
-            { "accumulated_" +  pollutant.toString() , GWSObjectFactory::incrementValue( existing_value , emission.number() ) }
+         double existing_value = entity->getProperty("accumulated_" + pollutant.toString() ).toDouble();
+         entity->setProperties( QJsonObject({
+            { "instant_" + pollutant.toString() , emission.number() },
+            { "accumulated_" +  pollutant.toString() , ObjectFactory::incrementValue( existing_value , emission.number() ) }
             }) );
 
     }
-
 
     this->last_position = current_coor;
 

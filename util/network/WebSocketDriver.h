@@ -1,19 +1,23 @@
-#ifndef GWSEXTERNALCOMMUNICATOR_H
-#define GWSEXTERNALCOMMUNICATOR_H
+#ifndef WEBSOCKETDRIVER_H
+#define WEBSOCKETDRIVER_H
 
 #include <QWebSocket>
 #include <QObject>
 #include <QString>
 #include <QReadWriteLock>
 
-class GWSExternalCommunicator : public QObject
+namespace geoworldsim {
+namespace network {
+
+
+class WebSocketDriver : public QObject
 {
     Q_OBJECT
 
 public:
-    GWSExternalCommunicator( const QString &socket_id );
+    WebSocketDriver( const QString &socket_id );
 
-    enum CommunicatorStatus {
+    enum SocketStatus {
         NOT_STARTED = 0,
         DISCONNECTED = 1,
         CONNECTED = 2,
@@ -29,9 +33,13 @@ public slots:
 protected:
     QString socket_id;
     QWebSocket websocket; // WS to sockets.geoworldsim.com
-    CommunicatorStatus communicator_status;
+    SocketStatus socket_status;
 
     mutable QReadWriteLock mutext;
 };
 
-#endif // GWSEXTERNALCOMMUNICATOR_H
+
+}
+}
+
+#endif // WEBSOCKETDRIVER_H

@@ -15,10 +15,11 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/time/WaitUntilTimeBehaviour.h"
 #include "../../behaviour/transaction/TransactionBehaviour.h"
-#include "../../behaviour/property/CompareEntityPropertyBehaviour.h"
+#include "../../behaviour/property/ComparePropertyBehaviour.h"
 #include "../../behaviour/random/GenerateRandomValueBehaviour.h"
-#include "../../behaviour/property/AccumulatePropertyBehaviour.h"
-#include "../../behaviour/property/MathEntityPropertyBehaviour.h"
+#include "../../behaviour/waste/GenerateWasteBehaviour.h"
+#include "../../behaviour/property/SetPropertyBehaviour.h".h"
+#include "../../behaviour/property/MathPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -56,7 +57,6 @@ int main(int argc, char* argv[])
     // INIT OBJECT FACTORY
     GWSObjectFactory::globalInstance()->registerType( GWSEntity::staticMetaObject );
 
-
     // INIT ENVIRONMENTS
     GWSObjectFactory::globalInstance();
     GWSEntityEnvironment::globalInstance();
@@ -69,10 +69,11 @@ int main(int argc, char* argv[])
     // AVAILABLE BEHAVIOURS
     GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
     GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CompareEntityPropertyBehaviour::staticMetaObject);
+    GWSObjectFactory::globalInstance()->registerType( ComparePropertyBehaviour::staticMetaObject);
     GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( AccumulatePropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MathEntityPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( SetPropertyBehaviour::staticMetaObject );
+    GWSObjectFactory::globalInstance()->registerType( MathPropertyBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QDateTime datasource_download_time = QDateTime::currentDateTime();

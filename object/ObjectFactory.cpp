@@ -12,99 +12,100 @@
 #include "../../util/geometry/Geometry.h"
 #include "../../util/graph/Edge.h"
 
-GWSObjectFactory* GWSObjectFactory::globalInstance(){
-    static GWSObjectFactory instance;
+
+geoworldsim::ObjectFactory* geoworldsim::ObjectFactory::globalInstance(){
+    static geoworldsim::ObjectFactory instance;
     return &instance;
 }
 
-GWSObjectFactory::GWSObjectFactory() : QObject( Q_NULLPTR ){
+geoworldsim::ObjectFactory::ObjectFactory() : QObject( Q_NULLPTR ){
 
     // Register basic types
     // qRegisterMetaType is necessary to be used in SIGNAL/SLOTS
     this->registerType( QObject::staticMetaObject );
     qRegisterMetaType< QSharedPointer<QObject> >( "QSharedPointer<QObject>" );
 
-    this->registerType( GWSObject::staticMetaObject );
-    qRegisterMetaType< GWSObject >( GWSObject::staticMetaObject.className() );
-    qRegisterMetaType< QSharedPointer<GWSObject> >( "QSharedPointer<GWSObject>" );
+    this->registerType( Object::staticMetaObject );
+    qRegisterMetaType< Object >( Object::staticMetaObject.className() );
+    qRegisterMetaType< QSharedPointer<Object> >( "QSharedPointer<Object>" );
 
-    this->registerType( GWSEntity::staticMetaObject );
-    qRegisterMetaType< GWSEntity >( GWSEntity::staticMetaObject.className() );
-    qRegisterMetaType< QSharedPointer<GWSEntity> >( "QSharedPointer<GWSEntity>" );
+    this->registerType( Entity::staticMetaObject );
+    qRegisterMetaType< Entity >( Entity::staticMetaObject.className() );
+    qRegisterMetaType< QSharedPointer< Entity > >( "QSharedPointer<Entity>" );
 
-    this->registerType( GWSSkill::staticMetaObject );
-    qRegisterMetaType< GWSSkill >( GWSSkill::staticMetaObject.className() );
+    this->registerType( skill::Skill::staticMetaObject );
+    qRegisterMetaType< skill::Skill >( skill::Skill::staticMetaObject.className() );
 
-    this->registerType( GWSBehaviour::staticMetaObject );
-    qRegisterMetaType< GWSBehaviour >( GWSBehaviour::staticMetaObject.className() );
+    this->registerType( behaviour::Behaviour::staticMetaObject );
+    qRegisterMetaType< behaviour::Behaviour >( behaviour::Behaviour::staticMetaObject.className() );
 
-    qRegisterMetaType< GWSGeometry >( "GWSGeometry" );
-    qRegisterMetaType< GWSCoordinate >( "GWSCoordinate" );
-    qRegisterMetaType< GWSEdge >( "GWSEdge" );
+    qRegisterMetaType< geometry::Geometry >( "Geometry" );
+    qRegisterMetaType< geometry::Coordinate >( "Coordinate" );
+    qRegisterMetaType< graph::Edge >( "Edge" );
 }
 
-GWSObjectFactory::~GWSObjectFactory(){
+geoworldsim::ObjectFactory::~ObjectFactory(){
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-void GWSObjectFactory::registerType( QMetaObject metaobject ){
-    this->constructors.insert( metaobject.className() , metaobject );
+void geoworldsim::ObjectFactory::registerType( QMetaObject metaobject ){
+    this->constructors.insert( QString( metaobject.className() ).split("::").last() , metaobject );
 }
 
-const QMetaObject GWSObjectFactory::getRegisteredType( const QString &type_name ){
+const QMetaObject geoworldsim::ObjectFactory::getRegisteredType( const QString &type_name ){
     return this->constructors.value( type_name );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromType( const QString &type , QSharedPointer<GWSObject> parent ){
+QSharedPointer<geoworldsim::Object> geoworldsim::ObjectFactory::fromType( const QString &type , QSharedPointer<Object> parent ){
     QJsonObject json;
-    json.insert( GWSObject::GWS_CLASS_PROP , type );
+    json.insert( Object::GWS_CLASS_PROP , type );
     return this->fromJSON( json , parent );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromBytes( const QByteArray &json_bytes, QSharedPointer<GWSObject> parent){
+QSharedPointer<geoworldsim::Object> geoworldsim::ObjectFactory::fromBytes( const QByteArray &json_bytes, QSharedPointer<Object> parent){
     QJsonObject object = QJsonDocument::fromJson( json_bytes ).object();
     return this->fromJSON( object , parent );
 }
 
-QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( const QJsonObject &json , QSharedPointer<GWSObject> parent ){
+QSharedPointer<geoworldsim::Object> geoworldsim::ObjectFactory::fromJSON( const QJsonObject &json , QSharedPointer<Object> parent ){
 
     if( json.isEmpty() ){
         qWarning() << QString("Object Factory received empty JSON");
-        GWSApp::globalInstance()->exit( -1 );
+        App::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 
-    if( !json.keys().contains( GWSObject::GWS_CLASS_PROP ) ){
-        qWarning() << QString("Object Factory received json without %1").arg( GWSObject::GWS_CLASS_PROP );
-        GWSApp::globalInstance()->exit( -1 );
+    if( !json.keys().contains( Object::GWS_CLASS_PROP ) ){
+        qWarning() << QString("Object Factory received json without %1").arg( Object::GWS_CLASS_PROP );
+        App::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 
-    QString class_name = json.value( GWSObject::GWS_CLASS_PROP ).toString();
+    QString class_name = json.value( Object::GWS_CLASS_PROP ).toString();
 
     if( !this->constructors.keys().contains( class_name ) ){
         qWarning() << QString("Object class %1 not registered in the ObjectFactory.").arg( class_name );
-        GWSApp::globalInstance()->exit( -1 );
+        App::globalInstance()->exit( -1 );
         return Q_NULLPTR;
     }
 
     // Create object
-    GWSObject* obj_raw = dynamic_cast<GWSObject*>( this->constructors.value( class_name ).newInstance() );
+    Object* obj_raw = dynamic_cast<Object*>( this->constructors.value( class_name ).newInstance() );
     if( !obj_raw ){
         return Q_NULLPTR;
     }
 
     // CREATE QSHAREPOINTERS!! DO NOT DELETE THEM, CALL CLEAR() INSTEAD
-    QSharedPointer<GWSObject> obj = QSharedPointer<GWSObject>( obj_raw );
+    QSharedPointer<Object> obj = QSharedPointer<Object>( obj_raw );
     obj_raw->self_shared_pointer = obj;
-    obj_raw->setProperty( GWSObject::GWS_UID_PROP , QString("%1::%2").arg( class_name ).arg( ++GWSObject::counter ) );
+    obj_raw->setProperty( Object::GWS_UID_PROP , QString("%1::%2").arg( class_name ).arg( ++Object::counter ) );
 
     // Set parent if any
     if( parent ){
-        obj->setProperty( GWSObject::GWS_UID_PROP , QString("%1::%2::%3").arg( parent->getUID() ).arg( class_name ).arg( ++GWSObject::counter ) );
+        obj->setProperty( Object::GWS_UID_PROP , QString("%1::%2::%3").arg( parent->getUID() ).arg( class_name ).arg( ++Object::counter ) );
         obj->moveToThread( parent->thread() );
     }
 
@@ -118,7 +119,7 @@ QSharedPointer<GWSObject> GWSObjectFactory::fromJSON( const QJsonObject &json , 
     return obj;
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyName( const QString &property_name, QSharedPointer<GWSObject> object, QSharedPointer<GWSObject> parent){
+QJsonValue geoworldsim::ObjectFactory::simpleOrParentPropertyName( const QString &property_name, QSharedPointer<Object> object, QSharedPointer<Object> parent){
 
     // IS STRING AND <>
 
@@ -133,11 +134,11 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyName( const QString &property
 
     // IS SIMPLE STRING
     if( !object ){ return QJsonValue::Null; }
-    return GWSObjectFactory::simpleOrParentPropertyValue( object->GWSObject::getProperty( property_name ) , object , parent );
+    return geoworldsim::ObjectFactory::simpleOrParentPropertyValue( object->Object::getProperty( property_name ) , object , parent );
 
 }
 
-QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &property_value ,  QSharedPointer<GWSObject> object , QSharedPointer<GWSObject> parent){
+QJsonValue geoworldsim::ObjectFactory::simpleOrParentPropertyValue( const QJsonValue &property_value ,  QSharedPointer<Object> object , QSharedPointer<Object> parent){
 
     // IS NULL
 
@@ -151,7 +152,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
 
     // If it comes between '<>', it is not the property name, but a kew to fetch said property name from one entities's value
     if( value_as_string.startsWith("<") && value_as_string.endsWith(">") ){
-        return GWSObjectFactory::simpleOrParentPropertyName( value_as_string , object , parent );
+        return geoworldsim::ObjectFactory::simpleOrParentPropertyName( value_as_string , object , parent );
     }
 
     // IS OBJECT
@@ -169,7 +170,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
                 return parent->getProperty( k );
             }
 
-            QJsonValue v = GWSObjectFactory::simpleOrParentPropertyValue( property_value.toObject().value( key ) , object , parent );
+            QJsonValue v = geoworldsim::ObjectFactory::simpleOrParentPropertyValue( property_value.toObject().value( key ) , object , parent );
             obj.insert( k , v );
         }
         return obj;
@@ -181,7 +182,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
 
         QJsonArray arr;
         foreach (QJsonValue v , property_value.toArray()) {
-            arr.append( GWSObjectFactory::simpleOrParentPropertyValue( v , object , parent ) );
+            arr.append( geoworldsim::ObjectFactory::simpleOrParentPropertyValue( v , object , parent ) );
         }
 
         return arr;
@@ -192,7 +193,7 @@ QJsonValue GWSObjectFactory::simpleOrParentPropertyValue( const QJsonValue &prop
     return property_value;
 }
 
-QJsonValue GWSObjectFactory::incrementValue( const QJsonValue &existing_value , const QJsonValue &increment){
+QJsonValue geoworldsim::ObjectFactory::incrementValue( const QJsonValue &existing_value , const QJsonValue &increment){
 
     if( existing_value.isNull() ){
         return increment;
@@ -205,7 +206,7 @@ QJsonValue GWSObjectFactory::incrementValue( const QJsonValue &existing_value , 
     // Unitary elements (int, double, string, bool)
 
     if( existing_value.isDouble() ){
-        return existing_value.toDouble() + increment.toDouble();
+        return existing_value.toDouble( 0 ) + increment.toDouble( 0 );
     }
 
     if( existing_value.isString() ){
@@ -239,13 +240,13 @@ QJsonValue GWSObjectFactory::incrementValue( const QJsonValue &existing_value , 
 
     if( existing_value.isObject() ){
         foreach( QString key , existing_value.toObject().keys() ){
-            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject().value(key) , increment.toObject().value(key) ) );
+            result.insert( key , geoworldsim::ObjectFactory::incrementValue( existing_value.toObject().value(key) , increment.toObject().value(key) ) );
         }
     }
 
     if( increment.isObject() ){
         foreach( QString key , increment.toObject().keys() ){
-            result.insert( key , GWSObjectFactory::incrementValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
+            result.insert( key , geoworldsim::ObjectFactory::incrementValue( existing_value.toObject()[key] , increment.toObject()[ key ] ) );
         }
     }
 

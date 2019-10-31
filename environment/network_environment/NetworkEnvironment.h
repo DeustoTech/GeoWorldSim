@@ -1,5 +1,5 @@
-#ifndef GWSNETWORKENVIRONMENT_H
-#define GWSNETWORKENVIRONMENT_H
+#ifndef NETWORKENVIRONMENT_H
+#define NETWORKENVIRONMENT_H
 
 #include <QObject>
 #include <QReadWriteLock>
@@ -10,12 +10,16 @@
 #include "../../util/geometry/Quadtree.h"
 #include "../../util/routing/Routing.h"
 
-class GWSNetworkEnvironment : public GWSEnvironment
+namespace geoworldsim {
+namespace environment {
+
+
+class NetworkEnvironment : public Environment
 {
     Q_OBJECT
 
 public:
-    static GWSNetworkEnvironment* globalInstance();
+    static NetworkEnvironment* globalInstance();
 
     // PROPERTIES
     static QString EDGE_PROP;
@@ -26,21 +30,21 @@ public:
     // GETTERS
     //GWSNetworkEdge getEdge( QSharedPointer< GWSAgent > agent ) const;
     //QSharedPointer< GWSAgent > getAgent( GWSNetworkEdge edge ) const;
-    QString getEdge( const GWSCoordinate &from , const GWSCoordinate &to , const QString &class_name ) const;
-    QString getNearestAgent( const GWSCoordinate &coor , const QString &class_name ) const;
+    QString getEdge( const geometry::Coordinate &from , const geometry::Coordinate &to , const QString &class_name ) const;
+    QString getNearestAgent( const geometry::Coordinate &coor , const QString &class_name ) const;
 
-    QStringList getShortestPath( const GWSCoordinate &from , const GWSCoordinate &to , const QString &class_name ) const;
-    QList< QStringList > getShortestPath( QList< GWSCoordinate > ordered_coors , const QString &class_name ) const;
-    QList< QStringList > getShortestPaths( const GWSCoordinate &from_one, QList< GWSCoordinate > to_many , const QString &class_name ) const;
-    QPair< GWSCoordinate , QList< QSharedPointer<GWSEntity> > > getNearestNodeAndPath( const GWSCoordinate &coor , QList< GWSCoordinate > get_nearest , const QString &class_name ) const;
+    QStringList getShortestPath( const geometry::Coordinate &from , const geometry::Coordinate &to , const QString &class_name ) const;
+    QList< QStringList > getShortestPath( QList< geometry::Coordinate > ordered_coors , const QString &class_name ) const;
+    QList< QStringList > getShortestPaths( const geometry::Coordinate &from_one, QList< geometry::Coordinate > to_many , const QString &class_name ) const;
+    QPair< geometry::Coordinate , QList< QSharedPointer< Entity > > > getNearestNodeAndPath( const geometry::Coordinate &coor , QList< geometry::Coordinate > get_nearest , const QString &class_name ) const;
 
     // METHODS
-    virtual void registerEntity( QSharedPointer<GWSEntity> agent );
-    virtual void unregisterEntity( QSharedPointer<GWSEntity> agent );
+    virtual void registerEntity( QSharedPointer< Entity > entity );
+    virtual void unregisterEntity( QSharedPointer< Entity > entity );
 
 protected:
 
-    void upsertEntityToIndex( QSharedPointer<GWSEntity> agent , const GWSNetworkEdge &edge );
+    void upsertEntityToIndex( QSharedPointer< Entity > entity , const graph::NetworkEdge &edge );
 
 protected slots:
 
@@ -48,21 +52,24 @@ protected slots:
 
 private :
 
-    GWSNetworkEnvironment();
-    GWSNetworkEnvironment( GWSNetworkEnvironment const& );
-    ~GWSNetworkEnvironment();
+    NetworkEnvironment();
+    NetworkEnvironment( NetworkEnvironment const& );
+    ~NetworkEnvironment();
 
     // Methods
-    QString getNearestNodeUID( const GWSCoordinate& coor , const QString& class_name ) const;
+    QString getNearestNodeUID( const geometry::Coordinate& coor , const QString& class_name ) const;
 
     // Storages
     QStringList environment_entity_index_types;
-    QMap<QString , QSharedPointer< GWSQuadtree > > network_edges; // Edges indexed
-    QMap<QString , QSharedPointer< GWSRouting > > network_routings;
+    QMap<QString , QSharedPointer< geometry::Quadtree > > network_edges; // Edges indexed
+    QMap<QString , QSharedPointer< routing::Routing > > network_routings;
 
     // Mutex, for avoiding concurrency
     mutable QReadWriteLock mutex;
 
 };
 
-#endif // GWSNETWORKENVIRONMENT_H
+}
+}
+
+#endif // NETWORKENVIRONMENT_H

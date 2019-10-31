@@ -1,5 +1,5 @@
-#ifndef GWSEDGEVISITOR_H
-#define GWSEDGEVISITOR_H
+#ifndef EDGEVISITOR_H
+#define EDGEVISITOR_H
 
 #include <QObject>
 #include <QDebug>
@@ -12,12 +12,16 @@
 #include <QMap>
 #include "../../util/graph/Edge.h"
 
-class GWSEdgeVisitor : public lemon::ListDigraph::ArcMap<double>
+namespace geoworldsim {
+namespace graph {
+
+
+class EdgeVisitor : public lemon::ListDigraph::ArcMap<double>
 {
 
 public:
 
-    GWSEdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){}
+    EdgeVisitor( lemon::ListDigraph* routing_graph ) : lemon::ListDigraph::ArcMap<double>( *routing_graph ){}
 
     // OPERATORS
     double operator[](Key arc) const{
@@ -25,8 +29,11 @@ public:
     }
 
     // STORAGE
-    QMap< lemon::ListDigraph::Arc , GWSEdge > edges;
+    QMap< lemon::ListDigraph::Arc , Edge > edges;
 
 };
 
-#endif // GWSEDGEVISITOR_H
+}
+}
+
+#endif // EDGEVISITOR_H

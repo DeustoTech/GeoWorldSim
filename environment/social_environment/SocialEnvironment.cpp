@@ -1,17 +1,18 @@
 #include "SocialEnvironment.h"
 #include "../../environment/EnvironmentsGroup.h"
 
-GWSSocialEnvironment* GWSSocialEnvironment::globalInstance(){
-    static GWSSocialEnvironment instance;
+
+geoworldsim::environment::GWSSocialEnvironment* geoworldsim::environment::GWSSocialEnvironment::globalInstance(){
+    static geoworldsim::environment::GWSSocialEnvironment instance;
     return &instance;
 }
 
-GWSSocialEnvironment::GWSSocialEnvironment() : GWSEnvironment(){
+geoworldsim::environment::GWSSocialEnvironment::GWSSocialEnvironment() : Environment(){
     qInfo() << "SocialEnvironment created";
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    EnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
-GWSSocialEnvironment::~GWSSocialEnvironment(){
+geoworldsim::environment::GWSSocialEnvironment::~GWSSocialEnvironment(){
 }
 
 
@@ -19,18 +20,18 @@ GWSSocialEnvironment::~GWSSocialEnvironment(){
  GETTERS
 **********************************************************************/
 
-QStringList GWSSocialEnvironment::getOutRelationeds(QSharedPointer<GWSEntity> agent, QString relation_type){
+QStringList geoworldsim::environment::GWSSocialEnvironment::getOutRelationeds(QSharedPointer<Entity> agent, QString relation_type){
     QStringList agent_uids;
-    foreach (GWSSocialRelation rel , this->out_relations.value( relation_type ).value( agent->getUID() ) ) {
+    foreach (social::SocialRelation rel , this->out_relations.value( relation_type ).value( agent->getUID() ) ) {
         //agent_uids.append( rel.to_agent_uid );
     }
     return agent_uids;
 }
 
 
-QStringList GWSSocialEnvironment::getInRelationeds(QSharedPointer<GWSEntity> agent, QString relation_type){
+QStringList geoworldsim::environment::GWSSocialEnvironment::getInRelationeds(QSharedPointer<Entity> agent, QString relation_type){
     QStringList agent_uids;
-    foreach (GWSSocialRelation rel , this->in_relations.value( relation_type ).value( agent->getUID() ) ) {
+    foreach (social::SocialRelation rel , this->in_relations.value( relation_type ).value( agent->getUID() ) ) {
         //agent_uids.append( rel.from_agent_uid );
     }
     return agent_uids;

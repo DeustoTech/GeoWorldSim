@@ -1,5 +1,5 @@
-#ifndef GWSROUTING_H
-#define GWSROUTING_H
+#ifndef ROUTING_H
+#define ROUTING_H
 
 #include <QObject>
 #include <QReadWriteLock>
@@ -12,14 +12,18 @@
 #include "../../util/graph/Edge.h"
 #include "../../util/routing/EdgeVisitor.hpp"
 
-class GWSRouting : public QObject
+namespace geoworldsim{
+namespace routing {
+
+
+class Routing : public QObject
 {
     Q_OBJECT
 
 public:
 
-    GWSRouting();
-    ~GWSRouting();
+    Routing();
+    ~Routing();
 
     // GETTERS
     QStringList getShortestPath( const QString &from_hash , const QString &to_hash );
@@ -27,11 +31,11 @@ public:
     QList< QStringList > getShortestPaths( const QString &from_one_hash , const QStringList &to_many_hashes );
 
 public slots:
-    void upsertEdge(const QString &object_id , const GWSEdge &edge );
+    void upsertEdge(const QString &object_id , const graph::Edge &edge );
     void removeEdge( const QString &object_id );
 
 signals:
-    void upsertEdgeSignal(const QString &object_id , const GWSEdge &edge );
+    void upsertEdgeSignal(const QString &object_id , const graph::Edge &edge );
     void removeEdgeSignal( const QString &object_id );
 
 protected:
@@ -44,7 +48,7 @@ protected:
 
     // Used to create nodes and arcs
     lemon::ListDigraph* routing_graph = Q_NULLPTR;
-    GWSEdgeVisitor* graph_edge_visitor = Q_NULLPTR;
+    graph::EdgeVisitor* graph_edge_visitor = Q_NULLPTR;
 
     // To link arcs with its original GSSGraphEdge
     QMap< lemon::ListDigraph::Arc , std::string >* arc_to_object_ids;
@@ -57,5 +61,7 @@ protected:
 
 };
 
+}
+}
 
-#endif // GWSROUTING_H
+#endif // ROUTING_H

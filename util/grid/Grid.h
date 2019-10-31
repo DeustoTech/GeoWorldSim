@@ -1,11 +1,14 @@
-#ifndef GWSGRID_H
-#define GWSGRID_H
+#ifndef GRID_H
+#define GRID_H
 
 #include <QObject>
 #include <QReadWriteLock>
 #include <QMap>
 #include <QJsonArray>
 #include "../../util/geometry/Geometry.h"
+
+namespace geoworldsim{
+namespace grid {
 
 class GWSGrid : public QObject {
 
@@ -16,12 +19,12 @@ class GWSGrid : public QObject {
     //[00 , 10 , 20 , 30]
 
 public:
-    GWSGrid( GWSGeometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type );
+    GWSGrid( geometry::Geometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type );
     ~GWSGrid();
 
     // GETTERS
     virtual bool isGridEmpty() const;
-    GWSGeometry getBounds() const;
+    geometry::Geometry getBounds() const;
     QJsonObject getGeoJSON() const;
     unsigned int getXSize() const;
     unsigned int getYSize() const;
@@ -29,14 +32,14 @@ public:
     double getLat( double y ) const;
     double getMaxValue() const;
     double getMinValue() const;
-    virtual QJsonValue getValue( const GWSCoordinate &coor ) const;
-    virtual QJsonValue getValue( const GWSGeometry &geom ) const;
+    virtual QJsonValue getValue( const geometry::Coordinate &coor ) const;
+    virtual QJsonValue getValue( const geometry::Geometry &geom ) const;
     //virtual void getGridCellValue( unsigned int grid_x , unsigned int grid_y ) = 0;
 
     // SETTERS
-    void addValue( const GWSCoordinate &coor , const QJsonValue &value );
-    void addValue( const GWSGeometry &geom , const QJsonValue &value );
-    void setBounds( const GWSGeometry &bounds );
+    void addValue( const geometry::Coordinate &coor , const QJsonValue &value );
+    void addValue( const geometry::Geometry &geom , const QJsonValue &value );
+    void setBounds( const geometry::Geometry &bounds );
     //virtual void addGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void removeGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v) = 0;
     //virtual void setGridCellValue( unsigned int grid_x , unsigned int grid_y , void* v);
@@ -49,7 +52,7 @@ protected:
 
     mutable QReadWriteLock mutex;
 
-    GWSGeometry grid_bounds;
+    geometry::Geometry grid_bounds;
     QMap< unsigned int , QMap< unsigned int , QJsonValue >* >* grid;
     int x_size = -1;
     int y_size = -1;
@@ -68,4 +71,8 @@ protected:
 };
 
 
-#endif // GWSGRID_H
+}
+}
+
+
+#endif // GRID_H

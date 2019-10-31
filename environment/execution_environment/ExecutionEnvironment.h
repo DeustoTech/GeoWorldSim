@@ -9,13 +9,16 @@
 #include "../../util/storage/ObjectStorage.h"
 #include "../../environment/Environment.h"
 
-class GWSExecutionEnvironment : public GWSEnvironment
+namespace geoworldsim {
+namespace environment {
+
+class ExecutionEnvironment : public Environment
 {
     Q_OBJECT
-    friend class GWSApp; // App can access
+    friend class App; // App can access
 
 public:
-    static GWSExecutionEnvironment* globalInstance();
+    static ExecutionEnvironment* globalInstance();
 
     // PROPERTIES
     static QString ENTITY_BIRTH_PROP;
@@ -32,19 +35,17 @@ public:
     virtual QJsonObject serialize() const;
 
     // GETTERS
-    bool containsEntity( QSharedPointer<GWSEntity> entity ) const;
+    bool containsEntity( QSharedPointer<Entity> entity ) const;
     int getRunningAmount() const;
-    QList< QSharedPointer<GWSEntity> > getRunning() const;
+    QList< QSharedPointer<Entity> > getRunning() const;
     template <class T>
-    QList< QSharedPointer<T> > getRunning( QString class_name ) const{
-        return this->environment_entities->getByClass<T>( class_name );
-    }
+    QList< QSharedPointer<T> > getRunning( QString class_name ) const{ return this->environment_entities->getByClass<T>( class_name ); }
     bool isRunning() const;
     int getTicksAmount() const;
 
     // METHODS
-    virtual void registerEntity(QSharedPointer<GWSEntity> entity);
-    virtual void unregisterEntity(QSharedPointer<GWSEntity> entity);
+    virtual void registerEntity(QSharedPointer<Entity> entity);
+    virtual void unregisterEntity(QSharedPointer<Entity> entity);
 
 signals:
     void tickEndedSignal(int executed_tick);
@@ -59,17 +60,17 @@ private slots:
     void behave();
 
 private:
-    GWSExecutionEnvironment();
-    GWSExecutionEnvironment(GWSExecutionEnvironment const&);
-    ~GWSExecutionEnvironment();
+    ExecutionEnvironment();
+    ExecutionEnvironment(ExecutionEnvironment const&);
+    ~ExecutionEnvironment();
 
     // HELPER CLASS
-    class GWSExecutionEnvironmentElement : public QObject {
+    class ExecutionEnvironmentElement : public QObject {
         public:
-            GWSExecutionEnvironmentElement( QThread* thread , quint64 tick_time_window , uint max_entity_amount_per_tick = -1 ) : QObject() , tick_time_window(tick_time_window) , max_entity_amount_per_tick(max_entity_amount_per_tick) {
+            ExecutionEnvironmentElement( QThread* thread , quint64 tick_time_window , uint max_entity_amount_per_tick = -1 ) : QObject() , tick_time_window(tick_time_window) , max_entity_amount_per_tick(max_entity_amount_per_tick) {
                 this->moveToThread( thread );
             }
-            ~GWSExecutionEnvironmentElement(){
+            ~ExecutionEnvironmentElement(){
             }
 
             // FLAGS
@@ -78,7 +79,7 @@ private:
             bool is_busy = false;
 
             // RUNNING ENTITIES
-            QList< QSharedPointer<GWSEntity> > running_storage;
+            QList< QSharedPointer<Entity> > running_storage;
             qint64 min_tick = -1;
             int ticked_entities = 0;
             int ready_entities = 0;
@@ -100,11 +101,14 @@ private:
     const uint max_entity_amount_per_tick = -1;
 
     // Parallel execution chunks
-    QMap< QThread* , GWSExecutionEnvironmentElement* > parallel_executions;
+    QMap< QThread* , ExecutionEnvironmentElement* > parallel_executions;
 
     // ENVIRONMENT MEMORY
-    GWSObjectStorage* environment_entities = Q_NULLPTR;
+    storage::ObjectStorage* environment_entities = Q_NULLPTR;
 
 };
+
+}
+}
 
 #endif // GWSEXECUTIONENVIRONMENT_H

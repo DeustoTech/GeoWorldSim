@@ -3,55 +3,55 @@
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../object/ObjectFactory.h"
 
-GWSCommunicationEnvironment* GWSCommunicationEnvironment::globalInstance(){
-    static GWSCommunicationEnvironment instance;
+geoworldsim::environment::CommunicationEnvironment* geoworldsim::environment::CommunicationEnvironment::globalInstance(){
+    static geoworldsim::environment::CommunicationEnvironment instance;
     return &instance;
 }
 
-GWSCommunicationEnvironment::GWSCommunicationEnvironment() : GWSEnvironment(){
+geoworldsim::environment::CommunicationEnvironment::CommunicationEnvironment() : Environment(){
     qInfo() << "CommunicationEnvironment created";
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    EnvironmentsGroup::globalInstance()->addEnvironment( this );
 
     // Create global Simulation Socket
-    QString socket_id = GWSApp::globalInstance()->getAppId();
-    this->publishers.insert( socket_id , new GWSExternalPublisher( socket_id ) );
+    QString socket_id = App::globalInstance()->getAppId();
+    this->publishers.insert( socket_id , new network::PublisherWebSocket( socket_id ) );
 
     // Connect signals and slots
-    this->connect( this , &GWSCommunicationEnvironment::listenSocketSignal , this , &GWSCommunicationEnvironment::connectExternalSocket );
-    this->connect( this , &GWSCommunicationEnvironment::sendEntitySignal , this , &GWSCommunicationEnvironment::sendEntity );
-    this->connect( this , &GWSCommunicationEnvironment::sendMessageSignal , this , &GWSCommunicationEnvironment::sendMessage );
+    this->connect( this , &geoworldsim::environment::CommunicationEnvironment::listenSocketSignal , this , &geoworldsim::environment::CommunicationEnvironment::connectExternalSocket );
+    this->connect( this , &geoworldsim::environment::CommunicationEnvironment::sendEntitySignal , this , &geoworldsim::environment::CommunicationEnvironment::sendEntity );
+    this->connect( this , &geoworldsim::environment::CommunicationEnvironment::sendMessageSignal , this , &geoworldsim::environment::CommunicationEnvironment::sendMessage );
 
 }
 
-GWSCommunicationEnvironment::~GWSCommunicationEnvironment(){
+geoworldsim::environment::CommunicationEnvironment::~CommunicationEnvironment(){
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-void GWSCommunicationEnvironment::registerEntity( QSharedPointer<GWSEntity> agent ){
+void geoworldsim::environment::CommunicationEnvironment::registerEntity( QSharedPointer<Entity> agent ){
     Q_UNUSED(agent);
 }
 
-void GWSCommunicationEnvironment::unregisterEntity( QSharedPointer<GWSEntity> agent ){
+void geoworldsim::environment::CommunicationEnvironment::unregisterEntity( QSharedPointer<Entity> agent ){
     Q_UNUSED(agent);
 }
 
-void GWSCommunicationEnvironment::connectExternalSocket(const QString &socket_id){
-    GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
+void geoworldsim::environment::CommunicationEnvironment::connectExternalSocket(const QString &socket_id){
+    network::ListenerWebSocket* listener = this->listeners.value( socket_id , 0 );
     if( !listener ){
         qDebug() << QString("Creating external listener %1").arg( socket_id );
-        listener = new GWSExternalListener( socket_id );
+        listener = new network::ListenerWebSocket( socket_id );
         this->listeners.insert( socket_id , listener );
-        listener->connect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::dataReceivedFromSocket );
+        listener->connect( listener , &network::ListenerWebSocket::dataReceivedSignal , this , &geoworldsim::environment::CommunicationEnvironment::dataReceivedFromSocket );
         }
 }
 
-void GWSCommunicationEnvironment::disconnectExternalSocket(const QString &socket_id){
-    GWSExternalListener* listener = this->listeners.value( socket_id , 0 );
+void geoworldsim::environment::CommunicationEnvironment::disconnectExternalSocket(const QString &socket_id){
+    network::ListenerWebSocket* listener = this->listeners.value( socket_id , 0 );
     if( listener ){
-        listener->disconnect( listener , &GWSExternalListener::dataReceivedSignal , this , &GWSCommunicationEnvironment::dataReceivedFromSocket );
+        listener->disconnect( listener , &network::ListenerWebSocket::dataReceivedSignal , this , &geoworldsim::environment::CommunicationEnvironment::dataReceivedFromSocket );
     }
 }
 
@@ -60,7 +60,7 @@ void GWSCommunicationEnvironment::disconnectExternalSocket(const QString &socket
  LISTENERS
 **********************************************************************/
 
-/*void GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_data){
+/*void geoworldsim::environment::GWSCommunicationEnvironment::externalEnvironmentReceived(QJsonObject json_data){
 
     qDebug() << "MESSAGE RECEIVED";
     emit this->dataReceivedSignal( json_data , "demo" );
@@ -101,31 +101,31 @@ void GWSCommunicationEnvironment::disconnectExternalSocket(const QString &socket
  DATA
 **********************************************************************/
 
-void GWSCommunicationEnvironment::sendEntity(const QJsonObject &entity_json, const QString &socket_id){
+void geoworldsim::environment::CommunicationEnvironment::sendEntity(const QJsonObject &entity_json, const QString &socket_id){
     this->sendData( "entity" , entity_json , socket_id );
 }
 
-void GWSCommunicationEnvironment::sendMessage(const QJsonObject &message_json, const QString &socket_id){
+void geoworldsim::environment::CommunicationEnvironment::sendMessage(const QJsonObject &message_json, const QString &socket_id){
     this->sendData( "message" , message_json , socket_id );
 }
 
-void GWSCommunicationEnvironment::sendData(const QString &signal , const QJsonObject &data , const QString &socket_id ){
+void geoworldsim::environment::CommunicationEnvironment::sendData(const QString &signal , const QJsonObject &data , const QString &socket_id ){
 
     // To be done in the main thread
-    GWSExternalPublisher* publisher = this->publishers.value( socket_id , 0 );
+    network::PublisherWebSocket* publisher = this->publishers.value( socket_id , 0 );
     if( !publisher ){
         qDebug() << QString("Creating external publisher %1").arg( socket_id );
-        publisher = new GWSExternalPublisher( socket_id );
+        publisher = new network::PublisherWebSocket( socket_id );
         publisher->setObjectName( QString("%1 %2").arg( this->metaObject()->className() ).arg( socket_id ) );
         this->publishers.insert( socket_id , publisher );
     }
     publisher->sendMessage( signal , data );
 }
 
-void GWSCommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
+void geoworldsim::environment::CommunicationEnvironment::dataReceivedFromSocket( QJsonObject data ){
 
     // Dynamic cast sender() method to convert a QObject* into a GWSExternalListener*
-    GWSExternalListener* listener = dynamic_cast<GWSExternalListener*>( sender() );
+    network::ListenerWebSocket* listener = dynamic_cast< network::ListenerWebSocket* >( sender() );
 
     // Get socketID corresponding to listener from listener QMap
     QString socketUID =  this->listeners.key( listener );
