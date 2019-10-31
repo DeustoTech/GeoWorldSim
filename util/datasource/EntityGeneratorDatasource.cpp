@@ -31,14 +31,14 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject configura
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString scenario_id = datasource.value("scenario_id").toString();
                 int limit = datasource.value("limit").toInt(-1);
-                QString entity_type = datasource.value("entity_type").toString();
-                QString entity_filter = datasource.value("entity_filter").toString();
+                QString entities_type = datasource.value("entity_type").toString();
+                QString entities_filter = datasource.value("entity_filter").toString();
 
-                if( scenario_id.isEmpty() || entity_type.isEmpty() ){
+                if( scenario_id.isEmpty() || entities_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 
-                GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id,  entity_type , entity_filter , limit );
+                GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id,  entities_type , entities_filter , limit );
 
                 if( !reader ){
                     continue;
@@ -75,8 +75,8 @@ GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource(QJsonObject configura
 
 }
 
-GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource( QJsonObject entity_template , QString user_id , QString scenario_id , QString entity_type , QString entity_filter , int amount ) : QObject (){
-    GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id , entity_type , entity_filter , amount );
+GWSEntityGeneratorDatasource::GWSEntityGeneratorDatasource( QJsonObject entity_template , QString user_id , QString scenario_id , QString entities_type , QString entities_filter , int amount ) : QObject (){
+    GWSDatasourceReader* reader = this->generateEntities( entity_template , user_id , scenario_id , entities_type , entities_filter , amount );
 
     if( !reader ){
         emit this->dataReadingFinishedSignal();
@@ -120,14 +120,14 @@ QJsonObject GWSEntityGeneratorDatasource::joinJSON( QJsonObject json_template , 
     return json_template;
 }
 
-GWSDatasourceReader* GWSEntityGeneratorDatasource::generateEntities(QJsonObject entity_template, QString user_id, QString scenario_id, QString entity_type, QString entity_filter, int amount){
+GWSDatasourceReader* GWSEntityGeneratorDatasource::generateEntities(QJsonObject entity_template, QString user_id, QString scenario_id, QString entities_type, QString entities_filter, int amount){
 
     if( entity_template.isEmpty() ){
         qCritical() << "Empty JSON template to join with the datasource";
         return Q_NULLPTR;
     }
 
-    GWSDatasourceReader* reader = new GWSDatasourceReader( user_id , scenario_id , entity_type , entity_filter , amount > 0 ? amount : 999999999999999 );
+    GWSDatasourceReader* reader = new GWSDatasourceReader( user_id , scenario_id , entities_type , entities_filter , amount > 0 ? amount : 999999999999999 );
     reader->connect( reader , &GWSDatasourceReader::dataValueReadSignal , [this , entity_template]( QJsonObject data ){
 
         // FIXME

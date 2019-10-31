@@ -205,7 +205,7 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
                stream << str << endl;
            }
 
-           // Input variances
+           // Input stdev
            {
                QString str;
                for(int i = 0 ; i < this->input_positions.values().size() ; i++){

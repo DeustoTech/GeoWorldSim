@@ -18,7 +18,6 @@ QPair<double, QJsonArray> SetEntityPropertyBehaviour::behave(){
     
     if( !entity ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-
     }
 
     QJsonObject properties = this->getProperty( PROPERTIES ).toObject();
