@@ -36,7 +36,6 @@ HEADERS += \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
     ../../entity/Entity.h \
-    ../../entity/EntitySource.h \
         # SKILLS
     ../../skill/Skill.h \
         # BEHAVIOURS
@@ -62,16 +61,15 @@ HEADERS += \
     ../../util/geometry/GeometryGetters.h  \
     ../../util/geometry/GeometryToGeoJSON.h \
     ../../util/routing/Routing.h \
-    ../../util/api/APIDriver.h \
+    ../../util/network/HttpDriver.h \
+    ../../util/network/ListenerWebSocket.h \
+    ../../util/network/PublisherWebSocket.h \
+    ../../util/network/WebSocketDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/datasource/EntityGeneratorDatasource.h \
     ../../util/routing/EdgeVisitor.hpp \
-            ## GRID
             ## RANDOM
     ../../util/random/UniformDistribution.h \
-    ../../util/distributed/ExternalListener.h \
-    ../../util/distributed/ExternalCommunicator.h \
-    ../../util/distributed/ExternalPublisher.h \
     ../../util/graph/Edge.h \
         # ENVIRONMENT
     ../../environment/Environment.h \
@@ -111,7 +109,10 @@ SOURCES += mainlauncher.cpp \
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
-    ../../util/api/APIDriver.cpp \
+    ../../util/network/HttpDriver.cpp \
+    ../../util/network/ListenerWebSocket.cpp \
+    ../../util/network/PublisherWebSocket.cpp \
+    ../../util/network/WebSocketDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
             ## DATASOURCES
     ../../util/datasource/EntityGeneratorDatasource.cpp \
@@ -127,9 +128,6 @@ SOURCES += mainlauncher.cpp \
             ## GRID
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
-    ../../util/distributed/ExternalListener.cpp \
-    ../../util/distributed/ExternalCommunicator.cpp \
-    ../../util/distributed/ExternalPublisher.cpp \
     ../../util/graph/Edge.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \

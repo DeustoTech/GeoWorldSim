@@ -31,10 +31,10 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
                 QJsonObject datasource = datasources.at( i ).toObject();
                 QString scenario_id = datasource.value("scenario_id").toString();
                 int limit = datasource.value("limit").toInt(-1);
-                QString entities_type = datasource.value("entity_type").toString();
-                QString entities_filter = datasource.value("entity_filter").toString();
+                QString entity_type = datasource.value("entity_type").toString();
+                QString entity_filter = datasource.value("entity_filter").toString();
 
-                if( scenario_id.isEmpty() || entities_type.isEmpty() ){
+                if( scenario_id.isEmpty() || entity_type.isEmpty() ){
                     qWarning() << "Asked to download from scenario without ID or entity_type";
                 }
 

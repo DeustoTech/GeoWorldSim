@@ -4,25 +4,22 @@
 
 #include "../../environment/time_environment/TimeEnvironment.h"
 
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_YEAR = "wait_until_year";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_MONTH = "wait_until_month";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_DAY = "wait_until_day";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_HOUR = "wait_until_hour";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_MINUTE = "wait_until_minute";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_UNTIL_SECOND = "wait_until_second";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::WAIT_FREQUENCY = "wait_frequency";
+QString geoworldsim::behaviour::WaitUntilTimeBehaviour::NEXTS = "nexts";
 
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_YEAR = "wait_until_year";
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_MONTH = "wait_until_month";
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_DAY = "wait_until_day";
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_HOUR = "wait_until_hour";
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_MINUTE = "wait_until_minute";
-QString WaitUntilTimeBehaviour::WAIT_UNTIL_SECOND = "wait_until_second";
-QString WaitUntilTimeBehaviour::WAIT_FREQUENCY = "wait_frequency";
-
-QString WaitUntilTimeBehaviour::NEXTS = "nexts";
-
-WaitUntilTimeBehaviour::WaitUntilTimeBehaviour() : GWSBehaviour(){
+geoworldsim::behaviour::WaitUntilTimeBehaviour::WaitUntilTimeBehaviour() : Behaviour(){
 
 }
 
+QPair< double , QJsonArray > geoworldsim::behaviour::WaitUntilTimeBehaviour::behave(){
 
-QPair< double , QJsonArray > WaitUntilTimeBehaviour::behave(){
-
-    qint64 current_time = this->getEntity()->getProperty( GWSTimeEnvironment::INTERNAL_TIME_PROP ).toInt();
+    qint64 current_time = this->getEntity()->getProperty( environment::TimeEnvironment::INTERNAL_TIME_PROP ).toInt();
     QDateTime current_datetime = QDateTime::fromMSecsSinceEpoch( current_time );
 
     int year = this->getProperty( WAIT_UNTIL_YEAR ).toDouble( current_datetime.date().year() );
@@ -68,7 +65,7 @@ QPair< double , QJsonArray > WaitUntilTimeBehaviour::behave(){
     }
 
     int seconds = current_datetime.secsTo( wait_until ); // IN seconds
-    this->setProperty( GWSBehaviour::BEHAVIOUR_DURATION , seconds );
+    this->setProperty( BEHAVIOUR_DURATION , seconds );
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

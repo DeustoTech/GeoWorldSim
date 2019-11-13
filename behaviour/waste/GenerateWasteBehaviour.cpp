@@ -5,11 +5,11 @@
 #include "../../app/App.h"
 #include "../../object/ObjectFactory.h"
 
-QString GenerateWasteBehaviour::GENERATION = "generation";
-QString GenerateWasteBehaviour::SORTING_TYPES_CHARACTERIZATION = "characterization";
-QString GenerateWasteBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::GenerateWasteBehaviour::GENERATION = "generation";
+QString geoworldsim::behaviour::GenerateWasteBehaviour::SORTING_TYPES_CHARACTERIZATION = "characterization";
+QString geoworldsim::behaviour::GenerateWasteBehaviour::NEXTS = "nexts";
 
-GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
+geoworldsim::behaviour::GenerateWasteBehaviour::GenerateWasteBehaviour() : Behaviour(){
 
     // Careful! These are the quantities obtained from a whole container.
     // Right now, the model assumes each household generates this HUGE amount of waste
@@ -182,14 +182,14 @@ GenerateWasteBehaviour::GenerateWasteBehaviour() : GWSBehaviour(){
 
 
 
-QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
+QPair< double , QJsonArray > geoworldsim::behaviour::GenerateWasteBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> entity = this->getEntity();
+    QSharedPointer< Entity > entity = this->getEntity();
 
     QJsonObject characterization_data = this->getProperty( SORTING_TYPES_CHARACTERIZATION ).toObject();
 
     // Accumulate the total per sorting_type and waste_category
-    QMap< QString , GWSMassUnit > totals;
+    QMap< QString , unit::MassUnit > totals;
 
     foreach( QString sorting_type_name , characterization_data.keys() ) {
 
@@ -225,7 +225,7 @@ QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
 
             foreach( QString sorting_type , characterization_data.keys() ){
 
-                GWSMassUnit generate_for_this_sorting_type =
+                unit::MassUnit generate_for_this_sorting_type =
                         characterization_data.value( sorting_type ).toObject().value( key ).toDouble( 0 ) / total_of_totals * generation_data.value( key ).toDouble( 0 );
 
                 this->generateForSortingTypeWasteCaregory( entity , sorting_type , key , generate_for_this_sorting_type );
@@ -237,30 +237,30 @@ QPair< double , QJsonArray > GenerateWasteBehaviour::behave(){
 }
 
 
-void GenerateWasteBehaviour::generateForFullSortingType(QSharedPointer<GWSEntity> entity, QJsonObject sorting_type_data, GWSMassUnit sorting_type_total, QString sorting_type, GWSMassUnit sorting_type_generate_amount){
+void geoworldsim::behaviour::GenerateWasteBehaviour::generateForFullSortingType(QSharedPointer< Entity > entity, QJsonObject sorting_type_data, unit::MassUnit sorting_type_total, QString sorting_type, unit::MassUnit sorting_type_generate_amount){
 
-    GWSMassUnit existing = entity->getProperty( QString("accumulated_%1").arg( sorting_type ) ).toDouble( 0 );
+    unit::MassUnit existing = entity->getProperty( QString("accumulated_%1").arg( sorting_type ) ).toDouble( 0 );
 
     foreach (QString waste_category , sorting_type_data.keys() ) {
 
         // Calculate the percentage per each waste_category
-        GWSMassUnit waste_category_amount = sorting_type_generate_amount * sorting_type_data.value( waste_category ).toDouble( 0 ) / sorting_type_total;
+        unit::MassUnit waste_category_amount = sorting_type_generate_amount * sorting_type_data.value( waste_category ).toDouble( 0 ) / sorting_type_total;
         this->generateForSortingTypeWasteCaregory( entity , sorting_type , waste_category , waste_category_amount );
     }
 
     entity->setProperties({
           { QString("instant_%1").arg( sorting_type ) , sorting_type_generate_amount.number() },
-          { QString("accumulated_%1").arg( sorting_type ), GWSObjectFactory::incrementValue( existing.number() , sorting_type_generate_amount.number() ) },
+          { QString("accumulated_%1").arg( sorting_type ), ObjectFactory::incrementValue( existing.number() , sorting_type_generate_amount.number() ) },
       });
 }
 
-void GenerateWasteBehaviour::generateForSortingTypeWasteCaregory(QSharedPointer<GWSEntity> entity, QString sorting_type, QString waste_category, GWSMassUnit generate_amount){
+void geoworldsim::behaviour::GenerateWasteBehaviour::generateForSortingTypeWasteCaregory(QSharedPointer< Entity > entity, QString sorting_type, QString waste_category, unit::MassUnit generate_amount){
 
-    GWSMassUnit existing = entity->getProperty( QString("accumulated_%1_%2").arg( sorting_type ).arg( waste_category ) ).toDouble( 0 );
+    unit::MassUnit existing = entity->getProperty( QString("accumulated_%1_%2").arg( sorting_type ).arg( waste_category ) ).toDouble( 0 );
 
     entity->setProperties({
           { QString("instant_%1_%2").arg( sorting_type ).arg( waste_category )  , generate_amount.number() },
-          { QString("accumulated_%1_%2").arg( sorting_type ).arg( waste_category ) , GWSObjectFactory::incrementValue( existing.number() , generate_amount.number() ) },
+          { QString("accumulated_%1_%2").arg( sorting_type ).arg( waste_category ) , ObjectFactory::incrementValue( existing.number() , generate_amount.number() ) },
       });
 
 }

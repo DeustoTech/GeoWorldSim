@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class GenerateWasteBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class GenerateWasteBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -21,8 +24,11 @@ protected slots:
     virtual QPair< double , QJsonArray > behave();
 
 private:
-    void generateForFullSortingType(QSharedPointer<GWSEntity> entity , QJsonObject sorting_type_data , GWSMassUnit sorting_type_total , QString sorting_type , GWSMassUnit sorting_type_generate_amount);
-    void generateForSortingTypeWasteCaregory( QSharedPointer<GWSEntity> entity , QString sorting_type , QString waste_category , GWSMassUnit generate_amount );
+    void generateForFullSortingType(QSharedPointer< Entity > entity , QJsonObject sorting_type_data , unit::MassUnit sorting_type_total , QString sorting_type , unit::MassUnit sorting_type_generate_amount);
+    void generateForSortingTypeWasteCaregory( QSharedPointer< Entity > entity , QString sorting_type , QString waste_category , unit::MassUnit generate_amount );
 };
+
+}
+}
 
 #endif // GENERATEWASTEBEHAVIOUR_H

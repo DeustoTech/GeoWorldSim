@@ -8,7 +8,6 @@
 #include <QProcess>
 #include <QtMath>
 
-
 // Skills
 
 // Behaviours
@@ -18,7 +17,7 @@
 #include "../../behaviour/property/ComparePropertyBehaviour.h"
 #include "../../behaviour/random/GenerateRandomValueBehaviour.h"
 #include "../../behaviour/waste/GenerateWasteBehaviour.h"
-#include "../../behaviour/property/SetPropertyBehaviour.h".h"
+#include "../../behaviour/property/SetPropertyBehaviour.h"
 #include "../../behaviour/property/MathPropertyBehaviour.h"
 
 //Environments
@@ -33,8 +32,6 @@
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/geometry/Envelope.h"
-#include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
@@ -49,52 +46,49 @@ int main(int argc, char* argv[])
     QDateTime start = QDateTime::currentDateTime();
 
     // CREATE QAPPLICATION
-    GWSApp* app = GWSApp::globalInstance( argc , argv );
+    geoworldsim::App* app = geoworldsim::App::globalInstance( argc , argv );
 
     // INIT RANDOM NUMBERS
     qsrand( QDateTime::currentDateTime().toMSecsSinceEpoch() );
 
-    // INIT OBJECT FACTORY
-    GWSObjectFactory::globalInstance()->registerType( GWSEntity::staticMetaObject );
-
-    // INIT ENVIRONMENTS
-    GWSObjectFactory::globalInstance();
-    GWSEntityEnvironment::globalInstance();
-    GWSExecutionEnvironment::globalInstance();
-    GWSPhysicalEnvironment::globalInstance();
-    GWSNetworkEnvironment::globalInstance();
-    GWSTimeEnvironment::globalInstance();
-    GWSCommunicationEnvironment::globalInstance();
+    // INIT SINGLETONS
+    geoworldsim::ObjectFactory::globalInstance();
+    geoworldsim::environment::EntityEnvironment::globalInstance();
+    geoworldsim::environment::ExecutionEnvironment::globalInstance();
+    geoworldsim::environment::PhysicalEnvironment::globalInstance();
+    geoworldsim::environment::NetworkEnvironment::globalInstance();
+    geoworldsim::environment::TimeEnvironment::globalInstance();
+    geoworldsim::environment::CommunicationEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( WaitUntilTimeBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( ComparePropertyBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( GenerateRandomValueBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( GenerateWasteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( MathPropertyBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::WaitUntilTimeBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::TransactionBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::ComparePropertyBehaviour::staticMetaObject);
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::GenerateRandomValueBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::GenerateWasteBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SetPropertyBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::MathPropertyBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QDateTime datasource_download_time = QDateTime::currentDateTime();
-    GWSEntityGeneratorDatasource* reader = new GWSEntityGeneratorDatasource( app->getConfiguration() );
-    reader->connect( reader , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ reader , datasource_download_time ](){
+    geoworldsim::datasource::EntityGeneratorDatasource* reader = new geoworldsim::datasource::EntityGeneratorDatasource( app->getConfiguration() );
+    reader->connect( reader , &geoworldsim::datasource::EntityGeneratorDatasource::dataReadingFinishedSignal , [ reader , datasource_download_time ](){
 
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , geoworldsim::App::globalInstance()->getAppId() + "-LOG" );
 
-        GWSExecutionEnvironment::globalInstance()->run();
+        geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     });
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-    QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
+    QJsonObject json_external_listeners = geoworldsim::App::globalInstance()->getConfiguration().value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
         if ( !json_external_listeners[ key ].isNull() ){
-            new GWSExternalListener( json_external_listeners[ key ].toString() );
+            new geoworldsim::network::ListenerWebSocket( json_external_listeners[ key ].toString() );
         }
         qDebug() << QString("Creating external listener %1").arg( key );
      }

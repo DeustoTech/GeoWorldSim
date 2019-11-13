@@ -2,27 +2,28 @@
 
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString MathPropertyBehaviour::ENTITY_ID = "entity_id";
-QString MathPropertyBehaviour::ENTITY_TYPE = "entity_type";
-QString MathPropertyBehaviour::OPERAND_PROPERTY = "property_to_modify";
-QString MathPropertyBehaviour::OPERATOR = "math_operator";
-QString MathPropertyBehaviour::OPERAND_VALUE = "operand_value";
-QString MathPropertyBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::MathPropertyBehaviour::ENTITY_ID = "entity_id";
+QString geoworldsim::behaviour::MathPropertyBehaviour::ENTITY_TYPE = "entity_type";
+QString geoworldsim::behaviour::MathPropertyBehaviour::OPERAND_1 = "operand_1";
+QString geoworldsim::behaviour::MathPropertyBehaviour::OPERAND_2 = "operand_2";
+QString geoworldsim::behaviour::MathPropertyBehaviour::OPERATOR = "operator";
+QString geoworldsim::behaviour::MathPropertyBehaviour::STORE_AS = "store_as";
+QString geoworldsim::behaviour::MathPropertyBehaviour::NEXTS = "nexts";
 
 
-MathPropertyBehaviour::MathPropertyBehaviour() : GWSBehaviour (){
+geoworldsim::behaviour::MathPropertyBehaviour::MathPropertyBehaviour() : Behaviour (){
 
 }
 
 
-QPair< double , QJsonArray > MathPropertyBehaviour::behave(){
+QPair< double , QJsonArray > geoworldsim::behaviour::MathPropertyBehaviour::behave(){
 
     QString entity_id = this->getProperty( ENTITY_ID ).toString();
     QString entity_type = this->getProperty( ENTITY_TYPE ).toString();
 
-    QList<QSharedPointer<GWSEntity> > entities;
+    QList<QSharedPointer< Entity > > entities;
 
-    QSharedPointer<GWSEntity> behaving_entity = this->getEntity();
+    QSharedPointer< Entity > behaving_entity = this->getEntity();
 
     if( behaving_entity->getUID() == entity_id ){
         entities.append( behaving_entity );
@@ -30,44 +31,41 @@ QPair< double , QJsonArray > MathPropertyBehaviour::behave(){
 
     // If ID and Type supplied
     else if( !entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByClassAndUID( entity_type , entity_id ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClassAndUID( entity_type , entity_id ) );
     }
 
     // If only Type supplied, affect all
     else if( entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByClass( entity_type ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClass( entity_type ) );
     }
 
     // If only ID supplied
     else if ( !entity_id.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByUID( entity_id ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByUID( entity_id ) );
     }
 
-    foreach (QSharedPointer<GWSEntity> e , entities ) {
+    foreach (QSharedPointer< Entity > e , entities ) {
         if( !e ){ continue; }
 
         QString operation = this->getProperty( OPERATOR ).toString();
-        QJsonValue operand_value = this->getProperty( OPERAND_VALUE );
-        QString property_to_modify = this->getProperty( OPERAND_PROPERTY ).toString();
-
-        double initial_property_value = e->getProperty( property_to_modify ).toDouble();
-        double final_property_value;
+        double operand_1 = this->getProperty( OPERAND_1 ).toDouble();
+        double operand_2 = this->getProperty( OPERAND_2 ).toDouble();
+        double operation_result;
 
         if ( operation == "+" ){
-            final_property_value = initial_property_value + operand_value.toDouble();
+            operation_result = operand_1 + operand_2;
         }
         if ( operation == "/" ){
-            final_property_value = initial_property_value / operand_value.toDouble();
+            operation_result = operand_1 / operand_2;
         }
         if ( operation == "-" ){
-            final_property_value = initial_property_value - operand_value.toDouble();
-
+            operation_result = operand_1 - operand_2;
         }
         if ( operation == "*" ){
-            final_property_value = initial_property_value * operand_value.toDouble();
+            operation_result = operand_1 * operand_2;
         }
 
-        e->setProperty( property_to_modify , final_property_value );
+        e->setProperty( this->getProperty( STORE_AS ).toString() , operation_result );
     }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

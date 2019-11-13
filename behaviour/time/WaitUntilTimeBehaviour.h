@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class WaitUntilTimeBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class WaitUntilTimeBehaviour : public Behaviour
 {
     Q_OBJECT
 public:
@@ -22,6 +25,10 @@ public:
 
 protected slots:
      virtual QPair< double , QJsonArray > behave();
+
 };
+
+}
+}
 
 #endif // WAITUNTILTIMEBEHAVIOUR_H

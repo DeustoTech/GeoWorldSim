@@ -5,7 +5,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class TransactionBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class TransactionBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -24,5 +27,8 @@ public:
 protected slots:
      virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // TRANSFERAGENTPROPERTYBEHAVIOUR_H

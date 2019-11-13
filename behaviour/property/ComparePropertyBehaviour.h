@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class ComparePropertyBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class ComparePropertyBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -13,14 +16,17 @@ public:
     // PROPERTIES
     static QString ENTITY_ID;
     static QString ENTITY_TYPE;
-    static QString COMPARE_PROPERTY;
+    static QString VALUE_1;
     static QString COMPARISON_OPERATOR;
-    static QString COMPARISON_VALUE;
+    static QString VALUE_2;
     static QString NEXTS_IF_TRUE;
     static QString NEXTS_IF_FALSE;
 
 protected slots:
      virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // COMPAREPROPERTYBEHAVIOUR_H

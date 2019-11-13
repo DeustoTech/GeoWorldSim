@@ -32,15 +32,12 @@
 // Utils
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/geometry/Envelope.h"
-#include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
 #include "../../util/svm/Svm.h"
-#include "../../util/api/APIDriver.h"
 
 
 // Behaviours

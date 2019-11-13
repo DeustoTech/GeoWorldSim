@@ -2,24 +2,23 @@
 
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString SetPropertyBehaviour::ENTITY_ID = "entity_id";
-QString SetPropertyBehaviour::ENTITY_TYPE = "entity_type";
-QString SetPropertyBehaviour::PROPERTIES = "properties";
-QString SetPropertyBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::SetPropertyBehaviour::INPUT_ENTITY_ID = "entity_id";
+QString geoworldsim::behaviour::SetPropertyBehaviour::INPUT_ENTITY_TYPE = "entity_type";
+QString geoworldsim::behaviour::SetPropertyBehaviour::INPUT_PROPERTIES = "properties";
+QString geoworldsim::behaviour::SetPropertyBehaviour::NEXTS = "nexts";
 
-SetPropertyBehaviour::SetPropertyBehaviour() : GWSBehaviour(){
-
+geoworldsim::behaviour::SetPropertyBehaviour::SetPropertyBehaviour() : Behaviour(){
 }
 
 
-QPair<double, QJsonArray> SetPropertyBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::SetPropertyBehaviour::behave(){
 
-    QString entity_id = this->getProperty( ENTITY_ID ).toString();
-    QString entity_type = this->getProperty( ENTITY_TYPE ).toString();
+    QString entity_id = this->getProperty( INPUT_ENTITY_ID ).toString();
+    QString entity_type = this->getProperty( INPUT_ENTITY_TYPE ).toString();
 
-    QList<QSharedPointer<GWSEntity> > entities;
+    QList<QSharedPointer< Entity > > entities;
 
-    QSharedPointer<GWSEntity> behaving_entity = this->getEntity();
+    QSharedPointer< Entity > behaving_entity = this->getEntity();
 
     if( behaving_entity->getUID() == entity_id ){
         entities.append( behaving_entity );
@@ -27,22 +26,22 @@ QPair<double, QJsonArray> SetPropertyBehaviour::behave(){
 
     // If ID and Type supplied
     else if( !entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByClassAndUID( entity_type , entity_id ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClassAndUID( entity_type , entity_id ) );
     }
 
     // If only Type supplied, affect all
     else if( entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByClass( entity_type ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClass( entity_type ) );
     }
 
     // If only ID supplied
     else if ( !entity_id.isEmpty() ){
-        entities.append( GWSEntityEnvironment::globalInstance()->getByUID( entity_id ) );
+        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByUID( entity_id ) );
     }
 
-    QJsonObject properties = this->getProperty( PROPERTIES ).toObject();
+    QJsonObject properties = this->getProperty( INPUT_PROPERTIES ).toObject();
     
-    foreach (QSharedPointer<GWSEntity> e , entities ) {
+    foreach (QSharedPointer< Entity > e , entities ) {
         if( !e ){ continue; }
 
         foreach( QString property_name , properties.keys() ){

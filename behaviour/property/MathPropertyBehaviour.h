@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class MathPropertyBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class MathPropertyBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -14,10 +17,10 @@ public:
     // PROPERTIES
     static QString ENTITY_ID;
     static QString ENTITY_TYPE;
+    static QString OPERAND_1;
+    static QString OPERAND_2;
     static QString OPERATOR;
-    static QString OPERAND_VALUE;
-    static QString OPERAND_PROPERTY;
-    static QString ENTITY_ID_TO_OPERATE_ON;
+    static QString STORE_AS;
     static QString NEXTS;
 
 protected slots:
@@ -25,5 +28,8 @@ protected slots:
      virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // MATHENTITYPROPERTYBEHAVIOUR_H
