@@ -50,9 +50,6 @@ const QStringList geoworldsim::storage::ObjectStorage::getClasses() const{
     return l;
 }
 
-const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getAll() const{
-    return this->objects.value( geoworldsim::Object::staticMetaObject.className() , Q_NULLPTR );
-}
 
 QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByClassAndUID( const QString &class_name , const QString &uid ) const{
     if ( this->objects.value( class_name.toStdString() , Q_NULLPTR ) ){
@@ -81,13 +78,6 @@ QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByClassAndName( 
     return Q_NULLPTR;
 }
 
-const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass( const QString &class_name ) const{
-    return this->objects.value( class_name.toStdString() );
-}
-
-const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass(const QMetaObject &metaobject) const{
-    return this->getByClass( metaobject.className() );
-}
 
 QSharedPointer<QObject> geoworldsim::storage::ObjectStorage::getByName(const QString &name ) const{
     this->mutex.lockForRead();
@@ -222,3 +212,61 @@ void geoworldsim::storage::ObjectStorage::deleteAllObjects(){
     }
 }
 
+/**********************************************************************
+ PROTECTED
+**********************************************************************/
+
+const QList< QSharedPointer< QObject > >* geoworldsim::storage::ObjectStorage::getAll() const{
+    return this->objects.value( geoworldsim::Object::staticMetaObject.className() , Q_NULLPTR );
+}
+
+QList< QSharedPointer< QObject > > geoworldsim::storage::ObjectStorage::getMatches(const QString &class_name, const QString &uid) const{
+    QList< QSharedPointer< QObject > > matches;
+
+    // Match class and uid
+    if( !class_name.isEmpty() && !uid.isEmpty() ){
+
+        QList< QSharedPointer< QObject > >* l = this->objects.value( class_name.toStdString() );
+        if( !l ){ return matches; }
+
+        QSharedPointer<QObject> obj = this->object_uids.value( class_name.toStdString() )->value( uid.toStdString() , Q_NULLPTR );
+        if( !obj.isNull() ){
+            matches.append( obj );
+        }
+    }
+
+    // Match only class
+    else if( !class_name.isEmpty() && uid.isEmpty() ){
+
+        QList< QSharedPointer< QObject > >* l = this->objects.value( class_name.toStdString() );
+        if( !l ){ return matches; }
+
+        foreach( QSharedPointer< QObject > obj , *l ){
+            if( !obj.isNull() ){
+                matches.append( obj );
+            }
+        }
+    }
+
+    // Match only id
+    else if( class_name.isEmpty() && !uid.isEmpty() ){
+
+        foreach( std::string class_name , this->objects.keys() ) {
+            QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid.toStdString() , Q_NULLPTR );
+            if( !obj.isNull() ){
+                matches.append( obj );
+            }
+        }
+
+    }
+
+    return matches;
+}
+
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass( const QString &class_name ) const{
+    return this->objects.value( class_name.toStdString() );
+}
+
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass(const QMetaObject &metaobject) const{
+    return this->getByClass( metaobject.className() );
+}

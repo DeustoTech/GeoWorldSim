@@ -27,21 +27,8 @@ QPair< double , QJsonArray > geoworldsim::behaviour::MathPropertyBehaviour::beha
 
     if( behaving_entity->getUID() == entity_id ){
         entities.append( behaving_entity );
-    }
-
-    // If ID and Type supplied
-    else if( !entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClassAndUID( entity_type , entity_id ) );
-    }
-
-    // If only Type supplied, affect all
-    else if( entity_id.isEmpty() && !entity_type.isEmpty() ){
-        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByClass( entity_type ) );
-    }
-
-    // If only ID supplied
-    else if ( !entity_id.isEmpty() ){
-        entities.append( geoworldsim::environment::EntityEnvironment::globalInstance()->getByUID( entity_id ) );
+    } else {
+        entities = geoworldsim::environment::EntityEnvironment::globalInstance()->getMatches< Entity >( entity_type , entity_id );
     }
 
     foreach (QSharedPointer< Entity > e , entities ) {

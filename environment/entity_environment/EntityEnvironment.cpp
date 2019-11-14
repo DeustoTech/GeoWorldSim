@@ -31,7 +31,7 @@ bool geoworldsim::environment::EntityEnvironment::contains(QString class_name) c
 }
 
 QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment::getRandomByClass(QString class_name){
-    QList< QSharedPointer<geoworldsim::Entity> > all = this->environment_entities->getByClass<geoworldsim::Entity>( class_name );
+    QList< QSharedPointer< Entity > > all = this->environment_entities->getByClass< Entity >( class_name );
     return all.at( qrand() % all.size() );
 }
 
@@ -40,7 +40,7 @@ QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment:
 }
 
 QList< QSharedPointer< geoworldsim::Entity > > geoworldsim::environment::EntityEnvironment::getByUIDS(QStringList ids) const{
-    QList< QSharedPointer<geoworldsim::Entity> > entities;
+    QList< QSharedPointer< Entity > > entities;
     foreach (QString id , ids) {
         entities.append( this->getByUID( id ) );
     }
@@ -57,7 +57,7 @@ QList< QSharedPointer<geoworldsim::Entity> > geoworldsim::environment::EntityEnv
 
 QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment::getByClassAndUID( QString class_name , QString id) const{
     if( this->environment_entities ){
-        QSharedPointer<geoworldsim::Entity> obj = this->environment_entities->getByClassAndUID<geoworldsim::Entity>( class_name , id );
+        QSharedPointer< Entity > obj = this->environment_entities->getByClassAndUID< Entity >( class_name , id );
         if( !obj.isNull() ){
             return obj;
         }
@@ -66,22 +66,27 @@ QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment:
 }
 
 QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment::getByClassAndName( QString class_name , QString agent_name) const{
-    return this->environment_entities->getByClassAndName<geoworldsim::Entity>( class_name , agent_name );
+    return this->environment_entities->getByClassAndName< Entity >( class_name , agent_name );
 }
 
 QList< QSharedPointer<geoworldsim::Entity> > geoworldsim::environment::EntityEnvironment::getByClass( QString class_name ) const{
-    return this->environment_entities->getByClass<geoworldsim::Entity>( class_name );
+    return this->environment_entities->getByClass< Entity >( class_name );
 }
 
+QList< QSharedPointer<geoworldsim::Entity> > geoworldsim::environment::EntityEnvironment::getMatches(QString class_name, QString uid) const{
+    return this->environment_entities->getMatches< Entity >( class_name , uid );
+}
+
+
 QSharedPointer<geoworldsim::Entity> geoworldsim::environment::EntityEnvironment::getByName( QString agent_name ) const{
-    return this->environment_entities->getByName<geoworldsim::Entity>( agent_name );
+    return this->environment_entities->getByName< Entity >( agent_name );
 }
 
 /**********************************************************************
  PRIVATE
 **********************************************************************/
 
-void geoworldsim::environment::EntityEnvironment::registerEntity( QSharedPointer<geoworldsim::Entity> entity){
+void geoworldsim::environment::EntityEnvironment::registerEntity( QSharedPointer< Entity > entity){
     Environment::registerEntity( entity );
 
     if( entity->getProperty( SKIP_INDEXING ).toBool() ){
@@ -91,7 +96,7 @@ void geoworldsim::environment::EntityEnvironment::registerEntity( QSharedPointer
     emit this->environment_entities->addObjectSignal( entity );
 }
 
-void geoworldsim::environment::EntityEnvironment::unregisterEntity( QSharedPointer<geoworldsim::Entity> entity){
+void geoworldsim::environment::EntityEnvironment::unregisterEntity( QSharedPointer< Entity > entity){
     Environment::unregisterEntity( entity );
     emit this->environment_entities->removeObjectSignal( entity );
 }

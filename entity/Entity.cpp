@@ -13,6 +13,8 @@
 #include "../../util/parallelism/ParallelismController.h"
 
 #include "../../environment/EnvironmentsGroup.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
+#include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 
@@ -49,6 +51,15 @@ void geoworldsim::Entity::deserialize( const QJsonObject &json , QSharedPointer<
     QTimer::singleShot( 10 , this , [this , json , parent]{
 
         Object::deserialize( json , parent );
+
+        // Check if other entity with this ID exists
+        QSharedPointer< Entity > existing = environment::EntityEnvironment::globalInstance()->getByClassAndUID( this->metaObject()->className() , this->getUID() );
+        if( existing ){
+            emit environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                        QJsonObject({ { "message" , QString("Duplicated UID in entities %1 %2").arg( existing->getInheritanceFamily().last().toString() ).arg( existing->getUID() ) } }) , geoworldsim::App::globalInstance()->getAppId() + "-LOG" );
+            qWarning() << QString("An entity with same UID (class : %1 and UID : %2) already exists. Skipping register.").arg( existing->getInheritanceFamily().last().toString() ).arg( existing->getUID() );
+            return;
+        }
 
         // SKILLS
         if( json.keys().contains( "@skills" ) ){

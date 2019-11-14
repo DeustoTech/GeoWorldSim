@@ -26,9 +26,9 @@ public:
         return this->getRandomByClass( class_name ).dynamicCast<T>();
     }
 
-    QSharedPointer<Entity> getByClassAndUID( QString class_name , QString internal_id ) const;  // Get one agent
+    QSharedPointer<Entity> getByClassAndUID( QString class_name , QString uid ) const;  // Get one agent
     template <class T> QSharedPointer<T> getByClassAndUID( QString class_name , QString uid ) const{
-        return this->environment_entities->getByClassAndUID<T>(class_name , uid);
+        return this->environment_entities->getByClassAndUID<T>(class_name , uid );
     }
 
     QSharedPointer<Entity> getByClassAndName( QString class_name , QString name ) const; // Get one agent by its name
@@ -45,9 +45,14 @@ public:
     QList< QSharedPointer<Entity> > getByUIDS( QStringList ids ) const;
     QList< QSharedPointer<Entity> > getByUIDS( QJsonArray ids ) const;
 
-    QSharedPointer<Entity> getByName(QString name) const; // Get one agent by its name
+    QSharedPointer<Entity> getByName( QString name ) const; // Get one agent by its name
     template <class T> QSharedPointer<T> getByName(QString name) const{
         return this->environment_entities->getByName<T>( name );
+    }
+
+    QList< QSharedPointer<Entity> > getMatches( QString class_name , QString uid = "" ) const; // Get all agents that match a given type and if exists an id
+    template <class T> QList<QSharedPointer<T>> getMatches( QString class_name = "" , QString uid = "" ) const {
+        return this->environment_entities->getMatches<T>( class_name , uid );
     }
 
     // METHODS

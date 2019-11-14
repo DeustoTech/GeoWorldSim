@@ -11,7 +11,7 @@
 geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJsonObject configuration){
 
     // CREATE POPULATION
-    QList< DatasourceReader* >* pending_readers = new QList< DatasourceReader* >();
+    QList< DatasourceReader* >* pending_readers = Q_NULLPTR;
 
     QJsonObject json_population = configuration.value("population").toObject();
     QString user_id = configuration.value("user_id").toString();
@@ -44,11 +44,16 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
                     continue;
                 }
 
+                if( !pending_readers ){
+                    pending_readers = new QList< DatasourceReader* >();
+                }
                 pending_readers->append( reader );
 
                 reader->connect( reader , &DatasourceReader::dataReadingFinishedSignal , [ this , reader , pending_readers ](){
 
-                    pending_readers->removeAll( reader );
+                    if( pending_readers ){
+                        pending_readers->removeAll( reader );
+                    }
                     reader->deleteLater();
 
                     if( pending_readers && pending_readers->isEmpty() ){
@@ -65,19 +70,12 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
                 // Use template to generate amount entities
                 QSharedPointer<geoworldsim::Object> entity = ObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() );
             }
-
-            if( pending_readers && pending_readers->isEmpty() ){
-                delete pending_readers;
-                pending_readers = Q_NULLPTR;
-                emit this->dataReadingFinishedSignal();
-            }
         }
 
        qInfo() << QString("Creating population %1").arg( key );
     }
 
-    if( pending_readers ){
-        delete pending_readers;
+    if( !pending_readers ){
         emit this->dataReadingFinishedSignal();
     }
 

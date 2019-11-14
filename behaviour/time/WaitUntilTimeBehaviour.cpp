@@ -19,7 +19,8 @@ geoworldsim::behaviour::WaitUntilTimeBehaviour::WaitUntilTimeBehaviour() : Behav
 
 QPair< double , QJsonArray > geoworldsim::behaviour::WaitUntilTimeBehaviour::behave(){
 
-    qint64 current_time = this->getEntity()->getProperty( environment::TimeEnvironment::INTERNAL_TIME_PROP ).toInt();
+    QSharedPointer< Entity > entity = this->getEntity();
+    qint64 current_time = entity->getProperty( environment::TimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
     QDateTime current_datetime = QDateTime::fromMSecsSinceEpoch( current_time );
 
     int year = this->getProperty( WAIT_UNTIL_YEAR ).toDouble( current_datetime.date().year() );
@@ -50,7 +51,6 @@ QPair< double , QJsonArray > geoworldsim::behaviour::WaitUntilTimeBehaviour::beh
     // Wait until DAY has already past, so wait until next day's TIME
     QString wait_periodicity = this->getProperty( WAIT_FREQUENCY ).toString();
 
-
     if( wait_until < current_datetime ){
         if ( wait_periodicity == "year" ){
             wait_until = wait_until.addYears( 1 );
@@ -61,11 +61,8 @@ QPair< double , QJsonArray > geoworldsim::behaviour::WaitUntilTimeBehaviour::beh
         if ( wait_periodicity == "day" ){
             wait_until = wait_until.addDays( 1 );
         }
-
     }
 
-    int seconds = current_datetime.secsTo( wait_until ); // IN seconds
-    this->setProperty( BEHAVIOUR_DURATION , seconds );
-
-    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+    int seconds = current_datetime.secsTo( wait_until ) + 1; // IN seconds
+    return QPair< double , QJsonArray >( seconds , this->getProperty( NEXTS ).toArray() );
 }

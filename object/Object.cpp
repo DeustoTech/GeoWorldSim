@@ -129,11 +129,11 @@ QJsonArray geoworldsim::Object::getInheritanceFamily() const{
     QJsonArray inheritance_family = this->properties->value( geoworldsim::Object::GWS_INHERITANCE_FAMILY_PROP ).toArray();
     this->mutex.unlock();
 
-    inheritance_family.append( this->metaObject()->className() );
+    inheritance_family.prepend( this->metaObject()->className() );
     const QMetaObject* mobj = this->metaObject();
     while( mobj && mobj->className() != QObject::metaObject()->className() ){
         if( !inheritance_family.contains( mobj->className() ) ){
-            inheritance_family.append( mobj->className() );
+            inheritance_family.prepend( mobj->className() );
         }
         mobj = mobj->superClass();
     }

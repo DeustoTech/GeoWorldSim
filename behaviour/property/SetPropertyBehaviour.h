@@ -14,9 +14,9 @@ public:
     Q_INVOKABLE explicit SetPropertyBehaviour();
 
     //- PROPERTIES
-    static QString INPUT_ENTITY_ID;
-    static QString INPUT_ENTITY_TYPE;
-    static QString INPUT_PROPERTIES;
+    static QString ENTITY_ID;
+    static QString ENTITY_TYPE;
+    static QString PROPERTIES;
     static QString NEXTS;
 
 protected:

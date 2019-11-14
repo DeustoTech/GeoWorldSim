@@ -42,6 +42,7 @@ HEADERS += \
     ../../behaviour/Behaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
     ../../behaviour/random/GenerateRandomValueBehaviour.h \
+    ../../behaviour/property/AccumulatePropertyBehaviour.h \
     ../../behaviour/property/ComparePropertyBehaviour.h \
     ../../behaviour/property/SetPropertyBehaviour.h \
     ../../behaviour/property/MathPropertyBehaviour.h \
@@ -100,6 +101,7 @@ SOURCES += mainlauncher.cpp \
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/transaction/TransactionBehaviour.cpp \
     ../../behaviour/random/GenerateRandomValueBehaviour.cpp \
+    ../../behaviour/property/AccumulatePropertyBehaviour.cpp \
     ../../behaviour/property/ComparePropertyBehaviour.cpp \
     ../../behaviour/property/SetPropertyBehaviour.cpp \
     ../../behaviour/property/MathPropertyBehaviour.cpp \

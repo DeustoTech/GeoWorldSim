@@ -1,13 +1,8 @@
 #include "App.h"
 
-#include <QHostAddress>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QJsonDocument>
-#include <QStringList>
 #include <QString>
 #include <QFile>
-#include <QBuffer>
 #include <QDateTime>
 #include <QException>
 #include <QString>
