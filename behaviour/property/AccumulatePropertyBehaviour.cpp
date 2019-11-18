@@ -33,10 +33,11 @@ QPair< double , QJsonArray > geoworldsim::behaviour::AccumulatePropertyBehaviour
     QJsonObject properties = this->getProperty( PROPERTIES ).toObject();
     QJsonObject accumulations;
     foreach( QString property_name , properties.keys() ) {
-
         accumulations[ property_name ] = ObjectFactory::globalInstance()->simpleOrParentPropertyValue( properties.value( property_name ) , this->getSharedPointer() , behaving_entity );
+    }
 
-        foreach ( QSharedPointer< Entity > entity , entities ) {
+    foreach ( QSharedPointer< Entity > entity , entities ) {
+        foreach( QString property_name , properties.keys() ) {
 
             QJsonValue value = entity->getProperty( property_name );
 

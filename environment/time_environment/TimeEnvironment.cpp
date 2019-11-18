@@ -80,7 +80,7 @@ void geoworldsim::environment::TimeEnvironment::setDatetime( quint64 datetime ){
 
 void geoworldsim::environment::TimeEnvironment::goBackToDatetime( quint64 datetime ){
     if( datetime >= 0 ){
-        this->simulation_datetime_msecs = qMin( this->simulation_datetime_msecs , datetime );
+        this->simulation_datetime_msecs = datetime;
         this->software_started_datetime_msecs = QDateTime::currentMSecsSinceEpoch();
     }
 }

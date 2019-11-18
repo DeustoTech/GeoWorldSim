@@ -83,9 +83,9 @@ QPair< double , QJsonArray > geoworldsim::behaviour::TransactionBehaviour::behav
             QJsonArray property_names = this->getProperty( PROPERTY_NAMES_TO_TRANSFER ).toArray();
             foreach( QJsonValue v , property_names ) {
                 QString property_name = v.toString();
-                QJsonValue to_be_set_in_receiver = ObjectFactory::incrementValue( receiver->getProperty( "received_" + property_name ) , emitter->getProperty( property_name ) );
+                QJsonValue to_be_set_in_receiver = ObjectFactory::incrementValue( receiver->getProperty( property_name ) , emitter->getProperty( property_name ) );
                 emitter->setProperty( property_name , QJsonValue() );
-                receiver->setProperty( "received_" + property_name , to_be_set_in_receiver );
+                receiver->setProperty( property_name , to_be_set_in_receiver );
             }
 
             // Increment emitter transaction_count

@@ -255,6 +255,7 @@ QList< QSharedPointer< QObject > > geoworldsim::storage::ObjectStorage::getMatch
             QSharedPointer<QObject> obj = this->object_uids.value( class_name )->value( uid.toStdString() , Q_NULLPTR );
             if( !obj.isNull() ){
                 matches.append( obj );
+                return matches;
             }
         }
 

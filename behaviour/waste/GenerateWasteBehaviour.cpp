@@ -188,6 +188,41 @@ QPair< double , QJsonArray > geoworldsim::behaviour::GenerateWasteBehaviour::beh
 
     QJsonObject characterization_data = this->getProperty( SORTING_TYPES_CHARACTERIZATION ).toObject();
 
+    // Process characterization_data since it may come as double or as object with units and amount
+    QJsonObject processed_characterization_data;
+    foreach( QString sorting_type_name , characterization_data.keys() ) {
+
+        QJsonObject processed_sorting_type_characterization;
+        QJsonObject sorting_type_characterization = characterization_data[ sorting_type_name ].toObject();
+
+        foreach( QString waste_category_name , sorting_type_characterization.keys() ) {
+
+            QJsonValue amount = sorting_type_characterization.value( waste_category_name );
+            double value = 0;
+
+            if( amount.isDouble() ){ // Comes as double directly : 2.34
+                value = sorting_type_characterization.value( waste_category_name ).toDouble();
+            }
+
+            if( amount.isObject() ){ // Comes as complex : { amount : 2.43 , unit : "KGM" }
+                QJsonObject object = sorting_type_characterization.value( waste_category_name ).toObject();
+                value = object["amount"].toDouble();
+
+                // Check units
+                if( object["unit"].toString() == "KGM" ){
+                    value *= 1000; // Pass to grams
+                }
+            }
+
+            processed_sorting_type_characterization[ waste_category_name ] = value;
+        }
+
+        processed_characterization_data[ sorting_type_name ] = processed_sorting_type_characterization;
+
+    }
+
+    characterization_data = processed_characterization_data;
+
     // Accumulate the total per sorting_type and waste_category
     QMap< QString , unit::MassUnit > totals;
 
@@ -197,9 +232,10 @@ QPair< double , QJsonArray > geoworldsim::behaviour::GenerateWasteBehaviour::beh
         QJsonObject sorting_type_characterization = characterization_data[ sorting_type_name ].toObject();
 
         foreach( QString waste_category_name , sorting_type_characterization.keys() ) {
-            double value = sorting_type_characterization.value( waste_category_name ).toDouble();
-            totals[ waste_category_name ] = totals.value( waste_category_name , 0 ) + value;
-            totals[ sorting_type_name ] += value;
+
+            double amount = sorting_type_characterization.value( waste_category_name ).toDouble();
+            totals[ waste_category_name ] = totals.value( waste_category_name , 0 ) + amount;
+            totals[ sorting_type_name ] += amount;
         }
     }
 
@@ -237,7 +273,7 @@ QPair< double , QJsonArray > geoworldsim::behaviour::GenerateWasteBehaviour::beh
 }
 
 
-void geoworldsim::behaviour::GenerateWasteBehaviour::generateForFullSortingType(QSharedPointer< Entity > entity, QJsonObject sorting_type_data, unit::MassUnit sorting_type_total, QString sorting_type, unit::MassUnit sorting_type_generate_amount){
+void geoworldsim::behaviour::GenerateWasteBehaviour::generateForFullSortingType( QSharedPointer< Entity > entity, QJsonObject sorting_type_data, unit::MassUnit sorting_type_total, QString sorting_type, unit::MassUnit sorting_type_generate_amount){
 
     unit::MassUnit existing = entity->getProperty( QString("accumulated_%1").arg( sorting_type ) ).toDouble( 0 );
 
@@ -254,7 +290,7 @@ void geoworldsim::behaviour::GenerateWasteBehaviour::generateForFullSortingType(
       });
 }
 
-void geoworldsim::behaviour::GenerateWasteBehaviour::generateForSortingTypeWasteCaregory(QSharedPointer< Entity > entity, QString sorting_type, QString waste_category, unit::MassUnit generate_amount){
+void geoworldsim::behaviour::GenerateWasteBehaviour::generateForSortingTypeWasteCaregory( QSharedPointer< Entity > entity, QString sorting_type, QString waste_category, unit::MassUnit generate_amount){
 
     unit::MassUnit existing = entity->getProperty( QString("accumulated_%1_%2").arg( sorting_type ).arg( waste_category ) ).toDouble( 0 );
 

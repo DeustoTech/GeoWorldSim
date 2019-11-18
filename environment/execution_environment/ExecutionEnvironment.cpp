@@ -203,7 +203,9 @@ void geoworldsim::environment::ExecutionEnvironment::behave(){
             busy_entities += p->busy_entities;
             future_entities += p->future_entities;
             ticked_entities += p->ticked_entities;
-            //min_tick = (min_tick + p->min_tick) / 2;
+            if( p->ticked_entities > 0 ){
+                min_tick = (min_tick + p->min_tick) / 2;
+            }
             QTimer::singleShot( 0 , p , &ExecutionEnvironmentElement::behave );
         }
     }
@@ -315,6 +317,8 @@ bool geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironmentElement
 
 void geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironmentElement::behave(){
 
+    this->last_ticked_entities.clear();
+
     this->mutext.lockForRead();
     if( this->is_busy ){
         this->mutext.unlock();
@@ -417,6 +421,7 @@ void geoworldsim::environment::ExecutionEnvironment::ExecutionEnvironmentElement
             entity->incrementBusy(); // Increment here, Decrement after entity Tick()
 
             QTimer::singleShot( 0 , entity.data() , &Entity::tick );
+            this->last_ticked_entities.append( entity );
 
             if( this->max_entity_amount_per_tick > 0 && ++this->ticked_entities >= this->max_entity_amount_per_tick ){
                 break;

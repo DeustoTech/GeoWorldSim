@@ -80,6 +80,7 @@ private:
 
             // RUNNING ENTITIES
             QList< QSharedPointer<Entity> > running_storage;
+            QList< QSharedPointer<Entity> > last_ticked_entities;
             qint64 min_tick = -1;
             int ticked_entities = 0;
             int ready_entities = 0;

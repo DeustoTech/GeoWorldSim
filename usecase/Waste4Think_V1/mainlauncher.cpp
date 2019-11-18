@@ -19,6 +19,7 @@
 #include "../../behaviour/waste/GenerateWasteBehaviour.h"
 #include "../../behaviour/property/SetPropertyBehaviour.h"
 #include "../../behaviour/property/MathPropertyBehaviour.h"
+#include "../../behaviour/property/AccumulatePropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -62,6 +63,7 @@ int main(int argc, char* argv[])
 
     // AVAILABLE BEHAVIOURS
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::WaitUntilTimeBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::AccumulatePropertyBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::TransactionBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::ComparePropertyBehaviour::staticMetaObject);
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::GenerateRandomValueBehaviour::staticMetaObject );
