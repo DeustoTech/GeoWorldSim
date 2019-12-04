@@ -1,13 +1,14 @@
 #include "SVMSkill.h"
 
 geoworldsim::skill::SVMSkill::SVMSkill() : Skill( ){
-
+    this->svms = new storage::ObjectStorage();
 }
 
 geoworldsim::skill::SVMSkill::~SVMSkill(){
     if( this->svms->getAmount() > 0 ){
         this->svms->deleteAllObjects();
     }
+    this->svms->deleteLater();
 }
 
 

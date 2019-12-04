@@ -50,7 +50,7 @@ QPair< double , QJsonArray > geoworldsim::behaviour::SVMRunBehaviour::behave(){
     QJsonObject json_inputs = this->getProperty( SVM_INPUTS ).toObject();
 
     foreach( QString k , json_inputs.keys() ) {
-        svm_inputs.insert( k , json_inputs.value( k ) );
+        svm_inputs.insert( k , json_inputs.value( k ).toVariant() );
     }
 
     // Run svm

@@ -63,7 +63,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::PolluteBehaviour::behave(){
 
     double gradient = entity->getProperty( INPUT_CURRENT_ROAD_GRADIENT ).toDouble();
     double trafficSit = entity->getProperty( INPUT_CURRENT_ROAD_TRAFFIC_SITUATION ).toDouble();
-    unit::SpeedUnit vehicle_speed = entity->getProperty( skill::MoveSkill::CURRENT_SPEED ).toDouble();
+    unit::SpeedUnit vehicle_speed = entity->getProperty( skill::MoveSkill::INSTANT_SPEED ).toDouble();
     QString road_type = entity->getProperty( INPUT_CURRENT_ROAD_TYPE ).toString().toLower();
      
     QSharedPointer< skill::PolluteSkill > pollute_skill = entity->getSkill( skill::PolluteSkill::staticMetaObject.className() ).dynamicCast< skill::PolluteSkill >();

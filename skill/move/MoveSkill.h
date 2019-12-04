@@ -18,9 +18,11 @@ public:
 
     // PROPERTIES
     static QString MAX_SPEED;
-    static QString CURRENT_SPEED;
+    static QString INSTANT_SPEED;
     static QString MOVING_TOWARDS;
+    static QString INSTANT_DISTANCE;
     static QString ACCUMULATED_DISTANCE;
+    static QString INSTANT_TIME;
     static QString ACCUMULATED_TIME;
 
     // GETTERS

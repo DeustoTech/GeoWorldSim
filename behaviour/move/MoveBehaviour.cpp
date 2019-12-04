@@ -47,12 +47,12 @@ QPair<double, QJsonArray> geoworldsim::behaviour::MoveBehaviour::behave(){
     }
 
     // Calculate speed
-    unit::SpeedUnit current_speed = unit::SpeedUnit( entity->getProperty( skill::MoveSkill::CURRENT_SPEED ).toDouble() );
+    unit::SpeedUnit current_speed = unit::SpeedUnit( entity->getProperty( skill::MoveSkill::INSTANT_SPEED ).toDouble() );
     unit::SpeedUnit max_speed = unit::SpeedUnit( entity->getProperty( skill::MoveSkill::MAX_SPEED ).toDouble( 1.4 ) );
 
     if( current_speed == 0 ){
         current_speed = move_skill->calculateNewSpeed( current_speed , max_speed , 1.4 );
-        entity->setProperty( skill::MoveSkill::CURRENT_SPEED , current_speed.number() );
+        entity->setProperty( skill::MoveSkill::INSTANT_SPEED , current_speed.number() );
     }
 
     // Pending time to reach destination can be higher than the duration requested.

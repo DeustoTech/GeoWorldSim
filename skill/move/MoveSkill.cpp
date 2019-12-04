@@ -6,9 +6,11 @@
 #include "../../util/geometry/GeometryTransformators.h"
 
 QString geoworldsim::skill::MoveSkill::MAX_SPEED = "maxspeed";
-QString geoworldsim::skill::MoveSkill::CURRENT_SPEED = "current_speed";
+QString geoworldsim::skill::MoveSkill::INSTANT_SPEED = "instant_speed"; // Current speed
 QString geoworldsim::skill::MoveSkill::MOVING_TOWARDS = "moving_towards";
+QString geoworldsim::skill::MoveSkill::INSTANT_DISTANCE = "instant_travelled_distance";
 QString geoworldsim::skill::MoveSkill::ACCUMULATED_DISTANCE = "accumulated_travelled_distance";
+QString geoworldsim::skill::MoveSkill::INSTANT_TIME = "instant_travelled_time";
 QString geoworldsim::skill::MoveSkill::ACCUMULATED_TIME = "accumulated_travelled_time";
 
 geoworldsim::skill::MoveSkill::MoveSkill() : Skill(){
@@ -53,7 +55,7 @@ void geoworldsim::skill::MoveSkill::move(const geoworldsim::unit::TimeUnit &move
 
     QSharedPointer< Entity > entity = this->getEntity();
     entity->setProperties( QJsonObject({
-         { CURRENT_SPEED , movement_speed.number() } ,
+         { INSTANT_SPEED , movement_speed.number() } ,
          { MOVING_TOWARDS , movement_towards_geom.getGeoJSON() }
                                       }) );
 
@@ -102,7 +104,10 @@ void geoworldsim::skill::MoveSkill::move(const geoworldsim::unit::TimeUnit &move
         entity->setProperty( environment::PhysicalEnvironment::GEOMETRY_PROP , moved_geometry.getGeoJSON() );
     }
 
+    entity->setProperty( INSTANT_DISTANCE , meters );
     entity->setProperty( ACCUMULATED_DISTANCE , entity->getProperty( ACCUMULATED_DISTANCE ).toDouble() + meters );
+
+    entity->setProperty( INSTANT_TIME , movement_duration.number() );
     entity->setProperty( ACCUMULATED_TIME , entity->getProperty( ACCUMULATED_TIME ).toDouble() + movement_duration.number() );
 
 }

@@ -1,6 +1,7 @@
 #include "Svm.h"
 
 #include <QDebug>
+#include <QFile>
 #include <QHash>
 #include <QStringList>
 
@@ -116,9 +117,17 @@ void geoworldsim::intelligence::Svm::saveModel( QString model_file_path ){
 }
 
 void geoworldsim::intelligence::Svm::loadModel( QString model_file_path ){
-    if ( !model_file_path.isNull() ){
-        this->model = svm_load_model( model_file_path.toUtf8() );
+    if ( model_file_path.isNull() ){
+        return;
     }
+
+    QFile in( model_file_path );
+    if( in.exists() ) {
+        this->model = svm_load_model( model_file_path.toUtf8() );
+    } else {
+       qWarning() << model_file_path << "does not exist";
+    }
+
 }
 
 QJsonObject geoworldsim::intelligence::Svm::run( const QMap<QString, QVariant> &inputs){

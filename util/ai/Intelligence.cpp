@@ -381,6 +381,8 @@ void geoworldsim::intelligence::Intelligence::loadTrained( QString model_file_pa
                 this->output_stdevs.insert( key , values.at( i ).toDouble() );
             }
         }
+    } else {
+        qWarning() << inputs_outputs_file_path << "does not exist";
     }
 
 
