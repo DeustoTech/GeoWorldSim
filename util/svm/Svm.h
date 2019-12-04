@@ -1,18 +1,23 @@
-#ifndef GWSSVM_H
-#define GWSSVM_H
+#ifndef SVM_H
+#define SVM_H
 
 #include "../../../GeoWorldSim/util/ai/Intelligence.h"
 
 #include <libsvm/svm.h>
 #include <QJsonObject>
 
-class GWSSvm : public GWSIntelligence
+
+namespace geoworldsim {
+namespace intelligence {
+
+
+class Svm : public Intelligence
 {
     Q_OBJECT
 
 public:
-    explicit GWSSvm();
-    ~GWSSvm();
+    explicit Svm();
+    ~Svm();
 
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset );
@@ -30,5 +35,7 @@ private:
 };
 
 
+}
+}
 
-#endif // GWSSVM_H
+#endif // SVM_H

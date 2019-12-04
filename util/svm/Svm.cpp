@@ -4,7 +4,7 @@
 #include <QHash>
 #include <QStringList>
 
-GWSSvm::GWSSvm() : GWSIntelligence (){
+geoworldsim::intelligence::Svm::Svm() : Intelligence (){
 
     // set some defaults
     // NU_SVC fits to integer categories
@@ -32,9 +32,9 @@ GWSSvm::GWSSvm() : GWSIntelligence (){
 
 }
 
-GWSSvm::~GWSSvm(){
-    if(model != Q_NULLPTR){ svm_free_and_destroy_model(&model); }
-    svm_destroy_param(&this->parameters);
+geoworldsim::intelligence::Svm::~Svm(){
+    if( this->model != Q_NULLPTR ){ svm_free_and_destroy_model( &this->model ); }
+    svm_destroy_param( &this->parameters );
 }
 
 
@@ -50,7 +50,7 @@ GWSSvm::~GWSSvm(){
 
 /* Train SVM on given files */
 
-void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset , const QList< QMap<QString, QVariant> > &output_train_dataset){
+void geoworldsim::intelligence::Svm::train( const QList< QMap< QString, QVariant> > &input_train_dataset , const QList< QMap<QString, QVariant> > &output_train_dataset){
 
     Q_ASSERT( input_train_dataset.size() == output_train_dataset.size() );
 
@@ -109,19 +109,19 @@ void GWSSvm::train( const QList< QMap< QString, QVariant> > &input_train_dataset
     this->model = svm_train(&problem, &this->parameters);
 }
 
-void GWSSvm::saveModel( QString model_file_path ){
+void geoworldsim::intelligence::Svm::saveModel( QString model_file_path ){
     if( this->model ){
         svm_save_model( model_file_path.toUtf8() , this->model );
     }
 }
 
-void GWSSvm::loadModel( QString model_file_path ){
+void geoworldsim::intelligence::Svm::loadModel( QString model_file_path ){
     if ( !model_file_path.isNull() ){
         this->model = svm_load_model( model_file_path.toUtf8() );
     }
 }
 
-QJsonObject GWSSvm::run( const QMap<QString, QVariant> &inputs){
+QJsonObject geoworldsim::intelligence::Svm::run( const QMap<QString, QVariant> &inputs){
 
     if( !this->model ){
         return QJsonObject();
@@ -131,7 +131,7 @@ QJsonObject GWSSvm::run( const QMap<QString, QVariant> &inputs){
 
     QJsonObject result;
 
-    // Loop over test input pairs:
+    // Loop over input pairs:
     for(int i = 0 ; i < inputs.keys().size() ; i++ ){
 
         QString hash = inputs.keys().at( i );

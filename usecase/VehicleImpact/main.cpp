@@ -19,6 +19,8 @@
 #include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/move/MoveThroughPathBehaviour.h"
 #include "../../behaviour/emissions/PolluteBehaviour.h"
+#include "../../behaviour/svm/SVMRunBehaviour.h"
+#include "../../behaviour/property/MathPropertyBehaviour.h"
 
 //Environments
 #include "../../environment/EnvironmentsGroup.h"
@@ -50,7 +52,8 @@ int main(int argc, char* argv[])
 
     // AVAILABLE BEHAVIOURS
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::MoveThroughPathBehaviour::staticMetaObject );
-    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::PolluteBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SVMRunBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::MathPropertyBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::StopEntityBehaviour::staticMetaObject );
 
     // CREATE POPULATION

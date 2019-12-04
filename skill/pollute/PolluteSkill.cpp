@@ -25,11 +25,11 @@ geoworldsim::unit::MassUnit geoworldsim::skill::PolluteSkill::pollute( QString t
         //QMap < QString, GWSSvm* > models = this->models;
         //QString svm_path = "/home/maialen/Escritorio/WorkSpace/MachineLearning/LIBSVMExamples/HBEFA/" + pollutant + "/" + transport_mode + "/" + vehicle_type + "/" + pollutant;
         QString svm_path = "../../data/" + transport_mode + "/" + vehicle_subtype + "/" + pollutant;
-        QSharedPointer< GWSSvm > pollutant_svm = storage::GlobalObjectStorage::globalInstance()->getByName< GWSSvm >( svm_path );
+        QSharedPointer< intelligence::Svm > pollutant_svm = storage::GlobalObjectStorage::globalInstance()->getByName< intelligence::Svm >( svm_path );
 
         if ( !pollutant_svm ){
 
-            pollutant_svm = QSharedPointer<GWSSvm>( new GWSSvm() );
+            pollutant_svm = QSharedPointer<intelligence::Svm>( new intelligence::Svm() );
             pollutant_svm->setObjectName( svm_path );
 
             QDir dir( svm_path );

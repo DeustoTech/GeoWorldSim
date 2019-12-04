@@ -1,5 +1,5 @@
-#ifndef GWSINTELLIGENCE_H
-#define GWSINTELLIGENCE_H
+#ifndef INTELLIGENCE_H
+#define INTELLIGENCE_H
 
 #include "../../object/Object.h"
 #include <QMap>
@@ -7,20 +7,24 @@
 #include <QJsonArray>
 #include <QMutex>
 
-class GWSIntelligence : public QObject
+namespace geoworldsim {
+namespace intelligence {
+
+
+class Intelligence : public QObject
 {
     Q_OBJECT
 
 public:
 
-    GWSIntelligence();
-    ~GWSIntelligence();
+    Intelligence();
+    ~Intelligence();
 
     // INIT STRUCTURES
     void trainFromFile( QString inputs_file_path , QString outputs_file_path );
     void trainFromJSON( QJsonArray inputs_array , QJsonArray outputs_array  );
-    void saveTrained( QString model_file_path , QString ios_file_path );
-    void loadTrained( QString model_file_path , QString ios_file_path );
+    void saveTrained( QString model_file_path , QString inputs_outputs_file_path );
+    void loadTrained( QString model_file_path , QString inputs_outputs_file_path );
 
     // METHODS
     virtual void train( const QList< QMap< QString , QVariant> > &input_train_dataset, const QList< QMap< QString , QVariant> >  &output_train_dataset ) = 0;
@@ -56,4 +60,8 @@ protected:
     static QMutex mutex;
 };
 
-#endif // GWSINTELLIGENCE_H
+
+}
+}
+
+#endif // INTELLIGENCE_H

@@ -40,12 +40,15 @@ HEADERS += \
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
     ../../skill/pollute/PolluteSkill.h \
+    ../../skill/svm/SVMSkill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
     ../../behaviour/move/MoveThroughPathBehaviour.h \
+    ../../behaviour/property/MathPropertyBehaviour.h \
     ../../behaviour/emissions/PolluteBehaviour.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
+    ../../behaviour/svm/SVMRunBehaviour.h \
         # UTILS
     ../../util/network/HttpDriver.h \
     ../../util/network/WebSocketDriver.h \
@@ -98,12 +101,15 @@ SOURCES += main.cpp \
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
     ../../skill/pollute/PolluteSkill.cpp \
+    ../../skill/svm/SVMSkill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
     ../../behaviour/move/MoveThroughPathBehaviour.cpp \
+    ../../behaviour/property/MathPropertyBehaviour.cpp \
     ../../behaviour/emissions/PolluteBehaviour.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
+    ../../behaviour/svm/SVMRunBehaviour.cpp \
         # UTILS
     ../../util/network/HttpDriver.cpp \
     ../../util/network/WebSocketDriver.cpp \

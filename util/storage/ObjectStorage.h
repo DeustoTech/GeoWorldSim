@@ -17,6 +17,7 @@ namespace storage {
 class ObjectStorage : public QObject
 {
     Q_OBJECT
+    friend class GlobalObjectStorage;
 
 public:
     explicit ObjectStorage();

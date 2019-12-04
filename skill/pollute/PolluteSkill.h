@@ -24,7 +24,7 @@ public:
     virtual unit::MassUnit pollute( QString transport_mode , QString vehicle_subtype , QString pollutant , unit::SpeedUnit speed , double gradient , QString roadType , double trafficSit , unit::LengthUnit distance );
 
 private:
-    QMap< QString , GWSSvm* > models; // QMAP< POLLUTANT , SVM >;
+    QMap< QString , intelligence::Svm* > models; // QMAP< POLLUTANT , SVM >;
 };
 
 }

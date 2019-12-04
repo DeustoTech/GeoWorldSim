@@ -8,13 +8,13 @@
 #include <QDebug>
 #include <QHash>
 
-QMutex GWSIntelligence::mutex;
+QMutex geoworldsim::intelligence::Intelligence::mutex;
 
-GWSIntelligence::GWSIntelligence() : QObject() {
+geoworldsim::intelligence::Intelligence::Intelligence() : QObject() {
 
 }
 
-GWSIntelligence::~GWSIntelligence(){
+geoworldsim::intelligence::Intelligence::~Intelligence(){
 }
 
 
@@ -22,7 +22,7 @@ GWSIntelligence::~GWSIntelligence(){
   METHODS
 **********************************************************************/
 
-void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_file_path) {
+void geoworldsim::intelligence::Intelligence::trainFromFile(QString inputs_file_path, QString outputs_file_path) {
 
     QList< QMap< QString , QVariant> > inputs;
     {
@@ -129,7 +129,7 @@ void GWSIntelligence::trainFromFile(QString inputs_file_path, QString outputs_fi
 }
 
 
-void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray output_train_dataset ){
+void geoworldsim::intelligence::Intelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray output_train_dataset ){
 
     QList< QMap< QString , QVariant> > inputs;
     foreach( QJsonValue r , input_train_dataset ){
@@ -158,10 +158,10 @@ void GWSIntelligence::trainFromJSON( QJsonArray input_train_dataset , QJsonArray
 
 }
 
-void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path){
+void geoworldsim::intelligence::Intelligence::saveTrained(QString model_file_path, QString inputs_outputs_file_path){
 
     // Save Input / output positions
-    QFile out( ios_file_path );
+    QFile out( inputs_outputs_file_path );
        if( out.open(QIODevice::ReadWrite) ) {
            QTextStream stream(&out);
 
@@ -273,15 +273,15 @@ void GWSIntelligence::saveTrained(QString model_file_path, QString ios_file_path
 }
 
 
-/* Load trained network */
-void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_path ){
+/* Load trained SVM */
+void geoworldsim::intelligence::Intelligence::loadTrained( QString model_file_path, QString inputs_outputs_file_path ){
 
     // Load trained:
-    GWSIntelligence::mutex.lock(); // Generate single mutex regardless of the number of calls
+    Intelligence::mutex.lock(); // Generate single mutex regardless of the number of calls
     this->loadModel( model_file_path );
-    GWSIntelligence::mutex.unlock();
+    Intelligence::mutex.unlock();
 
-    QFile in( ios_file_path );
+    QFile in( inputs_outputs_file_path );
     if( in.open(QIODevice::ReadOnly) ) {
         QTextStream stream(&in);
 
@@ -398,7 +398,7 @@ void GWSIntelligence::loadTrained( QString model_file_path, QString ios_file_pat
 /*  Allocate positions to input fields and get maximum and minimum values
     for eventual normalization (FANN data formatting requirement)        */
 
-void GWSIntelligence::generatePositions(QList< QMap< QString, QVariant> > data_rows, QMap<QString, int> &positions, QMap<QString, double> &maximums, QMap<QString, double> &minimums, QMap<QString, double> &means, QMap<QString, double> &stdevs){
+void geoworldsim::intelligence::Intelligence::generatePositions(QList< QMap< QString, QVariant> > data_rows, QMap<QString, int> &positions, QMap<QString, double> &maximums, QMap<QString, double> &minimums, QMap<QString, double> &means, QMap<QString, double> &stdevs){
 
     QMap< QString , QList< double > > column_values;
 
@@ -456,7 +456,7 @@ void GWSIntelligence::generatePositions(QList< QMap< QString, QVariant> > data_r
     }
 }
 
-QString GWSIntelligence::getIOName( QString key , QVariant value){
+QString geoworldsim::intelligence::Intelligence::getIOName( QString key , QVariant value){
 
     if( value.type() == QVariant::String ){
         return QString("%1:%2").arg( key ).arg( value.toString() );
@@ -465,7 +465,7 @@ QString GWSIntelligence::getIOName( QString key , QVariant value){
     return QString("%1").arg( key );
 }
 
-double GWSIntelligence::normalizeIOMinMax(QVariant value, QString hash, QMap<QString, double> maximums, QMap<QString, double> minimums){
+double geoworldsim::intelligence::Intelligence::normalizeIOMinMax(QVariant value, QString hash, QMap<QString, double> maximums, QMap<QString, double> minimums){
 
     double value_double = value.toDouble();
 
@@ -487,7 +487,7 @@ double GWSIntelligence::normalizeIOMinMax(QVariant value, QString hash, QMap<QSt
 }
 
 
-double GWSIntelligence::denormalizeIOMinMax( double normalized_value , int position ){
+double geoworldsim::intelligence::Intelligence::denormalizeIOMinMax( double normalized_value , int position ){
 
     double min = this->output_minimums.value( this->output_positions.key( position ) );
     double max = this->output_maximums.value( this->output_positions.key( position ) );
@@ -503,7 +503,7 @@ double GWSIntelligence::denormalizeIOMinMax( double normalized_value , int posit
 
 }
 
-double GWSIntelligence::normalizeIOMeanStdev(QVariant value, QString hash, QMap<QString, double> means, QMap<QString, double> stdevs){
+double geoworldsim::intelligence::Intelligence::normalizeIOMeanStdev(QVariant value, QString hash, QMap<QString, double> means, QMap<QString, double> stdevs){
     double value_double = value.toDouble();
 
     if( value.type() == QVariant::String ){
@@ -521,7 +521,7 @@ double GWSIntelligence::normalizeIOMeanStdev(QVariant value, QString hash, QMap<
 }
 
 
-double GWSIntelligence::denormalizeIOMeanStdev(double normalized_value, int position){
+double geoworldsim::intelligence::Intelligence::denormalizeIOMeanStdev(double normalized_value, int position){
 
     double mean = this->output_means.value( this->output_positions.key( position ) );
     double stdev = this->output_stdevs.value( this->output_positions.key( position ) );
