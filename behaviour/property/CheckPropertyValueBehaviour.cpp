@@ -1,18 +1,15 @@
 #include "CheckPropertyValueBehaviour.h"
 
+QString geoworldsim::behaviour::CheckPropertyValueBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
+QString geoworldsim::behaviour::CheckPropertyValueBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
+QString geoworldsim::behaviour::CheckPropertyValueBehaviour::PROPERTY_TO_COMPARE = "properties";
 
-
-QString CheckPropertyValueBehaviour::NEXTS_IF_TRUE = "nexts_if_true";
-QString CheckPropertyValueBehaviour::NEXTS_IF_FALSE = "nexts_if_false";
-QString CheckPropertyValueBehaviour::PROPERTY_TO_COMPARE = "properties";
-
-CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : GWSBehaviour{}{
-
+geoworldsim::behaviour::CheckPropertyValueBehaviour::CheckPropertyValueBehaviour() : Behaviour{}{
 }
 
-QPair< double , QJsonArray > CheckPropertyValueBehaviour::behave(){
+QPair< double , QJsonArray > geoworldsim::behaviour::CheckPropertyValueBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> entity = this->getEntity();
+    QSharedPointer< Entity > entity = this->getEntity();
 
     // If it is a QJsonObject, we will need to sum up the quantities of each of the QJsonObjects within:
     QJsonObject property_to_compare = this->getProperty( PROPERTY_TO_COMPARE ).toObject();

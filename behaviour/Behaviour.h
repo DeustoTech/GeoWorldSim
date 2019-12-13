@@ -21,6 +21,7 @@ public:
     // PROPERTIES
     static QString BEHAVIOUR_DURATION; // In seconds, IT WILL INCREMENT AGENTS INTERNAL DATETIME
     static QString SNAPSHOT_EVERY_TICKS; // 0 = do not send agent snapshot | 1 = send snapshot at every tick of this behaviour | n = send snapshot at every n repetition
+    static QString SNAPSHOT_ATTRIBUTES; // If empty, it will snapshot the entire Entity. If array of strings it will snapshot ID , TYPE , TIME and the attributes specified
     static QString SUB_BEHAVIOURS_PROP;
     static QString FINISH_CONDITION_PROP;
     static QString START_BEHAVIOUR_PROP;
@@ -45,11 +46,13 @@ public:
     //virtual bool canContinueToNext(); // Behaviour finished check
 
 protected:
+    void snapshotEntity( QSharedPointer<Entity> entity ) const;
 
-    QList< QSharedPointer<Behaviour> > sub_behaviours; // IMPORTANT! If one subbehaviour finishes, the entire behaviour has finished
+    QList< QSharedPointer<Behaviour> > sub_behaviours;
 
 private slots: // SLOTS, always invoke them by SLOT, it will make to be executed in the agent's thread
     QPair< double , QJsonArray > tick( qint64 behaviour_ticked_time ); // Acts as a behave() wrapper
+
 protected slots:
     virtual QPair< double , QJsonArray > behave(); // Behaviour, To be implemented by children, must be synchronous because tick() is already asynchronous
 

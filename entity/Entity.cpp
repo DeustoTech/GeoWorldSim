@@ -176,8 +176,6 @@ bool geoworldsim::Entity::fulfillsFilter(QJsonObject filter , bool nulls_allowed
 }
 
 
-
-
 QSharedPointer<geoworldsim::Entity> geoworldsim::Entity::getSharedPointer() const{
     QSharedPointer<Object> obj = Object::getSharedPointer();
     return obj.dynamicCast<geoworldsim::Entity>();

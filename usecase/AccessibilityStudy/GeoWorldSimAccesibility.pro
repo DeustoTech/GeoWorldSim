@@ -41,7 +41,6 @@ HEADERS += \
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/information/SendEntitySnapshotBehaviour.h \
     ../../behaviour/property/CompareEntityPropertyBehaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
@@ -109,7 +108,6 @@ SOURCES += mainAccesibility.cpp \
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
     ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
     ../../behaviour/property/SetEntityPropertyBehaviour.cpp \

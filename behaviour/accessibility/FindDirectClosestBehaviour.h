@@ -1,10 +1,12 @@
 #ifndef FINDDIRECTCLOSESTBEHAVIOUR_H
 #define FINDDIRECTCLOSESTBEHAVIOUR_H
 
-
 #include "../Behaviour.h"
 
-class FindDirectClosestBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class FindDirectClosestBehaviour : public Behaviour
 {
     Q_OBJECT
 public:
@@ -21,8 +23,9 @@ public:
 
 protected:
      virtual QPair< double , QJsonArray > behave();
-  //  GWSCoordinate closest_coor;
-  //  QPair< GWSCoordinate, QString > closest_coor_id;
 };
+
+}
+}
 
 #endif // FINDDIRECTCLOSESTBEHAVIOUR_H

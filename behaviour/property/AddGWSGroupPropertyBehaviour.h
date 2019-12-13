@@ -1,7 +1,6 @@
 #ifndef ADDGWSGROUPPROPERTYBEHAVIOUR_H
 #define ADDGWSGROUPPROPERTYBEHAVIOUR_H
 
-
 #include "../../behaviour/Behaviour.h"
 
 class AddGWSGroupPropertyBehaviour : GWSBehaviour

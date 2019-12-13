@@ -4,7 +4,10 @@
 #include "../../util/geometry/Coordinate.h"
 #include "../../behaviour/Behaviour.h"
 
-class FindRoutingClosestBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class FindRoutingClosestBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -26,5 +29,8 @@ protected slots:
      virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // FINDROUTINGCLOSESTBEHAVIOUR_H

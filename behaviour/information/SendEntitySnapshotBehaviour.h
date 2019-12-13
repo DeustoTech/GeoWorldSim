@@ -4,7 +4,10 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../app/App.h"
 
-class SendEntitySnapshotBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class SendEntitySnapshotBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -13,7 +16,7 @@ public:
     Q_INVOKABLE explicit SendEntitySnapshotBehaviour();
 
     // PROPERTIES
-    static QString ENTITY_TO_SEND_ID;
+    static QString ENTITY_TO_SEND_UID;
     static QString SOCKET_ID;
     static QString NEXTS;
 
@@ -22,5 +25,8 @@ private slots:
     virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // SENDENTITYSNAPSHOTBEHAVIOUR_H

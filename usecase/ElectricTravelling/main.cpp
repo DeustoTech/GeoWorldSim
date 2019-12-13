@@ -32,7 +32,6 @@
 // Utils
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/geometry/Envelope.h"
 #include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
@@ -45,14 +44,13 @@
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
-#include "../../behaviour/waste4think/GenerateWasteZamudioModelBehaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughRouteBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
-#include "../../behaviour/property/SetEntityPropertyBehaviour.h"
+#include "../../behaviour/property/SetPropertyBehaviour.h"
 #include "../../behaviour/property/SendPropertyStatisticsBehaviour.h"
 #include "../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h"
 #include "../../behaviour/execution/StopEntityBehaviour.h"

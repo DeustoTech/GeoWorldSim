@@ -17,12 +17,11 @@
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
-#include "../../behaviour/property/CompareEntityPropertyBehaviour.h"
+#include "../../behaviour/property/ComparePropertyBehaviour.h"
 #include "../../behaviour/execution/StopEntityBehaviour.h"
-#include "../../behaviour/property/SetEntityPropertyBehaviour.h"
+#include "../../behaviour/property/SetPropertyBehaviour.h"
 #include "../../behaviour/accessibility/FindDirectClosestBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
-#include "../../behaviour/property/AddGWSGroupPropertyBehaviour.h"
 #include "../../behaviour/transaction/TransactionBehaviour.h"
 #include "../../behaviour/property/CheckPropertyValueBehaviour.h"
 
@@ -38,8 +37,6 @@
 
 // Utils
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/geometry/Envelope.h"
-#include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
@@ -54,50 +51,49 @@ int main(int argc, char* argv[])
 {
 
     // CREATE QAPPLICATION
-    GWSApp* app = GWSApp::globalInstance( argc , argv );
+    geoworldsim::App* app = geoworldsim::App::globalInstance( argc , argv );
 
     // INIT ENVIRONMENTS
-    GWSObjectFactory::globalInstance();
-    GWSEntityEnvironment::globalInstance();
-    GWSExecutionEnvironment::globalInstance();
-    GWSPhysicalEnvironment::globalInstance();
-    GWSNetworkEnvironment::globalInstance();
-    GWSTimeEnvironment::globalInstance();
-    GWSCommunicationEnvironment::globalInstance();
+    geoworldsim::ObjectFactory::globalInstance();
+    geoworldsim::environment::EntityEnvironment::globalInstance();
+    geoworldsim::environment::ExecutionEnvironment::globalInstance();
+    geoworldsim::environment::PhysicalEnvironment::globalInstance();
+    geoworldsim::environment::NetworkEnvironment::globalInstance();
+    geoworldsim::environment::TimeEnvironment::globalInstance();
+    geoworldsim::environment::CommunicationEnvironment::globalInstance();
+
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( FindDirectClosestBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( FindRoutingClosestBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( CompareEntityPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( AddGWSGroupPropertyBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( TransactionBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckPropertyValueBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::FindDirectClosestBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::FindRoutingClosestBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SendEntitySnapshotBehaviour::staticMetaObject);
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::ComparePropertyBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::StopEntityBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SetPropertyBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::TransactionBehaviour::staticMetaObject );
+    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::CheckPropertyValueBehaviour::staticMetaObject );
 
 
     // CREATE POPULATION
-    QDateTime datasource_download_time = QDateTime::currentDateTime();
-    GWSEntityGeneratorDatasource* reader = new GWSEntityGeneratorDatasource( app->getConfiguration() );
-    reader->connect( reader , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ reader , datasource_download_time ](){
+    QDateTime download_started_time = QDateTime::currentDateTime();
+    geoworldsim::datasource::EntityGeneratorDatasource* reader = new geoworldsim::datasource::EntityGeneratorDatasource( app->getConfiguration() );
+    reader->connect( reader , &geoworldsim::datasource::EntityGeneratorDatasource::dataReadingFinishedSignal , [ reader , download_started_time ](){
 
-        emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                    QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( download_started_time.secsTo( QDateTime::currentDateTime() ) ) } }) , geoworldsim::App::globalInstance()->getAppId() + "-LOG" );
 
-        GWSExecutionEnvironment::globalInstance()->run();
+        geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     });
-
+    geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-    QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
+    QJsonObject json_external_listeners = geoworldsim::App::globalInstance()->getConfiguration().value("external_listeners").toObject();
     foreach( QString key , json_external_listeners.keys() ) {
 
         // Get simulation to be listened to from config.json file
         if ( !json_external_listeners[ key ].isNull() ){
-            new GWSExternalListener( json_external_listeners[ key ].toString() );
         }
         qDebug() << QString("Creating external listener %1").arg( key );
      }

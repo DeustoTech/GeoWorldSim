@@ -3,7 +3,11 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class CheckPropertyValueBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+
+class CheckPropertyValueBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -21,5 +25,8 @@ protected slots:
      virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // CHECKPROPERTYVALUEBEHAVIOUR_H

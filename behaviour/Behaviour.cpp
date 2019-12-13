@@ -9,6 +9,7 @@
 
 QString geoworldsim::behaviour::Behaviour::BEHAVIOUR_DURATION = "duration";
 QString geoworldsim::behaviour::Behaviour::SNAPSHOT_EVERY_TICKS = "snapshot_every";
+QString geoworldsim::behaviour::Behaviour::SNAPSHOT_ATTRIBUTES = "snapshot_attributes";
 QString geoworldsim::behaviour::Behaviour::SUB_BEHAVIOURS_PROP = "@sub_behaviours";
 QString geoworldsim::behaviour::Behaviour::FINISH_CONDITION_PROP = "@finish_condition";
 QString geoworldsim::behaviour::Behaviour::START_BEHAVIOUR_PROP = "start";
@@ -130,7 +131,7 @@ QPair< double , QJsonArray > geoworldsim::behaviour::Behaviour::tick( qint64 beh
     // Check if need to send snapshot
     quint64 snapshots = this->getProperty( SNAPSHOT_EVERY_TICKS ).toDouble( 0 );
     if( snapshots > 0 && this->ticked_amount % snapshots == 0 ){
-        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() );
+        this->snapshotEntity( entity );
     }
 
     return nexts;
@@ -151,4 +152,34 @@ QPair<double, QJsonArray> geoworldsim::behaviour::Behaviour::behave(){
     }
 
     return QPair< double , QJsonArray>( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , nexts );
+}
+
+
+void geoworldsim::behaviour::Behaviour::snapshotEntity( QSharedPointer<Entity> entity ) const {
+
+    // If SNAPSHOT_ATTRIBUTES has some values
+    QJsonArray snapshot_attributes = this->getProperty( SNAPSHOT_ATTRIBUTES ).toArray();
+    if( snapshot_attributes.isEmpty() ){
+
+        // Send entity unfiltered
+        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() );
+
+    } else {
+
+        QJsonObject filtered_json;
+        QJsonObject serialized_entity = entity->serialize();
+
+        // Mandatory attributes
+        snapshot_attributes.append( geoworldsim::Object::GWS_UID_PROP );
+        snapshot_attributes.append( "type" );
+        snapshot_attributes.append( environment::TimeEnvironment::INTERNAL_TIME_PROP );
+
+        foreach( QJsonValue attr , snapshot_attributes ) {
+            filtered_json.insert( attr.toString() , serialized_entity.value( attr.toString() ) );
+        }
+
+        // Send entity unfiltered
+        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() );
+    }
+
 }
