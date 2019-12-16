@@ -10,6 +10,7 @@ geoworldsim::environment::GWSSocialEnvironment* geoworldsim::environment::GWSSoc
 geoworldsim::environment::GWSSocialEnvironment::GWSSocialEnvironment() : Environment(){
     qInfo() << "SocialEnvironment created";
     EnvironmentsGroup::globalInstance()->addEnvironment( this );
+    qRegisterMetaType< social::SocialRelation >( "social::SocialRelation" ); // Register to be used in SIGNAL/SLOTS
 }
 
 geoworldsim::environment::GWSSocialEnvironment::~GWSSocialEnvironment(){

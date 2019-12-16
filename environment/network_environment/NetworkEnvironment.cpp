@@ -16,6 +16,7 @@ geoworldsim::environment::NetworkEnvironment* geoworldsim::environment::NetworkE
 geoworldsim::environment::NetworkEnvironment::NetworkEnvironment() : Environment(){
     qInfo() << "NetworkEnvironment created";
     EnvironmentsGroup::globalInstance()->addEnvironment( this );
+    qRegisterMetaType< graph::NetworkEdge >( "graph::NetworkEdge" ); // Register to be used in SIGNAL/SLOTS
 }
 
 geoworldsim::environment::NetworkEnvironment::~NetworkEnvironment(){

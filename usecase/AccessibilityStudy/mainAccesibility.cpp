@@ -84,7 +84,6 @@ int main(int argc, char* argv[])
         geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     });
-    geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:

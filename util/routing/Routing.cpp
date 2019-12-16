@@ -8,6 +8,8 @@ geoworldsim::routing::Routing::Routing() : QObject(){
 
     this->connect( this , &geoworldsim::routing::Routing::upsertEdgeSignal , this , &geoworldsim::routing::Routing::upsertEdge );
     this->connect( this , &geoworldsim::routing::Routing::removeEdgeSignal , this , &geoworldsim::routing::Routing::removeEdge );
+
+    qRegisterMetaType< graph::Edge >( "graph::Edge" );
 }
 
 geoworldsim::routing::Routing::~Routing(){

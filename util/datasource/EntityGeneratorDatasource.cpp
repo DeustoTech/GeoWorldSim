@@ -58,7 +58,7 @@ geoworldsim::datasource::EntityGeneratorDatasource::EntityGeneratorDatasource(QJ
 
                     if( pending_readers && pending_readers->isEmpty() ){
                         delete pending_readers;
-                        emit this->dataReadingFinishedSignal();
+                        QTimer::singleShot( 10*1000 , this , [this](){ emit this->dataReadingFinishedSignal(); });
                     }
                 });
 

@@ -179,7 +179,7 @@ void geoworldsim::behaviour::Behaviour::snapshotEntity( QSharedPointer<Entity> e
         }
 
         // Send entity unfiltered
-        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( entity->serialize() );
+        emit geoworldsim::environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( filtered_json );
     }
 
 }
