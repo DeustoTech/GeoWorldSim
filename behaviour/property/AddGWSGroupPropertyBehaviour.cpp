@@ -1,12 +1,10 @@
 #include "AddGWSGroupPropertyBehaviour.h"
 
-QString AddGWSGroupPropertyBehaviour::PROPERTY_TO_ADD_TO_GWSGROUP = "property_to_add_to_gwsgroup";
-QString AddGWSGroupPropertyBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::AddGWSGroupPropertyBehaviour::PROPERTY_TO_ADD_TO_GWSGROUP = "property_to_add_to_gwsgroup";
+QString geoworldsim::behaviour::AddGWSGroupPropertyBehaviour::NEXTS = "nexts";
 
 
-AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
-{
-
+geoworldsim::behaviour::AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour() : Behaviour(){
 }
 
 
@@ -14,9 +12,9 @@ AddGWSGroupPropertyBehaviour::AddGWSGroupPropertyBehaviour()
  * SLOTS
  ***********************************************************/
 
-QPair< double , QJsonArray > AddGWSGroupPropertyBehaviour::behave(){
+QPair< double , QJsonArray > geoworldsim::behaviour::AddGWSGroupPropertyBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
 
     QString property_to_add = this->getProperty( PROPERTY_TO_ADD_TO_GWSGROUP ).toString();
 

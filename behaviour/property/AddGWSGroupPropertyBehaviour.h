@@ -3,7 +3,11 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class AddGWSGroupPropertyBehaviour : GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+
+class AddGWSGroupPropertyBehaviour : Behaviour
 {
     Q_OBJECT
 
@@ -18,5 +22,9 @@ protected slots:
 
      virtual QPair< double , QJsonArray > behave();
 };
+
+
+}
+}
 
 #endif // ADDGWSGROUPPROPERTYBEHAVIOUR_H

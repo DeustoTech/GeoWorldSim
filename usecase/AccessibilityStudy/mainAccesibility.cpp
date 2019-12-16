@@ -66,7 +66,6 @@ int main(int argc, char* argv[])
     // AVAILABLE BEHAVIOURS
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::FindDirectClosestBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::FindRoutingClosestBehaviour::staticMetaObject );
-    geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SendEntitySnapshotBehaviour::staticMetaObject);
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::ComparePropertyBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::StopEntityBehaviour::staticMetaObject );
     geoworldsim::ObjectFactory::globalInstance()->registerType( geoworldsim::behaviour::SetPropertyBehaviour::staticMetaObject );

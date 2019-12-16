@@ -10,7 +10,6 @@ QT          += network
 QT          += websockets # sudo apt-get install libqt5websockets5-dev
 QT          += sql # sudo apt-get install libqt5sql5 libqt5sql5-psql
 QT          += xml
-QT          += network
 QT          += multimedia # For video exporter sudo apt-get install qtmultimedia5-dev
 
 # ACTIVATE QT-COMPILER OPTIMIZATION
@@ -36,7 +35,6 @@ HEADERS += \
     ../../object/Object.h \
     ../../object/ObjectFactory.h \
     ../../entity/Entity.h \
-    ../../entity/EntitySource.h \
         # SKILLS
     ../../skill/Skill.h \
         # BEHAVIOUR
@@ -69,9 +67,10 @@ HEADERS += \
     ../../util/datasource/EntityGeneratorDatasource.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
-    ../../util/distributed/ExternalListener.h \
-    ../../util/distributed/ExternalCommunicator.h \
-    ../../util/distributed/ExternalPublisher.h \
+    ../../util/network/WebSocketDriver.h \
+    ../../util/network/ListenerWebSocket.h \
+    ../../util/network/PublisherWebSocket.h \
+    ../../util/network/HttpDriver.h \
     ../../util/parallelism/ParallelismController.h \
     ../../util/ai/Intelligence.h \
     ../../util/svm/Svm.h \
@@ -101,7 +100,6 @@ SOURCES += mainAccesibility.cpp \
     ../../object/Object.cpp \
     ../../object/ObjectFactory.cpp \
     ../../entity/Entity.cpp \
-    ../../entity/EntitySource.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
         # BEHAVIOURS
@@ -131,9 +129,10 @@ SOURCES += mainAccesibility.cpp \
     ../../util/graph/Edge.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
-    ../../util/distributed/ExternalListener.cpp \
-    ../../util/distributed/ExternalCommunicator.cpp \
-    ../../util/distributed/ExternalPublisher.cpp \
+    ../../util/network/WebSocketDriver.cpp \
+    ../../util/network/ListenerWebSocket.cpp \
+    ../../util/network/PublisherWebSocket.cpp \
+    ../../util/network/HttpDriver.cpp \
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/ai/Intelligence.cpp \
     ../../util/svm/Svm.cpp \
