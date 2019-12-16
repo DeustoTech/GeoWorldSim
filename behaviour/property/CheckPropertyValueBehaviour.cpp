@@ -16,7 +16,7 @@ QPair< double , QJsonArray > geoworldsim::behaviour::CheckPropertyValueBehaviour
 
     if( entity->fulfillsFilter( property_to_compare , false ) ){
 
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE).toArray() );
+        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_TRUE ).toArray() );
 
     }
 

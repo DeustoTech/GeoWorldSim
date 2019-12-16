@@ -40,6 +40,12 @@ QPair< double , QJsonArray > geoworldsim::behaviour::ComparePropertyBehaviour::b
 
         QJsonValue value_1 = this->getProperty( VALUE_1 );
         QJsonValue value_2 = this->getProperty( VALUE_2 );
+
+        // If any of those does not exist, asume FALSE
+        if( value_1.isUndefined() || value_1.isNull() || value_2.isUndefined() || value_2.isNull() ){
+            return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_FALSE ).toArray() );
+        }
+
         QString comparison_operator = this->getProperty( COMPARISON_OPERATOR ).toString();
 
         // ==

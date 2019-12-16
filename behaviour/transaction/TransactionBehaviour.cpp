@@ -53,7 +53,7 @@ QPair< double , QJsonArray > geoworldsim::behaviour::TransactionBehaviour::behav
     }
 
     // Iterate all with all
-    foreach( QSharedPointer< Entity > emitter , emitters) {
+    foreach( QSharedPointer< Entity > emitter , emitters ) {
         foreach ( QSharedPointer< Entity > receiver , receivers ) {
 
 

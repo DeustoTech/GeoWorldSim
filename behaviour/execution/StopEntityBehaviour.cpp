@@ -19,8 +19,5 @@ QPair<double, QJsonArray> geoworldsim::behaviour::StopEntityBehaviour::behave(){
     environment::ExecutionEnvironment* env = environment::ExecutionEnvironment::globalInstance();
     env->unregisterEntity( entity );
 
-    QJsonObject json = entity->serialize();
-    emit environment::CommunicationEnvironment::globalInstance()->sendEntitySignal( json );
-
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , QJsonArray({ this->getUID() }) );
 }
