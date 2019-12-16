@@ -41,10 +41,10 @@ HEADERS += \
     ../../skill/Skill.h \
         # BEHAVIOUR
     ../../behaviour/Behaviour.h \
-    ../../behaviour/property/CompareEntityPropertyBehaviour.h \
+    ../../behaviour/property/ComparePropertyBehaviour.h \
     ../../behaviour/transaction/TransactionBehaviour.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
-    ../../behaviour/property/SetEntityPropertyBehaviour.h \
+    ../../behaviour/property/SetPropertyBehaviour.h \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.h \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.h \
         # UTILS
@@ -62,10 +62,8 @@ HEADERS += \
     ../../util/geometry/GeometryTransformators.h \
     ../../util/geometry/GeometryGetters.h \
     ../../util/graph/Edge.h \
-    ../../util/api/APIDriver.h \
     ../../util/routing/Routing.h \
     ../../util/routing/EdgeVisitor.hpp \
-    ../../util/routing/TSPRouting.h \
             ## DATASOURCES
     ../../util/datasource/DatasourceReader.h \
     ../../util/datasource/EntityGeneratorDatasource.h \
@@ -108,17 +106,15 @@ SOURCES += mainAccesibility.cpp \
     ../../skill/Skill.cpp \
         # BEHAVIOURS
     ../../behaviour/Behaviour.cpp \
-    ../../behaviour/property/CompareEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/ComparePropertyBehaviour.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
-    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/SetPropertyBehaviour.cpp \
     ../../behaviour/accessibility/FindDirectClosestBehaviour.cpp \
     ../../behaviour/accessibility/FindRoutingClosestBehaviour.cpp \
         # UTILS
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
-    ../../util/api/APIDriver.cpp \
     ../../util/routing/Routing.cpp \
-    ../../util/routing/TSPRouting.cpp \
     ../../util/io/csv/CsvImporter.cpp \
     ../../util/io/ImporterExporter.cpp \
             ## DATASOURCES
