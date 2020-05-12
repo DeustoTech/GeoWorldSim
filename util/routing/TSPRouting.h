@@ -10,22 +10,25 @@
 
 #include "../../util/geometry/Coordinate.h"
 
-class GWSTSPRouting : public QObject
+namespace geoworldsim{
+namespace routing {
+
+class TSPRouting : public QObject
 {
     Q_OBJECT
 
 public:
 
-    GWSTSPRouting( QString transport_network_type );
-    ~GWSTSPRouting();
+    TSPRouting( QString transport_network_type );
+    ~TSPRouting();
 
     // METHODS
-    QList<GWSCoordinate> nearestNeighborTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
-    QList<GWSCoordinate> greedyTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
-    QList<GWSCoordinate> insertionTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
-    QList<GWSCoordinate> christofidesTsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
-    QList<GWSCoordinate> opt2Tsp(const GWSCoordinate &start, QList<GWSCoordinate> visits, const GWSCoordinate &end);
-    QList<GWSCoordinate> orderCircularTsp(const GWSCoordinate& start, QList<GWSCoordinate> tsp_circular_nodes, const GWSCoordinate& end);
+    QList<geometry::Coordinate> nearestNeighborTsp(const geometry::Coordinate &start, QList<geometry::Coordinate> visits, const geometry::Coordinate &end);
+    QList<geometry::Coordinate> greedyTsp(const geometry::Coordinate &start, QList<geometry::Coordinate> visits, const geometry::Coordinate &end);
+    QList<geometry::Coordinate> insertionTsp(const geometry::Coordinate &start, QList<geometry::Coordinate> visits, const geometry::Coordinate &end);
+    QList<geometry::Coordinate> christofidesTsp(const geometry::Coordinate &start, QList<geometry::Coordinate> visits, const geometry::Coordinate &end);
+    QList<geometry::Coordinate> opt2Tsp(const geometry::Coordinate &start, QList<geometry::Coordinate> visits, const geometry::Coordinate &end);
+    QList<geometry::Coordinate> orderCircularTsp(const geometry::Coordinate& start, QList<geometry::Coordinate> tsp_circular_nodes, const geometry::Coordinate& end);
 
 private:
 
@@ -35,8 +38,11 @@ private:
     // Map to relate graph and distance matrix nodes
     QMap<lemon::ListDigraph::Node , lemon::FullGraph::Node> graph_matrix_nodes;
 
-    void loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_nodes );
+    void loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<geometry::Coordinate> visit_nodes );
 
 };
 
-#endif // GWSTSPROUTING_H
+}
+}
+
+#endif // TSPROUTING_H

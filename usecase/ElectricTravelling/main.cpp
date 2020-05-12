@@ -32,20 +32,20 @@
 // Utils
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/geometry/Coordinate.h"
-#include "../../util/distributed/ExternalListener.h"
+//#include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
 #include "../../util/io/csv/CsvImporter.h"
 #include "../../util/ai/Intelligence.h"
 #include "../../util/svm/Svm.h"
-#include "../../util/api/APIDriver.h"
+#include "../../util/network/ListenerWebSocket.h"
 
 
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughNetworkBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
@@ -60,42 +60,43 @@
 #include "../../behaviour/emissions/PolluteBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
 
+using namespace geoworldsim;
+
 int main(int argc, char* argv[])
 {
 
     QDateTime start = QDateTime::currentDateTime();
 
     // CREATE QAPPLICATION
-    GWSApp* app = GWSApp::globalInstance( argc , argv );
+    App* app = geoworldsim::App::globalInstance( argc , argv );
 
     // INIT ENVIRONMENTS
-    GWSObjectFactory::globalInstance();
-    GWSParallelismController::globalInstance();
-    GWSEntityEnvironment::globalInstance();
-    GWSExecutionEnvironment::globalInstance();
-    GWSPhysicalEnvironment::globalInstance();
-    GWSNetworkEnvironment::globalInstance();
-    GWSTimeEnvironment::globalInstance();
-    GWSCommunicationEnvironment::globalInstance();
-    GWSGridEnvironment::globalInstance();
-    GWSAPIDriver::globalInstance();
+    ObjectFactory::globalInstance();
+    parallel::ParallelismController::globalInstance();
+    environment::EntityEnvironment::globalInstance();
+    environment::ExecutionEnvironment::globalInstance();
+    environment::PhysicalEnvironment::globalInstance();
+    environment::NetworkEnvironment::globalInstance();
+    environment::TimeEnvironment::globalInstance();
+    environment::CommunicationEnvironment::globalInstance();
+    environment::GWSGridEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    GWSObjectFactory::globalInstance()->registerType( MoveThroughRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SendEntitySnapshotBehaviour::staticMetaObject);
-    GWSObjectFactory::globalInstance()->registerType( SendPropertyStatisticsBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( VehicleNoiseBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( StopEntityBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CalculateGTAlgRouteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetNextRouteDestinationBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( PolluteBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( CheckIfEntitiesRunningBehaviour::staticMetaObject );
-    GWSObjectFactory::globalInstance()->registerType( SetEntityPropertyBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::MoveThroughNetworkBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::SendEntitySnapshotBehaviour::staticMetaObject);
+    ObjectFactory::globalInstance()->registerType( behaviour::SendPropertyStatisticsBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::VehicleNoiseBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::StopEntityBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::CalculateGTAlgRouteBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::SetNextRouteDestinationBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::PolluteBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::CheckIfEntitiesRunningBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::SetPropertyBehaviour::staticMetaObject );
 
     // CREATE POPULATION
-    QList<GWSEntityGeneratorDatasource*> pending_datasources;
+    QList<datasource::EntityGeneratorDatasource*> pending_datasources;
     QDateTime datasource_download_time = QDateTime::currentDateTime();
-    QJsonObject json_population = GWSApp::globalInstance()->getConfiguration().value("population").toObject();
+    QJsonObject json_population = App::globalInstance()->getConfiguration().value("population").toObject();
     foreach( QString key , json_population.keys() ) {
 
          // Population type:
@@ -109,25 +110,25 @@ int main(int argc, char* argv[])
 
                  QJsonObject datasource = datasources.at( i ).toObject();
                  QString scenario_id = datasource.value("scenario_id").toString();
+                 QString user_id = datasource.value("user_id").toString();
                  int limit = datasource.value("limit").toInt(-1);
                  QString entity_type = datasource.value("entity_type").toString();
                  QString entity_filter = datasource.value("entity_filter").toString();
                  if( scenario_id.isEmpty() || entity_type.isEmpty() ){
                      qWarning() << "Asked to download from scenario without ID or entity_type";
-                 }
-
-                 GWSEntityGeneratorDatasource* ds = new GWSEntityGeneratorDatasource( population.value( "template" ).toObject() , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
+                 }                                                                                                        
+                 datasource::EntityGeneratorDatasource* ds = new datasource::EntityGeneratorDatasource( population.value( "template" ).toObject() ,user_id , scenario_id,  entity_type , entity_filter , limit > 0 ? limit : 999999999999999 );
                  pending_datasources.append( ds );
 
-                 ds->connect( ds , &GWSEntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
+                 ds->connect( ds , &datasource::EntityGeneratorDatasource::dataReadingFinishedSignal , [ ds , &pending_datasources , datasource_download_time ](){
                      pending_datasources.removeAll( ds );
                      ds->deleteLater();
                      if( pending_datasources.isEmpty() ){
 
-                         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                                     QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+                         emit environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                                     QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( datasource_download_time.secsTo( QDateTime::currentDateTime() ) ) } }) , App::globalInstance()->getAppId() + "-LOG" );
 
-                         GWSExecutionEnvironment::globalInstance()->run();
+                         environment::ExecutionEnvironment::globalInstance()->run();
                      }
                  });
 
@@ -137,28 +138,28 @@ int main(int argc, char* argv[])
          if ( !population.value("template").isNull() && !population.value("amount").isNull() ){
              for ( int i = 0; i < population.value("amount").toInt() ; i++){
                  // Use template to generate amount entities
-                 GWSObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<GWSEntity>();
+                 ObjectFactory::globalInstance()->fromJSON( population.value("template").toObject() ).dynamicCast<Entity>();
              }
          }
         qInfo() << QString("Creating population %1").arg( key );
      }
      if( pending_datasources.isEmpty() ){
 
-         emit GWSCommunicationEnvironment::globalInstance()->sendMessageSignal(
-                     QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , GWSApp::globalInstance()->getAppId() + "-LOG" );
+         emit environment::CommunicationEnvironment::globalInstance()->sendMessageSignal(
+                     QJsonObject({ { "message" , QString("No data to download. Starting execution soon") } }) , App::globalInstance()->getAppId() + "-LOG" );
 
 
-         GWSExecutionEnvironment::globalInstance()->run();
+         environment::ExecutionEnvironment::globalInstance()->run();
      }
 
      // LISTEN TO EXTERNAL SIMULATIONS
-     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:
-     QJsonObject json_external_listeners = GWSApp::globalInstance()->getConfiguration().value("external_listeners").toObject();
+     // GWSExternalListener and environment::CommunicationEnvironment have changed, do the code below needs to eventually be modified:
+     QJsonObject json_external_listeners = App::globalInstance()->getConfiguration().value("external_listeners").toObject();
      foreach( QString key , json_external_listeners.keys() ) {
 
          // Get simulation to be listened to from config.json file
          if ( !json_external_listeners[ key ].isNull() ){
-             new GWSExternalListener( json_external_listeners[ key ].toString() );
+             new network::ListenerWebSocket( json_external_listeners[ key ].toString() );
          }
          qDebug() << QString("Creating external listener %1").arg( key );
       }

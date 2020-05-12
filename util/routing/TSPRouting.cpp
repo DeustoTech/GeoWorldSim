@@ -7,22 +7,26 @@
 #include "lemon/insertion_tsp.h"
 #include "lemon/opt2_tsp.h"
 
+#include <stdlib.h>
+
 #include "../../environment/network_environment/NetworkEdge.h"
 #include "../../environment/network_environment/NetworkEnvironment.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
-GWSTSPRouting::GWSTSPRouting( QString transport_network_type ) : QObject() {
+using namespace geoworldsim;
+
+geoworldsim::routing::TSPRouting::TSPRouting( QString transport_network_type ) : QObject() {
     this->transport_network_type = transport_network_type;
 }
 
-GWSTSPRouting::~GWSTSPRouting(){
+geoworldsim::routing::TSPRouting::~TSPRouting(){
 }
 
 /**********************************************************************
  METHODS
 **********************************************************************/
 
-QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate > visit_coordinates , const GWSCoordinate& end_coor){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::nearestNeighborTsp(const geometry::Coordinate& start_coor , QList<geometry::Coordinate > visit_coordinates , const geometry::Coordinate& end_coor){
 
     this->mutex.lock();
 
@@ -40,7 +44,7 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(const GWSCoordinate& star
     lemon::NearestNeighborTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::NearestNeighborTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
 
-    QList<GWSCoordinate> tsp_circular_route_nodes;
+    QList<geometry::Coordinate> tsp_circular_route_nodes;
     foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         tsp_circular_route_nodes.append( visit_coordinates.at( distance_matrix->id( n ) ) );
     }
@@ -50,7 +54,7 @@ QList<GWSCoordinate> GWSTSPRouting::nearestNeighborTsp(const GWSCoordinate& star
     return tsp_circular_route_nodes;// this->orderCircularTsp(start_coordinate , end_coordinate , tsp_circular_route_nodes);
 }
 
-QList<GWSCoordinate> GWSTSPRouting::greedyTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::greedyTsp(const geometry::Coordinate& start_coor , QList<geometry::Coordinate> visit_coordinates , const geometry::Coordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -63,14 +67,14 @@ QList<GWSCoordinate> GWSTSPRouting::greedyTsp(const GWSCoordinate& start_coor , 
     lemon::GreedyTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::GreedyTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
 
-    QList<GWSCoordinate> tsp_circular_route_nodes;
+    QList<geometry::Coordinate> tsp_circular_route_nodes;
     foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         //tsp_circular_route_nodes.append( this->node_to_original_node.value( this->graph_matrix_nodes.key( n ) ) );
     }
 
 }
 
-QList<GWSCoordinate> GWSTSPRouting::insertionTsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::insertionTsp(const geometry::Coordinate& start_coor , QList<geometry::Coordinate> visit_coordinates , const geometry::Coordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -82,14 +86,14 @@ QList<GWSCoordinate> GWSTSPRouting::insertionTsp(const GWSCoordinate& start_coor
 
     lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
-    QList<GWSCoordinate> tsp_circular_route_nodes;
+    QList<geometry::Coordinate> tsp_circular_route_nodes;
     foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         //tsp_circular_route_nodes.append( this->node_to_original_node.value( this->graph_matrix_nodes.key( n ) ) );
     }
 
 }
 
-QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(const GWSCoordinate &start_coordinate, QList<GWSCoordinate> visit_coordinates, const GWSCoordinate &end_coordinate){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::christofidesTsp(const geometry::Coordinate &start_coordinate, QList<geometry::Coordinate> visit_coordinates, const geometry::Coordinate &end_coordinate){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -101,13 +105,13 @@ QList<GWSCoordinate> GWSTSPRouting::christofidesTsp(const GWSCoordinate &start_c
 
     lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
-    QList<GWSCoordinate> tsp_circular_route_nodes;
+    QList<geometry::Coordinate> tsp_circular_route_nodes;
     foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         //tsp_circular_route_nodes.append( this->node_to_original_node.value( this->graph_matrix_nodes.key( n ) ) );
     }
 }
 
-QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(const GWSCoordinate& start_coor , QList<GWSCoordinate> visit_coordinates , const GWSCoordinate& end_coor){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::opt2Tsp(const geometry::Coordinate& start_coor , QList<geometry::Coordinate> visit_coordinates , const geometry::Coordinate& end_coor){
 
     // Distance matrix represented as a graph, create nodes as visit_coordinates.size()
     lemon::FullGraph* distance_matrix = new lemon::FullGraph( visit_coordinates.size() );
@@ -119,7 +123,7 @@ QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(const GWSCoordinate& start_coor , QL
 
     lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >* tsp = new lemon::InsertionTsp< lemon::FullGraph::EdgeMap<double> >( *distance_matrix , *distance_matrix_weights );
     tsp->run();
-    QList<GWSCoordinate> tsp_circular_route_nodes;
+    QList<geometry::Coordinate> tsp_circular_route_nodes;
     foreach( lemon::FullGraph::Node n , tsp->tourNodes() ){
         //tsp_circular_route_nodes.append( this->node_to_original_node.value( this->graph_matrix_nodes.key( n ) ) );
     }
@@ -130,7 +134,7 @@ QList<GWSCoordinate> GWSTSPRouting::opt2Tsp(const GWSCoordinate& start_coor , QL
  PRIVATE
 **********************************************************************/
 
-void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<GWSCoordinate> visit_coordinates ){
+void geoworldsim::routing::TSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemon::FullGraph::EdgeMap<double>* distance_matrix_weights , QList<geometry::Coordinate> visit_coordinates ){
 
     if( this->transport_network_type.isEmpty() ){
         return;
@@ -139,20 +143,20 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
     // Create all to all distances
     for(int i = 0; i < visit_coordinates.size(); i++ ){
 
-        QList< QStringList > routes_from_i = GWSNetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
+        QList< QStringList > routes_from_i = environment::NetworkEnvironment::globalInstance()->getShortestPaths( visit_coordinates.at(i) , visit_coordinates , this->transport_network_type );
         for(int j = 0; j < routes_from_i.size(); j++ ){
 
             lemon::FullGraph::Node from = distance_matrix->nodeFromId( i );
             lemon::FullGraph::Node to = distance_matrix->nodeFromId( j );
             lemon::FullGraph::Edge edge = distance_matrix->edge( from , to );
 
-            QList< QSharedPointer<GWSEntity> > route_edges = GWSEntityEnvironment::globalInstance()->getByUIDS( routes_from_i.at(j) );
+            QList< QSharedPointer<Entity> > route_edges = environment::EntityEnvironment::globalInstance()->getByUIDS( routes_from_i.at(j) );
 
-            GWSLengthUnit length = 0;
-            foreach( QSharedPointer<GWSEntity> e , route_edges ){
-                length = length + GWSNetworkEdge( e->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
+            unit::LengthUnit length = 0;
+            foreach( QSharedPointer<Entity> e , route_edges ){
+                length = length + graph::NetworkEdge( e->getProperty( environment::NetworkEnvironment::EDGE_PROP ).toObject() ).getCost();
             }
-            if( length <= GWSLengthUnit( 0 ) ){
+            if( length <= unit::LengthUnit( 0 ) ){
                 length = visit_coordinates.at(i).getDistance( visit_coordinates.at(j) );
             }
 
@@ -169,16 +173,16 @@ void GWSTSPRouting::loadDistanceMatrix( lemon::FullGraph* distance_matrix , lemo
  * @param tsp_circular_nodes
  * @return
  */
-QList<GWSCoordinate> GWSTSPRouting::orderCircularTsp(const GWSCoordinate& start, QList<GWSCoordinate> tsp_circular_nodes, const GWSCoordinate& end){
+QList<geometry::Coordinate> geoworldsim::routing::TSPRouting::orderCircularTsp(const geometry::Coordinate& start, QList<geometry::Coordinate> tsp_circular_nodes, const geometry::Coordinate& end){
     Q_UNUSED(end)
 
-    QList<GWSCoordinate> tsp_ordered_nodes;
+    QList<geometry::Coordinate> tsp_ordered_nodes;
 
     // Find the nearest circular_route node to start_coordinate
-    GWSCoordinate nearest = tsp_circular_nodes.at( 0 );
-    GWSLengthUnit min_distance = start.getDistance( nearest );
-    foreach(GWSCoordinate n , tsp_circular_nodes){
-        GWSLengthUnit d = n.getDistance( start );
+    geometry::Coordinate nearest = tsp_circular_nodes.at( 0 );
+    unit::LengthUnit min_distance = start.getDistance( nearest );
+    foreach(geometry::Coordinate n , tsp_circular_nodes){
+        unit::LengthUnit d = n.getDistance( start );
         if( min_distance > d ){
             nearest = n;
             min_distance = d;

@@ -3,31 +3,31 @@
 #include <QtMath>
 
 #include "../../skill/move/MoveSkill.h"
-#include "../../skill/move/MoveThroughRouteSkill.h"
+#include "../../skill/move/MoveThroughNetworkSkill.h"
 #include "../../object/ObjectFactory.h"
 
-QString VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
-QString VehicleNoiseBehaviour::OUTPUT_NOISE = "output_noise";
-QString VehicleNoiseBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::VehicleNoiseBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
+QString geoworldsim::behaviour::VehicleNoiseBehaviour::OUTPUT_NOISE = "output_noise";
+QString geoworldsim::behaviour::VehicleNoiseBehaviour::NEXTS = "nexts";
 
-VehicleNoiseBehaviour::VehicleNoiseBehaviour() : GWSBehaviour(){
+geoworldsim::behaviour::VehicleNoiseBehaviour::VehicleNoiseBehaviour() : Behaviour(){
 
 }
 
-QPair<double, QJsonArray> VehicleNoiseBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::VehicleNoiseBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
     double A_roll = 0;
     double B_roll = 0;
     double A_prop = 0;
     double B_prop = 0;
     double vref = 70.0;
 
-    GWSSpeedUnit vehicle_speed = agent->getProperty( MoveSkill::CURRENT_SPEED ).toDouble();
+    unit::SpeedUnit vehicle_speed = agent->getProperty( skill::MoveSkill::INSTANT_SPEED ).toDouble();
     QString vehicle_type = this->getProperty( INPUT_VEHICLE_TYPE ).toString();
 
-    QSharedPointer<MoveThroughRouteSkill> movethroughroute_skill = agent->getSkill( MoveThroughRouteSkill::staticMetaObject.className() ).dynamicCast<MoveThroughRouteSkill>();
-    QSharedPointer<GWSEntity> current_edge = movethroughroute_skill->getCurrentEdge();
+    QSharedPointer<skill::MoveThroughNetworkSkill> movethroughroute_skill = agent->getSkill( skill::MoveThroughNetworkSkill::staticMetaObject.className() ).dynamicCast<skill::MoveThroughNetworkSkill>();
+    QSharedPointer<Entity> current_edge = movethroughroute_skill->getCurrentEdge();
 
     double instant_noise = 0;
 

@@ -1,21 +1,21 @@
 #include "SetNextRouteDestinationBehaviour.h"
 
 #include "../../skill/move/StoreMultiRouteSkill.h"
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughNetworkBehaviour.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 
 
-QString SetNextRouteDestinationBehaviour::NEXTS_WHILE_PENDING_ROUTE = "nexts_while_pending_route";
-QString SetNextRouteDestinationBehaviour::NEXTS_IF_ROUTE_FINISHED = "nexts_if_finished";
+QString geoworldsim::behaviour::SetNextRouteDestinationBehaviour::NEXTS_WHILE_PENDING_ROUTE = "nexts_while_pending_route";
+QString geoworldsim::behaviour::SetNextRouteDestinationBehaviour::NEXTS_IF_ROUTE_FINISHED = "nexts_if_finished";
 
-SetNextRouteDestinationBehaviour::SetNextRouteDestinationBehaviour() : GWSBehaviour() {
+geoworldsim::behaviour::SetNextRouteDestinationBehaviour::SetNextRouteDestinationBehaviour() : Behaviour() {
 }
 
 
-QPair<double, QJsonArray> SetNextRouteDestinationBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::SetNextRouteDestinationBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toArray();
 
     // Finished following destinations
@@ -33,8 +33,8 @@ QPair<double, QJsonArray> SetNextRouteDestinationBehaviour::behave(){
 
         QString next_destination_agent_id = next_destination.toString();
 
-        QSharedPointer<GWSEntity> destination_agent = GWSEntityEnvironment::globalInstance()->getByUID( next_destination_agent_id );
-        GWSGeometry next_destination_agent_geom= GWSGeometry( destination_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        QSharedPointer<Entity> destination_agent = environment::EntityEnvironment::globalInstance()->getByUID( next_destination_agent_id );
+        geometry::Geometry next_destination_agent_geom= geometry::Geometry( destination_agent->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
         agent->setProperties( QJsonObject({
             { this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id },

@@ -9,7 +9,7 @@ QString GWSCalculateTSPRouteBehaviour::TSP_AGENT_TYPE = "tsp_agent_type"; // e.g
 QString GWSCalculateTSPRouteBehaviour::NETWORK_TYPE = "network_type";  // e.g. ROADS
 QString GWSCalculateTSPRouteBehaviour::NEXTS = "nexts";
 
-GWSCalculateTSPRouteBehaviour::GWSCalculateTSPRouteBehaviour() : GWSBehaviour(){
+GWSCalculateTSPRouteBehaviour::GWSCalculateTSPRouteBehaviour() : Behaviour(){
 
 }
 

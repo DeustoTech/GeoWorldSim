@@ -5,7 +5,10 @@
 #include "../../app/App.h"
 #include <QObject>
 
-class ListenToMessagesBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class ListenToMessagesBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -25,5 +28,8 @@ private slots:
 public:
     QList< QJsonObject > received_pending_messages;
 };
+
+}
+}
 
 #endif // LISTENTOMESSAGESBEHAVIOUR_H

@@ -41,13 +41,13 @@ HEADERS += \
         # SKILLS
     ../../skill/Skill.h \
     ../../skill/move/MoveSkill.h \
-    ../../skill/move/MoveThroughRouteSkill.h \
+    ../../skill/move/MoveThroughNetworkSkill.h \
         # BEHAVIOURS
     ../../behaviour/Behaviour.h \
     ../../behaviour/information/SendEntitySnapshotBehaviour.h \
-    ../../behaviour/property/SetEntityPropertyBehaviour.h \
+    ../../behaviour/property/SetPropertyBehaviour.h \
     ../../behaviour/move/MoveBehaviour.h \
-    ../../behaviour/move/MoveThroughRouteBehaviour.h \
+    ../../behaviour/move/MoveThroughNetworkBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.h \
         # UTILS
@@ -66,10 +66,10 @@ HEADERS += \
     ../../util/geometry/GeometryComparators.h \
     ../../util/geometry/GeometryTransformators.h \
     ../../util/geometry/GeometryGetters.h \
-    ../../util/distributed/ExternalCommunicator.h \
-    ../../util/distributed/ExternalListener.h \
-    ../../util/distributed/ExternalPublisher.h \
-    ../../util/api/APIDriver.h \
+    ../../util/network/WebSocketDriver.h \
+    ../../util/network/ListenerWebSocket.h \
+    ../../util/network/PublisherWebSocket.h \
+    ../../util/network/HttpDriver.h \
     ../../util/datasource/DatasourceReader.h \
     ../../util/datasource/EntityGeneratorDatasource.h \
     ../../util/routing/EdgeVisitor.hpp \
@@ -116,13 +116,13 @@ SOURCES += main.cpp \
         # SKILLS
     ../../skill/Skill.cpp \
     ../../skill/move/MoveSkill.cpp \
-    ../../skill/move/MoveThroughRouteSkill.cpp \
+    ../../skill/move/MoveThroughNetworkSkill.cpp \
         # BEHAVIOUR
     ../../behaviour/Behaviour.cpp \
     ../../behaviour/information/SendEntitySnapshotBehaviour.cpp \
-    ../../behaviour/property/SetEntityPropertyBehaviour.cpp \
+    ../../behaviour/property/SetPropertyBehaviour.cpp \
     ../../behaviour/move/MoveBehaviour.cpp \
-    ../../behaviour/move/MoveThroughRouteBehaviour.cpp \
+    ../../behaviour/move/MoveThroughNetworkBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp \
         # UTILS
@@ -130,10 +130,10 @@ SOURCES += main.cpp \
     ../../util/io/log/Logger.cpp \
     ../../util/storage/ObjectStorage.cpp \
     ../../util/storage/GlobalObjectStorage.cpp \
-    ../../util/distributed/ExternalCommunicator.cpp \
-    ../../util/distributed/ExternalListener.cpp \
-    ../../util/distributed/ExternalPublisher.cpp \
-    ../../util/api/APIDriver.cpp \
+    ../../util/network/WebSocketDriver.cpp \
+    ../../util/network/ListenerWebSocket.cpp \
+    ../../util/network/PublisherWebSocket.cpp \
+    ../../util/network/HttpDriver.cpp \
     ../../util/datasource/DatasourceReader.cpp \
     ../../util/datasource/EntityGeneratorDatasource.cpp \
     ../../util/routing/Routing.cpp \

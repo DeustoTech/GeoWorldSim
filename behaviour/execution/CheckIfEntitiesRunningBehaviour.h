@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class CheckIfEntitiesRunningBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class CheckIfEntitiesRunningBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -19,5 +22,8 @@ public:
 private slots:
     virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // CHECKIFENTITIESRUNNINGBEHAVIOUR_H

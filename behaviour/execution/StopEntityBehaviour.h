@@ -6,7 +6,6 @@
 namespace geoworldsim {
 namespace behaviour {
 
-
 class StopEntityBehaviour : public Behaviour
 {
     Q_OBJECT

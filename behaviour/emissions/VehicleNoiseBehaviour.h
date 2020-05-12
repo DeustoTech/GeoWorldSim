@@ -7,7 +7,10 @@
 * https://www.mp.nl/sites/all/files/publicaties/IMA55TR-060821-MP10%20-%20IMAGINE%20Deliverable%20D11.pdf
 **/
 
-class VehicleNoiseBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class VehicleNoiseBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -23,5 +26,8 @@ private slots:
     virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // VEHICLENOISEBEHAVIOUR_H

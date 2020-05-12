@@ -2,18 +2,18 @@
 
 #include <QJsonDocument>
 
-QString CalculateGTAlgRouteBehaviour::GTALG_HOST = "gtalg_host";
-QString CalculateGTAlgRouteBehaviour::DESTINATION_X = "destination_x";
-QString CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
-QString CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
-QString CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
-QString CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
-QString CalculateGTAlgRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::GTALG_HOST = "gtalg_host";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_X = "destination_x";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
 
-QString CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
 
 
-#include "../../util/api/APIDriver.h"
+#include "../../util/network/HttpDriver.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
@@ -22,20 +22,20 @@ QString CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
 #include "../../skill/move/StoreMultiRouteSkill.h"
 
 
-CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : GWSBehaviour(){
+geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : Behaviour(){
 
 }
 
-QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::behave(){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
     // If legs are empty, calculate them through algorithm:
     if ( next_destinations.isEmpty() ){
 
-        GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        const GWSCoordinate& agent_coor = agent_geom.getCentroid();
+        geometry::Geometry agent_geom = geometry::Geometry( agent->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        const geometry::Coordinate& agent_coor = agent_geom.getCentroid();
 
         double from_x = agent_coor.getX();
         double from_y = agent_coor.getY();
@@ -58,14 +58,14 @@ QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
 
         if( !json_value.isNull() ){
 
-            GWSGeometry geom_json = GWSGeometry( json_value.toObject() );
-            const GWSCoordinate& coor_json = geom_json.getCentroid();
+            geometry::Geometry geom_json = geometry::Geometry( json_value.toObject() );
+            const geometry::Coordinate& coor_json = geom_json.getCentroid();
 
             dest_x = coor_json.getX();
             dest_y = coor_json.getY();
         }
 
-        qint64 currentDateTime = GWSTimeEnvironment::globalInstance()->getCurrentDateTime();
+        qint64 currentDateTime = environment::TimeEnvironment::globalInstance()->getCurrentDateTime();
         QDateTime timeStamp = QDateTime::fromMSecsSinceEpoch( currentDateTime );
         QDate date = timeStamp.date();
         QTime time = timeStamp.time();
@@ -96,7 +96,7 @@ QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        GWSAPIDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
+        network::HttpDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
 
                 if( !reply ){
                     agent->decrementBusy();
@@ -133,7 +133,7 @@ QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
                                 QJsonObject leg = v.toObject();
                                 QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"},{"ELECTRIC","Lime"}};
 
-                                GWSCoordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
+                                geometry::Coordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
 
                                 // Additional properties
                                 QJsonObject properties;
@@ -146,7 +146,7 @@ QPair<double, QJsonArray> CalculateGTAlgRouteBehaviour::behave(){
                         }
                         else if ( legs_array.isEmpty() && stop_if_no_route ){
 
-                              GWSExecutionEnvironment::globalInstance()->unregisterEntity( agent );
+                              environment::ExecutionEnvironment::globalInstance()->unregisterEntity( agent );
 
 
                         }

@@ -4,7 +4,12 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../util/geometry/Coordinate.h"
 
-class GWSCalculateTSPRouteBehaviour : public GWSBehaviour
+
+namespace geoworldsim {
+namespace behaviour {
+
+
+class GWSCalculateTSPRouteBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -19,5 +24,8 @@ public:
 protected slots:
     virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // GWSCALCULATETSPROUTEBEHAVIOUR_H

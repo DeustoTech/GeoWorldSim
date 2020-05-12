@@ -5,7 +5,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class CopyPropertyBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class CopyPropertyBehaviour : public Behaviour
 {
     Q_OBJECT
 public:
@@ -18,5 +21,8 @@ public:
 
     virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // COPYPROPERTYBEHAVIOUR_H

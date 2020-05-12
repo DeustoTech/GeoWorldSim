@@ -1,10 +1,10 @@
 #ifndef MOVETHOUGHROUTEINVEHICLEBEHAVIOUR_H
 #define MOVETHOUGHROUTEINVEHICLEBEHAVIOUR_H
 
-#include "../../behaviour/move/MoveThroughRouteBehaviour.h"
+#include "../../behaviour/move/MoveThroughNetworkBehaviour.h"
 #include "../../skill/move/MoveThroughRouteInVehicleSkill.h"
 
-class MoveThroughRouteInVehicleBehaviour : public MoveThroughRouteBehaviour
+class MoveThroughRouteInVehicleBehaviour : public MoveThroughNetworkBehaviour
 {
     Q_OBJECT
 

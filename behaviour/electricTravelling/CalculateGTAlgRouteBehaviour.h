@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class CalculateGTAlgRouteBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class CalculateGTAlgRouteBehaviour : public Behaviour
 {
      Q_OBJECT
 
@@ -26,5 +29,8 @@ private slots:
     virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // CALCULATEGTALGROUTEBEHAVIOUR_H

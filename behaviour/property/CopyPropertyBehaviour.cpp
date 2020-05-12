@@ -3,17 +3,17 @@
 #include "../../app/App.h"
 #include "../../environment/entity_environment/EntityEnvironment.h"
 
-QString CopyPropertyBehaviour::AGENT_ID_TO_COPY_FROM = "agent_id_to_copy_from";
-QString CopyPropertyBehaviour::PROPERTY_NAME_TO_COPY = "property_name";
-QString CopyPropertyBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::CopyPropertyBehaviour::AGENT_ID_TO_COPY_FROM = "agent_id_to_copy_from";
+QString geoworldsim::behaviour::CopyPropertyBehaviour::PROPERTY_NAME_TO_COPY = "property_name";
+QString geoworldsim::behaviour::CopyPropertyBehaviour::NEXTS = "nexts";
 
-CopyPropertyBehaviour::CopyPropertyBehaviour() : GWSBehaviour(){
+geoworldsim::behaviour::CopyPropertyBehaviour::CopyPropertyBehaviour() : Behaviour(){
 
 }
 
-QPair< double , QJsonArray > CopyPropertyBehaviour::behave(){
+QPair< double , QJsonArray > geoworldsim::behaviour::CopyPropertyBehaviour::behave(){
 
-    QSharedPointer<GWSAgent> agent = this->getAgent();
+    QSharedPointer<Entity> agent = this->getEntity();
 
     QString agent_id_to_copy_from = this->getProperty( AGENT_ID_TO_COPY_FROM ).toString();
 
@@ -27,7 +27,7 @@ QPair< double , QJsonArray > CopyPropertyBehaviour::behave(){
 
     QString property_name_to_copy = this->getProperty( PROPERTY_NAME_TO_COPY ).toString();
 
-    QSharedPointer<GWSAgent> copy_agent = GWSAgentEnvironment::globalInstance()->getByUID( agent_id_to_copy_from );
+    QSharedPointer<Entity> copy_agent = environment::EntityEnvironment::globalInstance()->getByUID( agent_id_to_copy_from );
     agent->setProperty( property_name_to_copy , copy_agent->getProperty( property_name_to_copy ) );
 
     // Set next behaviours:

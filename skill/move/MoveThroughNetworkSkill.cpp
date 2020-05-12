@@ -7,18 +7,20 @@
 #include "../../util/geometry/GeometryGetters.h"
 #include "../../util/geometry/GeometryTransformators.h"
 
-QString MoveThroughNetworkSkill::EDGE_CAPACITY_PROP = "capacity";
-QString MoveThroughNetworkSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
-QString MoveThroughNetworkSkill::CURRENT_ROAD_ID = "current_road_id";
-QString MoveThroughNetworkSkill::CURRENT_ROAD_TYPE = "current_road_type";
-QString MoveThroughNetworkSkill::CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
-QString MoveThroughNetworkSkill::STORE_ROUTE_AS = "calculated_route";
+QString geoworldsim::skill::MoveThroughNetworkSkill::EDGE_CAPACITY_PROP = "capacity";
+QString geoworldsim::skill::MoveThroughNetworkSkill::EDGE_INSIDE_AGENT_IDS_PROP = "agents_inside_edge_ids";
+QString geoworldsim::skill::MoveThroughNetworkSkill::CURRENT_ROAD_ID = "current_road_id";
+QString geoworldsim::skill::MoveThroughNetworkSkill::CURRENT_ROAD_TYPE = "current_road_type";
+QString geoworldsim::skill::MoveThroughNetworkSkill::CURRENT_ROAD_MAXSPEED = "current_road_maxspeed";
+QString geoworldsim::skill::MoveThroughNetworkSkill::STORE_ROUTE_AS = "calculated_route";
 
-MoveThroughNetworkSkill::MoveThroughNetworkSkill() : MoveSkill(){
+using namespace geoworldsim;
+
+geoworldsim::skill::MoveThroughNetworkSkill::MoveThroughNetworkSkill() : MoveSkill(){
     //this->setProperty( SKILL_NETWORK_TYPE_PROP , "GWSAgent" );
 }
 
-MoveThroughNetworkSkill::~MoveThroughNetworkSkill(){
+geoworldsim::skill::MoveThroughNetworkSkill::~MoveThroughNetworkSkill(){
 }
 
 
@@ -26,20 +28,20 @@ MoveThroughNetworkSkill::~MoveThroughNetworkSkill(){
  GETTERS
 **********************************************************************/
 
-QSharedPointer<GWSEntity> MoveThroughNetworkSkill::getCurrentEdge() const{
+QSharedPointer<Entity> geoworldsim::skill::MoveThroughNetworkSkill::getCurrentEdge() const{
     if( !this->pending_route_edges.isEmpty() ){
         return this->pending_route_edges.at( 0 );
     }
     return Q_NULLPTR;
 }
 
-GWSGeometry MoveThroughNetworkSkill::getCurrentMovingTowards() const{
+geometry::Geometry geoworldsim::skill::MoveThroughNetworkSkill::getCurrentMovingTowards() const{
 
     if( !this->pending_edge_coordinates.isEmpty() ){
-        GWSCoordinate c = this->pending_edge_coordinates.at( 0 );
-        return GWSGeometry( c );
+        geometry::Coordinate c = this->pending_edge_coordinates.at( 0 );
+        return geometry::Geometry( c );
     }
-    return GWSGeometry();
+    return geometry::Geometry();
 }
 
 
@@ -47,11 +49,11 @@ GWSGeometry MoveThroughNetworkSkill::getCurrentMovingTowards() const{
  METHODS
 **********************************************************************/
 
-void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const GWSSpeedUnit &movement_speed, GWSGeometry &route_destination_geom, QString &graph_type){
+void geoworldsim::skill::MoveThroughNetworkSkill::move(const unit::TimeUnit &movement_duration, const unit::SpeedUnit &movement_speed, geometry::Geometry &route_destination_geom, QString &graph_type){
 
     // Extract current coordinates of Skilled GWSAgent
-    QSharedPointer<GWSEntity> agent = this->getEntity();
-    GWSGeometry agent_geom = GWSGeometry( agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    QSharedPointer<Entity> agent = this->getEntity();
+    geometry::Geometry agent_geom = geometry::Geometry( agent->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
     // Reset travelling road
     agent->setProperty( CURRENT_ROAD_ID , QJsonValue::Null );
@@ -68,27 +70,27 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
         return;
     }
 
-    GWSGeometry move_to = GWSGeometry( route_destination_geom );
+    geometry::Geometry move_to = geometry::Geometry( route_destination_geom );
 
     // Extract destination coordinates
-    GWSCoordinate current_coor = agent_geom.getCentroid();
-    GWSCoordinate route_destination_coor = route_destination_geom.getCentroid();
+    geometry::Coordinate current_coor = agent_geom.getCentroid();
+    geometry::Coordinate route_destination_coor = route_destination_geom.getCentroid();
 
     if( this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ){
 
         // Generate pending route
-        if( graph_type.isEmpty() ){ graph_type = GWSEntity::staticMetaObject.className(); }
-        QStringList agent_ids = GWSNetworkEnvironment::globalInstance()->getShortestPath( current_coor , route_destination_coor , graph_type );
+        if( graph_type.isEmpty() ){ graph_type = Entity::staticMetaObject.className(); }
+        QStringList agent_ids = environment::NetworkEnvironment::globalInstance()->getShortestPath( current_coor , route_destination_coor , graph_type );
 
         if( !agent_ids.isEmpty() ){
-            this->pending_route_edges = GWSEntityEnvironment::globalInstance()->getByUIDS( agent_ids );
+            this->pending_route_edges = environment::EntityEnvironment::globalInstance()->getByUIDS( agent_ids );
         }
 
         // If calculated a route whose first point was already calculated in a previous call to this method,
         // it means we are running in circles
         if( !this->pending_route_edges.isEmpty() ){
 
-           GWSCoordinate new_route_start = GWSNetworkEdge( this->pending_route_edges.at( 0 )->getProperty( GWSNetworkEnvironment::EDGE_PROP ).toObject() ).getFromCoordinate();
+           geometry::Coordinate new_route_start = graph::NetworkEdge( this->pending_route_edges.at( 0 )->getProperty( environment::NetworkEnvironment::EDGE_PROP ).toObject() ).getFromCoordinate();
            if( new_route_start == this->last_route_started_from ){
                 this->pending_route_edges.clear();
             } else {
@@ -99,9 +101,9 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
             QJsonObject geojson;
             geojson.insert( "type" , "LineString" );
             QJsonArray coordinates;
-            foreach (QSharedPointer<GWSEntity> edge , this->pending_route_edges) {
-                GWSGeometry edge_geom = GWSGeometry( edge->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-                foreach( GWSCoordinate c , GWSGeometryGetters::getCoordinates( edge_geom ) ){
+            foreach (QSharedPointer<Entity> edge , this->pending_route_edges) {
+                geometry::Geometry edge_geom = geometry::Geometry( edge->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+                foreach( geometry::Coordinate c , geometry::GeometryGetters::getCoordinates( edge_geom ) ){
                     coordinates.append( QJsonArray( { c.getX() , c.getY() , c.getZ() } ) );
                 }
             }
@@ -116,14 +118,14 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
     if( this->pending_route_edges.isEmpty() ){
 
         // Pending time to reach destination can be higher than the duration requested.
-        GWSLengthUnit pending_distance = current_coor.getDistance( route_destination_coor );
-        GWSTimeUnit pending_time = pending_distance.number() / movement_speed.number(); // Time needed to reach route_destination at current speed
+        unit::LengthUnit pending_distance = current_coor.getDistance( route_destination_coor );
+        unit::TimeUnit pending_time = pending_distance.number() / movement_speed.number(); // Time needed to reach route_destination at current speed
         MoveSkill::move( qMin( pending_time , movement_duration ), movement_speed , move_to );
         return;
     }
 
     // If pending_route_edges is not empty, we are moving through the pos(0) edge
-    QSharedPointer<GWSEntity> current_edge_agent = this->getCurrentEdge();
+    QSharedPointer<Entity> current_edge_agent = this->getCurrentEdge();
     agent->setProperty( CURRENT_ROAD_ID , current_edge_agent->getUID() );
     agent->setProperty( CURRENT_ROAD_TYPE , current_edge_agent->getProperty( "type" ) );
     agent->setProperty( CURRENT_ROAD_MAXSPEED , current_edge_agent->getProperty( MoveSkill::MAX_SPEED ) );
@@ -131,10 +133,10 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
     // Continue following coordinates
     if ( !this->pending_edge_coordinates.isEmpty() ){
 
-        move_to = GWSGeometry( this->pending_edge_coordinates.at( 0 ) );
+        move_to = geometry::Geometry( this->pending_edge_coordinates.at( 0 ) );
 
         // Get next real edge geometry's coordinate (not the ones from the edge), and move to them
-        if( agent_geom.getDistance( move_to ) < GWSLengthUnit( 0.5 ) ){
+        if( agent_geom.getDistance( move_to ) < unit::LengthUnit( 0.5 ) ){
             this->pending_edge_coordinates.removeAt( 0 );
         }
 
@@ -148,9 +150,9 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
 
     if( !this->pending_route_edges.isEmpty() && this->pending_edge_coordinates.isEmpty() ) {
 
-        GWSGeometry current_edge_agent_geometry = GWSGeometry( current_edge_agent->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
-        current_edge_agent_geometry = GWSGeometryTransformators::transformSimplify( current_edge_agent_geometry , 0.0001 );
-        this->pending_edge_coordinates = GWSGeometryGetters::getCoordinates( current_edge_agent_geometry );
+        geometry::Geometry current_edge_agent_geometry = geometry::Geometry( current_edge_agent->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        current_edge_agent_geometry = geometry::GeometryTransformators::transformSimplify( current_edge_agent_geometry , 0.0001 );
+        this->pending_edge_coordinates = geometry::GeometryGetters::getCoordinates( current_edge_agent_geometry );
 
         // Set destination to next coordinate
         if ( !this->pending_edge_coordinates.isEmpty() ){
@@ -159,7 +161,7 @@ void MoveThroughNetworkSkill::move(const GWSTimeUnit &movement_duration, const G
                 this->pending_edge_coordinates.removeAt( 0 );
             }
 
-            move_to = GWSGeometry( this->pending_edge_coordinates.at( 0 ) );
+            move_to = geometry::Geometry( this->pending_edge_coordinates.at( 0 ) );
         }
     }
 

@@ -5,6 +5,9 @@
 #include "../../environment/network_environment/NetworkEdge.h"
 #include "../../skill/move/MoveSkill.h"
 
+namespace geoworldsim {
+namespace skill {
+
 class MoveThroughNetworkSkill : public MoveSkill
 {
     Q_OBJECT
@@ -22,18 +25,21 @@ public:
     static QString STORE_ROUTE_AS;
 
     // GETTERS
-    QSharedPointer<GWSEntity> getCurrentEdge() const;
-    GWSGeometry getCurrentMovingTowards() const;
+    QSharedPointer<Entity> getCurrentEdge() const;
+    geometry::Geometry getCurrentMovingTowards() const;
 
     // METHODS
-    virtual void move( const GWSTimeUnit &movement_duration , const GWSSpeedUnit &movement_speed , GWSGeometry &route_destination_geom , QString &graph_type );
+    virtual void move( const unit::TimeUnit &movement_duration , const unit::SpeedUnit &movement_speed , geometry::Geometry &route_destination_geom , QString &graph_type );
 
 protected:
 
-    QList< QSharedPointer<GWSEntity> > pending_route_edges;
-    QList< GWSCoordinate > pending_edge_coordinates;
-    GWSCoordinate last_route_started_from;
+    QList< QSharedPointer<Entity> > pending_route_edges;
+    QList< geometry::Coordinate > pending_edge_coordinates;
+    geometry::Coordinate last_route_started_from;
 
 };
+
+}
+}
 
 #endif // MOVETHROUGHNETWORKSKILL_H

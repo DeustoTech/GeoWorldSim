@@ -3,7 +3,10 @@
 
 #include "../../behaviour/Behaviour.h"
 
-class SetNextRouteDestinationBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class SetNextRouteDestinationBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -17,5 +20,8 @@ public:
 protected slots:
      virtual QPair< double , QJsonArray > behave();
 };
+
+}
+}
 
 #endif // SETNEXTROUTEDESTINATIONBEHAVIOUR_H

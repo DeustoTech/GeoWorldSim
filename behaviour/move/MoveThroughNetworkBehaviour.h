@@ -3,6 +3,10 @@
 
 #include "../../behaviour/move/MoveBehaviour.h"
 
+
+namespace geoworldsim {
+namespace behaviour {
+
 class MoveThroughNetworkBehaviour : public MoveBehaviour
 {
     Q_OBJECT
@@ -25,6 +29,9 @@ protected:
     virtual void afterCreateHook();
 
 };
+
+}
+}
 
 #endif // MOVETHROUGHNETWORKBEHAVIOUR_H
 

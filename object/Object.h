@@ -66,8 +66,8 @@ public:
 protected:
 
     // HOOKS
-    virtual void afterCreateHook(){};
-    virtual void beforeDestroyHook(){};
+    virtual void afterCreateHook(){}
+    virtual void beforeDestroyHook(){}
 
 private:
 

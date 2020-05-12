@@ -5,8 +5,10 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../util/grid/Grid.h"
 
+namespace geoworldsim {
+namespace behaviour {
 
-class SendPropertyStatisticsBehaviour : public GWSBehaviour
+class SendPropertyStatisticsBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -33,11 +35,13 @@ private:
 
     // STORAGES
     QJsonValue accumulated_total;
-    GWSGrid* accumulated_grid = Q_NULLPTR;
+    grid::GWSGrid* accumulated_grid = Q_NULLPTR;
 
-    QList<GWSCoordinate> previous_sent_coordinates;
+    QList<geometry::Coordinate> previous_sent_coordinates;
     QStringList previous_sent_coordinates_ids;
 
 };
+
+}}
 
 #endif // GWSPROPERTYSTATISTICSBEHAVIOUR_H
