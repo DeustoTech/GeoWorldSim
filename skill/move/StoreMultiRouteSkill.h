@@ -5,12 +5,15 @@
 #include "../../util/geometry/Geometry.h"
 #include "../../util/geometry/Coordinate.h"
 
-class GWSStoreMultiRouteSkill : public GWSSkill
+namespace geoworldsim {
+namespace skill{
+
+class StoreMultiRouteSkill : public Skill
 {
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit GWSStoreMultiRouteSkill();
+    Q_INVOKABLE explicit StoreMultiRouteSkill();
 
     // PROPERTIES
     static QString STORE_NEXT_DESTINATION;
@@ -20,12 +23,15 @@ public:
 
     // METHODS
     void addDestination( const QString& agent_id , const QJsonObject& extra_properties = QJsonObject() );
-    void addDestination( const GWSCoordinate& coor , const QJsonObject& extra_properties = QJsonObject() );
-    void addDestination( const GWSGeometry& geom , const QJsonObject& extra_properties = QJsonObject() );
+    void addDestination( const geometry::Coordinate& coor , const QJsonObject& extra_properties = QJsonObject() );
+    void addDestination( const geometry::Geometry& geom , const QJsonObject& extra_properties = QJsonObject() );
 
 private:
     void addDestination( const QJsonObject& geojson , const QJsonObject& extra_properties = QJsonObject() );
 
 };
+
+}
+}
 
 #endif // GWSSTOREMULTIROUTESKILL_H

@@ -29,7 +29,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CheckIfEntitiesRunningBehaviou
 
         // Check if running
         quint64 current_datetime = environment::TimeEnvironment::globalInstance()->getCurrentDateTime();
-        quint64 agent_datetime = a->getProperty( environment::Environment::INTERNAL_TIME_PROP ).toDouble();
+        quint64 agent_datetime = a->getProperty( environment::TimeEnvironment::INTERNAL_TIME_PROP ).toDouble();
         if( agent_datetime > 0 && current_datetime <= agent_datetime && a->getProperty( environment::ExecutionEnvironment::ENTITY_RUNNING_PROP ).toBool() ){
 
             // Return true

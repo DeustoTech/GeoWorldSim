@@ -35,7 +35,7 @@ private:
 
     // STORAGES
     QJsonValue accumulated_total;
-    grid::GWSGrid* accumulated_grid = Q_NULLPTR;
+    grid::Grid* accumulated_grid = Q_NULLPTR;
 
     QList<geometry::Coordinate> previous_sent_coordinates;
     QStringList previous_sent_coordinates_ids;

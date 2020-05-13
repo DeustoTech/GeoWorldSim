@@ -53,11 +53,11 @@ QPair<double, QJsonArray> geoworldsim::behaviour::SendPropertyStatisticsBehaviou
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_STILL_ALIVE ).toArray() );
     }
 
-    grid::GWSGrid instant_grid( bounds , 100 , 100 ,  grid_type );
+    grid::Grid instant_grid( bounds , 100 , 100 ,  grid_type );
 
     // Create accumulated_grid
     if( !this->accumulated_grid ){
-        this->accumulated_grid = new grid::GWSGrid( bounds , 100 , 100 , grid_type );
+        this->accumulated_grid = new grid::Grid( bounds , 100 , 100 , grid_type );
     } else {
         this->accumulated_grid->setBounds( bounds );
     }

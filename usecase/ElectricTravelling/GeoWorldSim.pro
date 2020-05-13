@@ -178,7 +178,8 @@ SOURCES += main.cpp \
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
-unix|win32: LIBS += -llemon
+#unix|win32: LIBS += -llemon
+unix|win32: LIBS += -lemon
 
 #INCLUDE LIBPQ SYSTEM LIBRARY (sudo apt-get install libpq-dev)
 unix|win32: LIBS += -lpq

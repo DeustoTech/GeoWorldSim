@@ -10,7 +10,7 @@
 namespace geoworldsim{
 namespace grid {
 
-class GWSGrid : public QObject {
+class Grid : public QObject {
 
     //[xy]
     //[03 , 13 , 23 , 33]
@@ -19,8 +19,8 @@ class GWSGrid : public QObject {
     //[00 , 10 , 20 , 30]
 
 public:
-    GWSGrid( geometry::Geometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type );
-    ~GWSGrid();
+    Grid( geometry::Geometry bounds , unsigned int x_size , unsigned int y_size , QString grid_type );
+    ~Grid();
 
     // GETTERS
     virtual bool isGridEmpty() const;

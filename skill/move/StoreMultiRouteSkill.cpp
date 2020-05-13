@@ -1,10 +1,10 @@
 #include "StoreMultiRouteSkill.h"
 
-QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION = "next_destination";
-QString GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS = "next_agent_id";
-QString GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS = "pending_route_destinations";
+QString geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION = "next_destination";
+QString geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS = "next_agent_id";
+QString geoworldsim::skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS = "pending_route_destinations";
 
-GWSStoreMultiRouteSkill::GWSStoreMultiRouteSkill(){
+geoworldsim::skill::StoreMultiRouteSkill::StoreMultiRouteSkill(){
 
 }
 
@@ -12,9 +12,9 @@ GWSStoreMultiRouteSkill::GWSStoreMultiRouteSkill(){
  METHODS
 **********************************************************************/
 
-void GWSStoreMultiRouteSkill::addDestination( const QString &agent_id , const QJsonObject& extra_properties ){
+void geoworldsim::skill::StoreMultiRouteSkill::addDestination( const QString &agent_id , const QJsonObject& extra_properties ){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( PENDING_ROUTE_DESTINATIONS ).toArray();
 
     QJsonObject new_destination = extra_properties;
@@ -25,17 +25,17 @@ void GWSStoreMultiRouteSkill::addDestination( const QString &agent_id , const QJ
 }
 
 
-void GWSStoreMultiRouteSkill::addDestination( const GWSGeometry &geom , const QJsonObject& extra_properties ){
+void geoworldsim::skill::StoreMultiRouteSkill::addDestination( const geometry::Geometry &geom , const QJsonObject& extra_properties ){
     this->addDestination( geom.getGeoJSON() , extra_properties );
 }
 
-void GWSStoreMultiRouteSkill::addDestination( const GWSCoordinate &coor , const QJsonObject& extra_properties ){
-    this->addDestination( GWSGeometry( coor ).getGeoJSON() , extra_properties );
+void geoworldsim::skill::StoreMultiRouteSkill::addDestination( const geometry::Coordinate &coor , const QJsonObject& extra_properties ){
+    this->addDestination( geometry::Geometry( coor ).getGeoJSON() , extra_properties );
 }
 
-void GWSStoreMultiRouteSkill::addDestination(const QJsonObject &geojson, const QJsonObject &extra_properties){
+void geoworldsim::skill::StoreMultiRouteSkill::addDestination(const QJsonObject &geojson, const QJsonObject &extra_properties){
 
-    QSharedPointer<GWSEntity> agent = this->getEntity();
+    QSharedPointer<Entity> agent = this->getEntity();
     QJsonArray ordered_destinations = agent->getProperty( PENDING_ROUTE_DESTINATIONS ).toArray();
 
     QJsonObject new_destination = extra_properties;

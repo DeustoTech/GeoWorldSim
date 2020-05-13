@@ -10,7 +10,7 @@
 #include "../../util/geometry/GeometryTransformators.h"
 #include "../../util/geometry/GeometryComparators.h"
 
-GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size , QString grid_type) : QObject(){
+geoworldsim::grid::Grid::Grid(geometry::Geometry bounds, unsigned int x_size, unsigned int y_size , QString grid_type) : QObject(){
 
     this->grid = new QMap< unsigned int , QMap< unsigned int , QJsonValue >* >();
 
@@ -27,20 +27,20 @@ GWSGrid::GWSGrid(GWSGeometry bounds, unsigned int x_size, unsigned int y_size , 
     this->x_size = x_size;
     this->y_size = y_size;
     this->grid_bounds = bounds;
-    this->max_x = GWSGeometryGetters::getGeometryMaxX( this->grid_bounds );
-    this->max_y = GWSGeometryGetters::getGeometryMaxY( this->grid_bounds );
-    this->min_x = GWSGeometryGetters::getGeometryMinX( this->grid_bounds );
-    this->min_y = GWSGeometryGetters::getGeometryMinY( this->grid_bounds );
+    this->max_x = geometry::GeometryGetters::getGeometryMaxX( this->grid_bounds );
+    this->max_y = geometry::GeometryGetters::getGeometryMaxY( this->grid_bounds );
+    this->min_x = geometry::GeometryGetters::getGeometryMinX( this->grid_bounds );
+    this->min_y = geometry::GeometryGetters::getGeometryMinY( this->grid_bounds );
 }
 
-GWSGrid::~GWSGrid(){
+geoworldsim::grid::Grid::~Grid(){
 }
 
 /**********************************************************************
  EXPORTERS
 **********************************************************************/
 
-QJsonObject GWSGrid::getGeoJSON() const{
+QJsonObject geoworldsim::grid::Grid::getGeoJSON() const{
 
     QJsonObject geojson;
     geojson.insert( "type" , "GeometryCollection" );
@@ -76,39 +76,39 @@ QJsonObject GWSGrid::getGeoJSON() const{
  GETTERS
 **********************************************************************/
 
-bool GWSGrid::isGridEmpty() const{
+bool geoworldsim::grid::Grid::isGridEmpty() const{
     return this->grid->isEmpty();
 }
 
-GWSGeometry GWSGrid::getBounds() const{
+geoworldsim::geometry::Geometry geoworldsim::grid::Grid::getBounds() const{
     return this->grid_bounds;
 }
 
-unsigned int GWSGrid::getXSize() const{
+unsigned int geoworldsim::grid::Grid::getXSize() const{
     return this->x_size;
 }
 
-unsigned int GWSGrid::getYSize() const{
+unsigned int geoworldsim::grid::Grid::getYSize() const{
     return this->y_size;
 }
 
-double GWSGrid::getLon( double x ) const{
+double geoworldsim::grid::Grid::getLon( double x ) const{
     return GWSGridCoordinatesConversor::x2lon( x , min_x , max_x , x_size );
 }
 
-double GWSGrid::getLat(double y) const{
+double geoworldsim::grid::Grid::getLat(double y) const{
     return GWSGridCoordinatesConversor::y2lat( y , min_y , max_y , y_size );
 }
 
-double GWSGrid::getMaxValue() const{
+double geoworldsim::grid::Grid::getMaxValue() const{
     return this->max_value;
 }
 
-double GWSGrid::getMinValue() const{
+double geoworldsim::grid::Grid::getMinValue() const{
     return this->min_value;
 }
 
-QJsonValue GWSGrid::getValue( const GWSCoordinate &coor ) const{
+QJsonValue geoworldsim::grid::Grid::getValue( const geometry::Coordinate &coor ) const{
 
     unsigned int x = GWSGridCoordinatesConversor::lon2x( coor.getX() , min_x , max_x , x_size );
     unsigned int y = GWSGridCoordinatesConversor::lat2y( coor.getY() , min_y , max_y , y_size );
@@ -119,8 +119,8 @@ QJsonValue GWSGrid::getValue( const GWSCoordinate &coor ) const{
     return QJsonValue::Null;
 }
 
-QJsonValue GWSGrid::getValue( const GWSGeometry &geom ) const{
-    const GWSCoordinate& centroid = geom.getCentroid();
+QJsonValue geoworldsim::grid::Grid::getValue( const geometry::Geometry &geom ) const{
+    const geometry::Coordinate& centroid = geom.getCentroid();
     return this->getValue( centroid );
 }
 
@@ -150,7 +150,7 @@ QJsonValue GWSGrid::getValue( const GWSGeometry &geom ) const{
  SETTERS
 **********************************************************************/
 
-void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
+void geoworldsim::grid::Grid::addValue( const geometry::Coordinate &coor , const QJsonValue &value ){
 
     if( value.isNull() ){ return; }
 
@@ -190,7 +190,7 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
 
     // The grid cells represent the total value of the cell:
     if ( this->grid_type == "total" || this->grid_type.isEmpty() ){
-        QJsonValue sum = GWSObjectFactory::incrementValue( existing_value , value );
+        QJsonValue sum = ObjectFactory::incrementValue( existing_value , value );
         this->grid->value( x )->insert( y , sum );
         this->max_value = qMax( this->max_value , sum.toDouble() );
         this->min_value = qMin( this->min_value , sum.toDouble() );
@@ -198,26 +198,26 @@ void GWSGrid::addValue( const GWSCoordinate &coor , const QJsonValue &value ){
 
 }
 
-void GWSGrid::addValue( const GWSGeometry &geom , const QJsonValue &value ){
+void geoworldsim::grid::Grid::addValue( const geometry::Geometry &geom , const QJsonValue &value ){
     if( geom.isValid() && !value.isNull() ){
-        const GWSCoordinate& centroid = geom.getCentroid();
+        const geometry::Coordinate& centroid = geom.getCentroid();
         this->addValue( centroid , value );
     }
 }
 
-void GWSGrid::setBounds( const GWSGeometry &bounds ){
+void geoworldsim::grid::Grid::setBounds( const geometry::Geometry &bounds ){
 
     if( this->grid_bounds == bounds ){
         return;
     }
 
-    QMap<GWSCoordinate , QJsonValue > old_values;
+    QMap<geometry::Coordinate , QJsonValue > old_values;
 
     // Before resizing the grid, retrieve the coordinates and values
     if( this->grid_bounds.isValid() ){
         for(unsigned int i = 0 ; i < this->getXSize() ; i++){
             for(unsigned int j = 0 ; j < this->getYSize() ; j++ ){
-                GWSCoordinate coor = GWSCoordinate( this->getLon( i+0.5 ) , this->getLat( j+0.5 ) );
+                geometry::Coordinate coor = geometry::Coordinate( this->getLon( i+0.5 ) , this->getLat( j+0.5 ) );
                 QJsonValue val = this->getValue( coor );
                 if( !val.isNull() ){
                     old_values.insert( coor , val );
@@ -230,13 +230,13 @@ void GWSGrid::setBounds( const GWSGeometry &bounds ){
 
     // Set new bounds
     this->grid_bounds = bounds;
-    this->max_x = GWSGeometryGetters::getGeometryMaxX( this->grid_bounds );
-    this->max_y = GWSGeometryGetters::getGeometryMaxY( this->grid_bounds );
-    this->min_x = GWSGeometryGetters::getGeometryMinX( this->grid_bounds );
-    this->min_y = GWSGeometryGetters::getGeometryMinY( this->grid_bounds );
+    this->max_x = geometry::GeometryGetters::getGeometryMaxX( this->grid_bounds );
+    this->max_y = geometry::GeometryGetters::getGeometryMaxY( this->grid_bounds );
+    this->min_x = geometry::GeometryGetters::getGeometryMinX( this->grid_bounds );
+    this->min_y = geometry::GeometryGetters::getGeometryMinY( this->grid_bounds );
 
     // Put back the old values
-    foreach(GWSCoordinate c , old_values.keys()) {
+    foreach(geometry::Coordinate c , old_values.keys()) {
         this->addValue( c , old_values.value( c ) );
     }
 

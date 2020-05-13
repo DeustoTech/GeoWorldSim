@@ -14,46 +14,46 @@ geoworldsim::environment::GridEnvironment* geoworldsim::environment::GridEnviron
     return &instance;
 }
 
-geoworldsim::environment::GridEnvironment::geoworldsim::environment::GridEnvironment() : GWSEnvironment() {
+geoworldsim::environment::GridEnvironment::GridEnvironment() : Environment() {
     qInfo() << "Grid environment created";
-    GWSEnvironmentsGroup::globalInstance()->addEnvironment( this );
+    environment::EnvironmentsGroup::globalInstance()->addEnvironment( this );
 }
 
-geoworldsim::environment::GridEnvironment::~geoworldsim::environment::GridEnvironment(){
+geoworldsim::environment::GridEnvironment::~GridEnvironment(){
 }
 
 /**********************************************************************
  GETTERS
 **********************************************************************/
 
-const GWSGeometry geoworldsim::environment::GridEnvironment::getBounds() const{
-    GWSGeometry bounds;
-    foreach( QSharedPointer<GWSGrid> t , this->environment_entity_grids.values() ) {
-        bounds = GWSGeometryTransformators::transformToFit( bounds , t->getBounds() );
+const geoworldsim::geometry::Geometry geoworldsim::environment::GridEnvironment::getBounds() const{
+    geometry::Geometry bounds;
+    foreach( QSharedPointer<grid::Grid> t , this->environment_entity_grids.values() ) {
+        bounds = geometry::GeometryTransformators::transformToFit( bounds , t->getBounds() );
     }
     return bounds;
 }
 
-const GWSGeometry geoworldsim::environment::GridEnvironment::getBounds( QString class_name ) const {
-    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
+const geoworldsim::geometry::Geometry geoworldsim::environment::GridEnvironment::getBounds( QString class_name ) const {
+    QSharedPointer<grid::Grid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
     if( grid ){
         return grid->getBounds();
     }
-    return GWSGeometry();
+    return geometry::Geometry();
 }
 
-const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QString class_name , GWSGeometry geom ) const {
-    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
+const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QString class_name , geometry::Geometry geom ) const {
+    QSharedPointer<grid::Grid> grid = this->environment_entity_grids.value( class_name.toStdString() , Q_NULLPTR );
     if( grid ){
         return grid->getValue( geom );
     }
     return QJsonValue::Null;
 }
 
-const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QSharedPointer<GWSEntity> entity ) const {
-    QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( entity->metaObject()->className() , Q_NULLPTR );
+const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QSharedPointer<Entity> entity ) const {
+    QSharedPointer<grid::Grid> grid = this->environment_entity_grids.value( entity->metaObject()->className() , Q_NULLPTR );
     if( grid ){
-        GWSGeometry geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+        geometry::Geometry geom = geometry::Geometry( entity->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
         return grid->getValue( geom );
     }
     return QJsonValue::Null;
@@ -63,13 +63,13 @@ const QJsonValue geoworldsim::environment::GridEnvironment::getValue( QSharedPoi
  PRIVATE
 **********************************************************************/
 
-void geoworldsim::environment::GridEnvironment::registerEntity( QSharedPointer<GWSEntity> entity ){
+void geoworldsim::environment::GridEnvironment::registerEntity( QSharedPointer<Entity> entity ){
 
     if( entity.isNull() || entity->getProperty( GRID_PROP ).isNull() ){
         return;
     }
 
-    GWSEnvironment::registerEntity( entity );
+    environment::Environment::registerEntity( entity );
 
     QJsonObject json = entity->getProperty( GRID_PROP ).toObject();
 
@@ -83,8 +83,8 @@ void geoworldsim::environment::GridEnvironment::registerEntity( QSharedPointer<G
 
 }
 
-void geoworldsim::environment::GridEnvironment::unregisterEntity( QSharedPointer<GWSEntity> entity ){
-    GWSEnvironment::unregisterEntity( entity );
+void geoworldsim::environment::GridEnvironment::unregisterEntity( QSharedPointer<Entity> entity ){
+    environment::Environment::unregisterEntity( entity );
     //this->disconnect( entity.data() , &GWSEntity::entityPropertyChangedSignal , this , &geoworldsim::environment::GridEnvironment::entityPropertyChanged );
 }
 
@@ -93,12 +93,12 @@ void geoworldsim::environment::GridEnvironment::unregisterEntity( QSharedPointer
  PROTECTED
 **********************************************************************/
 
-void geoworldsim::environment::GridEnvironment::upsertValueToGrid( QSharedPointer<GWSEntity> entity , const QJsonValue& value ){
+void geoworldsim::environment::GridEnvironment::upsertValueToGrid( QSharedPointer<Entity> entity , const QJsonValue& value ){
 
-    GWSGeometry entity_geom = GWSGeometry( entity->getProperty( GWSPhysicalEnvironment::GEOMETRY_PROP ).toObject() );
+    geometry::Geometry entity_geom = geometry::Geometry( entity->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
     if( !entity_geom.isValid() ){ return; }
 
-    GWSGeometry bounds = GWSPhysicalEnvironment::globalInstance()->getBounds();
+    geometry::Geometry bounds = environment::PhysicalEnvironment::globalInstance()->getBounds();
 
     foreach (QJsonValue v , entity->getInheritanceFamily() ) {
 
@@ -106,13 +106,13 @@ void geoworldsim::environment::GridEnvironment::upsertValueToGrid( QSharedPointe
         if( family.isEmpty() ){ continue; }
 
         this->mutex.lockForRead();
-        QSharedPointer<GWSGrid> grid = this->environment_entity_grids.value( family.toStdString() , Q_NULLPTR );
+        QSharedPointer<grid::Grid> grid = this->environment_entity_grids.value( family.toStdString() , Q_NULLPTR );
 
         if( !grid ){
             this->mutex.unlock();
 
             this->mutex.lockForWrite();
-            grid = QSharedPointer<GWSGrid>( new GWSGrid( bounds , 1000 , 1000 , "total" ) );
+            grid = QSharedPointer<grid::Grid>( new grid::Grid( bounds , 1000 , 1000 , "total" ) );
             this->environment_entity_grids.insert( family.toStdString() , grid );
         }
         this->mutex.unlock();
@@ -127,7 +127,7 @@ void geoworldsim::environment::GridEnvironment::entityPropertyChanged( QString p
     if( property_name == GRID_PROP ){
         QObject* object = QObject::sender();
         if( !object ){ return; }
-        GWSEntity* entity = dynamic_cast<GWSEntity*>( object );
+        Entity* entity = dynamic_cast<Entity*>( object );
         if( !entity ){ return; }
         this->upsertValueToGrid( entity->getSharedPointer() , entity->getProperty( GRID_PROP ) );
     }

@@ -29,7 +29,7 @@ geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehavio
 QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::behave(){
 
     QSharedPointer<Entity> agent = this->getEntity();
-    QJsonArray next_destinations = agent->getProperty( this->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
+    QJsonArray next_destinations = agent->getProperty( this->getProperty( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
     // If legs are empty, calculate them through algorithm:
     if ( next_destinations.isEmpty() ){
@@ -121,9 +121,9 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::
                         if( !legs_array.isEmpty() ){
 
                             // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
-                            QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
+                            QSharedPointer<skill::StoreMultiRouteSkill> multiroute_skill = agent->getSkill( skill::StoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<skill::StoreMultiRouteSkill>();
                             if( !multiroute_skill ){
-                                multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
+                                multiroute_skill = QSharedPointer<skill::StoreMultiRouteSkill>( new skill::StoreMultiRouteSkill() );
                                 agent->addSkill( multiroute_skill );
                             }
 

@@ -9,12 +9,12 @@ namespace geoworldsim {
 namespace environment {
 
 
-class GWSGridEnvironment : public Environment
+class GridEnvironment : public Environment
 {
     Q_OBJECT
 
 public:
-    static GWSGridEnvironment* globalInstance();
+    static GridEnvironment* globalInstance();
 
     // PROPERTIES
     static QString GRID_PROP;
@@ -35,12 +35,12 @@ protected slots:
     void entityPropertyChanged( QString property_name );
 
 private:
-    GWSGridEnvironment();
-    GWSGridEnvironment(GWSGridEnvironment const&);
-    ~GWSGridEnvironment();
+    GridEnvironment();
+    GridEnvironment(environment::GridEnvironment const&);
+    ~GridEnvironment();
 
     // SPATIAL INDEX
-    QMap< std::string , QSharedPointer<grid::GWSGrid> > environment_entity_grids; // Spatial indexes
+    QMap< std::string , QSharedPointer<grid::Grid> > environment_entity_grids; // Spatial indexes
 
     // Mutex, for avoiding concurrency
     QReadWriteLock mutex;

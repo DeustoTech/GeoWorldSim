@@ -32,7 +32,6 @@
 // Utils
 #include "../../util/parallelism/ParallelismController.h"
 #include "../../util/geometry/Coordinate.h"
-//#include "../../util/distributed/ExternalListener.h"
 #include "../../util/datasource/DatasourceReader.h"
 #include "../../util/datasource/EntityGeneratorDatasource.h"
 #include "../../util/random/UniformDistribution.h"
@@ -79,7 +78,7 @@ int main(int argc, char* argv[])
     environment::NetworkEnvironment::globalInstance();
     environment::TimeEnvironment::globalInstance();
     environment::CommunicationEnvironment::globalInstance();
-    environment::GWSGridEnvironment::globalInstance();
+    environment::GridEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
     ObjectFactory::globalInstance()->registerType( behaviour::MoveThroughNetworkBehaviour::staticMetaObject );
@@ -106,7 +105,7 @@ int main(int argc, char* argv[])
 
              QJsonArray datasources = population.value( "datasources" ).toArray();
 
-             for ( int i = 0; i <  datasources.size() ; ++i ){
+             for ( int i = 0; i < datasources.size() ; ++i ){
 
                  QJsonObject datasource = datasources.at( i ).toObject();
                  QString scenario_id = datasource.value("scenario_id").toString();
@@ -131,7 +130,6 @@ int main(int argc, char* argv[])
                          environment::ExecutionEnvironment::globalInstance()->run();
                      }
                  });
-
              }
          }
 

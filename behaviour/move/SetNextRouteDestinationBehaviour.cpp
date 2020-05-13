@@ -16,7 +16,7 @@ geoworldsim::behaviour::SetNextRouteDestinationBehaviour::SetNextRouteDestinatio
 QPair<double, QJsonArray> geoworldsim::behaviour::SetNextRouteDestinationBehaviour::behave(){
 
     QSharedPointer<Entity> agent = this->getEntity();
-    QJsonArray ordered_destinations = agent->getProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toArray();
+    QJsonArray ordered_destinations = agent->getProperty( geoworldsim::skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toArray();
 
     // Finished following destinations
     if ( ordered_destinations.isEmpty() ){
@@ -26,7 +26,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::SetNextRouteDestinationBehavio
     // Have some pending destination
     QJsonValue next_destination = ordered_destinations.at( 0 );
     ordered_destinations.removeAt( 0 );
-    agent->setProperty( GWSStoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS , ordered_destinations );
+    agent->setProperty( geoworldsim::skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS , ordered_destinations );
 
     // We have the next agent_id
     if( next_destination.type() == QJsonValue::String ){
@@ -37,8 +37,8 @@ QPair<double, QJsonArray> geoworldsim::behaviour::SetNextRouteDestinationBehavio
         geometry::Geometry next_destination_agent_geom= geometry::Geometry( destination_agent->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
         agent->setProperties( QJsonObject({
-            { this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id },
-            { this->getProperty( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ).toString( GWSStoreMultiRouteSkill::STORE_NEXT_DESTINATION ) , next_destination_agent_geom.getGeoJSON() }
+            { this->getProperty( geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ).toString(  geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION_AGENT_ID_AS ) , next_destination_agent_id },
+            { this->getProperty( geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION ).toString(  geoworldsim::skill::StoreMultiRouteSkill::STORE_NEXT_DESTINATION ) , next_destination_agent_geom.getGeoJSON() }
         }) );
 
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_WHILE_PENDING_ROUTE ).toArray() );
