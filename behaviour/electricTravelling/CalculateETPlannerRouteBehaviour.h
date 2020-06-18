@@ -1,21 +1,20 @@
-#ifndef CALCULATEGTALGROUTEBEHAVIOUR_H
-#define CALCULATEGTALGROUTEBEHAVIOUR_H
+#ifndef CALCULATEETPLANNERROUTEBEHAVIOUR_H
+#define CALCULATEETPLANNERROUTEBEHAVIOUR_H
 
 #include "../../behaviour/Behaviour.h"
 
 namespace geoworldsim {
 namespace behaviour{
 
-class CalculateGTAlgRouteBehaviour : public Behaviour
-{
-     Q_OBJECT
+class CalculateETPlannerRouteBehaviour : public Behaviour
+{    
+    Q_OBJECT
 
 public:
-
-    Q_INVOKABLE explicit CalculateGTAlgRouteBehaviour();
+     Q_INVOKABLE explicit CalculateETPlannerRouteBehaviour();
 
     // PROPERTIES
-    static QString GTALG_HOST;
+    static QString ETPLANNER_HOST;
     static QString DESTINATION_X;
     static QString DESTINATION_Y;
     static QString DESTINATION_JSON;
@@ -27,10 +26,9 @@ public:
 
 private slots:
     virtual QPair< double , QJsonArray > behave();
-
 };
 
 }
 }
 
-#endif // CALCULATEGTALGROUTEBEHAVIOUR_H
+#endif // CALCULATEETPLANNERROUTEBEHAVIOUR_H

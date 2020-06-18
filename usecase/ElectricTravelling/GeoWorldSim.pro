@@ -56,7 +56,6 @@ HEADERS += \
     ../../util/storage/ObjectStorage.h \
     ../../util/storage/GlobalObjectStorage.h \
     ../../util/units/Units.h \
-    ../../util/ai/InAPItelligence.h \
     ../../util/svm/Svm.h \
             ## GEOMETRIES
     ../../util/geometry/Geometry.h \
@@ -83,6 +82,7 @@ HEADERS += \
     ../../util/ai/Intelligence.h \
             ## RANDOM
     ../../util/random/UniformDistribution.h \
+    ../../util/random/RouletteWheel.h \
             ## DATASOURCES
         # ENVIRONMENT
     ../../environment/Environment.h \
@@ -101,9 +101,10 @@ HEADERS += \
     ../../behaviour/emissions/PolluteBehaviour.h \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.h \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.h \
+    ../../behaviour/electricTravelling/CalculateETPlannerRouteBehaviour.h \
     ../../skill/move/StoreMultiRouteSkill.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
-    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h \
+    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -156,6 +157,7 @@ SOURCES += main.cpp \
     ../../util/svm/Svm.cpp \
             ## RANDOM
     ../../util/random/UniformDistribution.cpp \
+    ../../util/random/RouletteWheel.cpp \
         # ENVIRONMENT
     ../../environment/Environment.cpp \
     ../../environment/EnvironmentsGroup.cpp \
@@ -172,6 +174,7 @@ SOURCES += main.cpp \
     ../../behaviour/emissions/PolluteBehaviour.cpp \
     ../../behaviour/move/SetNextRouteDestinationBehaviour.cpp \
     ../../behaviour/electricTravelling/CalculateGTAlgRouteBehaviour.cpp \
+    ../../behaviour/electricTravelling/CalculateETPlannerRouteBehaviour.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
     ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.cpp

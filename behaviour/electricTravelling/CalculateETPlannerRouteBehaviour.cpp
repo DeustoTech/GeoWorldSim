@@ -1,16 +1,16 @@
-#include "CalculateGTAlgRouteBehaviour.h"
+#include "CalculateETPlannerRouteBehaviour.h"
 
 #include <QJsonDocument>
 
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::GTALG_HOST = "gtalg_host";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_X = "destination_x";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_Y = "destination_y";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::DESTINATION_JSON  = "destination_json";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::TRANSPORT_MODE = "transport_mode";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::OPTIMIZATION = "route_optimization";
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::ETPLANNER_HOST = "etplanner_host";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_X = "destination_x";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_Y = "destination_y";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_JSON  = "destination_json";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::TRANSPORT_MODE = "transport_mode";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::OPTIMIZATION = "route_optimization";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
 
-QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::NEXTS = "nexts";
 
 
 #include "../../util/network/HttpDriver.h"
@@ -22,11 +22,11 @@ QString geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::NEXTS = "nexts";
 #include "../../skill/move/StoreMultiRouteSkill.h"
 
 
-geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::CalculateGTAlgRouteBehaviour() : Behaviour(){
+geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::CalculateETPlannerRouteBehaviour() : Behaviour(){
 
 }
 
-QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::behave(){
+QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::behave(){
 
     QSharedPointer<Entity> agent = this->getEntity();
     QJsonArray next_destinations = agent->getProperty( this->getProperty( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
@@ -71,9 +71,10 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::
         QTime time = timeStamp.time();
 
         // url type to query:
-        QString gtalg_host = this->getProperty( "gtalg_host" ).toString( "http://157.158.135.195:8081/gtalg/routers/default" );
+        QString etplanner_host = this->getProperty( "etplanner_host" ).toString( "http://157.158.135.201:8080/etplanner/routers" );
+        QString etplanner_pilot = this->getProperty("etplanner_pilot").toString( "bilbao" ).toLower();
 
-        QString gtUrl = QString( gtalg_host + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
+        QString gtUrl = QString( etplanner_host + "/" + etplanner_pilot + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
                 .arg( from_y ).arg( from_x )
                 .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
@@ -82,18 +83,6 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateGTAlgRouteBehaviour::
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
         qDebug() << gtUrl;
-
-        // TEST NO GTALG
-
-        /*QSharedPointer<GWSStoreMultiRouteSkill> multiroute_skill = agent->getSkill( GWSStoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<GWSStoreMultiRouteSkill>();
-        if( !multiroute_skill ){
-            multiroute_skill = QSharedPointer<GWSStoreMultiRouteSkill>( new GWSStoreMultiRouteSkill() );
-            agent->addSkill( multiroute_skill );
-        }
-
-        multiroute_skill->addDestination( GWSCoordinate (dest_x , dest_y) , QJsonObject({ { TRANSPORT_MODE , "CAR" } , { "color" , "blue" }}) );
-        return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
-        */
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 

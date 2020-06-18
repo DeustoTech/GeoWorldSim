@@ -4,7 +4,10 @@
 #include <QObject>
 #include <QList>
 
-#include "utils/random_generators/UniformDistribution.h"
+#include "../../util/random/UniformDistribution.h"
+
+namespace geoworldsim {
+namespace random {
 
 class RouletteWheel : public QObject
 {
@@ -30,5 +33,8 @@ private:
     QList<double> ordered_frequencies; // frequencies ordered in ascending order
     double sum_frequencies;
 };
+
+}
+}
 
 #endif // ROULETEWHEEL_H

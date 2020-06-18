@@ -1,8 +1,14 @@
 #ifndef UNIFORMDISTRIBUTION_H
 #define UNIFORMDISTRIBUTION_H
 
-class UniformDistribution
+#include <QObject>
+
+namespace geoworldsim {
+namespace random {
+
+class UniformDistribution : public QObject
 {
+    Q_OBJECT
 
 public:
     UniformDistribution();
@@ -10,5 +16,8 @@ public:
     // METHODS
     static double uniformDistribution();
 };
+
+}
+}
 
 #endif // UNIFORMDISTRIBUTION_H

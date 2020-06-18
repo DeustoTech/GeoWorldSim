@@ -4,13 +4,13 @@
 #include <QtMath>
 #include <cmath>
 
-RouletteWheel::RouletteWheel(QObject *parent) : QObject(parent) {
+geoworldsim::random::RouletteWheel::RouletteWheel(QObject *parent) : QObject(parent) {
     this->sum_frequencies = 0;
     this->ordered_frequencies.empty();
     this->roulette.empty();
 }
 
-RouletteWheel::~RouletteWheel() {
+geoworldsim::random::RouletteWheel::~RouletteWheel() {
 }
 
 
@@ -18,7 +18,7 @@ RouletteWheel::~RouletteWheel() {
  GETTERS
 **********************************************************************/
 
-bool RouletteWheel::isEmpty(){
+bool geoworldsim::random::RouletteWheel::isEmpty(){
     return this->roulette.isEmpty();
 }
 
@@ -32,7 +32,7 @@ bool RouletteWheel::isEmpty(){
  * @param frequency
  * @param obj
  */
-void RouletteWheel::addElement( QObject* obj, double frequency ){
+void geoworldsim::random::RouletteWheel::addElement( QObject* obj, double frequency ){
     if( frequency == NAN || frequency == INFINITY || frequency != frequency ){
         return;
     }
@@ -67,8 +67,8 @@ void RouletteWheel::addElement( QObject* obj, double frequency ){
  * @brief RouletteWheel::getElement
  * @return
  */
-QObject* RouletteWheel::getElement(){
-    double value = UniformDistribution::uniformDistribution(); // Returns from 0 to 1
+QObject* geoworldsim::random::RouletteWheel::getElement(){
+    double value = geoworldsim::random::UniformDistribution::uniformDistribution(); // Returns from 0 to 1
     return getElement( value );
 }
 
@@ -79,7 +79,7 @@ QObject* RouletteWheel::getElement(){
  * @param value
  * @return
  */
-QObject* RouletteWheel::getElement( double value ){
+QObject* geoworldsim::random::RouletteWheel::getElement( double value ){
     double accumulative = 0;
     value = value * this->sum_frequencies;
 
