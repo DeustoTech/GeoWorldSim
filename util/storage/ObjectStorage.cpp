@@ -5,6 +5,8 @@
 #include "../parallelism/ParallelismController.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 
+#include <QDebug>
+
 geoworldsim::storage::ObjectStorage::ObjectStorage() : QObject(){
     this->connect( this , &geoworldsim::storage::ObjectStorage::addObjectSignal , this , &geoworldsim::storage::ObjectStorage::addObject );
     this->connect( this , &geoworldsim::storage::ObjectStorage::removeObjectSignal , this , &geoworldsim::storage::ObjectStorage::removeObject );
@@ -264,7 +266,7 @@ QList< QSharedPointer< QObject > > geoworldsim::storage::ObjectStorage::getMatch
     return matches;
 }
 
-const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass( const QString &class_name ) const{
+const QList< QSharedPointer<QObject> >* geoworldsim::storage::ObjectStorage::getByClass( const QString &class_name ) const{   
     return this->objects.value( class_name.toStdString() );
 }
 

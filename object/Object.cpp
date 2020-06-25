@@ -161,7 +161,7 @@ QJsonValue geoworldsim::Object::getProperty( const QString &name ) const{
     {
         this->mutex.lockForRead();
         QJsonValue v = this->properties->value( name );
-        this->mutex.unlock();
+        this->mutex.unlock();    
         return ( v.isUndefined() || v.isNull() ) ? QJsonValue::Null : v;
     }
 }

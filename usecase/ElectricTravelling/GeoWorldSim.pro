@@ -104,7 +104,8 @@ HEADERS += \
     ../../behaviour/electricTravelling/CalculateETPlannerRouteBehaviour.h \
     ../../skill/move/StoreMultiRouteSkill.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
-    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h
+    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h \
+    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -177,7 +178,8 @@ SOURCES += main.cpp \
     ../../behaviour/electricTravelling/CalculateETPlannerRouteBehaviour.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
-    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.cpp
+    ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.cpp \
+    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)

@@ -29,6 +29,7 @@ geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::CalculateETPlannerRout
 QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::behave(){
 
     QSharedPointer<Entity> agent = this->getEntity();
+
     QJsonArray next_destinations = agent->getProperty( this->getProperty( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ).toString( skill::StoreMultiRouteSkill::PENDING_ROUTE_DESTINATIONS ) ).toArray();
 
     // If legs are empty, calculate them through algorithm:
@@ -79,9 +80,10 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                 .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
                 .arg( date.toString( "MM-dd-yyyy" ) )
-                .arg( this->getProperty( TRANSPORT_MODE ).toString() )
+                .arg( "CAR" )
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
+        qDebug() << agent->getProperty("vehicle_subtype");
         qDebug() << gtUrl;
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
@@ -110,7 +112,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
 
                         if( !legs_array.isEmpty() ){
 
-                            // Prepare the next_destinations as required by GWSStoreMultiRouteSkill
+                            // Prepare the next_destinations as required by StoreMultiRouteSkill
                             QSharedPointer<skill::StoreMultiRouteSkill> multiroute_skill = agent->getSkill( skill::StoreMultiRouteSkill::staticMetaObject.className() , true ).dynamicCast<skill::StoreMultiRouteSkill>();
                             if( !multiroute_skill ){
                                 multiroute_skill = QSharedPointer<skill::StoreMultiRouteSkill>( new skill::StoreMultiRouteSkill() );
@@ -137,8 +139,6 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                         else if ( legs_array.isEmpty() && stop_if_no_route ){
 
                               environment::ExecutionEnvironment::globalInstance()->unregisterEntity( agent );
-
-
                         }
                     }
 

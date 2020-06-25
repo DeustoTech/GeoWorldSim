@@ -27,7 +27,7 @@ bool geoworldsim::random::RouletteWheel::isEmpty(){
 **********************************************************************/
 
 /**
- * Adds element to QMap of <Object, frequencies>
+ * Adds element to QList of <Object, frequencies>
  * @brief RouletteWheel::addElement
  * @param frequency
  * @param obj

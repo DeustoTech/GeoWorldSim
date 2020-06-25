@@ -41,9 +41,6 @@
 #include "../../util/svm/Svm.h"
 #include "../../util/network/ListenerWebSocket.h"
 
-
-
-
 // Behaviours
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
@@ -58,6 +55,7 @@
 #include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
 #include "../../behaviour/electricTravelling/CalculateETPlannerRouteBehaviour.h"
+#include "../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.h"
 #include "../../behaviour/move/SetNextRouteDestinationBehaviour.h"
 #include "../../behaviour/emissions/PolluteBehaviour.h"
 #include "../../behaviour/accessibility/FindRoutingClosestBehaviour.h"
@@ -90,6 +88,7 @@ int main(int argc, char* argv[])
     ObjectFactory::globalInstance()->registerType( behaviour::VehicleNoiseBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::StopEntityBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::CalculateETPlannerRouteBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::AssignVehicleSubtypeBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::SetNextRouteDestinationBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::PolluteBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::CheckIfEntitiesRunningBehaviour::staticMetaObject );
@@ -106,9 +105,8 @@ int main(int argc, char* argv[])
                     QJsonObject({ { "message" , QString("Data download took %1 seconds. Starting execution soon").arg( download_started_time.secsTo( QDateTime::currentDateTime() ) ) } }) , geoworldsim::App::globalInstance()->getAppId() + "-LOG" );
 
         geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
-
     });
-    geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
+//    geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:

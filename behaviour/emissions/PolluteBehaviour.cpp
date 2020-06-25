@@ -11,7 +11,7 @@ QString geoworldsim::behaviour::PolluteBehaviour::INPUT_POLLUTANT_TYPES = "input
 QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_GRADIENT = "input_current_road_gradient";
 QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_TYPE = "input_current_road_type";
 QString geoworldsim::behaviour::PolluteBehaviour::INPUT_CURRENT_ROAD_TRAFFIC_SITUATION = "input_current_road_traffic_situation";
-QString geoworldsim::behaviour::PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "input_vehicle_subtype";
+QString geoworldsim::behaviour::PolluteBehaviour::INPUT_VEHICLE_SUBTYPE = "vehicle_subtype";
 QString geoworldsim::behaviour::PolluteBehaviour::INPUT_VEHICLE_TYPE = "input_vehicle_type";
 QString geoworldsim::behaviour::PolluteBehaviour::OUTPUT_POLLUTANTS = "output_pollutants";
 QString geoworldsim::behaviour::PolluteBehaviour::NEXTS = "nexts";
@@ -38,7 +38,7 @@ void geoworldsim::behaviour::PolluteBehaviour::afterCreateHook(){
 
 QPair<double, QJsonArray> geoworldsim::behaviour::PolluteBehaviour::behave(){
 
-    return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
+    //return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 
     QSharedPointer< Entity > entity = this->getEntity();
     geometry::Geometry entity_geom = geometry::Geometry( entity->getProperty( geoworldsim::environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
