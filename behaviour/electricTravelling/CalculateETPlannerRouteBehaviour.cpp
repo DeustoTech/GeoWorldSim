@@ -75,7 +75,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
         QString etplanner_host = this->getProperty( "etplanner_host" ).toString( "http://157.158.135.201:8080/etplanner/routers" );
         QString etplanner_pilot = this->getProperty("etplanner_pilot").toString( "bilbao" ).toLower();
 
-        QString gtUrl = QString( etplanner_host + "/" + etplanner_pilot + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false&efaType=CC")
+        QString gtUrl = QString( etplanner_host + "/" + etplanner_pilot + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false")
                 .arg( from_y ).arg( from_x )
                 .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
@@ -132,6 +132,8 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                                 properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
                                 //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
                                 properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
+                                properties.insert( "distance", leg.value( "distance" ).toDouble() );
+                                properties.insert( "segments", leg.value( "segments" ).toArray() );
 
                                 multiroute_skill->addDestination( destination_coor , properties );
                             }

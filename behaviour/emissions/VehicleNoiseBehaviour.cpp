@@ -31,9 +31,9 @@ QPair<double, QJsonArray> geoworldsim::behaviour::VehicleNoiseBehaviour::behave(
 
     double instant_noise = 0;
 
-    if ( current_edge ){
+//    if ( current_edge ){
 
-        if( vehicle_type.toUpper() == "CAR" ){
+        if( vehicle_type.toUpper() == "CAR" || vehicle_type.toUpper() == "PC" ){
             A_roll = 93.9;
             B_roll = 37.2;
             A_prop = 86.9;
@@ -48,7 +48,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::VehicleNoiseBehaviour::behave(
         }
 
 
-        if( vehicle_type.toUpper() == "MOTORCYCLE" ){
+        if( vehicle_type.toUpper() == "MOTORCYCLE" || vehicle_type.toUpper() == "MC" ){
             A_roll = 0;
             B_roll = 0;
             A_prop = 93.2;
@@ -63,7 +63,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::VehicleNoiseBehaviour::behave(
 
         instant_noise = 10 * log10( qPow( 10 , rolling_noise / 10.0 )  +  qPow( 10 , propulsion_noise / 10.0 ) );
 
-    }
+//    }
 
     // Store noise
     agent->setProperty( this->getProperty( OUTPUT_NOISE ).toString( "instant_noise" ) ,  instant_noise );
