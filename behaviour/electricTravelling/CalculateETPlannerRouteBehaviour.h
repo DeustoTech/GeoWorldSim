@@ -21,7 +21,7 @@ public:
     static QString TRANSPORT_MODE;
     static QString COLOR;
     static QString TOTAL_DISTANCE;
-    static QString SEGMENT_ID;
+    static QString ROAD_ID;
     static QString OPTIMIZATION;
     static QString IS_STATION;
     static QString STOP_ENTITY_IF_NO_ROUTE;

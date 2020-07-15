@@ -10,7 +10,7 @@ QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_JS
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::TRANSPORT_MODE = "transport_mode";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::COLOR = "color";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::TOTAL_DISTANCE = "total_distance";
-QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::SEGMENT_ID = "segment_id";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::ROAD_ID = "road_id";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::IS_STATION = "is_station";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::OPTIMIZATION = "route_optimization";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
