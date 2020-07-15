@@ -151,7 +151,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                                     QString points = s.toObject().value( "geometry" ).toObject().value( "points" ).toString();
                                     auto polyline = gepaf::PolylineEncoder::decode( points.toStdString()  );
                                     geometry::Coordinate segment_coor( polyline.at(polyline.size() - 1 ).longitude(), polyline.at(polyline.size() - 1 ).latitude()  );
-                                    properties.insert( SEGMENT_ID, s.toObject().value( "id" ).toInt() );
+                                    properties.insert( ROAD_ID, s.toObject().value( "id" ).toInt() );
 
                                     multiroute_skill->addDestination( segment_coor , properties );
                                 }
