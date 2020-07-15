@@ -1,12 +1,17 @@
 #include "CalculateETPlannerRouteBehaviour.h"
-
 #include <QJsonDocument>
+
+#include "../../util/polyline_encoder/polylineencoder.h" // https://github.com/vahancho/polylineencode
 
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::ETPLANNER_HOST = "etplanner_host";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_X = "destination_x";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_Y = "destination_y";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_JSON  = "destination_json";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::TRANSPORT_MODE = "transport_mode";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::COLOR = "color";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::TOTAL_DISTANCE = "total_distance";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::SEGMENT_ID = "segment_id";
+QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::IS_STATION = "is_station";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::OPTIMIZATION = "route_optimization";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::STOP_ENTITY_IF_NO_ROUTE = "stop_if_no_route";
 
@@ -75,22 +80,26 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
         QString etplanner_host = this->getProperty( "etplanner_host" ).toString( "http://157.158.135.201:8080/etplanner/routers" );
         QString etplanner_pilot = this->getProperty("etplanner_pilot").toString( "bilbao" ).toLower();
 
-        QString gtUrl = QString( etplanner_host + "/" + etplanner_pilot + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%8&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false")
+        QString etUrl = QString( etplanner_host + "/" + etplanner_pilot + "/plan?fromPlace=%1,%2&toPlace=%3,%4&time=%5&date=%6&mode=%7&chargeLevel=%8&maxWalkDistance=750&maxBikeDistance=10000&maxElectricCarDistance=112654&weightOptimization=%9&requestedResults=1&responseTimeout=3&arriveBy=false&showIntermediateStops=false&energyConsumption=16&energyCost=50&fuelConsumption=8&fuelCost=500&motorFuelConsumption=4&congestionEnabled=false")
                 .arg( from_y ).arg( from_x )
                 .arg( dest_y ).arg( dest_x )
                 .arg( time.toString( "hh:mm" ) )
                 .arg( date.toString( "MM-dd-yyyy" ) )
-                .arg( "CAR" )
+                .arg( "ELECTRIC" )
+                .arg( 15 )
                 .arg( this->getProperty( OPTIMIZATION ).toString() );
 
         qDebug() << agent->getProperty("vehicle_subtype");
-        qDebug() << gtUrl;
+        qDebug() << etUrl;
+
+        etUrl = "http://157.158.135.201:8080/etplanner/routers/budapest/plan?maxWalkDistance=750&time=12:04&date=2020-07-14&congestionEnabled=false&mode=ELECTRIC&chargeLevel=15&maxBikeDistance=10000&weightOptimization=QUICKER&requestedResults=1&responseTimeout=10&energyCost=50&fuelConsumption=8&fuelCost=50&motorcycleFuelUsage=8&motorcycleFuelCost=50&motivationFrom=&motivationTo=&electricCarIndex=17&minChargeLevel=10&luggageWeight=0&driverWeight=80&arriveBy=false&temperature=23&operatorId=eCar&chargerPlugType=Type2&chargerPhases=1&carWeight=1386&acuCapacity=37&fromPlace=47.46630967143207,19.01656150817871&toPlace=47.501199263815415,19.12033081054688&alreadyRented=false&currentTimestamp=1594721259705";
+
 
         agent->incrementBusy(); // IMPORTANT TO WAIT UNTIL REQUEST FINISHES
 
-        network::HttpDriver::globalInstance()->GET( gtUrl , [ agent , this ]( QNetworkReply* reply ){
+        network::HttpDriver::globalInstance()->GET( etUrl , [ agent , this ]( QNetworkReply* reply ){
 
-                if( !reply ){
+               if( !reply ){
                     agent->decrementBusy();
                     return;
                 }
@@ -125,21 +134,38 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                                 QJsonObject leg = v.toObject();
                                 QMap<QString,QString> colors = {{"WALK","Grey"},{"SUBWAY","Yellow"},{"TRAM","Pink"},{"BUS","Blue"},{"MOTORCYCLE","Orange"},{"CAR","Red"},{"ELECTRIC","Lime"}};
 
-                                geometry::Coordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );
+                                geometry::Coordinate destination_coor( leg.value( "to" ).toObject().value( "lon" ).toDouble() , leg.value( "to" ).toObject().value( "lat" ).toDouble() );                                
 
                                 // Additional properties
                                 QJsonObject properties;
                                 properties.insert( TRANSPORT_MODE , leg.value("mode").toString() );
                                 //properties.insert( GWSTimeEnvironment::INTERNAL_TIME_PROP , leg.value( "startTime" ).toDouble() );
-                                properties.insert( "color" , colors.value( leg.value( "mode" ).toString() , "Black" ) );
-                                properties.insert( "distance", leg.value( "distance" ).toDouble() );
-                                properties.insert( "segments", leg.value( "segments" ).toArray() );
+                                properties.insert( COLOR , colors.value( leg.value( "mode" ).toString() , "Black" ) );
+                                properties.insert( TOTAL_DISTANCE, leg.value( "distance" ).toDouble() );
 
-                                multiroute_skill->addDestination( destination_coor , properties );
+                                QJsonArray segments = leg.value( "segments" ).toArray();
+                                geometry::Coordinate segment_coor;
+
+                                // Road segments defined by the ETPlanner
+                                foreach( QJsonValue s, segments){
+                                    QString points = s.toObject().value( "geometry" ).toObject().value( "points" ).toString();
+                                    auto polyline = gepaf::PolylineEncoder::decode( points.toStdString()  );
+                                    geometry::Coordinate segment_coor( polyline.at(polyline.size() - 1 ).longitude(), polyline.at(polyline.size() - 1 ).latitude()  );
+                                    properties.insert( SEGMENT_ID, s.toObject().value( "id" ).toInt() );
+
+                                    multiroute_skill->addDestination( segment_coor , properties );
+                                }
+
+                                if (properties.value( TRANSPORT_MODE ).toString().toUpper() == "STATION"){
+                                    properties.insert(IS_STATION, true);
+                                }
+
+                                if ( destination_coor != segment_coor ){
+                                    multiroute_skill->addDestination( destination_coor , properties );
+                                }
                             }
                         }
                         else if ( legs_array.isEmpty() && stop_if_no_route ){
-
                               environment::ExecutionEnvironment::globalInstance()->unregisterEntity( agent );
                         }
                     }
@@ -150,7 +176,6 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                 });
 
             });
-
     }
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );

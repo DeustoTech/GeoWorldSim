@@ -59,7 +59,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::MoveThroughNetworkBehaviour::b
     QSharedPointer<Entity> current_edge = movethroughroute_skill->getCurrentEdge();
     int edge_capacity = -1;
     int entities_inside_count = -1;
-    if( edge_capacity >= 0 && entities_inside_count >= edge_capacity ){
+    if( edge_capacity >= 0 && entities_inside_count >= edge_capacity ){  // AQUI NUNCA ENTRA AL TENER LAS VARIABLES edge_capacity = -1
         // Wait until edge is free
         return QPair< double , QJsonArray >( 0 , QJsonArray({ this->getUID() }) );
     }
@@ -96,10 +96,9 @@ QPair<double, QJsonArray> geoworldsim::behaviour::MoveThroughNetworkBehaviour::b
     QString graph_type = this->getProperty( INPUT_TRANSPORT_NETWORK_TYPE ).toString();
     movethroughroute_skill->move( duration_of_movement , current_speed , route_destination , graph_type );
 
-    // Once moved, check if arrived
+    // Once moved, check if arrived and set NEXTS behaviour
     geometry::Geometry entity_geom_post = geometry::Geometry( entity->getProperty( environment::PhysicalEnvironment::GEOMETRY_PROP ).toObject() );
 
-    // Set NEXTS behaviour
     if ( entity_geom_post.getDistance( route_destination ) < unit::LengthUnit( 0.5 ) ){
         return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS_IF_ARRIVED ).toArray() );
     }

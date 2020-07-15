@@ -38,10 +38,10 @@ QPair<double, QJsonArray> geoworldsim::behaviour::AssignVehicleSubtypeBehaviour:
         }
     }
 
-    qDebug() << roulete_wheel->isEmpty() << entity_type;
-
     QString subtype = roulete_wheel->getElement()->objectName();
     agent->setProperty( VEHICLE_SUBTYPE, subtype );
+
+    qDebug() << roulete_wheel->isEmpty() << entity_type << subtype;
 
     return QPair< double , QJsonArray >( this->getProperty( BEHAVIOUR_DURATION ).toDouble() , this->getProperty( NEXTS ).toArray() );
 }

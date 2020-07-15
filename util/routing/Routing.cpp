@@ -68,14 +68,14 @@ QList< QStringList > geoworldsim::routing::Routing::getShortestPath( const QStri
         if ( this->routing_graph->id( start ) <= 0 || this->routing_graph->id( end ) <= 0 ){
             qDebug() << QString("Start (%1) or end nodes (%2) are not in graph").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end , route );
-            result_routes.append( route );
+            result_routes.append( route ); // route = empty QStringList since either/both nodes are not in the Graph
             continue;
         }
 
         if( !dijkstra_algorithm.run( start , end ) ){
             qDebug() << QString("Can not reach end node (%2) from start (%1)").arg( from_hash ).arg( to_hash );
             this->cachePath( start , end , route );
-            result_routes.append( route );
+            result_routes.append( route ); // route = empty QStringList since the dijkstra_algorithm could not find a path
             continue;
         }
 

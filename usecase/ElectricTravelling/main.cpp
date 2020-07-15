@@ -45,6 +45,7 @@
 #include "../../behaviour/Behaviour.h"
 #include "../../behaviour/move/CalculateTSPRouteBehaviour.h"
 #include "../../behaviour/move/MoveThroughNetworkBehaviour.h"
+#include "../../behaviour/move/MoveToPointBehaviour.h"
 #include "../../behaviour/move/MoveBehaviour.h"
 #include "../../behaviour/emissions/VehicleNoiseBehaviour.h"
 #include "../../behaviour/information/SendEntitySnapshotBehaviour.h"
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
     environment::GridEnvironment::globalInstance();
 
     // AVAILABLE BEHAVIOURS
-    ObjectFactory::globalInstance()->registerType( behaviour::MoveThroughNetworkBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::MoveToPointBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::SendEntitySnapshotBehaviour::staticMetaObject);
     ObjectFactory::globalInstance()->registerType( behaviour::SendPropertyStatisticsBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::VehicleNoiseBehaviour::staticMetaObject );

@@ -57,6 +57,7 @@ HEADERS += \
     ../../util/storage/GlobalObjectStorage.h \
     ../../util/units/Units.h \
     ../../util/svm/Svm.h \
+    ../../util/polyline_encoder/polylineencoder.h \
             ## GEOMETRIES
     ../../util/geometry/Geometry.h \
     ../../util/geometry/Coordinate.h \
@@ -105,7 +106,8 @@ HEADERS += \
     ../../skill/move/StoreMultiRouteSkill.h \
     ../../behaviour/execution/StopEntityBehaviour.h \
     ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h \
-    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.h
+    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.h \
+    ../../behaviour/move/MoveToPointBehaviour.h
 
 
 SOURCES += main.cpp \
@@ -140,6 +142,7 @@ SOURCES += main.cpp \
     ../../util/datasource/EntityGeneratorDatasource.cpp \
     ../../util/routing/Routing.cpp \
     ../../util/routing/TSPRouting.cpp \
+    ../../util/polyline_encoder/polylineencoder.cpp \
             ## DATASOURCES
             ## GEOMETRIES
     ../../util/geometry/Geometry.cpp \
@@ -179,7 +182,8 @@ SOURCES += main.cpp \
     ../../skill/move/StoreMultiRouteSkill.cpp \
     ../../behaviour/execution/StopEntityBehaviour.cpp \
     ../../behaviour/execution/CheckIfEntitiesRunningBehaviour.cpp \
-    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.cpp
+    ../../behaviour/electricTravelling/AssignVehicleSubtypeBehaviour.cpp \
+    ../../behaviour/move/MoveToPointBehaviour.cpp
 
 
 #INCLUDE LEMON SYSTEM LIBRARY (sudo apt-get install liblemon-dev)
