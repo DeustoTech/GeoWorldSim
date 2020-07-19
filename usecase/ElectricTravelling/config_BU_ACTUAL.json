@@ -1,0 +1,495 @@
+{
+	"target": "gws-electric",
+	"name": "Simulation_BU",
+	"description": "Electric Travelling Simulation.",
+	"console": 1,
+	"speed": 50,
+	"timeout": 86400,
+	"status": "pending",
+	"user_id": "fa4a7d2b-865a-53d2-b510-a85a429b1ae3",
+	"id": "fc35dd34-a882-4797-859c-eaadbcd05b10-fa4a7d2b-865a-53d2-b510",
+	"tags": ["ET Simulation", "Simulation", "Electric Travelling"],
+	"population": {
+		"distribution": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@gwsgroups": ["DISTRIBUTION"]
+			},
+			"datasources": [{
+				"scenario_id": "855440ed-eb06-474c-95fa-735b690086f0-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Distribution_Actual"
+			}]
+		},
+		"citizens": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@gwsgroups": ["Citizen"],
+				"color": "Gray",
+				"wait_for_me": "green",
+				"geometry": {
+					"type": "Point",
+					"coordinates": [19.01656150817871, 47.46630967143207]
+				},
+				"destination": {
+					"type": "Point",
+					"coordinates": [19.12033081054688, 47.501199263815415]
+				},
+				"birth": -1,
+				"vehicle_type": "PC",
+				"vehicle_subtype": "",
+				"@behaviours": [{
+					"@gwsclass": "AssignVehicleSubtypeBehaviour",
+					"start": true,
+					"id": "ASSIGNER",
+					"vehicle_type": "<vehicle_type>",
+					"nexts": ["ETPLANNER"]
+				}, {
+					"@gwsclass": "CalculateETPlannerRouteBehaviour",
+					"id": "ETPLANNER",
+					"etplanner_pilot": "Budapest",
+					"transport_mode": "<vehicle_type>",
+					"route_optimization": "QUICKER",
+					"destination_json": "<destination>",
+					"stop_if_no_route": true,
+					"duration": 1,
+					"nexts": ["NEXT_DESTINATION"]
+				}, {
+					"@gwsclass": "SetNextRouteDestinationBehaviour",
+					"id": "NEXT_DESTINATION",
+					"duration": 1,
+					"nexts_while_pending_route": ["REMOVE_WAIT"],
+					"nexts_if_finished": ["STOP"]
+				}, {
+					"@gwsclass": "SetPropertyBehaviour",
+					"id": "REMOVE_WAIT",
+					"entity_id": "<id>",
+					"properties": {
+						"wait_for_me": false
+					},
+					"duration": 1,
+					"nexts": ["DISPLAY"]
+				}, {
+					"@gwsclass": "SendEntitySnapshotBehaviour",
+					"id": "DISPLAY",
+					"entity_to_send_id": "<id>",
+					"duration": 1,
+					"nexts": ["MOVE"]
+				}, {
+					"@gwsclass": "MoveToPointBehaviour",
+					"id": "MOVE",
+					"duration": 30,
+					"input_transport_network_type": "<vehicle_type>",
+					"input_route_destination": "<next_destination>",
+					"nexts_if_arrived": ["NEXT_DESTINATION"],
+					"nexts_if_not_arrived": ["NOISE"]
+				}, {
+					"@gwsclass": "VehicleNoiseBehaviour",
+					"id": "NOISE",
+					"input_vehicle_type": "<vehicle_type>",
+					"duration": 0,
+					"nexts": ["POLLUTE"]
+				}, {
+					"@gwsclass": "PolluteBehaviour",
+					"id": "POLLUTE",
+					"input_vehicle_type": "<vehicle_type>",
+					"input_vehicle_subtype": "<vehicle_subtype>",
+					"input_current_road_gradient": 0,
+					"input_current_road_traffic_situation": 0.36,
+					"input_pollutant_types": ["CO2e", "FC_MJ", "FC"],
+					"duration": 0,
+					"nexts": ["DISPLAY"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 5000
+		},
+		"noise_roads": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "NOISE",
+				"id": "NOISE",
+				"color": "Grey",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Road",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Road",
+					"entity_property_name": "instant_noise",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "maximum",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},		
+		"noise": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "NOISE",
+				"id": "NOISE",
+				"color": "Grey",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_noise",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "maximum",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"direct": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "DIRECT",
+				"id": "DIRECT",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_DIRECT",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"indirect": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "INDIRECT",
+				"id": "INDIRECT",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_INDIRECT",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"co2e": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "CO2e",
+				"id": "CO2e",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_CO2e",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"fcmj": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "FC_MJ",
+				"id": "FC_MJ",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_FC_MJ",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"fc": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "FC",
+				"id": "FC",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_FC",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},		
+		"indirect_electric_ES": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "INDIRECT_ELECTRIC_ES",
+				"id": "INDIRECT_ELECTRIC_ES",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_INDIRECT_ELECTRIC_ES",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"indirect_electric_PL": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "INDIRECT_ELECTRIC_PL",
+				"id": "INDIRECT_ELECTRIC_PL",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_INDIRECT_ELECTRIC_PL",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"indirect_electric_NL": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "INDIRECT_ELECTRIC_NL",
+				"id": "INDIRECT_ELECTRIC_NL",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_INDIRECT_ELECTRIC_NL",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},
+		"indirect_electric_HU": {
+			"template": {
+				"@gwsclass": "Entity",
+				"type": "INDIRECT_ELECTRIC_HU",
+				"id": "INDIRECT_ELECTRIC_HU",
+				"color": "Gray",
+				"birth": -1,
+				"@behaviours": [{
+					"@gwsclass": "CheckIfEntitiesRunningBehaviour",
+					"start": true,
+					"id": "CHECK",
+					"entity_type": "Citizen",
+					"duration": 60,
+					"nexts_if_true": ["DISPLAY"],
+					"nexts_if_false": ["CHECK"]
+				}, {
+					"@gwsclass": "SendPropertyStatisticsBehaviour",
+					"id": "DISPLAY",
+					"entity_type": "Citizen",
+					"entity_property_name": "instant_INDIRECT_ELECTRIC_HU",
+					"entity_filter": {
+						"running": true
+					},
+					"grid_type": "total",
+					"duration": 60,
+					"nexts_if_still_alive_entities": ["DISPLAY"],
+					"nexts_if_all_entities_dead": ["STOP"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		}
+	}
+}
