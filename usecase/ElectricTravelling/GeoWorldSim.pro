@@ -211,7 +211,7 @@ unix|win32: LIBS += -lsvm
 #INCLUDE GRASS SYSTEM LIBRARY (sudo apt-get install grass-dev)
 
 #INCLUDE LIBFUZZYLITE SYSTEM LIBRARY (sudo apt-get install libfuzzylite-dev) USE DFL_CPP11 FLAG
-unix|win32: LIBS += -lfuzzylite
+#unix|win32: LIBS += -lfuzzylite
 QMAKE_CXXFLAGS += -DFL_CPP11=ON
 
 #INCLUDE EIGEN3 SYSTEM LIBRARY (sudo apt-get install libeigen3-dev)
