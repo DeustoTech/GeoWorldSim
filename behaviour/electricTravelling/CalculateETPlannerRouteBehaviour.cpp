@@ -188,11 +188,14 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                                         way_template.insert( "accummulated_fc", "" );
                                         way_template.insert( "accummulated_fcmj", "" );
 
-                                        QSharedPointer<geoworldsim::Object> entity = ObjectFactory::globalInstance()->fromJSON( way_template );
+//                                        QSharedPointer<geoworldsim::Entity> entity = dynamic_cast<geoworldsim::Entity> (ObjectFactory::globalInstance()->fromJSON( way_template ));
 
-                                        qDebug() << "ROADS", environment::EntityEnvironment::globalInstance()->getByClass( "Road" ).length();
+//                                        environment::EntityEnvironment::globalInstance()->registerEntity( entity );
+//                                        environment::ExecutionEnvironment::globalInstance()->registerEntity( entity );
 
-                                        qDebug() << 2;
+//                                        qDebug() << "ROADS" << environment::EntityEnvironment::globalInstance()->getByClass( "Road" ).length();
+
+//                                        qDebug() << 2;
                                     }
                                 }
 
