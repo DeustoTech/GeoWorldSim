@@ -1,0 +1,242 @@
+{
+	"target": "gws-electric",
+	"name": "Simulation_SI",
+	"description": "Electric travelling simulation.",
+	"console": 1,
+	"speed": 50,
+	"timeout": 86400,
+	"status": "pending",
+	"user_id": "fa4a7d2b-865a-53d2-b510-a85a429b1ae3",
+	"id": "530247f5-5b9b-4268-a645-fad66d5b6924-fa4a7d2b-865a-53d2-b510",
+	"tags": ["ET Simulation", "Simulation", "Electric Travelling"],
+	"population": {
+		"distribution": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@gwsgroups": ["DISTRIBUTION"]
+			},
+			"datasources": [{
+				"scenario_id": "4055dfaf-e523-4237-bc15-b1f9db36362f-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Distribution_Actual"
+			}]
+		},
+		"citizens": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@gwsgroups": ["Citizen"],
+				"color": "Gray",
+				"wait_for_me": "green",
+				"geometry": {
+					"type": "Point",
+					"coordinates": [19.027762413024906, 50.2748323471939]
+				},
+				"destination": {
+					"type": "Point",
+					"coordinates": [19.006004333496094, 50.262076878381336]
+				},
+				"birth": -1,
+				"vehicle_type": "PC",
+				"vehicle_subtype": "",
+				"@behaviours": [{
+					"@gwsclass": "AssignVehicleSubtypeBehaviour",
+					"start": true,
+					"id": "ASSIGNER",
+					"vehicle_type": "<vehicle_type>",
+					"nexts": ["ETPLANNER"]
+				}, {
+					"@gwsclass": "CalculateETPlannerRouteBehaviour",
+					"id": "ETPLANNER",
+					"etplanner_pilot": "Silesia",
+					"transport_mode": "<vehicle_type>",
+					"route_optimization": "QUICKER",
+					"destination_json": "<destination>",
+					"stop_if_no_route": true,
+					"duration": 1,
+					"nexts": ["NEXT_DESTINATION"]
+				}, {
+					"@gwsclass": "SetNextRouteDestinationBehaviour",
+					"id": "NEXT_DESTINATION",
+					"duration": 1,
+					"nexts_while_pending_route": ["REMOVE_WAIT"],
+					"nexts_if_finished": ["STOP"]
+				}, {
+					"@gwsclass": "SetPropertyBehaviour",
+					"id": "REMOVE_WAIT",
+					"entity_id": "<id>",
+					"properties": {
+						"wait_for_me": false
+					},
+					"duration": 1,
+					"nexts": ["DISPLAY"]
+				}, {
+					"@gwsclass": "SendEntitySnapshotBehaviour",
+					"id": "DISPLAY",
+					"entity_to_send_id": "<id>",
+					"duration": 1,
+					"nexts": ["MOVE"]
+				}, {
+					"@gwsclass": "MoveThroughNetworkBehaviour",
+					"id": "MOVE",
+					"duration": 30,
+					"input_transport_network_type": "<vehicle_type>",
+					"input_route_destination": "<next_destination>",
+					"nexts_if_arrived": ["NEXT_DESTINATION"],
+					"nexts_if_not_arrived": ["NOISE"]
+				}, {
+					"@gwsclass": "VehicleNoiseBehaviour",
+					"id": "NOISE",
+					"input_vehicle_type": "<vehicle_type>",
+					"duration": 0,
+					"nexts": ["POLLUTE"]
+				}, {
+					"@gwsclass": "PolluteBehaviour",
+					"id": "POLLUTE",
+					"input_vehicle_type": "<vehicle_type>",
+					"input_vehicle_subtype": "<vehicle_subtype>",
+					"input_current_road_gradient": 0,
+					"input_current_road_traffic_situation": 0.36,
+					"input_pollutant_types": ["CO2e", "FC_MJ", "FC"],
+					"duration": 0,
+					"nexts": ["DISPLAY"]
+				}, {
+					"@gwsclass": "StopEntityBehaviour",
+					"id": "STOP",
+					"duration": 1
+				}]
+			},
+			"amount": 1
+		},		
+		"NETWORK0": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Footway",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK1": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Pedestrian",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK2": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Primary",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK3": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Railway",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK4": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Residential",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK5": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Secondary",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK6": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Service",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK7": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Tertiary",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK8": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Tram",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK9": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Trunk",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		},
+		"NETWORK10": {
+			"template": {
+				"@gwsclass": "Entity",
+				"@type": "Network",
+				"@gwsgroups": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			},
+			"datasources": [{
+				"scenario_id": "12152705-0b32-427d-8f3a-988732314ca1-fa4a7d2b-865a-53d2-b510",
+				"entity_type": "Unclassified",
+				"allowed_modes": ["ELECTRIC", "CAR", "MOTORCYCLE", "BICYCLE", "WALK"]
+			}]
+		}	
+	}
+}
