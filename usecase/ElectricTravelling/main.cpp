@@ -52,6 +52,7 @@
 #include "../../behaviour/property/CopyPropertyBehaviour.h"
 #include "../../behaviour/property/SetPropertyBehaviour.h"
 #include "../../behaviour/property/SendPropertyStatisticsBehaviour.h"
+#include "../../behaviour/property/IncrementPropertyBehaviour.h"
 #include "../../behaviour/execution/CheckIfEntitiesRunningBehaviour.h"
 #include "../../behaviour/execution/StopEntityBehaviour.h"
 #include "../../behaviour/information/ListenToMessagesBehaviour.h"
@@ -94,6 +95,7 @@ int main(int argc, char* argv[])
     ObjectFactory::globalInstance()->registerType( behaviour::PolluteBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::CheckIfEntitiesRunningBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::SetPropertyBehaviour::staticMetaObject );
+    ObjectFactory::globalInstance()->registerType( behaviour::IncrementPropertyBehaviour::staticMetaObject );
 
     // CREATE POPULATION
     QList<datasource::EntityGeneratorDatasource*> pending_datasources;  
@@ -107,7 +109,6 @@ int main(int argc, char* argv[])
 
         geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
     });
-//    geoworldsim::environment::ExecutionEnvironment::globalInstance()->run();
 
     // LISTEN TO EXTERNAL SIMULATIONS
     // GWSExternalListener and GWSCommunicationEnvironment have changed, do the code below needs to eventually be modified:

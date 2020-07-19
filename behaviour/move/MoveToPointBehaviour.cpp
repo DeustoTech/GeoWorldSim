@@ -56,6 +56,5 @@ QPair<double, QJsonArray> geoworldsim::behaviour::MoveToPointBehaviour::behave()
     }
 
     // Se MUEVE
-
     return QPair< double , QJsonArray >( duration_of_movement.number() ,  this->getProperty( NEXTS_IF_NOT_ARRIVED ).toArray() );
 }

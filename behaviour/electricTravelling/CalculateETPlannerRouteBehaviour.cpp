@@ -1,7 +1,7 @@
 #include "CalculateETPlannerRouteBehaviour.h"
 #include <QJsonDocument>
 
-#include "../../util/polyline_encoder/polylineencoder.h" // https://github.com/vahancho/polylineencode
+#include "../../util/polyline_encoder/polylineencoder.h" // https://github.com/vahancho/polylineencoder
 
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::ETPLANNER_HOST = "etplanner_host";
 QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::DESTINATION_X = "destination_x";
@@ -21,10 +21,12 @@ QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::NEXTS = "nexts
 #include "../../util/network/HttpDriver.h"
 #include "../../util/geometry/Coordinate.h"
 #include "../../environment/execution_environment/ExecutionEnvironment.h"
+#include "../../environment/entity_environment/EntityEnvironment.h"
 #include "../../environment/time_environment/TimeEnvironment.h"
 #include "../../environment/communication_environment/CommunicationEnvironment.h"
 #include "../../environment/physical_environment/PhysicalEnvironment.h"
 #include "../../skill/move/StoreMultiRouteSkill.h"
+#include "../../object/ObjectFactory.h"
 
 
 geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::CalculateETPlannerRouteBehaviour() : Behaviour(){
@@ -148,12 +150,50 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
 
                                 // Road segments defined by the ETPlanner
                                 foreach( QJsonValue s, segments){
-                                    QString points = s.toObject().value( "geometry" ).toObject().value( "points" ).toString();
-                                    auto polyline = gepaf::PolylineEncoder::decode( points.toStdString()  );
-                                    geometry::Coordinate segment_coor( polyline.at(polyline.size() - 1 ).longitude(), polyline.at(polyline.size() - 1 ).latitude()  );
-                                    properties.insert( ROAD_ID, s.toObject().value( "id" ).toInt() );
+                                    QString osm_id = s.toObject().value( "id" ).toString();
+                                    QString entity_id = QString("WAY%1").arg( osm_id );
+                                    properties.insert( ROAD_ID, entity_id );
+
+                                    auto polyline = gepaf::PolylineEncoder::decode( s.toObject().value( "geometry" ).toObject().value( "points" ).toString().toStdString()  );
+                                    geometry::Coordinate segment_coor( polyline.at(polyline.size() - 1 ).longitude(), polyline.at(polyline.size() - 1 ).latitude()  );                                                                       
 
                                     multiroute_skill->addDestination( segment_coor , properties );
+
+                                    // Build road if it does not exist
+                                    QSharedPointer< Entity > entity = environment::EntityEnvironment::globalInstance()->getByUID( entity_id );
+                                    if( entity ){
+//                                        qWarning() << QString("Skipping duplicate (Duplicate UID %1 found)").arg( entity_id );
+                                    } else {
+
+                                        QJsonObject linestring;
+                                        linestring.insert( "type", "LineString" );
+                                        linestring.insert( "coordinates", QJsonArray() );
+
+                                        for (const auto &point : polyline) {
+                                            QJsonArray p;
+                                            p.push_back( point.longitude() );
+                                            p.push_back( point.latitude() );
+                                            linestring.value( "coordinates" ).toArray().push_back( p );
+                                        }
+
+                                        QJsonObject way_template;
+                                        way_template.insert( "id", entity_id );
+                                        way_template.insert( "osdm_id", osm_id );
+                                        way_template.insert( "@gwsclass", "Entity");
+                                        way_template.insert( "@gwsgroups", QJsonArray( { "Road" } ) );
+                                        way_template.insert( "linestring", linestring );
+                                        way_template.insert( "osm_type", "way" );
+                                        way_template.insert( "accumulated_noise", "" );
+                                        way_template.insert( "accummulated_co2", "" );
+                                        way_template.insert( "accummulated_fc", "" );
+                                        way_template.insert( "accummulated_fcmj", "" );
+
+                                        QSharedPointer<geoworldsim::Object> entity = ObjectFactory::globalInstance()->fromJSON( way_template );
+
+                                        qDebug() << "ROADS", environment::EntityEnvironment::globalInstance()->getByClass( "Road" ).length();
+
+                                        qDebug() << 2;
+                                    }
                                 }
 
                                 if (properties.value( TRANSPORT_MODE ).toString().toUpper() == "STATION"){
