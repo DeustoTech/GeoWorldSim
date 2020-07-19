@@ -17,8 +17,8 @@ QT          += multimedia # For video exporter sudo apt-get install qtmultimedia
 # march=native
 # 02 -> Optimizations level 2
 # pipe
-QMAKE_CXXFLAGS += -march=native -O2 -pipe
-QMAKE_CFLAGS += -march=native -O2 -pipe
+QMAKE_CXXFLAGS += -march=native -Ofast -pipe
+QMAKE_CFLAGS += -march=native -Ofast -pipe
 
 # FORCE C++11
 QMAKE_CXXFLAGS += -std=c++14
@@ -228,3 +228,5 @@ unix|win32: LIBS += -lfann
 #unix|win32: LIBS += -lpacc
 #unix|win32: LIBS += -lopenbeagle
 #unix|win32: LIBS += -lopenbeagle-GA
+
+#DEFINES += QT_NO_DEBUG_OUTPUT

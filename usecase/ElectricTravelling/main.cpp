@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
     ObjectFactory::globalInstance()->registerType( behaviour::SetPropertyBehaviour::staticMetaObject );
     ObjectFactory::globalInstance()->registerType( behaviour::IncrementPropertyBehaviour::staticMetaObject );
 
+
     // CREATE POPULATION
     QList<datasource::EntityGeneratorDatasource*> pending_datasources;  
     QDateTime download_started_time = QDateTime::currentDateTime();

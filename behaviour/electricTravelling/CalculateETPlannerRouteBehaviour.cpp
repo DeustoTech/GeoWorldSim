@@ -30,7 +30,7 @@ QString geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::NEXTS = "nexts
 
 
 geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::CalculateETPlannerRouteBehaviour() : Behaviour(){
-
+    this->setProperty( SNAPSHOT_EVERY_TICKS , 10 );
 }
 
 QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehaviour::behave(){
@@ -150,7 +150,9 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
 
                                 // Road segments defined by the ETPlanner
                                 foreach( QJsonValue s, segments){
-                                    QString osm_id = s.toObject().value( "id" ).toString();
+                                    QJsonObject o = s.toObject();
+                                    QJsonValue w = o.value( "id" );
+                                    QString osm_id = w.toVariant().toString();
                                     QString entity_id = QString("WAY%1").arg( osm_id );
                                     properties.insert( ROAD_ID, entity_id );
 
@@ -178,7 +180,7 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
 
                                         QJsonObject way_template;
                                         way_template.insert( "id", entity_id );
-                                        way_template.insert( "osdm_id", osm_id );
+                                        way_template.insert( "osm_id", osm_id );
                                         way_template.insert( "@gwsclass", "Entity");
                                         way_template.insert( "@gwsgroups", QJsonArray( { "Road" } ) );
                                         way_template.insert( "linestring", linestring );
@@ -188,14 +190,38 @@ QPair<double, QJsonArray> geoworldsim::behaviour::CalculateETPlannerRouteBehavio
                                         way_template.insert( "accummulated_fc", "" );
                                         way_template.insert( "accummulated_fcmj", "" );
 
-//                                        QSharedPointer<geoworldsim::Entity> entity = dynamic_cast<geoworldsim::Entity> (ObjectFactory::globalInstance()->fromJSON( way_template ));
+                                        QString strFromObj = QJsonDocument(way_template).toJson(QJsonDocument::Compact).toStdString().c_str();
 
-//                                        environment::EntityEnvironment::globalInstance()->registerEntity( entity );
-//                                        environment::ExecutionEnvironment::globalInstance()->registerEntity( entity );
+                                        qDebug() << "Creo carretera " << strFromObj;
+                                        QSharedPointer<Object> aux = ObjectFactory::globalInstance()->fromJSON( way_template );
 
-//                                        qDebug() << "ROADS" << environment::EntityEnvironment::globalInstance()->getByClass( "Road" ).length();
+                                        //environment::EntityEnvironment::globalInstance()->registerEntity( entity );
+                                        //environment::ExecutionEnvironment::globalInstance()->registerEntity( entity );
 
-//                                        qDebug() << 2;
+                                        QJsonValue auid = aux->getProperty( "id" );
+                                        qDebug() << "Hemos creado el objeto con UID " << auid.toString();
+
+                                        QSharedPointer<geoworldsim::Entity> z = environment::EntityEnvironment::globalInstance()->getByUID(auid.toString());
+                                        if (!z.isNull() ){
+                                            qDebug() << "Hemos creado y lo hemos sacado del environment por UID" << z->getUID();
+                                        } else {
+                                            qDebug() << "z es NULL para UID!";
+                                        }
+
+                                        z = environment::EntityEnvironment::globalInstance()->getByUID(entity_id);
+                                        if (!z.isNull() ){
+                                            qDebug() << "Hemos creado y lo hemos sacado del environment por entity_id" << entity_id << " " << z->getUID();
+                                        } else {
+                                            qDebug() << "z es NULL para entity_id!";
+                                        }
+                                        QList< QSharedPointer<geoworldsim::Entity>>  zz = environment::EntityEnvironment::globalInstance()->getByClass( "Road" );
+                                        qDebug() << "ROADS" << zz.length();
+
+
+
+
+
+//
                                     }
                                 }
 

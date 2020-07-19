@@ -4,6 +4,7 @@
 	"description": "Electric Travelling Simulation.",
 	"console": 1,
 	"speed": 50,
+	"max_threads": 5,
 	"timeout": 86400,
 	"status": "pending",
 	"user_id": "fa4a7d2b-865a-53d2-b510-a85a429b1ae3",
@@ -104,7 +105,7 @@
 					"duration": 1
 				}]
 			},
-			"amount": 5000
+			"amount": 50
 		},
 		"noise_roads": {
 			"template": {
