@@ -3,7 +3,10 @@
 
 #include "../Behaviour.h"
 
-class IncrementPropertyBehaviour : public GWSBehaviour
+namespace geoworldsim {
+namespace behaviour {
+
+class IncrementPropertyBehaviour : public Behaviour
 {
     Q_OBJECT
 
@@ -11,7 +14,7 @@ public:
     Q_INVOKABLE explicit IncrementPropertyBehaviour();
 
     // PROPERTIES
-    static QString AGENT_ID;
+    static QString ENTITY_ID;
     static QString PROPERTY_NAME_PROP;
     static QString INCREMENT_VALUE_PROP;
     static QString MAX_THRESHOLD_VALUE_PROP;
@@ -26,5 +29,8 @@ private slots:
      virtual QPair< double , QJsonArray > behave();
 
 };
+
+}
+}
 
 #endif // INCREMENTPROPERTYBEHAVIOUR_H

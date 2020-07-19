@@ -50,6 +50,7 @@ HEADERS += \
     ../../behaviour/move/MoveThroughNetworkBehaviour.h \
     ../../behaviour/emissions/VehicleNoiseBehaviour.h \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.h \
+    ../../behaviour/property/IncrementPropertyBehaviour.h \
         # UTILS
     ../../util/parallelism/ParallelismController.h \
     ../../util/io/log/Logger.h \
@@ -129,6 +130,7 @@ SOURCES += main.cpp \
     ../../behaviour/move/MoveThroughNetworkBehaviour.cpp \
     ../../behaviour/emissions/VehicleNoiseBehaviour.cpp \
     ../../behaviour/property/SendPropertyStatisticsBehaviour.cpp \
+    ../../behaviour/property/IncrementPropertyBehaviour.cpp \
         # UTILS
     ../../util/parallelism/ParallelismController.cpp \
     ../../util/io/log/Logger.cpp \
